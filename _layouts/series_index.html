@@ -1,0 +1,37 @@
+---
+layout: default
+---
+
+<div class="container">
+<div class="row">
+
+  
+    <div class="span8">
+		<h1 class="category">The "{{page.seriesIndexId | escape }}" series</h1>
+
+		{{content}}
+		
+        <div class="alignright"> {% include twitter_tweet.inc %}</div>
+        <div class="alignoff"></div>
+
+		<div class="postIndex">
+		{% for page in (site.seriesPages[page.seriesIndexId]) %}
+		<div class="postIndexItem">
+			<div class="title"><a href="{{ page.url }}/" title="{{ page.title | escape }}">{{ page.seriesOrder }}. {{ page.title | escape }}</a></div>
+			<div class="description">{{page.description}}</div>
+		</div>
+		{% endfor %}		
+		</div>
+
+    </div>
+
+	
+	
+	<div class="span2 sidebar">
+	{% include sidebar.inc %}
+	</div>
+
+		
+	
+</div>
+</div>

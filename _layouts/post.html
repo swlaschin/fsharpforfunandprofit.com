@@ -1,0 +1,52 @@
+---
+layout: default
+---
+
+<div class="container">
+<div class="row">
+	
+<div class="span8">
+
+{% include series_toc_header.inc %}
+
+{% unless page.hideHeader %}
+	<div class="page-header">
+	<h1>{{ page.title | escape }}</h1>
+	{% if page.description %}
+	<div class="subtitle alignleft">{{ page.description | escape }}</div>
+	{% endif %}
+    <div class="alignright"> {% include twitter_tweet.inc %}</div>
+    <div class="alignoff"></div>
+	</div>
+{% endunless  %}
+	
+	{{content}}
+
+			
+	<div class="post-footer">
+		<hr>
+		
+		{% include series_prev_next.inc %}
+
+		<div>
+			<br>
+			<div style="float:left">Posted by <a href="/about/">scottw</a> on {{ page.date | date_to_string }}</div>
+			{% if page.categories.size > 0 %}<div class="categories" style="float:right">Filed under: {{ page.categories | category_links }}</div>{% endif %}
+		</div>
+		<div style="clear: both;"></div>
+	</div >
+	
+	{% include series_toc.inc %}
+	
+	{% include disqus.inc %}
+</div>
+
+
+<div class="span2 sidebar">
+{% include sidebar.inc %}
+</div>
+
+		
+	
+</div>
+</div>
