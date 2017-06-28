@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Home"
 nav: home
@@ -22,7 +22,7 @@ image: "/assets/img/four-concepts2.png"
 	
 <div class="row-fluid " >	
 <p>
-This site will introduce you to F# and show you ways that F# can help in day-to-day development of mainstream commercial business software. On the way, I hope to open your mind to the joys of functional programming – it really is fun!
+This site will introduce you to F# and show you ways that F# can help in day-to-day development of mainstream commercial business software. On the way, I hope to open your mind to the joys of functional programming -- it really is fun!
 </p>
 <p>
 If you have never heard of F#, it is a general purpose functional/hybrid programming language which is great for tackling almost any kind of software challenge.  F# is free and open source, and runs on Linux, Mac, Windows and more. Find out more at the  <a href="http://fsharp.org/">F# Foundation</a>.  
@@ -33,7 +33,7 @@ If you have never heard of F#, it is a general purpose functional/hybrid program
 
 <div class="span6">
   <h3><img src="/assets/img/glyphicons/glyphicons_064_lightbulb.png" class="bs-icon"> Learn to think functionally</h3>
-  <p>“Thinking functionally” is critical to getting the most out of F#, so I will spend a lot of time on getting the basics down, and I will generally avoid too much discussion of the hybrid and OO features.</p>
+  <p>"Thinking functionally" is critical to getting the most out of F#, so I will spend a lot of time on getting the basics down, and I will generally avoid too much discussion of the hybrid and OO features.</p>
 </div>
 
     <div class="span6">

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Using the core functions in practice"
 description: "Working with independent and dependent data"

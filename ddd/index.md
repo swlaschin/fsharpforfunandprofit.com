@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Domain Driven Design"
 description: Slides and video from my talk "Domain Driven Design with the F# Type System" 
@@ -15,7 +15,7 @@ Here's the blurb for the talk:
 > <br><br>
 > Types can be used to represent the domain in a fine-grained, self documenting way. And in many cases,
 > types can even be used to encode business rules so that you literally cannot create incorrect code.
-> You can then use the static type checking almost as an instant unit test — making sure that your code is correct at compile time. 
+> You can then use the static type checking almost as an instant unit test -- making sure that your code is correct at compile time. 
 > <br><br>
 > In this talk, we'll look at some of the ways you can use types as part of a domain driven design process,
 > with some simple real world examples in F#. No jargon, no maths, and no prior F# experience necessary. 

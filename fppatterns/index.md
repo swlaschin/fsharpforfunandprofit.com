@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Functional Programming Design Patterns"
 description: Slides and video from my talk

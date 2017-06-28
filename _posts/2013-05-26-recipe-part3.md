@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Organizing modules in a project"
 description: "A recipe for a functional app, Part 3"

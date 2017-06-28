@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Shopping cart example in C#"
 categories: [csharp]

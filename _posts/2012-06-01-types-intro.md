@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Understanding F# types: Introduction"
 description: "A new world of types"

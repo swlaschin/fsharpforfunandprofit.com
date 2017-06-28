@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Attaching functions to types"
 description: "Creating methods the F# way"
@@ -34,7 +34,7 @@ The key things to note are:
 
 * The `with` keyword indicates the start of the list of members
 * The `member` keyword shows that this is a member function (i.e. a method)
-* The word `this` is a placeholder for the object that is being dotted into (called a “self-identifier”). The placeholder prefixes the function name, and then the function body then uses the same placeholder when it needs to refer to the current instance.
+* The word `this` is a placeholder for the object that is being dotted into (called a "self-identifier"). The placeholder prefixes the function name, and then the function body then uses the same placeholder when it needs to refer to the current instance.
 There is no requirement to use a particular word, just as long as it is consistent. You could use `this` or `self` or `me` or any other word that commonly indicates a self reference.
 
 You don't have to add a member at the same time that you declare the type, you can always add it later in the same module:

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Pattern matching for conciseness"
 description: "Pattern matching can match and bind in a single step"
@@ -8,7 +8,7 @@ seriesOrder: 12
 categories: [Conciseness, Patterns]
 ---
 
-So far we have seen the pattern matching logic in the `match..with` expression, where it seems to be just a switch/case statement. But in fact pattern matching is much more general — it can compare expressions in a number of ways, matching on values, conditions, and types, and then assign or extract values, all at the same time.
+So far we have seen the pattern matching logic in the `match..with` expression, where it seems to be just a switch/case statement. But in fact pattern matching is much more general -- it can compare expressions in a number of ways, matching on values, conditions, and types, and then assign or extract values, all at the same time.
 
 Pattern matching will be discussed in depth in later posts, but to start with, here is a little taster of one way that it aids conciseness. 
 We'll look at the way pattern matching is used for binding values to expressions (the functional equivalent of assigning to variables). 

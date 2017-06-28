@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Railway oriented programming: Carbonated edition"
 description: "Three ways to implement FizzBuzz"

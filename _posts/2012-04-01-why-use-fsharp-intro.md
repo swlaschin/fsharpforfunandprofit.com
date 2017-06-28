@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Introduction to the 'Why use F#' series"
 description: "An overview of the benefits of F#"

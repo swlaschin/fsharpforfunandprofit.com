@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Inheritance and abstract classes"
 description: ""
@@ -93,7 +93,7 @@ Now, if you try to compile the code above, you will get an error! The compiler w
 * provide a default implementation of the method, or 
 * tell the compiler that the class as whole is also abstract.
 
-We’ll look at both of these alternatives shortly.
+We'll look at both of these alternatives shortly.
 
 ### Defining abstract properties
 

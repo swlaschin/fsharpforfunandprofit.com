@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Type inference"
 description: "How to avoid getting distracted by complex type syntax"
@@ -9,7 +9,7 @@ categories: [Conciseness,Types]
 ---
 
 
-As you have already seen, F# uses a technique called “type inference” to greatly reduce the number of type annotations that need to be explicitly specified in normal code. And even when types do need to be specified, the syntax is less longwinded compared to C#.
+As you have already seen, F# uses a technique called "type inference" to greatly reduce the number of type annotations that need to be explicitly specified in normal code. And even when types do need to be specified, the syntax is less longwinded compared to C#.
 
 To see this, here are some C# methods that wrap two standard LINQ functions. The implementations are trivial, but the method signatures are extremely complex:
 
@@ -46,7 +46,7 @@ let GroupBy source keySelector =
 {% endhighlight %}
 	
 <div class="alert alert-info">	
-You might notice that the standard F# implementations for “filter” and “groupBy” have the parameters in exactly the opposite order from the LINQ implementations used in C#. The “source” parameter is placed last, rather than first. There is a reason for this, which will be explained in the <a href="/series/thinking-functionally.html">thinking functionally</a> series.
+You might notice that the standard F# implementations for "filter" and "groupBy" have the parameters in exactly the opposite order from the LINQ implementations used in C#. The "source" parameter is placed last, rather than first. There is a reason for this, which will be explained in the <a href="/series/thinking-functionally.html">thinking functionally</a> series.
 </div>
 
 The type inference algorithm is excellent at gathering information from many sources to determine the types. In the following example, it correctly deduces that the `list` value is a list of strings.

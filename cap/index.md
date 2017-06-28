@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Designing with Capabilities"
 description:  Designing using capabilities and the principle of least authority

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Concurrency"
 description: "The next major revolution in how we write software?"

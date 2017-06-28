@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Comparing F# with C#: A simple sum"
 description: "In which we attempt to sum the squares from 1 to N without using a loop"

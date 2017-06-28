@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Overview of F# expressions"
 description: "Control flows, lets, dos, and more"

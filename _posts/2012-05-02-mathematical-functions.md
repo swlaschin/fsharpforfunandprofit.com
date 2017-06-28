@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Mathematical functions"
 description: "The impetus behind functional programming"
@@ -9,39 +9,39 @@ seriesOrder: 2
 
 The impetus behind functional programming comes from mathematics. Mathematical functions have a number of very nice features that functional languages try to emulate in the real world. 
 
-So first, let’s start with a mathematical function that adds 1 to a number.
+So first, let's start with a mathematical function that adds 1 to a number.
 
 	Add1(x) = x+1
 
 What does this really mean?  Well it seems pretty straightforward. It means that there is an operation that starts with a number, and adds one to it. 
 
-Let’s introduce some terminology:
+Let's introduce some terminology:
 
-* The set of values that can be used as input to the function is called the *domain*. In this case, it could be the set of real numbers, but to make life simpler for now, let’s restrict it to integers only.
+* The set of values that can be used as input to the function is called the *domain*. In this case, it could be the set of real numbers, but to make life simpler for now, let's restrict it to integers only.
 * The set of possible output values from the function is called the *range* (technically, the image on the codomain). In this case, it is also the set of integers.
 * The function is said to *map* the domain to the range.
 
 ![](/assets/img/Functions_Add1.png)
  
-Here’s how the definition would look in F#
+Here's how the definition would look in F#
 
 {% highlight fsharp %}
 let add1 x = x + 1
 {% endhighlight %}
 
-If you type that into the F# interactive window (don’t forget the double semicolons) you will see the result (the "signature" of the function): 
+If you type that into the F# interactive window (don't forget the double semicolons) you will see the result (the "signature" of the function): 
 
 {% highlight fsharp %}
 val add1 : int -> int
 {% endhighlight  %}
 
-Let’s look at that output in detail:
+Let's look at that output in detail:
 
-* The overall meaning is “the function `add1` maps integers (the domain) onto integers (the range)”.
-* “`add1`” is defined as a “val”, short for "value". Hmmm… what does that mean?  We’ll discuss values shortly.
+* The overall meaning is "the function `add1` maps integers (the domain) onto integers (the range)".
+* "`add1`" is defined as a "val", short for "value". Hmmm... what does that mean?  We'll discuss values shortly.
 * The arrow notation "`->`" is used to show the domain and range. In this case, the domain is the `int` type, and the range is also the `int` type.
 
-Also note that the type was not specified, yet the F# compiler guessed that the function was working with ints. (Can this be tweaked? Yes, as we’ll see shortly).
+Also note that the type was not specified, yet the F# compiler guessed that the function was working with ints. (Can this be tweaked? Yes, as we'll see shortly).
 
 ## Key properties of mathematical functions ##
 
@@ -54,7 +54,7 @@ These properties provide some very powerful benefits, and so functional programm
 
 ### Mathematical functions always give the same output for a given input ###
 
-In imperative programming, we think that functions "do" something or "calculate" something. A mathematical function does not do any calculation – it is purely a mapping from input to output. In fact, another way to think of defining a function is simply as the set of all the mappings. For example, in a very crude way we could define the "`add1`" 
+In imperative programming, we think that functions "do" something or "calculate" something. A mathematical function does not do any calculation -- it is purely a mapping from input to output. In fact, another way to think of defining a function is simply as the set of all the mappings. For example, in a very crude way we could define the "`add1`" 
 function (in C#) as 
 
 {% highlight csharp %}

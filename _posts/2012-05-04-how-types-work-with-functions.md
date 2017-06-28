@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "How types work with functions"
 description: "Understanding the type notation"
@@ -10,7 +10,7 @@ categories: [Types, Functions]
 
 Now that we have some understanding of functions, we'll look at how types work with functions, both as domains and ranges. This is just an overview; the series ["understanding F# types"](/series/understanding-fsharp-types.html) will cover types in detail. 
 
-First, we need to understand the type notation a bit more. We’ve seen that the arrow notation "`->`" is used to show the domain and range. So that a function signature always looks like:
+First, we need to understand the type notation a bit more. We've seen that the arrow notation "`->`" is used to show the domain and range. So that a function signature always looks like:
 
 {% highlight fsharp %}
 val functionName : domain -> range
@@ -96,7 +96,7 @@ val evalWith5ThenAdd2 : (int -> int) -> int
 
 You can see that the domain is `(int->int)` and the range is `int`. What does that mean?  It means that the input parameter is not a simple value, but a function, and what's more is restricted only to functions that map `ints` to `ints`. The output is not a function, just an int.
 
-Let’s try it:
+Let's try it:
 
 {% highlight fsharp %}
 let add1 x = x + 1      // define a function of type (int -> int)
@@ -110,11 +110,11 @@ val add1 : int -> int
 val it : int = 8
 {% endhighlight %}
 
-“`add1`” is a function that maps ints to ints, as we can see from its signature. So it is a valid parameter for the `evalWith5ThenAdd2` function. And the result is 8. 
+"`add1`" is a function that maps ints to ints, as we can see from its signature. So it is a valid parameter for the `evalWith5ThenAdd2` function. And the result is 8. 
 
 By the way, the special word "`it`" is used for the last thing that was evaluated; in this case the result we want. It's not a keyword, just a convention.
 
-Here’s another one:
+Here's another one:
 
 {% highlight fsharp %}
 let times3 x = x * 3      // a function of type (int -> int)
@@ -128,7 +128,7 @@ val times3 : int -> int
 val it : int = 17
 {% endhighlight %}
 
-“`times3`” is also a function that maps ints to ints, as we can see from its signature. So it is also a valid parameter for the `evalWith5ThenAdd2` function. And the result is 17.
+"`times3`" is also a function that maps ints to ints, as we can see from its signature. So it is also a valid parameter for the `evalWith5ThenAdd2` function. And the result is 17.
 
 Note that the input is sensitive to the types. If our input function uses `floats` rather than `ints`, it will not work. For example, if we have:
 
@@ -148,7 +148,7 @@ meaning that the input function should have been an `int->int` function.
 
 ### Functions as output ###
 
-A function value can also be the output of a function. For example, the following function will generate an “adder” function that adds using the input value. 
+A function value can also be the output of a function. For example, the following function will generate an "adder" function that adds using the input value. 
 
 {% highlight fsharp %}
 let adderGenerator numberToAdd = (+) numberToAdd
@@ -160,7 +160,7 @@ The signature is:
 val adderGenerator : int -> (int -> int)
 {% endhighlight %}
 
-which means that the generator takes an `int`, and creates a function (the “adder”) that maps `ints` to `ints`. Let’s see how it works:
+which means that the generator takes an `int`, and creates a function (the "adder") that maps `ints` to `ints`. Let's see how it works:
 
 {% highlight fsharp %}
 let add1 = adderGenerator 1
@@ -216,7 +216,7 @@ Because the main function returns a string, the "`fn`" function is also constrai
 <a name="unit-type"></a>
 ## The "unit" type ##
 
-When programming, we sometimes want a function to do something without returning a value. Consider the function "`printInt`", defined below. The function doesn’t actually return anything. It just prints a string to the console as a side effect.
+When programming, we sometimes want a function to do something without returning a value. Consider the function "`printInt`", defined below. The function doesn't actually return anything. It just prints a string to the console as a side effect.
 
 {% highlight fsharp %}
 let printInt x = printf "x is %i" x        // print to console
@@ -228,7 +228,7 @@ So what is the signature for this function?
 val printInt : int -> unit
 {% endhighlight %}
 
-What is this “`unit`”?  
+What is this "`unit`"?  
 
 Well, even if a function returns no output, it still needs a range. There are no "void" functions in mathematics-land. Every function must have some output, because a function is a mapping, and a mapping has to have something to map to!
  
@@ -260,7 +260,7 @@ This signature says: `printInt` has a domain of `int` which it maps onto nothing
 
 ### Parameterless functions
 
-Now that we understand unit, can we predict its appearance in other contexts?  For example, let’s try to create a reusable "hello world" function. Since there is no input and no output, we would expect it to have a signature `unit -> unit`. Let's see:
+Now that we understand unit, can we predict its appearance in other contexts?  For example, let's try to create a reusable "hello world" function. Since there is no input and no output, we would expect it to have a signature `unit -> unit`. Let's see:
 
 {% highlight fsharp %}
 let printHello = printf "hello world"        // print to console
@@ -273,7 +273,7 @@ hello world
 val printHello : unit = ()
 {% endhighlight %}
 
-Not quite what we expected. “Hello world” is printed immediately and the result is not a function, but a simple value of type unit. As we saw earlier, we can tell that this is a simple value because it has a signature of the form:  
+Not quite what we expected. "Hello world" is printed immediately and the result is not a function, but a simple value of type unit. As we saw earlier, we can tell that this is a simple value because it has a signature of the form:  
 
 {% highlight fsharp %}
 val aName: type = constant
@@ -333,7 +333,7 @@ For example, the following function converts the parameter to a string and appen
 let onAStick x = x.ToString() + " on a stick"
 {% endhighlight %}
 
-It doesn’t matter what type the parameter is, as all objects understand `ToString()`. 
+It doesn't matter what type the parameter is, as all objects understand `ToString()`. 
 
 The signature is:
 
@@ -353,7 +353,7 @@ string OnAStick<TObject>();   // F#'s use of 'a is like
 
 Note that the F# function is still strongly typed with a generic type. It does *not* take a parameter of type `Object`. This strong typing is desirable so that when functions are composed together, type safety is still maintained.
 
-Here’s the same function being used with an int, a float and a string
+Here's the same function being used with an int, a float and a string
 
 {% highlight fsharp %}
 onAStick 22
@@ -391,15 +391,15 @@ Generic parameters are also very important when it comes to lists and more abstr
 
 The types discussed so far are just the basic types. These types can be combined in various ways to make much more complex types. A full discussion of these types will have to wait for [another series](/series/understanding-fsharp-types.html), but meanwhile, here is a brief introduction to them so that you can recognize them in function signatures.
 
-* **The “tuple” types**. These are pairs, triples, etc., of other types. For example `("hello", 1)` is a tuple made from a string and an int. The comma is the distinguishing characteristic of a tuple – if you see a comma in F#, it is almost certainly part of a tuple!
+* **The "tuple" types**. These are pairs, triples, etc., of other types. For example `("hello", 1)` is a tuple made from a string and an int. The comma is the distinguishing characteristic of a tuple -- if you see a comma in F#, it is almost certainly part of a tuple!
 
-In function signatures, tuples are written as the “multiplication” of the two types involved. So in this case, the tuple would have type:
+In function signatures, tuples are written as the "multiplication" of the two types involved. So in this case, the tuple would have type:
 
 {% highlight fsharp %}
 string * int      // ("hello", 1)
 {% endhighlight %}
 
-* **The collection types**. The most common of these are lists, sequences, and arrays. Lists and arrays are fixed size, while sequences are potentially infinite (behind the scenes, sequences are the same as `IEnumerable`). In function signatures, they have their own keywords: “`list`”, “`seq`”, and "`[]`" for arrays.
+* **The collection types**. The most common of these are lists, sequences, and arrays. Lists and arrays are fixed size, while sequences are potentially infinite (behind the scenes, sequences are the same as `IEnumerable`). In function signatures, they have their own keywords: "`list`", "`seq`", and "`[]`" for arrays.
 
 {% highlight fsharp %}
 int list          // List type  e.g. [1;2;3]
@@ -408,7 +408,7 @@ seq<int>          // Seq type   e.g. seq{1..10}
 int []            // Array type e.g. [|1;2;3|]
 {% endhighlight %}
 
-* **The option type**. This is a simple wrapper for objects that might be missing. There are two cases: `Some` and `None`. In function signatures, they have their own “`option`” keyword:
+* **The option type**. This is a simple wrapper for objects that might be missing. There are two cases: `Some` and `None`. In function signatures, they have their own "`option`" keyword:
 
 {% highlight fsharp %}
 int option        // Some(1)

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Object-oriented programming in F#: Introduction"
 description: ""
@@ -25,7 +25,7 @@ Reasons in favor of using OO features:
 Reasons against using OO features:
 
 * If you are a beginner coming from an imperative language, classes can be a crutch that hinder your understanding of functional programming.
-* Classes do not have the convenient “out of the box” features that the “pure” F# data types have, such as built-in equality and comparison, pretty printing, etc.
+* Classes do not have the convenient "out of the box" features that the "pure" F# data types have, such as built-in equality and comparison, pretty printing, etc.
 * Classes and methods do not play well with the type inference system and higher order functions (see [discussion here](/posts/type-extensions/#downsides-of-methods)), so using them heavily means that you are making it harder to benefit from the most powerful parts of F#.
 
 In most cases, the best approach is a hybrid one, primarily using pure F# types and functions to benefit from type inference, but occasionally using interfaces and classes when polymorphism is needed.

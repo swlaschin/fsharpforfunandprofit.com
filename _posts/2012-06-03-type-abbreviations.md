@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Type abbreviations"
 description: "Also known as aliases"

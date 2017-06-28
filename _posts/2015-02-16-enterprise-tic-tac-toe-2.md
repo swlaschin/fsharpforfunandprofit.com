@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Enterprise Tic-Tac-Toe, part 2"
 description: "In which I throw away the previous design, and switch to a capability-centric approach"

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Functional Reactive Programming"
 description: "Turning events into streams"

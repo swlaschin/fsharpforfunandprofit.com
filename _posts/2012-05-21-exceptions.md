@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Exceptions"
 description: "Syntax for throwing and catching"
@@ -98,7 +98,7 @@ let f x =
    else raise (MyFSharpError1 "message")
 {% endhighlight %}
 
-And that’s pretty much it for throwing exceptions.
+And that's pretty much it for throwing exceptions.
 
 ## What effect does raising an exception have on the function type?
 
@@ -182,7 +182,7 @@ divide 1 0
 
 Now that the `try-with` expression has a defined type, the whole function can be assigned a type, namely `int -> int -> int`, as expected.
 
-As before, if any branch throws an exception, it doesn’t count when types are being determined.  
+As before, if any branch throws an exception, it doesn't count when types are being determined.  
 
 ### Rethrowing exceptions
 

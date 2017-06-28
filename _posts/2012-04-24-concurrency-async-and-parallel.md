@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Asynchronous programming"
 description: "Encapsulating a background task with the Async class"
@@ -312,7 +312,7 @@ sites                     // start with the list of sites
 
 Make a note of the time taken, and let's if we can improve on it!
 
-Obviously the example above is inefficient – only one web site at a time is visited. The program would be faster if we could visit them all at the same time.
+Obviously the example above is inefficient -- only one web site at a time is visited. The program would be faster if we could visit them all at the same time.
 
 So how would we convert this to a concurrent algorithm?  The logic would be something like:
 
@@ -345,7 +345,7 @@ let fetchUrlAsync url =
 
 Note that the new code looks almost exactly the same as the original. There are only a few minor changes. 
 
-* The change from "`use resp = `" to "`use! resp =`" is exactly the change that we talked about above – while the async operation is going on, let other tasks have a turn. 
+* The change from "`use resp = `" to "`use! resp =`" is exactly the change that we talked about above -- while the async operation is going on, let other tasks have a turn. 
 * We also used the extension method `AsyncGetResponse` defined in the `CommonExtensions` namespace.  This returns an async workflow that we can nest inside the main workflow.
 * In addition the whole set of steps is contained in the  "`async {...}`" wrapper which turns it into a block that can be run asynchronously.
 

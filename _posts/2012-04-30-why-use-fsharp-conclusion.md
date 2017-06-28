@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Why use F#: Conclusion"
 description: ""

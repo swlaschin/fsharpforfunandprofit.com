@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Understanding parser combinators"
 description: Building a parser combinator library and then writing a JSON parser from scratch

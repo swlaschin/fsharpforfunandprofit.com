@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "We don't need no stinking UML diagrams"
 description: "A comparison of code vs UML"

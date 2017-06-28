@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Exhaustive pattern matching"
 description: "A powerful technique to ensure correctness"
@@ -10,7 +10,7 @@ categories: [Correctness, Patterns]
 
 We briefly noted earlier that when pattern matching there is a requirement to match all possible cases.  This turns out be a very powerful technique to ensure correctness.
 
-Let’s compare some C# to F# again. Here’s some C# code that uses a switch statement to handle different types of state.
+Let's compare some C# to F# again. Here's some C# code that uses a switch statement to handle different types of state.
 
 {% highlight csharp %}
 enum State { New, Draft, Published, Inactive, Discontinued }
@@ -30,9 +30,9 @@ void HandleState(State state)
 }
 {% endhighlight %}
 
-This code will compile, but there is an obvious bug! The compiler couldn't see it — can you? If you can, and you fixed it, would it stay fixed if I added another `State` to the list?
+This code will compile, but there is an obvious bug! The compiler couldn't see it -- can you? If you can, and you fixed it, would it stay fixed if I added another `State` to the list?
 
-Here’s the F# equivalent:
+Here's the F# equivalent:
 
 {% highlight fsharp %}
 type State = New | Draft | Published | Inactive | Discontinued
@@ -52,11 +52,11 @@ The fact that exhaustive matching is always done means that certain common error
 * An impossible case (when an existing choice has been removed).
 * A redundant case that could never be reached (the case has been subsumed in a previous case -- this can sometimes be non-obvious). 
 
-Now let’s look at some real examples of how exhaustive matching can help you write correct code.
+Now let's look at some real examples of how exhaustive matching can help you write correct code.
 
 ## Avoiding nulls with the Option type ##
 
-We’ll start with an extremely common scenario where the caller should always check for an invalid case, namely testing for nulls. A typical C# program is littered with code like this:
+We'll start with an extremely common scenario where the caller should always check for an invalid case, namely testing for nulls. A typical C# program is littered with code like this:
 
 {% highlight csharp %}
 if (myObject != null)
@@ -66,7 +66,7 @@ if (myObject != null)
 {% endhighlight %}
 
 Unfortunately, this test is not required by the compiler. All it takes is for one piece of code to forget to do this, and the program can crash.
-Over the years, a huge amount of programming effort has been devoted to handling nulls — the invention of nulls has even been called a [billion dollar mistake](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare)! 
+Over the years, a huge amount of programming effort has been devoted to handling nulls -- the invention of nulls has even been called a [billion dollar mistake](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare)! 
 
 In pure F#, nulls cannot exist accidentally. A string or object must always be assigned to something at creation, and is immutable thereafter. 
 
@@ -118,7 +118,7 @@ By avoiding nulls and by using `Option` types in this way, F# completely elimina
 
 ## Exhaustive pattern matching for edge cases ##
 
-Here’s some C# code that creates a list by averaging pairs of numbers from an input list:
+Here's some C# code that creates a list by averaging pairs of numbers from an input list:
 
 {% highlight csharp %}
 public IList<float> MovingAverages(IList<int> list)
@@ -133,9 +133,9 @@ public IList<float> MovingAverages(IList<int> list)
 }
 {% endhighlight  %}
 
-It compiles correctly, but it actually has a couple of issues. Can you find them quickly? If you’re lucky, your unit tests will find them for you, assuming you have thought of all the edge cases.
+It compiles correctly, but it actually has a couple of issues. Can you find them quickly? If you're lucky, your unit tests will find them for you, assuming you have thought of all the edge cases.
 
-Now let’s try the same thing in F#:
+Now let's try the same thing in F#:
 
 {% highlight fsharp %}
 let rec movingAverages list = 
@@ -149,10 +149,10 @@ let rec movingAverages list =
         avg :: movingAverages (y::rest)
 {% endhighlight  %}
 
-This code also has a bug. But unlike C#, this code will not even compile until I fix it.  The compiler will tell me that I haven’t handled the case when I have a single item in my list.
+This code also has a bug. But unlike C#, this code will not even compile until I fix it.  The compiler will tell me that I haven't handled the case when I have a single item in my list.
 Not only has it found a bug, it has revealed a gap in the requirements: what should happen when there is only one item?
 
-Here’s the fixed up version:
+Here's the fixed up version:
 
 {% highlight fsharp %}
 let rec movingAverages list = 

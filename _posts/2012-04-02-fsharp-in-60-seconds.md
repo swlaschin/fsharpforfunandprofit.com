@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "F# syntax in 60 seconds"
 description: "A very quick overview on how to read F# code"

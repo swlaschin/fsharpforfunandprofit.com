@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Enterprise Tic-Tac-Toe"
 description:  In which I ridiculously over-engineer a simple game to make it "enterprise-ready" 

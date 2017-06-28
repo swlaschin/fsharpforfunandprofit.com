@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Troubleshooting F#"
 description: "Why won't my code compile?"
@@ -6,7 +6,7 @@ nav: troubleshooting-fsharp
 hasComments: 1
 ---
 
-As the saying goes, “if it compiles, it's correct”, but it can be extremely frustrating just trying to get the code to compile at all!  So this page is devoted to helping you troubleshoot your F# code.  
+As the saying goes, "if it compiles, it's correct", but it can be extremely frustrating just trying to get the code to compile at all!  So this page is devoted to helping you troubleshoot your F# code.  
 
 I will first present some general advice on troubleshooting and some of the most common errors that beginners make. After that, I will describe each of the common error messages in detail, and give examples of how they can occur and how to correct them.
 
@@ -14,13 +14,13 @@ I will first present some general advice on troubleshooting and some of the most
 
 ## General guidelines for troubleshooting ##
 
-By far the most important thing you can do is to take the time and effort to understand exactly how F# works, especially the core concepts involving functions and the type system.  So please read and reread the series ["thinking functionally"](/series/thinking-functionally.html) and ["understanding F# types"](/series/understanding-fsharp-types.html), play with the examples, and get comfortable with the ideas before you try to start doing serious coding. If you don’t understand how functions and types work, then the compiler errors will not make any sense.
+By far the most important thing you can do is to take the time and effort to understand exactly how F# works, especially the core concepts involving functions and the type system.  So please read and reread the series ["thinking functionally"](/series/thinking-functionally.html) and ["understanding F# types"](/series/understanding-fsharp-types.html), play with the examples, and get comfortable with the ideas before you try to start doing serious coding. If you don't understand how functions and types work, then the compiler errors will not make any sense.
 
-If you are coming from an imperative language such as C#, you may have developed some bad habits by relying on the debugger to find and fix incorrect code.   In F#, you will probably not get that far, because the compiler is so much stricter in many ways.  And of course, there is no tool to “debug” the compiler and step through its processing.  The best tool for debugging compiler errors is your brain, and F# forces you to use it! 
+If you are coming from an imperative language such as C#, you may have developed some bad habits by relying on the debugger to find and fix incorrect code.   In F#, you will probably not get that far, because the compiler is so much stricter in many ways.  And of course, there is no tool to "debug" the compiler and step through its processing.  The best tool for debugging compiler errors is your brain, and F# forces you to use it! 
 
 Nevertheless, there are a number of extremely common errors that beginners make, and I will quickly go through them.
 
-### Don’t use parentheses when calling a function ###
+### Don't use parentheses when calling a function ###
 
 In F#, whitespace is the standard separator for function parameters. You will rarely need to use parentheses, and in particular, do not use parentheses when calling a function.
 
@@ -31,7 +31,7 @@ let result = add (1 2)  //wrong
 let result = add 1 2    //correct
 {% endhighlight  %}
 
-### Don’t mix up tuples with multiple parameters ###
+### Don't mix up tuples with multiple parameters ###
 
 If it has a comma, it is a tuple. And a tuple is one object not two. So you will get errors about passing the wrong type of parameter, or too few parameters.
 
@@ -52,13 +52,13 @@ addTuple 1 2   // trying to pass two args rather than one tuple
   
 ### Watch out for too few or too many arguments ###
 
-The F# compiler will not complain if you pass too few arguments to a function (in fact “partial application” is an important feature), but if you don’t understand what is going on, you will often get strange “type mismatch” errors later.  
+The F# compiler will not complain if you pass too few arguments to a function (in fact "partial application" is an important feature), but if you don't understand what is going on, you will often get strange "type mismatch" errors later.  
 
-Similarly the error for having too many arguments is typically “This value is not a function” rather than a more straightforward error.
+Similarly the error for having too many arguments is typically "This value is not a function" rather than a more straightforward error.
 
-The “printf” family of functions is very strict in this respect. The argument count must be exact.
+The "printf" family of functions is very strict in this respect. The argument count must be exact.
 
-This is a very important topic – it is critical that you understand how partial application works. See the series ["thinking functionally"](/series/thinking-functionally.html) for a more detailed discussion.
+This is a very important topic -- it is critical that you understand how partial application works. See the series ["thinking functionally"](/series/thinking-functionally.html) for a more detailed discussion.
 
 ### Use semicolons for list separators ###
 
@@ -73,9 +73,9 @@ type Customer = {Name:string, Address: string}  // wrong
 type Customer = {Name:string; Address: string}  // correct
 {% endhighlight %}
 
-### Don’t use ! for not or != for not-equal ###
+### Don't use ! for not or != for not-equal ###
 
-The exclamation point symbol is not the “NOT” operator. It is the deferencing operator for mutable references. If you use it by mistake, you will get the following error:
+The exclamation point symbol is not the "NOT" operator. It is the deferencing operator for mutable references. If you use it by mistake, you will get the following error:
 
 {% highlight fsharp %}
 let y = true
@@ -84,20 +84,20 @@ let z = !y
 //    type 'a ref but here has type bool    
 {% endhighlight %}
 
-The correct construction is to use the “not” keyword. Think SQL or VB syntax rather than C syntax.
+The correct construction is to use the "not" keyword. Think SQL or VB syntax rather than C syntax.
 
 {% highlight fsharp %}
 let y = true
 let z = not y       //correct
 {% endhighlight %}
 
-And for “not equal”, use “<>”, again like SQL or VB.
+And for "not equal", use "<>", again like SQL or VB.
 
 {% highlight fsharp %}
 let z = 1 <> 2      //correct
 {% endhighlight %}
 
-### Don’t use = for assignment ###
+### Don't use = for assignment ###
 
 If you are using mutable values, the assignment operation is written "`<-`".  If you use the equals symbol you might not even get an error, just an unexpected result.
 
@@ -119,9 +119,9 @@ let add x y =
 
 Be sure to set your editor to convert tabs to spaces. And watch out if you are pasting code in from elsewhere. If you do run into persistent problems with a bit of code, try removing the whitespace and re-adding it.
 
-### Don’t mistake simple values for function values ###
+### Don't mistake simple values for function values ###
 
-If you are trying to create a function pointer or delegate, watch out that you don’t accidentally create a simple value that has already been evaluated.
+If you are trying to create a function pointer or delegate, watch out that you don't accidentally create a simple value that has already been evaluated.
 
 If you want a parameterless function that you can reuse, you will need to explicitly pass a unit parameter, or define it as a lambda.
 
@@ -143,7 +143,7 @@ See the series ["thinking functionally"](/series/thinking-functionally.html) for
 
 The F# compiler is currently a one-pass left-to-right compiler, and so type information later in the program is unavailable to the compiler if it hasn't been parsed yet. 
 
-A number of errors can be caused by this, such as [“FS0072: Lookup on object of indeterminate type”](#FS0072) and [“FS0041: A unique overload for could not be determined”](#FS0041). The suggested fixes for each of these specific cases are described below, but there are some general principles that can help if the compiler is complaining about missing types or not enough information. These guidelines are:
+A number of errors can be caused by this, such as ["FS0072: Lookup on object of indeterminate type"](#FS0072) and ["FS0041: A unique overload for could not be determined"](#FS0041). The suggested fixes for each of these specific cases are described below, but there are some general principles that can help if the compiler is complaining about missing types or not enough information. These guidelines are:
 
 * Define things before they are used (this includes making sure the files are compiled in the right order)
 * Put the things that have "known types" earlier than things that have "unknown types". In particular, you might be able reorder pipes and similar chained functions so that the typed objects come first.
@@ -191,11 +191,11 @@ This is probably the most common error you will run into. It can manifest itself
 <tbody>
   <tr>
 	<td>The type 'float' does not match the type 'int'</td>
-	<td><a href="#FS0001A">A. Can’t mix floats and ints</a></td>
+	<td><a href="#FS0001A">A. Can't mix floats and ints</a></td>
   </tr>
   <tr>
 	<td>The type 'int' does not support any operators named 'DivideByInt'</td>
-	<td><a href="#FS0001A">A. Can’t mix floats and ints.</a></td>
+	<td><a href="#FS0001A">A. Can't mix floats and ints.</a></td>
   </tr>
   <tr>
 	<td>The type 'X' is not compatible with any of the types</td>
@@ -234,7 +234,7 @@ This is probably the most common error you will run into. It can manifest itself
   </tr>
   <tr>
 	<td>This expression was expected to have type 'a ref but here has type X</td>
-	<td><a href="#FS0001J">J. Don’t use ! as the “not” operator.</a></td>
+	<td><a href="#FS0001J">J. Don't use ! as the "not" operator.</a></td>
   </tr>
   <tr>
 	<td>The type (type) does not match the type (other type)</td>
@@ -248,7 +248,7 @@ This is probably the most common error you will run into. It can manifest itself
 </table>
 
 <a id="FS0001A"></a>
-### A. Can’t mix ints and floats ###
+### A. Can't mix ints and floats ###
 
 Unlike C# and most imperative languages, ints and floats cannot be mixed in expressions. You will get a type error if you attempt this:
 
@@ -263,7 +263,7 @@ The fix is to cast the int into a `float` first:
 float 1 + 2.0  //correct
 {% endhighlight %}
 
-This issue can also manifest itself in library functions and other places. For example, you cannot do “`average`” on a list of ints.
+This issue can also manifest itself in library functions and other places. For example, you cannot do "`average`" on a list of ints.
 
 {% highlight fsharp %}
 [1..10] |> List.average   // wrong
@@ -281,7 +281,7 @@ You must cast each int to a float first, as shown below:
 <a id="FS0001B"></a>
 ### B. Using the wrong numeric type ###
 
-You will get a “not compatible” error when a numeric cast failed.
+You will get a "not compatible" error when a numeric cast failed.
 
 {% highlight fsharp %}
 printfn "hello %i" 1.0  // should be a int not a float
@@ -504,9 +504,9 @@ let result = f z
 
 
 <a id="FS0001J"></a>  
-### J. Don’t use ! as the “not” operator ###
+### J. Don't use ! as the "not" operator ###
 
-If you use `!` as a “not” operator, you will get a type error mentioning the word “ref”.
+If you use `!` as a "not" operator, you will get a type error mentioning the word "ref".
 
 {% highlight fsharp %}
 let y = true
@@ -515,7 +515,7 @@ let z = !y     //wrong
 //    type 'a ref but here has type bool    
 {% endhighlight %}
 
-The fix is to use the “not” keyword instead.
+The fix is to use the "not" keyword instead.
 
 {% highlight fsharp %}
 let y = true
@@ -591,7 +591,7 @@ wrap {
 //               but here has type 'b * 'c    
 {% endhighlight %}
 
-The reason is that “`Bind`” expects a tuple `(wrapper,func)`, not two parameters.  (Check the signature for bind in the F# documentation).
+The reason is that "`Bind`" expects a tuple `(wrapper,func)`, not two parameters.  (Check the signature for bind in the F# documentation).
 
 The fix is to change the bind function to accept a tuple as its (single) parameter.
 
@@ -625,7 +625,7 @@ let (!!) x y = x + y
 <a id="FS0008"></a>
 ## FS0008: This runtime coercion or type test involves an indeterminate type ##
 
-You will often see this when attempting to use “`:?`” operator to match on a type.
+You will often see this when attempting to use "`:?`" operator to match on a type.
 
 {% highlight fsharp %}
 let detectType v =
@@ -637,9 +637,9 @@ let detectType v =
 // Runtime type tests are not allowed on some types. Further type annotations are needed.
 {% endhighlight %}
 
-The message tells you the problem: “runtime type tests are not allowed on some types”.  
+The message tells you the problem: "runtime type tests are not allowed on some types".  
 
-The answer is to “box” the value which forces it into a reference type, and then you can type check it:
+The answer is to "box" the value which forces it into a reference type, and then you can type check it:
 
 {% highlight fsharp %}
 let detectTypeBoxed v =
@@ -733,7 +733,7 @@ let something =
   "hello"
 {% endhighlight %}
 
-The easy fix is use `ignore`.  But ask yourself why you are using a function and then throwing away the answer – it might be a bug.
+The easy fix is use `ignore`.  But ask yourself why you are using a function and then throwing away the answer -- it might be a bug.
 
 {% highlight fsharp %}
 let something = 
@@ -780,7 +780,7 @@ let add() =
 <a id="FS0030"></a>	
 ## FS0030: Value restriction ##
 
-This is related to F#’s automatic generalization to generic types whenever possible. 
+This is related to F#'s automatic generalization to generic types whenever possible. 
 
 For example, given :
 
@@ -812,7 +812,7 @@ let idMap list = List.map id list             // OK
 let blankConcat list = String.concat "" list  // OK
 {% endhighlight %}
 
-For more details see the MSDN article on [“automatic generalization”](http://msdn.microsoft.com/en-us/library/dd233183%28v=VS.100%29.aspx).
+For more details see the MSDN article on ["automatic generalization"](http://msdn.microsoft.com/en-us/library/dd233183%28v=VS.100%29.aspx).
 
 <a id="FS0035"></a>	
 ## FS0035: This construct is deprecated ##
@@ -838,11 +838,11 @@ This error is commonly found in four situations:
 
 ### FS0039 with interfaces ###
 
-In F# all interfaces are “explicit” implementations rather than “implicit”. (Read the C# documentation on [“explicit interface implementation”](http://msdn.microsoft.com/en-us/library/aa288461%28v=vs.71%29.aspx) for an explanation of the difference). 
+In F# all interfaces are "explicit" implementations rather than "implicit". (Read the C# documentation on ["explicit interface implementation"](http://msdn.microsoft.com/en-us/library/aa288461%28v=vs.71%29.aspx) for an explanation of the difference). 
 
 The key point is that when a interface member is explicitly implemented, it cannot be accessed through a normal class instance, but only through an instance of the interface, so you have to cast to the interface type by using the `:>` operator.
 
-Here’s an example of a class that implements an interface:
+Here's an example of a class that implements an interface:
 
 {% highlight fsharp %}
 type MyResource() = 
@@ -850,7 +850,7 @@ type MyResource() =
        member this.Dispose() = printfn "disposed"
 {% endhighlight %}
 
-This doesn’t work:
+This doesn't work:
 
 {% highlight fsharp %}
 let x = new MyResource()
@@ -871,7 +871,7 @@ y.Dispose()   // OK
 
 ### FS0039 with recursion ###
 
-Here’s a standard Fibonacci implementation: 
+Here's a standard Fibonacci implementation: 
 
 {% highlight fsharp %}
 let fib i = 
@@ -885,9 +885,9 @@ Unfortunately, this will not compile:
 
     Error FS0039: The value or constructor 'fib' is not defined
 
-The reason is that when the compiler sees 'fib' in the body, it doesn’t know about the function because it hasn’t finished compiling it yet!
+The reason is that when the compiler sees 'fib' in the body, it doesn't know about the function because it hasn't finished compiling it yet!
 
-The fix is to use the “`rec`” keyword.
+The fix is to use the "`rec`" keyword.
 
 {% highlight fsharp %}
 let rec fib i = 
@@ -897,7 +897,7 @@ let rec fib i =
    | n -> fib(n-1) + fib(n-2)
 {% endhighlight %}
 
-Note that this only applies to “`let`” functions. Member functions do not need this, because the scope rules are slightly different.
+Note that this only applies to "`let`" functions. Member functions do not need this, because the scope rules are slightly different.
 
 {% highlight fsharp %}
 type FibHelper() =
@@ -1004,7 +1004,7 @@ match blueEnum with
 <a id="FS0072"></a>	
 ## FS0072: Lookup on object of indeterminate type ##
 
-This occurs when “dotting into” an object whose type is unknown.
+This occurs when "dotting into" an object whose type is unknown.
 
 Consider the following example:
 

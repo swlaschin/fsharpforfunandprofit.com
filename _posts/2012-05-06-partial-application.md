@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Partial application"
 description: "Baking-in some of the parameters of a function"
@@ -63,7 +63,7 @@ filterEvens [1;2;3;4]
 The following more complex example shows how the same approach can be used to create "plug in" behavior that is transparent.
 
 * We create a function that adds two numbers, but in addition takes a logging function that will log the two numbers and the result. 
-* The logging function has two parameters: (string) “name” and (generic) “value”, so it has signature `string->'a->unit`.
+* The logging function has two parameters: (string) "name" and (generic) "value", so it has signature `string->'a->unit`.
 * We then create various implementations of the logging function, such as a console logger or a popup logger.
 * And finally we partially apply the main function to create new functions that have a particular logger baked into them. 
 
@@ -138,13 +138,13 @@ sortDesc [0;1;2;3]
 
 If the library functions were written with the parameters in a different order, it would be much more inconvenient to use them with partial application.
 
-As you write your own multi-parameter functions, you might wonder what the best parameter order is. As with all design questions, there is no “right” answer to this question, but here are some commonly accepted guidelines:
+As you write your own multi-parameter functions, you might wonder what the best parameter order is. As with all design questions, there is no "right" answer to this question, but here are some commonly accepted guidelines:
 
 1.	Put earlier: parameters more likely to be static 
 2.	Put last: the data structure or collection (or most varying argument)
-3.	For well-known operations such as “subtract”, put in the expected order 
+3.	For well-known operations such as "subtract", put in the expected order 
 
-Guideline 1 is straightforward. The parameters that are most likely to be “fixed” with partial application should be first. We saw this with the logger example earlier.
+Guideline 1 is straightforward. The parameters that are most likely to be "fixed" with partial application should be first. We saw this with the logger example earlier.
 
 Guideline 2 makes it easier to pipe a structure or collection from function to function. We have seen this many times already with list functions.
 

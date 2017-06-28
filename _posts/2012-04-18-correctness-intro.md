@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Correctness"
 description: "How to write 'compile time unit tests'"
@@ -22,7 +22,7 @@ But F# has some additional features that can have a huge impact on ensuring corr
 
 * **Immutability**, which enables code to behave much more predictably.
 * **Exhaustive pattern matching**, which traps many common errors at compile time.
-* **A strict type system**, which is your friend, not your enemy. You can use the static type checking almost as an instant “compile time unit test”.
-* **An expressive type system** that can help you “make illegal states unrepresentable”* . We’ll see how to design a real-world example that demonstrates this.
+* **A strict type system**, which is your friend, not your enemy. You can use the static type checking almost as an instant "compile time unit test".
+* **An expressive type system** that can help you "make illegal states unrepresentable"* . We'll see how to design a real-world example that demonstrates this.
 
 <sub>* Thanks to Yaron Minsky at Jane Street for this phrase.</sub>

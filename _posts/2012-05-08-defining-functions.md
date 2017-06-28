@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Defining functions"
 description: "Lambdas and more"
@@ -9,17 +9,17 @@ categories: [Functions, Combinators]
 ---
 
 
-We have seen how to create typical functions using the “let” syntax, below:
+We have seen how to create typical functions using the "let" syntax, below:
 
 {% highlight fsharp %}
 let add x y = x + y
 {% endhighlight  %}
 
-In this section, we’ll look at some other ways of creating functions, and tips for defining functions.
+In this section, we'll look at some other ways of creating functions, and tips for defining functions.
 
 ## Anonymous functions (a.k.a. lambdas) ##
 
-If you are familiar with lambdas in other languages, this will not be new to you. An anonymous function (or “lambda expression”) is defined using the form:
+If you are familiar with lambdas in other languages, this will not be new to you. An anonymous function (or "lambda expression") is defined using the form:
 
 {% highlight fsharp %}
 fun parameter1 parameter2 etc -> expression
@@ -42,7 +42,7 @@ This is exactly the same as a more conventional function definition:
 let add x y = x + y
 {% endhighlight  %}
 
-Lambdas are often used when you have a short expression and you don’t want to define a function just for that expression. This is particularly common with list operations, as we have seen already.
+Lambdas are often used when you have a short expression and you don't want to define a function just for that expression. This is particularly common with list operations, as we have seen already.
 
 {% highlight fsharp %}
 // with separately defined function
@@ -55,7 +55,7 @@ let add1 i = i + 1
 
 Note that you must use parentheses around the lambda.
 
-Lambdas are also used when you want to make it clear that you are returning a function from another function. For example, the “`adderGenerator`” function that we talked about earlier could be rewritten with a lambda.
+Lambdas are also used when you want to make it clear that you are returning a function from another function. For example, the "`adderGenerator`" function that we talked about earlier could be rewritten with a lambda.
 
 {% highlight fsharp %}
 // original definition
@@ -165,7 +165,7 @@ Here we can see an error occur in the second case above.
 First, the compiler treats `(1,2)` as a generic tuple of type `('a * 'b)`, which it attempts to pass as the first parameter to "`addTwoParams`".
 Then it complains that the first parameter of `addTwoParams` is an `int`, and we're trying to pass a tuple.
 
-To make a tuple, use a comma!  Here’s how to do it correctly:
+To make a tuple, use a comma!  Here's how to do it correctly:
 
 {% highlight fsharp %}
 addTuple (1,2)           // ok
@@ -188,7 +188,7 @@ addConfusingTuple 1 2    // error trying to pass two args
 //                  cannot be applied
 {% endhighlight  %}
 
-In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then “`addConfusingTuple 1`” would be a partial application that returns another intermediate function. Trying to apply that intermediate function with “2” gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
+In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then "`addConfusingTuple 1`" would be a partial application that returns another intermediate function. Trying to apply that intermediate function with "2" gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
 
 ### Why not use tuples as parameters? ###
 
@@ -262,7 +262,7 @@ Here are some general guidelines of how to structure parameters when you are des
 
 In other words, when designing a function, ask yourself "could I provide this parameter in isolation?" If the answer is no, the parameters should be grouped.
 
-Let’s look at some examples:
+Let's look at some examples:
 
 {% highlight fsharp %}
 // Pass in two numbers for addition. 
@@ -289,7 +289,7 @@ Finally, do be sure to order the parameters appropriately to assist with partial
 
 ## Parameter-less functions ##
 
-Sometimes we may want functions that don’t take any parameters at all. For example, we may want a “hello world” function that we can call repeatedly. As we saw in a previous section, the naive definition will not work.
+Sometimes we may want functions that don't take any parameters at all. For example, we may want a "hello world" function that we can call repeatedly. As we saw in a previous section, the naive definition will not work.
 
 {% highlight fsharp %}
 let sayHello = printfn "Hello World!"     // not what we want
@@ -348,7 +348,7 @@ If the function has exactly two parameters, you can use it as an infix operator 
 let result = 2 .*% 3
 {% endhighlight  %}
 
-You can also define prefix operators that start with `!` or `~` (with some restrictions – see the [F# documentation on operator overloading](http://msdn.microsoft.com/en-us/library/dd233204#prefix))
+You can also define prefix operators that start with `!` or `~` (with some restrictions -- see the [F# documentation on operator overloading](http://msdn.microsoft.com/en-us/library/dd233204#prefix))
 
 {% highlight fsharp %}
 let (~%%) (s:string) = s.ToCharArray()

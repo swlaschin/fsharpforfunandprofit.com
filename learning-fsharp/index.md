@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Learning F#"
 description: "Functional programming languages need a different approach"
@@ -24,7 +24,7 @@ It is important to understand that functional programming is not just a stylisti
 
 F# does allow non-functional styles, and it is tempting to retain the habits you already are familiar with. You could just use F# in a non-functional way without really changing your mindset, and not realize what you are missing. To get the most out of F#, and to be fluent and comfortable with functional programming in general, it is critical that you think functionally, not imperatively.
 
-By far the most important thing you can do is to take the time and effort to understand exactly how F# works, especially the core concepts involving functions and the type system.  So please read and reread the series ["thinking functionally"](/series/thinking-functionally.html) and ["understanding F# types"](/series/understanding-fsharp-types.html), play with the examples, and get comfortable with the ideas before you try to start doing serious coding. If you don’t understand how functions and types work, then you will have a hard time being productive.
+By far the most important thing you can do is to take the time and effort to understand exactly how F# works, especially the core concepts involving functions and the type system.  So please read and reread the series ["thinking functionally"](/series/thinking-functionally.html) and ["understanding F# types"](/series/understanding-fsharp-types.html), play with the examples, and get comfortable with the ideas before you try to start doing serious coding. If you don't understand how functions and types work, then you will have a hard time being productive.
 
 ## Dos and Don'ts ##
 
@@ -34,7 +34,7 @@ Here is a list of dos and don'ts that will encourage you to think functionally. 
 * Don't use `for` loops or `if-then-else`. Use pattern matching for testing booleans and recursing through lists.
 * Don't use "dot notation". Instead of "dotting into" objects, try to use functions for everything. That is, write `String.length "hello"` rather than `"hello".Length`. It might seem like extra work, but this way of working is essential when using pipes and higher order functions like `List.map`. And don't write your own methods either! See [this post for details](/posts/type-extensions/#downsides-of-methods).
 * As a corollary, don't create classes. Use only the pure F# types such as tuples, records and unions.
-* Don't use the debugger. If you have relied on the debugger to find and fix incorrect code, you will get a nasty shock. In F#, you will probably not get that far, because the compiler is so much stricter in many ways.  And of course, there is no tool to “debug” the compiler and step through its processing.  The best tool for debugging compiler errors is your brain, and F# forces you to use it! 
+* Don't use the debugger. If you have relied on the debugger to find and fix incorrect code, you will get a nasty shock. In F#, you will probably not get that far, because the compiler is so much stricter in many ways.  And of course, there is no tool to "debug" the compiler and step through its processing.  The best tool for debugging compiler errors is your brain, and F# forces you to use it! 
 
 On the other hand:
 

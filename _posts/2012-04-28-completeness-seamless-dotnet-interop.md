@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Seamless interoperation with .NET libraries"
 description: "Some convenient features for working with .NET libraries"
@@ -13,7 +13,7 @@ We have already seen many examples of F#'s use with the .NET libraries, such as 
 
 For more complex requirements, F# natively supports .NET classes, interfaces, and structures, so the interop is still very straightforward.  For example, you can write an `ISomething` interface in C# and have the implementation be done in F#. 
 
-But not only can F# call into existing .NET code, it can also expose almost any .NET API back to other languages. For example, you can write classes and methods in F# and expose them to C#, VB or COM.  You can even do the above example backwards -- define an `ISomething` interface in F# and have the implementation be done in C#! The benefit of all this is that you don’t have to discard any of your existing code base; you can start using F# for some things while retaining C# or VB for others, and pick the best tool for the job.  
+But not only can F# call into existing .NET code, it can also expose almost any .NET API back to other languages. For example, you can write classes and methods in F# and expose them to C#, VB or COM.  You can even do the above example backwards -- define an `ISomething` interface in F# and have the implementation be done in C#! The benefit of all this is that you don't have to discard any of your existing code base; you can start using F# for some things while retaining C# or VB for others, and pick the best tool for the job.  
 
 In addition to the tight integration though, there are a number of nice features in F# that often make working with .NET libraries more convenient than C# in some ways. Here are some of my favorites:
 

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Building a useful set of parser combinators"
 description: "15 or so combinators that can be combined to parse almost anything"

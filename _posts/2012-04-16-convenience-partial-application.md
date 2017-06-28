@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Partial Application"
 description: "How to fix some of a function's parameters"
@@ -8,9 +8,9 @@ seriesOrder: 16
 categories: [Convenience, Functions, Partial Application]
 ---
 
-A particularly convenient feature of F# is that complicated functions with many parameters can have some of the parameters fixed or “baked in” and yet leave other parameters open.  In this post, we'll take a quick look at how this might be used in practice.
+A particularly convenient feature of F# is that complicated functions with many parameters can have some of the parameters fixed or "baked in" and yet leave other parameters open.  In this post, we'll take a quick look at how this might be used in practice.
 
-Let’s start with a very simple example of how this works. We’ll start with a trivial function:
+Let's start with a very simple example of how this works. We'll start with a trivial function:
 
 {% highlight fsharp %}
 // define a adding function
@@ -20,13 +20,13 @@ let add x y = x + y
 let z = add 1 2
 {% endhighlight  %}
 
-But we can do something strange as well — we can call the function with only one parameter!
+But we can do something strange as well -- we can call the function with only one parameter!
 
 {% highlight fsharp %}
 let add42 = add 42
 {% endhighlight  %}
 
-The result is a new function that has the “42” baked in, and now takes only one parameter instead of two!  This technique is called "partial application", and it means that, for any function, you can "fix" some of the parameters and leave other ones open to be filled in later.
+The result is a new function that has the "42" baked in, and now takes only one parameter instead of two!  This technique is called "partial application", and it means that, for any function, you can "fix" some of the parameters and leave other ones open to be filled in later.
 
 {% highlight fsharp %}
 // use the new function
@@ -34,7 +34,7 @@ add42 2
 add42 3
 {% endhighlight  %}
 
-With that under our belt, let’s revisit the generic logger that we saw earlier:
+With that under our belt, let's revisit the generic logger that we saw earlier:
 
 {% highlight fsharp %}
 let genericLogger anyFunc input = 
@@ -44,7 +44,7 @@ let genericLogger anyFunc input =
    result                        //return the result
 {% endhighlight  %}
 
-Unfortunately, I have hard-coded the logging operations.  Ideally, I’d like to make this more generic so that I can choose how logging is done. 
+Unfortunately, I have hard-coded the logging operations.  Ideally, I'd like to make this more generic so that I can choose how logging is done. 
 
 Of course, F# being a functional programming language, we will do this by passing functions around. 
 
@@ -78,7 +78,7 @@ genericLogger
     2                                 // parameter 
 {% endhighlight  %}
 
-This is a lot more flexible. I don't have to create a new function every time I want to change the behavior – I can define the behavior on the fly. 
+This is a lot more flexible. I don't have to create a new function every time I want to change the behavior -- I can define the behavior on the fly. 
 
 But you might be thinking that this is a bit ugly. A library function might expose a number of callback functions and it would be inconvenient to have to pass the same functions in over and over.
 
@@ -105,7 +105,7 @@ add1WithConsoleLogging 4
 
 ## The functional approach in C# ##
 
-In a classical object-oriented approach, we would probably have used inheritance to do this kind of thing. For instance, we might have had an abstract `LoggerBase` class, with virtual methods for “`before`” and “`after`” and the function to execute.  And then to implement a particular kind of behavior, we would have created a new subclass and overridden the virtual methods as needed.
+In a classical object-oriented approach, we would probably have used inheritance to do this kind of thing. For instance, we might have had an abstract `LoggerBase` class, with virtual methods for "`before`" and "`after`" and the function to execute.  And then to implement a particular kind of behavior, we would have created a new subclass and overridden the virtual methods as needed.
 
 But classical style inheritance is now becoming frowned upon in object-oriented design, and composition of objects is much preferred. And indeed, in "modern" C#, we would probably write the code in the same way as F#, either by using events or by passing functions in.
 

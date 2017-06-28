@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Understanding type inference"
 description: "Behind the magic curtain"
@@ -211,7 +211,7 @@ And unlike C#, in F# the order of file compilation is important, so do make sure
 
 ### Recursive or simultaneous declarations 
 
-A variant of the "out of order" problem occurs with recursive functions or definitions that have to refer to each other. No amount of reordering will help in this case – we need to use additional keywords to help the compiler.
+A variant of the "out of order" problem occurs with recursive functions or definitions that have to refer to each other. No amount of reordering will help in this case -- we need to use additional keywords to help the compiler.
 
 When a function is being compiled, the function identifier is not available to the body. So if you define a simple recursive function, you will get a compiler error. The fix is to add the "rec" keyword as part of the function definition. For example:
 
@@ -231,7 +231,7 @@ let rec fib n =              // LET REC rather than LET
    else fib (n - 1) + fib (n - 2)
 {% endhighlight %}
 
-A similar "`let rec … and`" syntax is used for two functions that refer to each other. Here is a very contrived example that fails if you do not have the "`rec`" keyword.
+A similar "`let rec ... and`" syntax is used for two functions that refer to each other. Here is a very contrived example that fails if you do not have the "`rec`" keyword.
 
 {% highlight fsharp %}
 let rec showPositiveNumber x =               // LET REC rather than LET
@@ -278,7 +278,7 @@ These kinds of error can be fixed with explicit annotations.
 let stringLength (s:string) = s.Length
 {% endhighlight %}
 
-Occasionally there does appear to be enough information, but still the compiler doesn’t seem to recognize it. For example, it's obvious to a human that the `List.map` function (below) is being applied to a list of strings, so why does `x.Length` cause an error?
+Occasionally there does appear to be enough information, but still the compiler doesn't seem to recognize it. For example, it's obvious to a human that the `List.map` function (below) is being applied to a list of strings, so why does `x.Length` cause an error?
 
 {% highlight fsharp %}
 List.map (fun x -> x.Length) ["hello"; "world"]       //not ok

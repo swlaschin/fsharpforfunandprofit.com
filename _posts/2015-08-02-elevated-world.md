@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Understanding map and apply"
 description: "A toolset for working with elevated worlds"

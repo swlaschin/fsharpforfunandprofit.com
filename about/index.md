@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "About"
 description: 
@@ -53,7 +53,7 @@ I do highlight the most important bits on the [contents page](/site-contents/) a
 
 Many innocent people might visit this site, so to avoid causing offence, certain obnoxious words and phrases are strongly discouraged. 
 
-These words include: "endofunctor", "anamorphism", "existential quantification", "beta reduction", "category theory", "final coalgebra", "Kleisli arrows", "Curry–Howard correspondence" and worst of all, the five letter word beginning with "m".
+These words include: "endofunctor", "anamorphism", "existential quantification", "beta reduction", "category theory", "final coalgebra", "Kleisli arrows", "Curry--Howard correspondence" and worst of all, the five letter word beginning with "m".
 
 Repeated use of these words will result in banning. You will be exiled and forced to spend time with [other incorrigible elements](http://www.haskell.org/haskellwiki/Haskell).**
 

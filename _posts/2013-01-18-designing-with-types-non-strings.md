@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Designing with types: Non-string types"
 description: "Working with integers and dates safely"

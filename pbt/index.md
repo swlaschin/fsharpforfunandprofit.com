@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "An introduction to property based testing"
 description: The lazy programmer's guide to writing 1000's of tests 

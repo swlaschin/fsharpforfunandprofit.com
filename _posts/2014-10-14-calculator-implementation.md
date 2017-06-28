@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Calculator Walkthrough: Part 2"
 description: "Testing the design with a trial implementation"

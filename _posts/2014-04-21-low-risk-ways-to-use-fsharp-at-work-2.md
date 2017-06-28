@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Using F# for development and devops scripts"
 description: "Twenty six low-risk ways to use F# at work (part 2)"

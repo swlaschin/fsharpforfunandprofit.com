@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Reinventing the Reader monad"
 description: "Or, designing your own elevated world"

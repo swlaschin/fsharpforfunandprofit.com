@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Choosing properties for property-based testing"
 description: "Or, I want to use FsCheck and Quickcheck, but I can never think of any properties to use"

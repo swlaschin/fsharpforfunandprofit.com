@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Discriminated Unions"
 description: "Adding types together"
@@ -274,7 +274,7 @@ Sometimes it is useful to create union types with only one case. This might be s
 
 For example, let's say that we have customer ids and order ids which are both represented by integers, but that they should never be assigned to each other.
 
-As we saw before, a type alias approach will not work, because an alias is just a synonym and doesn’t create a distinct type.  Here's how you might try to do it with aliases:
+As we saw before, a type alias approach will not work, because an alias is just a synonym and doesn't create a distinct type.  Here's how you might try to do it with aliases:
 
 {% highlight fsharp %}
 type CustomerId = int   // define a type alias

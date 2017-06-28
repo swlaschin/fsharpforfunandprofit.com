@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Map and Bind and Apply, a summary"
 description: ""

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Thirteen ways of looking at a turtle (part 2)"
 description: "Continuing with examples of event sourcing, FRP, monadic control flow, and an interpreter."

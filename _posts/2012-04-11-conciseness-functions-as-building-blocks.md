@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Using functions as building blocks"
 description: "Function composition and mini-languages make code more readable"
@@ -103,9 +103,9 @@ allFunctions 5
 
 Domain-specific languages (DSLs) are well recognized as a technique to create more readable and concise code. The functional approach is very well suited for this.
 
-If you need to, you can go the route of having a full “external” DSL with its own lexer, parser, and so on, and there are various toolsets for F# that make this quite straightforward.
+If you need to, you can go the route of having a full "external" DSL with its own lexer, parser, and so on, and there are various toolsets for F# that make this quite straightforward.
 
-But in many cases, it is easier to stay within the syntax of F#, and just design a set of “verbs” and “nouns” that encapsulate the behavior we want.
+But in many cases, it is easier to stay within the syntax of F#, and just design a set of "verbs" and "nouns" that encapsulate the behavior we want.
 
 The ability to create new types concisely and then match against them makes it very easy to set up fluent interfaces quickly. For example, here is a little function that calculates dates using a simple vocabulary. Note that two new enum-style types are defined just for this one function.
 
@@ -134,9 +134,9 @@ let example2 = getDate 1 Hour Hence
 // getDate().Interval(1).Hour().Hence()
 {% endhighlight %}
 
-The example above only has one “verb”, using lots of types for the “nouns”.
+The example above only has one "verb", using lots of types for the "nouns".
 
-The following example demonstrates how you might build the functional equivalent of a fluent interface with many “verbs”. 
+The following example demonstrates how you might build the functional equivalent of a fluent interface with many "verbs". 
 
 Say that we are creating a drawing program with various shapes. Each shape has a color, size, label and action to be performed when clicked, and we want a fluent interface to configure each shape.
 

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Introducing Folds"
 description: "Threading state through a recursive data structure"

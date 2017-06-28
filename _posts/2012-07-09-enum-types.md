@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Enum types"
 description: "Not the same as a union type"

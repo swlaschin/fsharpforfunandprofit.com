@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Thirteen ways of looking at a turtle - addendum"
 description: "Bonus ways: An Abstract Data Turtle and a Capability-based Turtle."

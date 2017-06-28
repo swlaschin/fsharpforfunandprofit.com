@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Implementing a builder: The rest of the standard methods"
 description: "Implementing While, Using, and exception handling"

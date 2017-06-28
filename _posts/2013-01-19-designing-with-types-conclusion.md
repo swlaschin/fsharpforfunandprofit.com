@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Designing with types: Conclusion"
 description: "A before and after comparison"

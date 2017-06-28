@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Introduction to recursive types"
 description: "Don't fear the catamorphism..."

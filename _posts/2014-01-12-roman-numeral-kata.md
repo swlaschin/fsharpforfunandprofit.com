@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Commentary on 'Roman Numerals Kata with Commentary'"
 description: "My approach to the Roman Numerals Kata"
@@ -16,7 +16,7 @@ I thought that in this post I'd try to explain why I got annoyed, and to present
 
 ## Where are the requirements?
 
-> *"Few programmers write even a rough sketch of what their programs will do before they start coding. Most programmers regard anything that doesn’t generate code to be a waste of time."*
+> *"Few programmers write even a rough sketch of what their programs will do before they start coding. Most programmers regard anything that doesn't generate code to be a waste of time."*
 >
 > *Leslie Lamport, ["Why We Should Build Software Like We Build Houses"](http://www.wired.com/opinion/2013/01/code-bugs-programming-why-we-need-specs/)*
 
@@ -144,7 +144,7 @@ The whole thing took only 5-10 mins. In my opinion, that was time well spent.
 
 > *"Unit tests have been compared with shining a flashlight into a dark room in search of a monster. 
 > Shine the light into the room and then into all the scary corners. 
-> It doesn't mean the room is monster free -– just that the monster isn't standing where you've shined your flashlight."*
+> It doesn't mean the room is monster free --- just that the monster isn't standing where you've shined your flashlight."*
 
 Now that we have the requirements, we can start writing the tests.
 

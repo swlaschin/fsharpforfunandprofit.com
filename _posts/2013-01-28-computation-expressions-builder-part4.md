@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Implementing a builder: Overloading"
 description: "Stupid method tricks"

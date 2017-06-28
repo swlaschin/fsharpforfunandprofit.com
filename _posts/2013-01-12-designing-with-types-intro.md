@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Designing with types: Introduction"
 description: "Making design more transparent and improving correctness"

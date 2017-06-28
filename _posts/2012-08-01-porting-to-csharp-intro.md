@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Porting from C# to F#: Introduction"
 description: "Three approaches to porting existing C# code to F#"

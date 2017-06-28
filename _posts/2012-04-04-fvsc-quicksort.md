@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Comparing F# with C#: Sorting"
 description: "In which we see that F# is more declarative than C#, and we are introduced to pattern matching."
@@ -55,7 +55,7 @@ Again note that this is not an optimized implementation, but is designed to mirr
 Let's go through this code:
 
 * There are no type declarations anywhere. This function will work on any list that has comparable items (which is almost all F# types, because they automatically have a default comparison function).
-* The whole function is recursive - this is signaled to the compiler using the `rec` keyword in "`let rec quicksort list =`".
+* The whole function is recursive -- this is signaled to the compiler using the `rec` keyword in "`let rec quicksort list =`".
 * The `match..with` is sort of like a switch/case statement. Each branch to test is signaled with a vertical bar, like so:
 
 {% highlight fsharp %}
@@ -168,7 +168,7 @@ Finally, a beneficial side-effect of this compactness is that F# code often work
 
 Indeed, when coding these samples, the old-style C# code was incorrect initially, and required some debugging to get it right. Particularly tricky areas were the `for` loop (starting at 1 not zero) and the `CompareTo` comparison (which I got the wrong way round), and it would also be very easy to accidentally modify the inbound list. The functional style in the second C# example is not only cleaner but was easier to code correctly.
 
-But even the functional C# version has drawbacks compared to the F# version. For example, because F# uses pattern matching, it is not possible to branch to the “non-empty list” case with an empty list. On the other hand, in the C# code, if we forgot the test:
+But even the functional C# version has drawbacks compared to the F# version. For example, because F# uses pattern matching, it is not possible to branch to the "non-empty list" case with an empty list. On the other hand, in the C# code, if we forgot the test:
 
 {% highlight csharp %}
 if (values == null || !values.Any()) ...
@@ -190,7 +190,7 @@ if (item != null)
 }
 {% endhighlight %}
 
-The one-step “pattern match and branch” in F# allows you to avoid this in many cases.
+The one-step "pattern match and branch" in F# allows you to avoid this in many cases.
 
 ## Postscript
 

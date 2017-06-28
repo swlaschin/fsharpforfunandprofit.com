@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Analysis of Roslyn vs. the F# compiler"
 description: "Lines of code, dependency analysis and more"

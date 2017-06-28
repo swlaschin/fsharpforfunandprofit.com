@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: 'Out-of-the-box behavior for types'
 description: "Immutability and built-in equality with no coding"
@@ -8,7 +8,7 @@ seriesOrder: 14
 categories: [Convenience, Types]
 ---
 
-One nice thing about F# is that most types immediately have some useful “out-of-the-box” behavior such as immutability and built-in equality, functionality that often has to be explicitly coded for in C#.  
+One nice thing about F# is that most types immediately have some useful "out-of-the-box" behavior such as immutability and built-in equality, functionality that often has to be explicitly coded for in C#.  
 
 By "most" F# types, I mean the core "structural" types such as tuples, records, unions, options, lists, etc. Classes and some other types have been added to help with .NET integration, but lose some of the power of the structural types. 
 
@@ -46,7 +46,7 @@ class ImmutablePersonalName
 }
 {% endhighlight %}
 
-That’s 10 lines to do the same thing as 1 line of F#.
+That's 10 lines to do the same thing as 1 line of F#.
 
 ## Most F# types have built-in pretty printing
 

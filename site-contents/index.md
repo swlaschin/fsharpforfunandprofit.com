@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Site Contents"
 nav: site-contents

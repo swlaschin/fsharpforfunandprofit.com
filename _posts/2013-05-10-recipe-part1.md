@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "How to design and code a complete program"
 description: "A recipe for a functional app, part 1"

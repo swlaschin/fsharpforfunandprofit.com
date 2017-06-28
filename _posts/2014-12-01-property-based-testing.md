@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "An introduction to property-based testing"
 description: "Or, why you should be using FsCheck and QuickCheck"

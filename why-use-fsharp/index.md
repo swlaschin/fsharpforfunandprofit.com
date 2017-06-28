@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Why use F#?"
 description: "Why you should consider using F# for your next project"

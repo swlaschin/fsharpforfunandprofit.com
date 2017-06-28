@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Anything C# can do..."
 description: "A whirlwind tour of object-oriented code in F#"
@@ -8,7 +8,7 @@ seriesOrder: 29
 categories: [Completeness]
 ---
 
-As should be apparent, you should generally try to prefer functional-style code over object-oriented code in F#, but in some situations, you may need all the features of a fully fledged OO language — classes, inheritance, virtual methods, etc.  
+As should be apparent, you should generally try to prefer functional-style code over object-oriented code in F#, but in some situations, you may need all the features of a fully fledged OO language -- classes, inheritance, virtual methods, etc.  
 
 So just to conclude this section, here is a whirlwind tour of the F# versions of these features.  
 
@@ -159,7 +159,7 @@ if i.IsEven then printfn "'%i' is even" i
 
 ## Parameter arrays ##
 
-Just like C#’s variable length “params” keyword, this allows a variable length list of arguments to be converted to a single array parameter.
+Just like C#'s variable length "params" keyword, this allows a variable length list of arguments to be converted to a single array parameter.
 
 {% highlight fsharp %}
 open System

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Worked example: Parsing command line arguments"
 description: "Pattern matching in practice"

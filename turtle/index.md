@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Thirteen ways of looking at a turtle"
 description:  

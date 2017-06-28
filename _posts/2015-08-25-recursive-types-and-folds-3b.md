@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Trees in the real world"
 description: "Examples using databases, JSON and error handling"

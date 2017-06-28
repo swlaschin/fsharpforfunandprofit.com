@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Expressions vs. statements"
 description: "Why expressions are safer and make better building blocks"

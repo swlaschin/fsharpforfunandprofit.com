@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Active patterns"
 description: "Dynamic patterns for powerful matching"
@@ -8,7 +8,7 @@ seriesOrder: 17
 categories: [Convenience, Patterns]
 ---
 
-F# has a special type of pattern matching called “active patterns” where the pattern can be parsed or detected dynamically. As with normal patterns, the matching and output are combined into a single step from the caller’s point of view.
+F# has a special type of pattern matching called "active patterns" where the pattern can be parsed or detected dynamically. As with normal patterns, the matching and output are combined into a single step from the caller's point of view.
 
 Here is an example of using active patterns to parse a string into an int or bool. 
 
@@ -27,10 +27,10 @@ let (|Bool|_|) str =
 {% endhighlight  %}   
 
 <div class="alert alert-info">   
-You don’t need to worry about the complex syntax used to define the active pattern right now — this is just an example so that you can see how they are used.
+You don't need to worry about the complex syntax used to define the active pattern right now -- this is just an example so that you can see how they are used.
 </div>
 
-Once these patterns have been set up, they can be used as part of a normal “`match..with`” expression.
+Once these patterns have been set up, they can be used as part of a normal "`match..with`" expression.
 
 {% highlight fsharp %}
 // create a function to call the patterns
@@ -46,7 +46,7 @@ testParse "true"
 testParse "abc"
 {% endhighlight  %}
 
-You can see that from the caller’s point of view, the matching with an `Int` or `Bool` is transparent, even though there is parsing going on behind the scenes.
+You can see that from the caller's point of view, the matching with an `Int` or `Bool` is transparent, even though there is parsing going on behind the scenes.
 
 A similar example is to use active patterns with regular expressions in order to both match on a regex pattern and return the matched value in a single step.
 
@@ -75,7 +75,7 @@ testRegex "http://google.com/test"
 testRegex "alice@hotmail.com"
 {% endhighlight  %}
 
-And for fun, here’s one more: the well-known [FizzBuzz challenge](http://www.codinghorror.com/blog/2007/02/why-cant-programmers-program.html) written using active patterns.
+And for fun, here's one more: the well-known [FizzBuzz challenge](http://www.codinghorror.com/blog/2007/02/why-cant-programmers-program.html) written using active patterns.
 
 {% highlight fsharp %}
 // setup the active patterns

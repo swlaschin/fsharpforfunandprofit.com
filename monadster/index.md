@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Dr Frankenfunctor and the Monadster"
 hasComments: 1

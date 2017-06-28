@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Generic recursive types"
 description: "Implementing a domain in three ways"

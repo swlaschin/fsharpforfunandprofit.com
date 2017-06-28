@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Understanding traverse and sequence"
 description: "Mixing lists and elevated values"

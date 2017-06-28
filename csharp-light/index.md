@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "The C# Light project"
 description: 

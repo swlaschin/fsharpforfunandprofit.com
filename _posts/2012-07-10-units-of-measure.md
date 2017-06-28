@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Units of measure"
 description: "Type safety for numerics"

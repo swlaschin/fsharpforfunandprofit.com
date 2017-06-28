@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "More on wrapper types"
 description: "We discover that even lists can be wrapper types"

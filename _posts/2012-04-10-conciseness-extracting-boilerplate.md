@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Using functions to extract boilerplate code"
 description: "The functional approach to the DRY principle"
@@ -17,7 +17,7 @@ Now let's say we want some new functions which are similar, such as:
 
 Obviously, all these requirements are similar, but how would you extract any common functionality?
 
-Let’s start with some straightforward implementations in C# first:
+Let's start with some straightforward implementations in C# first:
 
 {% highlight csharp %}
 public static int Product(int n)
@@ -61,7 +61,7 @@ public static int AlternatingSum(int n)
 }
 {% endhighlight  %}
 
-What do all these implementations have in common?  The looping logic!  As programmers, we are told to remember the DRY principle ("don’t repeat yourself"), yet here we have repeated almost exactly the same loop logic each time. Let's see if we can extract just the differences between these three methods:
+What do all these implementations have in common?  The looping logic!  As programmers, we are told to remember the DRY principle ("don't repeat yourself"), yet here we have repeated almost exactly the same loop logic each time. Let's see if we can extract just the differences between these three methods:
 
 <table class="table">
 <thead>

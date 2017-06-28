@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Cycles and modularity in the wild"
 description: "Comparing some real-world metrics of C# and F# projects"

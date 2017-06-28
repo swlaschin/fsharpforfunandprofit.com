@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Railway Oriented Programming"
 description: Slides and videos explaining a functional approach to error handling

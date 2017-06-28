@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Worked example: Designing for correctness"
 description: "How to make illegal states unrepresentable"
@@ -8,7 +8,7 @@ seriesOrder: 22
 categories: [Correctness, Types, Worked Examples]
 ---
 
-In this post, we'll see how you can design for correctness (or at least, for the requirements as you currently understand them), by which I mean that a client of a well designed model will not be able to put the system into an illegal state — a state that doesn't meet the requirements. You literally cannot create incorrect code because the compiler will not let you.
+In this post, we'll see how you can design for correctness (or at least, for the requirements as you currently understand them), by which I mean that a client of a well designed model will not be able to put the system into an illegal state -- a state that doesn't meet the requirements. You literally cannot create incorrect code because the compiler will not let you.
 
 For this to work, we do have to spend some time up front thinking about design and making an effort to encode the requirements into the types that you use.
 If you just use strings or lists for all your data structures, you will not get any benefit from the type checking.
@@ -234,9 +234,9 @@ let cartA = emptyCart.Add "A"
 printf "cartA="; cartA.Display
 {% endhighlight  %}
 
-We now have an active cart with one item in it. Note that “`cartA`” is a completely different object from “`emptyCart`” and is in a different state.
+We now have an active cart with one item in it. Note that "`cartA`" is a completely different object from "`emptyCart`" and is in a different state.
 
-Let’s keep going:
+Let's keep going:
 
 {% highlight fsharp %}
 let cartAB = cartA.Add "B"
@@ -251,14 +251,14 @@ printf "emptyCart2="; emptyCart2.Display
 
 So far, so good. Again, all these are distinct objects in different states,
 
-Let’s test the requirement that you cannot remove items from an empty cart:
+Let's test the requirement that you cannot remove items from an empty cart:
 
 {% highlight fsharp %}
 let emptyCart3 = emptyCart2.Remove "B"    //error
 printf "emptyCart3="; emptyCart3.Display
 {% endhighlight  %}
 
-An error — just what we want!
+An error -- just what we want!
 
 Now say that we want to pay for a cart. We didn't create this method at the Cart level, because we didn't want to tell the client how to handle all the cases. This method only exists for the Active state, so the client will have to explicitly handle each case and only call the `Pay` method when an Active state is matched.
 
@@ -304,7 +304,7 @@ let cartABPaidAgain =
     | Active state -> state.Pay 100m
 {% endhighlight  %}
 
-You might argue that the client code above might not be representative of code in the real world — it is well-behaved and already dealing with the requirements. 
+You might argue that the client code above might not be representative of code in the real world -- it is well-behaved and already dealing with the requirements. 
 
 So what happens if we have badly written or malicious client code that tries to force payment:
 
@@ -345,7 +345,7 @@ Now that you have seen the F# code, we can revisit the original C# code with fre
 </p>
 
 <p>
-That’s quite a lot of things to worry about. 
+That's quite a lot of things to worry about. 
 </p>
 
 <p>
@@ -353,7 +353,7 @@ The nice thing about the F# design is none of these problems can even exist. So 
 </p>
 
 <p>
-<i>Compile time checking:</i>  The original C# design mixes up all the states and transitions in a single class, which makes it very error prone. A better approach would be to create separate state classes (with a common base class say) which reduces complexity, but still, the lack of a built in “union” type means that you cannot statically verify that the code is correct.  There are ways of doing “union” types in C#, but it is not idiomatic at all, while in F# it is commonplace.
+<i>Compile time checking:</i>  The original C# design mixes up all the states and transitions in a single class, which makes it very error prone. A better approach would be to create separate state classes (with a common base class say) which reduces complexity, but still, the lack of a built in "union" type means that you cannot statically verify that the code is correct.  There are ways of doing "union" types in C#, but it is not idiomatic at all, while in F# it is commonplace.
 </p>
 
 

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: "Installing and using F#"
 description: "Instructions for downloading, installing and using F# with Visual Studio, SharpDevelop and MonoDevelop"
@@ -145,7 +145,7 @@ You can also use F# as a scripting language, rather than having to compile code 
 
 This is very convenient when you want to quickly create some code without compiling it into a full blown application. The F# build automation system ["FAKE"](https://github.com/fsharp/FAKE) is an example of how useful this can be.
 
-To see how you can do this yourself, here is a little example script that downloads a web page to a local file. First create an FSX script file — call it “`ShellScriptExample.fsx`” — and paste in the following code. 
+To see how you can do this yourself, here is a little example script that downloads a web page to a local file. First create an FSX script file -- call it "`ShellScriptExample.fsx`" -- and paste in the following code. 
 
 {% highlight fsharp %}
 // ================================
@@ -181,7 +181,7 @@ match fsi.CommandLineArgs with
         printfn "USAGE: [url] [targetfile]"
 {% endhighlight %}
 
-Don’t worry about how the code works right now. It’s pretty crude anyway, and a better example would add error handling, and so on.
+Don't worry about how the code works right now. It's pretty crude anyway, and a better example would add error handling, and so on.
 
 To run this script, open a command window in the same directory and type:
 

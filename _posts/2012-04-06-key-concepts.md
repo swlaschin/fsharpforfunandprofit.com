@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Four Key Concepts"
 description: "The concepts that differentiate F# from a standard imperative language"
@@ -227,7 +227,7 @@ A few things to note:
 * As usual, we didn't have to specify any types. The compiler correctly determined that the shape parameter for the "draw" function was of type `Shape`.
 * The `int * int` in the definition of the `Polygon` case is a tuple, a pair of ints. If you're wondering why the types are "multiplied", see this [post on tuples](/posts/tuples/).
 * You can see that the `match..with` logic not only matches against the internal structure of the shape, but also assigns values based on what is appropriate for the shape. 
-* The underscore is similar to the "default" branch in a switch statement, except that in F# it is required – every possible case must always be handled. If you comment out the line 
+* The underscore is similar to the "default" branch in a switch statement, except that in F# it is required -- every possible case must always be handled. If you comment out the line 
 
 {% highlight fsharp %}
   | _ -> printfn "I don't recognize this shape"

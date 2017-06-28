@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Choosing between collection functions"
 description: "A guide for the perplexed"
@@ -135,7 +135,7 @@ All functions are available for `list`, `seq` and `array` in F# v4 unless noted.
 
 For the function signatures I will use `list` as the standard collection type. The signatures for the `seq` and `array` versions will be similar.
 
-Many of these functions are not yet documented on MSDN so I’m going to link directly to the source code on GitHub, which has the up-to-date comments. 
+Many of these functions are not yet documented on MSDN so I'm going to link directly to the source code on GitHub, which has the up-to-date comments. 
 Click on the function name for the link.
 
 ## Note on availability
@@ -193,7 +193,7 @@ With that disclaimer out of the way, you can start your adventure!
 
 What kind of collection do you have?
 
-* If you don’t have a collection, and want to create one, go to [section 2](#2).
+* If you don't have a collection, and want to create one, go to [section 2](#2).
 * If you already have a collection that you want to work with, go to [section 9](#9).
 * If you have two collections that you want to work with, go to [section 23](#23).
 * If you have three collections that you want to work with, go to [section 24](#24).
@@ -209,7 +209,7 @@ So you want to create a new collection. How do you want to create it?
 * If the new collection will be empty or will have one element, go to [section 3](#3).
 * If the new collection is a known size, go to [section 4](#4).
 * If the new collection is potentially infinite, go to [section 7](#7).
-* If you don’t know how big the collection will be, go to [section 8](#8).
+* If you don't know how big the collection will be, go to [section 8](#8).
 
 <a id="3"></a> 
 <hr>  
@@ -396,7 +396,7 @@ let firstTenSquares_v2 = seqOfSquares_v2 |> Seq.take 10
 <hr>  
 ## 8. Creating a new collection of indefinite size
 
-Sometimes you don’t know how big the collection will be in advance. In this case you need a function that will keep adding elements until it gets a signal to stop.
+Sometimes you don't know how big the collection will be in advance. In this case you need a function that will keep adding elements until it gets a signal to stop.
 `unfold` is your friend here, and the "signal to stop" is whether you return a `None` (stop) or a `Some` (keep going).
 
 * [`unfold : generator:('State -> ('T * 'State) option) -> state:'State -> 'T list`](https://github.com/fsharp/fsharp/blob/4331dca3648598223204eed6bfad2b41096eec8a/src/fsharp/FSharp.Core/list.fsi#L846).

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Messages and Agents"
 description: "Making it easier to think about concurrency"

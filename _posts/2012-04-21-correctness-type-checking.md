@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Using the type system to ensure correct code"
 description: "In F# the type system is your friend, not your enemy"
@@ -10,7 +10,7 @@ categories: [Correctness, Types]
 
 You are familiar with static type checking through languages such as C# and Java. In these languages, the type checking is straightforward but rather crude, and can be seen as an annoyance compared with the freedom of dynamic languages such as Python and Ruby.
 
-But in F# the type system is your friend, not your enemy. You can use static type checking almost as an instant unit test — making sure that your code is correct at compile time.
+But in F# the type system is your friend, not your enemy. You can use static type checking almost as an instant unit test -- making sure that your code is correct at compile time.
 
 In the earlier posts we have already seen some of the things that you can do with the type system in F#:
 
@@ -48,11 +48,11 @@ sendEmail "bob@example.com"   //error
 
 By wrapping the email address in a special type, we ensure that normal strings cannot be used as arguments to email specific functions. (In practice, we would also hide the constructor of the `EmailAddress` type as well, to ensure that only valid values could be created in the first place.)
 
-There is nothing here that couldn’t be done in C#, but it would be quite a lot of work to create a new value type just for this one purpose, so in C#, it is easy to be lazy and just pass strings around.
+There is nothing here that couldn't be done in C#, but it would be quite a lot of work to create a new value type just for this one purpose, so in C#, it is easy to be lazy and just pass strings around.
 
 ## Additional type safety features in F# ##
 
-Before moving on to the major topic of “designing for correctness”, let’s see a few of the other minor, but cool, ways that F# is type-safe.
+Before moving on to the major topic of "designing for correctness", let's see a few of the other minor, but cool, ways that F# is type-safe.
 
 ### Type-safe formatting with printf ###
 
@@ -136,7 +136,7 @@ gbp10 + 1.0<_>            // allowed using wildcard
 
 ### Type-safe equality ###
 
-One final example. In C# any class can be equated with any other class (using reference equality by default). In general, this is a bad idea! For example, you shouldn’t really be able to compare a string with a person at all.  
+One final example. In C# any class can be equated with any other class (using reference equality by default). In general, this is a bad idea! For example, you shouldn't really be able to compare a string with a person at all.  
 
 Here is some C# code which is perfectly valid and compiles fine:
 

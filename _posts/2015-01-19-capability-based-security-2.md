@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Constraining capabilities based on identity and role"
 description: "A functional approach to authorization, part 2"

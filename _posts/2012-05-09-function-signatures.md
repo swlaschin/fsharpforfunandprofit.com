@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Function signatures"
 description: "A function signature can give you some idea of what it does"
@@ -40,7 +40,7 @@ List.map                      // ('a -> 'b) -> 'a list -> 'b list
 
 ## Understanding functions through their signatures ##
 
-Just by examining a function’s signature, you can often get some idea of what it does. Let’s look at some examples and analyze them in turn.
+Just by examining a function's signature, you can often get some idea of what it does. Let's look at some examples and analyze them in turn.
 
 {% highlight fsharp %}
 // function signature 1
@@ -68,7 +68,7 @@ This function takes no input but returns a `string`, which means that the functi
 int -> (unit -> string)
 {% endhighlight  %}
 
-This function takes an `int` input and returns a function that when called, returns strings. Again, the function probably has something to do with reading or generating. The input probably initializes the returned function somehow. For example, the input could be a file handle, and the returned function something like `readline()`. Or the input could be a seed for a random string generator. We can’t tell exactly, but we can make some educated guesses.
+This function takes an `int` input and returns a function that when called, returns strings. Again, the function probably has something to do with reading or generating. The input probably initializes the returned function somehow. For example, the input could be a file handle, and the returned function something like `readline()`. Or the input could be a seed for a random string generator. We can't tell exactly, but we can make some educated guesses.
 
 {% highlight fsharp %}
 // function signature 5
@@ -111,7 +111,7 @@ which is exactly the one we want!
 
 ## Defining your own types for function signatures ##
 
-Sometimes you may want to create your own types to match a desired function signature. You can do this using the “type” keyword, and define the type in the same way that a signature is written:
+Sometimes you may want to create your own types to match a desired function signature. You can do this using the "type" keyword, and define the type in the same way that a signature is written:
 
 {% highlight fsharp %}
 type Adder = int -> int

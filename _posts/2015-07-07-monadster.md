@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Dr Frankenfunctor and the Monadster"
 description: "Or, how a 19th century scientist nearly invented the state monad"

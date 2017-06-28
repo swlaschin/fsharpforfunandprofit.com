@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Happy F# Day!"
 description: "Growing and getting better each year"

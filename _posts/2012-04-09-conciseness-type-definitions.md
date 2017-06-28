@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Low overhead type definitions"
 description: "No penalty for making new types"
@@ -8,7 +8,7 @@ seriesOrder: 9
 categories: [Conciseness,Types]
 ---
 
-In C#, there is a disincentive for creating new types — the lack of type inference means you need to explicitly specify types in most places, resulting in brittleness and more visual clutter. As a result, there is always a temptation to create monolithic classes rather than modularizing them.
+In C#, there is a disincentive for creating new types -- the lack of type inference means you need to explicitly specify types in most places, resulting in brittleness and more visual clutter. As a result, there is always a temptation to create monolithic classes rather than modularizing them.
 
 In F# there is no penalty for making new types, so it is quite common to have hundreds if not thousands of them.  Every time you need to define a structure, you can create a special type, rather than reusing (and overloading) existing types such as strings and lists. 
 
@@ -33,11 +33,11 @@ type Appointment = OneTime of DateTime
 
 ## F# types and domain driven design
 
-The conciseness of the type system in F# is particularly useful when doing domain driven design (DDD).  In DDD, for each real world entity and value object, you ideally want to have a corresponding type. This can mean creating hundreds of “little” types, which can be tedious in C#.  
+The conciseness of the type system in F# is particularly useful when doing domain driven design (DDD).  In DDD, for each real world entity and value object, you ideally want to have a corresponding type. This can mean creating hundreds of "little" types, which can be tedious in C#.  
 
-Furthermore, “value” objects in DDD should have structural equality, meaning that two objects containing the same data should always be equal.  In C# this can mean more tedium in overriding `IEquatable<T>`, but in F#, you get this for free by default.
+Furthermore, "value" objects in DDD should have structural equality, meaning that two objects containing the same data should always be equal.  In C# this can mean more tedium in overriding `IEquatable<T>`, but in F#, you get this for free by default.
 
-To show how easy it is to create DDD types in F#, here are some example types that might be created for a simple “customer” domain. 
+To show how easy it is to create DDD types in F#, here are some example types that might be created for a simple "customer" domain. 
 
 {% highlight fsharp %}
 type PersonalName = {FirstName:string; LastName:string}
@@ -99,7 +99,7 @@ type CustomerAccount =
 
 This code fragment contains 17 type definitions in just a few lines, but with minimal complexity. How many lines of C# code would you need to do the same thing?
 
-Obviously, this is a simplified version with just the basic types — in a real system, constraints and other methods would be added.  But note how easy it is to create lots of DDD value objects, especially wrapper types for strings, such as “`ZipCode`” and “`Email`”. By using these wrapper types, we can enforce certain constraints at creation time, and also ensure that these types don’t get confused with unconstrained strings in normal code. The only “entity” type is the `CustomerAccount`, which is clearly indicated as having special treatment for equality and comparison.
+Obviously, this is a simplified version with just the basic types -- in a real system, constraints and other methods would be added.  But note how easy it is to create lots of DDD value objects, especially wrapper types for strings, such as "`ZipCode`" and "`Email`". By using these wrapper types, we can enforce certain constraints at creation time, and also ensure that these types don't get confused with unconstrained strings in normal code. The only "entity" type is the `CustomerAccount`, which is clearly indicated as having special treatment for equality and comparison.
 
 For a more in-depth discussion, see the series called ["Domain driven design in F#"](/series/domain-driven-design-in-fsharp.html).
 

@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: "Implementing a builder: Delay and Run"
 description: "Controlling when functions execute"
