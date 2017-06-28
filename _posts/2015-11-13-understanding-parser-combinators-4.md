@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Writing a JSON parser from scratch"
 description: "In 250 lines of code"

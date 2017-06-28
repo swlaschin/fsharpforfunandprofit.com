@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Happy F# Day!"
 description: "Celebrating the 5th anniversary of F# in Visual Studio"

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "F# decompiled into C#"
 description: "Or, what C# code do you have to write to get the same functionality as F#?"

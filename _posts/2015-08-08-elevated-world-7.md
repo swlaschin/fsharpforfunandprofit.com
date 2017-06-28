@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Map and Bind and Apply, a summary"
 description: ""
@@ -110,7 +110,7 @@ Alternative tutorials:
 
 * [You Could Have Invented Monads! (And Maybe You Already Have)](http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html).
 * [Functors, Applicatives and Monads in pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html).
-* [Kleisli composition � la Up-Goer Five](http://mergeconflict.com/kleisli-composition-a-la-up-goer-five/). I think this one is funny.
+* [Kleisli composition à la Up-Goer Five](http://mergeconflict.com/kleisli-composition-a-la-up-goer-five/). I think this one is funny.
 * [Eric Lippert's series on monads in C#](http://ericlippert.com/category/monads/).
 
 For the academically minded:

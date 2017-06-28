@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Cyclic dependencies are evil"
 description: "Cyclic dependencies: Part 1"

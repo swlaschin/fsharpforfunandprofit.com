@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Designing with types: Making state explicit"
 description: "Using state machines to ensure correctness"

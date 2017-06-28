@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Using types as access tokens"
 description: "A functional approach to authorization, part 3"

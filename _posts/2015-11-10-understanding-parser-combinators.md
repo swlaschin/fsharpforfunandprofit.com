@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Understanding Parser Combinators"
 description: "Building a parser combinator library from scratch"

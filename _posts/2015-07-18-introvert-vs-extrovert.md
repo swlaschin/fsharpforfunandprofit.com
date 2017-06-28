@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Introvert and extrovert programming languages"
 description: "Late night thoughts on language personality types"
@@ -58,7 +58,7 @@ has excellent support for real-world data processing via [type providers](http:/
 Just as people are not all one or the other, so with programming languages.
 There is a range. Some languages are extremely extrovert, some extremely introvert, and some in-between.
 
-### A lot of people say I am egocentric � but enough about them
+### A lot of people say I am egocentric – but enough about them
 
 > "Reality is merely an illusion, albeit a very persistent one."
 

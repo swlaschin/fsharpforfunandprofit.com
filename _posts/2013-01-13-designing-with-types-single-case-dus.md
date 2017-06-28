@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Designing with types: Single case union types"
 description: "Adding meaning to primitive types"

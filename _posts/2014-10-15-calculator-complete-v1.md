@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Calculator Walkthrough: Part 3"
 description: "Adding the services and user interface, and dealing with disaster"

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Railway oriented programming"
 description: "A recipe for a functional app, part 2"

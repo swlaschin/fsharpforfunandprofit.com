@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Designing with types: Making illegal states unrepresentable"
 description: "Encoding business logic in types"

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Functional approaches to dependency injection"
 description: "Part one of a series, starting with partial application."

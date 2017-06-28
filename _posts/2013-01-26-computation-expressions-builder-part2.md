@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Implementing a builder: Combine"
 description: "How to return multiple values at once"

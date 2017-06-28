@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Twenty six low-risk ways to use F# at work"
 description: "You can start right now -- no permission needed"

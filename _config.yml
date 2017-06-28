@@ -38,7 +38,9 @@ exclude:
 port: 4000
 host: localhost
 
+# command line
+#  jekyll serve --no-watch --skip-initial-build
 
 #permalink: /:month-:day-:year/:title.html
-permalink: /posts/:title
+permalink: /posts/:title/
 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Understanding bind"
 description: "Or, how to compose world-crossing functions"

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Implementing a builder: Adding laziness"
 description: "Delaying a workflow externally"

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Algebraic type sizes and domain modelling"
 description: "Comprehending cardinality for fun and profit"

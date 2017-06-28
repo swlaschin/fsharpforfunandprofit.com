@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Monoids in practice"
 description: "Monoids without tears - Part 2"
@@ -1034,7 +1034,7 @@ If you are interested in using monoids for data aggregation, there are lots of g
 * Twitter's [Algebird library](https://blog.twitter.com/2012/scalding-080-and-algebird) 
 * Most [probabilistic data structures](http://highlyscalable.wordpress.com/2012/05/01/probabilistic-structures-web-analytics-data-mining/) are monoids.
 * [Gaussian distributions form a monoid](http://izbicki.me/blog/gausian-distributions-are-monoids).
-* Google�s [MapReduce Programming Model](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.5859&rep=rep1&type=pdf) (PDF).
+* Google’s [MapReduce Programming Model](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.5859&rep=rep1&type=pdf) (PDF).
 * [Monoidify! Monoids as a Design Principle for Efficient MapReduce Algorithms](http://arxiv.org/abs/1304.7544) (PDF).
 * LinkedIn's [Hourglass libary for Hadoop](http://www.slideshare.net/matthewterencehayes/hourglass-27038297)
 * From Stack Exchange: [What use are groups, monoids, and rings in database computations?](http://cs.stackexchange.com/questions/9648/what-use-are-groups-monoids-and-rings-in-database-computations)

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Is your programming language unreasonable?"
 description: "or, why predictability is important"

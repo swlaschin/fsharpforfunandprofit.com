@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Ten reasons not to use a statically typed functional programming language"
 description: "A rant against something I don't get"

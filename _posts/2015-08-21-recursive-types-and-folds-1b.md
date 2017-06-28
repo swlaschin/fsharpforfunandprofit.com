@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Catamorphism examples"
 description: "Applying the rules to other domains"

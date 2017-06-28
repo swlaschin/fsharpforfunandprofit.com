@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Thirteen ways of looking at a turtle"
 description: "Examples of an API, dependency injection, a state monad, and more!"

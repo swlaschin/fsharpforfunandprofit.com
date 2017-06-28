@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Monoids without tears"
 description: "A mostly mathless discussion of a common functional pattern"
@@ -631,7 +631,7 @@ The answer is `1`, not `0` as you might expect!  Here's the code to prove it:
 
 ### Summary of the benefits
 
-To sum up, a monoid is basically a way to describe an aggregation pattern � we have a list of things, we have some way of combining them, and we get a single aggregated object back at the end.
+To sum up, a monoid is basically a way to describe an aggregation pattern – we have a list of things, we have some way of combining them, and we get a single aggregated object back at the end.
 
 Or in F# terms:
 

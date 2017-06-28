@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Working with non-monoids"
 description: "Monoids without tears - Part 3"

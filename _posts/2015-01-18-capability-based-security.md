@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "A functional approach to authorization"
 description: "Capability based security and more"

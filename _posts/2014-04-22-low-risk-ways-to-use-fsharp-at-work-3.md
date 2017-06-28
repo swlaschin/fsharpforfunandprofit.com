@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Using F# for testing"
 description: "Twenty six low-risk ways to use F# at work (part 3)"
@@ -452,7 +452,7 @@ For example, property based testing is especially useful for "algorithmic" code.
 * If you reverse a list and then reverse it again, you get the original list.
 * If you factorize an integer and then multiply the factors, you get the original number.
 
-But even in Boring Line-Of-Business Applications�, you may find that property based testing has a place. For example, here are some things that can be expressed as properties:
+But even in Boring Line-Of-Business Applications™, you may find that property based testing has a place. For example, here are some things that can be expressed as properties:
 
 * **Roundtripping**. For example, if you save a record to a database and then reload it, the record's fields should be unchanged. 
   Similarly, if you serialize and then deserialize something, you should get the original thing back.

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Overview of types in F#"
 description: "A look at the big picture"

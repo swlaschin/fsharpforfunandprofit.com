@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Calculator Walkthrough: Part 4"
 description: "Designing using a state machine"

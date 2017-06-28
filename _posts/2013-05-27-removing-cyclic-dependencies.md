@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Refactoring to remove cyclic dependencies"
 description: "Cyclic dependencies: Part 2"

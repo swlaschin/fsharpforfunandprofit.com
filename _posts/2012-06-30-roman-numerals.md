@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Worked example: Roman numerals"
 description: "More pattern matching in practice"

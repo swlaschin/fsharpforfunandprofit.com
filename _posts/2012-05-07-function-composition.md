@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Function associativity and composition"
 description: "Building new functions from existing ones"

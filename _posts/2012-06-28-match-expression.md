@@ -1,4 +1,4 @@
----
+Ôªø---
 layout: post
 title: "Match expressions"
 description: "The workhorse of F#"
@@ -464,8 +464,8 @@ let detectType v =
 // Runtime type tests are not allowed on some types. Further type annotations are needed.
 {% endhighlight %}
 
-The message tells you the problem: ìruntime type tests are not allowed on some typesî. 
-The answer is to ìboxî the value which forces it into a reference type, and then you can type check it:
+The message tells you the problem: ‚Äúruntime type tests are not allowed on some types‚Äù. 
+The answer is to ‚Äúbox‚Äù the value which forces it into a reference type, and then you can type check it:
 
 {% highlight fsharp %}
 let detectTypeBoxed v =

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Using map, apply, bind and sequence in practice"
 description: "A real-world example that uses all the techniques"

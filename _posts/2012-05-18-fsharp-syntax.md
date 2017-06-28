@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "F# syntax: indentation and verbosity"
 description: "Understanding the offside rule"

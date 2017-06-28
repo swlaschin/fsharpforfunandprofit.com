@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "Commentary on 'Roman Numerals Kata with Commentary'"
 description: "My approach to the Roman Numerals Kata"
@@ -16,7 +16,7 @@ I thought that in this post I'd try to explain why I got annoyed, and to present
 
 ## Where are the requirements?
 
-> *"Few programmers write even a rough sketch of what their programs will do before they start coding. Most programmers regard anything that doesn’t generate code to be a waste of time."*
+> *"Few programmers write even a rough sketch of what their programs will do before they start coding. Most programmers regard anything that doesnâ€™t generate code to be a waste of time."*
 >
 > *Leslie Lamport, ["Why We Should Build Software Like We Build Houses"](http://www.wired.com/opinion/2013/01/code-bugs-programming-why-we-need-specs/)*
 
@@ -144,7 +144,7 @@ The whole thing took only 5-10 mins. In my opinion, that was time well spent.
 
 > *"Unit tests have been compared with shining a flashlight into a dark room in search of a monster. 
 > Shine the light into the room and then into all the scary corners. 
-> It doesn't mean the room is monster free -– just that the monster isn't standing where you've shined your flashlight."*
+> It doesn't mean the room is monster free -â€“ just that the monster isn't standing where you've shined your flashlight."*
 
 Now that we have the requirements, we can start writing the tests.
 
@@ -296,12 +296,12 @@ I'm not going to go into property-based testing any more here, but I think you c
 
 *The [code for this post](https://gist.github.com/swlaschin/8409306) has a full property-based test suite.*
 
-## Requirements Driven Design™
+## Requirements Driven Designâ„¢
 
 At this point, we can start on the implementation.
 
 Unlike the TDD video, I'd rather build the implementation by iterating on the *requirements*, not on the *test cases*.
-I need a catchy phrase for this, so I'll call it Requirements Driven Design™. Watch out for a Requirements Driven Design Manifesto coming soon.
+I need a catchy phrase for this, so I'll call it Requirements Driven Designâ„¢. Watch out for a Requirements Driven Design Manifesto coming soon.
 
 And rather than implementing code that handles individual inputs one by one, I prefer my implementations to cover as many input cases as possible -- preferably all of them.
 As each new requirement is added the implementation is modified or refined, using the tests to ensure that it still meets the requirements.

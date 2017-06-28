@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Designing with types: Discovering new concepts"
 description: "Gaining deeper insight into the domain"

@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "Worked example: A stack based calculator"
 description: "Using combinators to build functionality"
@@ -20,11 +20,11 @@ The first steps to designing a system like this is to think about how it would b
 
     EMPTY ONE THREE ADD TWO MUL SHOW
 
-We might not be able to get this exact syntax, but let’s see how close we can get.
+We might not be able to get this exact syntax, but letâ€™s see how close we can get.
 
 ## The Stack data type
 
-First we need to define the data structure for a stack. To keep things simple, we’ll just use a list of floats.
+First we need to define the data structure for a stack. To keep things simple, weâ€™ll just use a list of floats.
 
 {% highlight fsharp %}
 type Stack = float list
@@ -74,7 +74,7 @@ First, note that the list structure is immutable, so the function must accept an
     Input: a Stack plus other parameters
     Output: a new Stack
 
-Next, what should the order of the parameters be? Should the stack parameter come first or last? If you remember the discussion of [designing functions for partial application](/posts/partial-application), you will remember that the most changeable thing should come last. You’ll see shortly that this guideline will be born out.
+Next, what should the order of the parameters be? Should the stack parameter come first or last? If you remember the discussion of [designing functions for partial application](/posts/partial-application), you will remember that the most changeable thing should come last. Youâ€™ll see shortly that this guideline will be born out.
 
 Finally, the function can be made more concise by using pattern matching in the function parameter itself, rather than using a `let` in the body of the function.
 
@@ -116,7 +116,7 @@ let ONE stack = push 1.0 stack
 let TWO stack = push 2.0 stack
 {% endhighlight %}
 
-But wait a minute! Can you see that the `stack` parameter is used on both sides? In fact, we don’t need to mention it at all. Instead we can skip the `stack` parameter and write the functions using partial application as follows:
+But wait a minute! Can you see that the `stack` parameter is used on both sides? In fact, we donâ€™t need to mention it at all. Instead we can skip the `stack` parameter and write the functions using partial application as follows:
 
 {% highlight fsharp %}
 let ONE = push 1.0
@@ -126,7 +126,7 @@ let FOUR = push 4.0
 let FIVE = push 5.0
 {% endhighlight %}
 
-Now you can see that if the parameters for `push` were in a different order, we wouldn’t have been able to do this. 
+Now you can see that if the parameters for `push` were in a different order, we wouldnâ€™t have been able to do this. 
 
 While we're at it, let's define a function that creates an empty stack as well:
 
@@ -134,7 +134,7 @@ While we're at it, let's define a function that creates an empty stack as well:
 let EMPTY = StackContents []
 {% endhighlight %}
 
-Let’s test all of these now:
+Letâ€™s test all of these now:
 
 {% highlight fsharp %}
 let stackWith1 = ONE EMPTY 
@@ -142,7 +142,7 @@ let stackWith2 = TWO stackWith1
 let stackWith3  = THREE stackWith2 
 {% endhighlight %}
 
-These intermediate stacks are annoying — can we get rid of them? Yes!  Note that these functions ONE, TWO, THREE all have the same signature:
+These intermediate stacks are annoying â€” can we get rid of them? Yes!  Note that these functions ONE, TWO, THREE all have the same signature:
 
 {% highlight fsharp %}
 Stack -> Stack
@@ -158,7 +158,7 @@ let result312 = EMPTY |> THREE |> ONE |> TWO
 
 ## Popping the stack
 
-That takes care of pushing onto the stack — what about a `pop` function next?
+That takes care of pushing onto the stack â€” what about a `pop` function next?
 
 When we pop the stack, we will return the top of the stack, obviously, but is that all?  
 
@@ -335,7 +335,7 @@ let square2 = EMPTY |> TWO |> SQUARE
 
 ## Putting it all together
 
-In the original requirements, we mentioned that we wanted to be able to show the results, so let’s define a SHOW function.
+In the original requirements, we mentioned that we wanted to be able to show the results, so letâ€™s define a SHOW function.
 
 {% highlight fsharp %}
 let SHOW stack = 

@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Organizing functions"
 description: "Nested functions and modules"

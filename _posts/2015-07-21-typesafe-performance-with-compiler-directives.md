@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Swapping type-safety for high performance using compiler directives"
 description: "An experiment in how to have your cake and eat it too"

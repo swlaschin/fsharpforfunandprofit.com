@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Introducing 'bind'"
 description: "Steps towards creating our own 'let!' "

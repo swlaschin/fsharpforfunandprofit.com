@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Designing with types: Constrained strings"
 description: "Adding more semantic information to a primitive type"

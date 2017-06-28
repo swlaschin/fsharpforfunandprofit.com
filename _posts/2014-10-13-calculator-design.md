@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Calculator Walkthrough: Part 1"
 description: "The type-first approach to designing a Calculator"

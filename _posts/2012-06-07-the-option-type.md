@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "The Option type"
 description: "And why it is not null or nullable"
@@ -333,7 +333,7 @@ And on occasion, you may need to pass a null to an external library. You can do 
 
 In addition to null, C# has the concept of a Nullable type, such as `Nullable<int>`, which seems similar to the option type. So what's the difference?
 
-The basic idea is the same, but Nullable is much weaker.  It only works on value types such as `Int` and `DateTime`, not on reference types such as strings or classes or functions. You can’t nest Nullables, and they don’t have much special behavior. 
+The basic idea is the same, but Nullable is much weaker.  It only works on value types such as `Int` and `DateTime`, not on reference types such as strings or classes or functions. You canâ€™t nest Nullables, and they donâ€™t have much special behavior. 
 
 On the other hand, the F# option is a true first class type and can be used consistently across all types in the same way. (See the examples above in the "Options are not just for primitive types" section.)
 

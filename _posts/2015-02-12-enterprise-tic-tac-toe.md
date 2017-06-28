@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Enterprise Tic-Tac-Toe"
 description: "A walkthrough of the design decisions in a purely functional implementation"

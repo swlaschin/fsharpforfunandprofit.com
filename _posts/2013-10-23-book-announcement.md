@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "'Understanding Functional Programming' book announcement"
 description: ""

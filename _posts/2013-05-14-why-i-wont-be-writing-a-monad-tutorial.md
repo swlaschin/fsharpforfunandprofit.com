@@ -1,11 +1,11 @@
----
+ï»¿---
 layout: post
 title: "Why I won't be writing a monad tutorial"
 description: ""
 categories: []
 ---
 
-*"A ‘newbie’, in Haskell, is someone who hasn’t yet implemented a compiler. They’ve only written a monad tutorial" - [Pseudonymn](http://sequence.complete.org/node?page=10)*
+*"A â€˜newbieâ€™, in Haskell, is someone who hasnâ€™t yet implemented a compiler. Theyâ€™ve only written a monad tutorial" - [Pseudonymn](http://sequence.complete.org/node?page=10)*
 
 Let's start with a story...
 

@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "Other interesting ways of using F# at work"
 description: "Twenty six low-risk ways to use F# at work (part 5)"
@@ -255,10 +255,10 @@ The results are:
 
 <pre>
 {Forename = "Kelly"; Surname = "Deasy";}
-{Forename = "Bam"; Surname = "Brézé";}
+{Forename = "Bam"; Surname = "BrÃ©zÃ©";}
 {Forename = "Claire"; Surname = "Sludden";}
-{Forename = "Kenneth"; Surname = "Klütz";}
-{Forename = "Étienne"; Surname = "Defendi";}
+{Forename = "Kenneth"; Surname = "KlÃ¼tz";}
+{Forename = "Ã‰tienne"; Surname = "Defendi";}
 {Forename = "Billy"; Surname = "Paleti";}
 {Forename = "Alix"; Surname = "Nuin";}
 {Forename = "Katherine"; Surname = "Desporte";}
@@ -361,7 +361,7 @@ Let's finish up by having a quick look at using F# for data science and machine 
 As we have seen, F# is great for exploratory programming -- it has a REPL with intellisense. But unlike Python and R, your
 code is type checked, so you know that your code is not going to fail with an exception halfway through a two hour processing job!
 
-If you are familiar with the Pandas library from Python or the ‘tseries’ package in R, then you should
+If you are familiar with the Pandas library from Python or the â€˜tseriesâ€™ package in R, then you should
 take a serious look at [Deedle](http://bluemountaincapital.github.io/Deedle/), an easy-to-use, high quality package for data and time series manipulation.
 Deedle is designed to work well for exploratory programming using the REPL, but can be also used in efficient compiled .NET code.
 

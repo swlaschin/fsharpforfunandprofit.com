@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "Interfaces"
 description: ""
@@ -14,7 +14,7 @@ Interfaces are available and fully supported in F#, but there are number of impo
 
 Defining an interface is similar to defining an abstract class. So similar, in fact, that you might easily get them confused.
 
-Here’s an interface definition:
+Hereâ€™s an interface definition:
 
 {% highlight fsharp %}
 type MyInterface =
@@ -28,7 +28,7 @@ type MyInterface =
    abstract member Area : float with get,set
 {% endhighlight %}
 
-And here’s the definition for the equivalent abstract base class:
+And hereâ€™s the definition for the equivalent abstract base class:
 
 {% highlight fsharp %}
 [<AbstractClass>]
@@ -43,7 +43,7 @@ type AbstractBaseClass() =
    abstract member Area : float with get,set
 {% endhighlight %}
 
-So what’s the difference? As usual, all abstract members are defined by signatures only. The only difference seems to be the lack of the `[<AbstractClass>]` attribute.
+So whatâ€™s the difference? As usual, all abstract members are defined by signatures only. The only difference seems to be the lack of the `[<AbstractClass>]` attribute.
 
 But in the earlier discussion on abstract methods, we stressed that the `[<AbstractClass>]` attribute was required; the compiler would complain that the methods have no implementation otherwise. So how does the interface definition get away with it?  
 
@@ -53,7 +53,7 @@ The answer is trivial, but subtle. *The interface has no constructor*. That is, 
 type MyInterface =   // <- no parens!
 {% endhighlight %}
 
-That’s it.  Removing the parens will convert a class definition into an interface!
+Thatâ€™s it.  Removing the parens will convert a class definition into an interface!
 
 ### Explicit and implicit interface implementations 
 
@@ -68,7 +68,7 @@ C# has support for both explicit and implicit interface implementations, but alm
 
 ### Implementing interfaces in F# ###
 
-So, how do you implement an interface in F#?  You cannot just “inherit” from it, as you would an abstract base class.  You have to provide an explicit implementation for each interface member using the syntax `interface XXX with`, as shown below:
+So, how do you implement an interface in F#?  You cannot just â€œinheritâ€ from it, as you would an abstract base class.  You have to provide an explicit implementation for each interface member using the syntax `interface XXX with`, as shown below:
 
 {% highlight fsharp %}
 type IAddingService =
@@ -91,7 +91,7 @@ The above code shows how the class `MyAddingService` explicitly implements the `
 
 ### Using interfaces
 
-So now let’s try to use the adding service interface:
+So now letâ€™s try to use the adding service interface:
 
 {% highlight fsharp %}
 let mas = new MyAddingService()

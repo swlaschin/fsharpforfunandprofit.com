@@ -1,4 +1,4 @@
----
+﻿---
 layout: post
 title: "Understanding Folds"
 description: "Recursion vs. iteration"

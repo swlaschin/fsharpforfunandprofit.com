@@ -1,4 +1,4 @@
----
+ï»¿---
 layout: post
 title: "Parameter and value naming conventions"
 description: "a, f, x and friends"
@@ -54,7 +54,7 @@ The common naming conventions are as follows:
 * "f", "g", "h" etc., are functions
 * "x", "y", "z" etc., are arguments to the functions 
 * Lists are indicated by adding an "s" suffix, so that "`xs`" is a list of `x`'s, "`fs`" is a list of functions, and so on.  It is extremely common to see "`x::xs`" meaning the head (first element) and tail (the remaining elements) of a list.
-* "_" is used whenever you don’t care about the value. So "`x::_`" means that you don't care about the rest of the list, and "`let f _ = something`" means you don't care about the argument to `f`.
+* "_" is used whenever you donâ€™t care about the value. So "`x::_`" means that you don't care about the rest of the list, and "`let f _ = something`" means you don't care about the argument to `f`.
 
 Another reason for the short names is that often, they cannot be assigned to anything meaningful.  For example, the definition of the pipe operator is:
 
@@ -62,7 +62,7 @@ Another reason for the short names is that often, they cannot be assigned to any
 let (|>) x f = f x
 {% endhighlight %}
 
-We don’t know what `f` and `x` are going to be, `f` could be any function and `x` could be any value. Making this explicit does not make the code any more understandable.
+We donâ€™t know what `f` and `x` are going to be, `f` could be any function and `x` could be any value. Making this explicit does not make the code any more understandable.
 
 {% highlight fsharp %}
 let (|>) aValue aFunction = aFunction aValue // any better?
