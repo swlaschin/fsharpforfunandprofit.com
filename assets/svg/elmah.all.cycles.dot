@@ -1,0 +1,15 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Elmah.ErrorDigestRssHandler" -> { rank=none; "Elmah.ErrorLogPageFactory" }
+   "Elmah.ErrorLog" -> { rank=none; "Elmah.ErrorLogEntry"; "Elmah.MemoryErrorLog"; "Elmah.ServiceCenter" }
+   "Elmah.ErrorLogDownloadHandler" -> { rank=none; "Elmah.ErrorLogPageFactory" }
+   "Elmah.ErrorLogEntry" -> { rank=none; "Elmah.ErrorLog" }
+   "Elmah.ErrorLogPageFactory" -> { rank=none; "Elmah.ErrorDigestRssHandler"; "Elmah.ErrorLogDownloadHandler"; "Elmah.ErrorRssHandler" }
+   "Elmah.ErrorRssHandler" -> { rank=none; "Elmah.ErrorLogPageFactory" }
+   "Elmah.MemoryErrorLog" -> { rank=none; "Elmah.ErrorLog"; "Elmah.ErrorLogEntry" }
+   "Elmah.ServiceCenter" -> { rank=none; "Elmah.ServiceContainer" }
+   "Elmah.ServiceContainer" -> { rank=none; "Elmah.ErrorLog" }
+   }

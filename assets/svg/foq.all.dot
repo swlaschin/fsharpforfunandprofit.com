@@ -1,0 +1,29 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Foq.Emit" -> { rank=none; "Foq.IMockObject"; "Foq.Invocation" }
+   "Foq.Eval" -> { rank=none; "Foq.QuotationEvaluation" }
+   "Foq.EventBuilder`2" -> { rank=none; "Foq.Emit"; "Foq.MockMode" }
+   "Foq.Expectations" -> { rank=none; "Foq.Format"; "Foq.IMockObject"; "Foq.Invocation"; "Foq.Verification" }
+   "Foq.Format" -> { rank=none; "Foq.Emit"; "Foq.Invocation" }
+   "Foq.IMockObject" -> { rank=none; "Foq.Invocation" }
+   "Foq.ItModule" -> { rank=none; "Foq.It" }
+   "Foq.Linq.ActionBuilder`1" -> { rank=none; "Foq.Emit"; "Foq.Linq.MockMode" }
+   "Foq.Linq.EventBuilder`1" -> { rank=none; "Foq.Emit"; "Foq.Linq.MockMode" }
+   "Foq.Linq.FuncBuilder`2" -> { rank=none; "Foq.Emit"; "Foq.Linq.MockMode" }
+   "Foq.Linq.Mock" -> { rank=none; "Foq.Emit"; "Foq.IMockObject"; "Foq.Invocation"; "Foq.Linq.Verification"; "Foq.Times"; "Foq.TimesModule" }
+   "Foq.Linq.Mock`1" -> { rank=none; "Foq.Emit"; "Foq.Linq.MockMode"; "Foq.Linq.Reflection" }
+   "Foq.Linq.Reflection" -> { rank=none; "Foq.Emit"; "Foq.PredicateAttribute"; "Foq.WildcardAttribute" }
+   "Foq.Linq.Times" -> { rank=none; "Foq.Times" }
+   "Foq.Linq.Verification" -> { rank=none; "Foq.IMockObject"; "Foq.Invocation"; "Foq.Linq.Reflection"; "Foq.Times"; "Foq.Verification" }
+   "Foq.Mock" -> { rank=none; "Foq.Emit"; "Foq.Format"; "Foq.IMockObject"; "Foq.Invocation"; "Foq.QuotationEvaluation"; "Foq.Reflection"; "Foq.Times"; "Foq.TimesModule"; "Foq.Verification" }
+   "Foq.Mock`1" -> { rank=none; "Foq.Emit"; "Foq.Expectations"; "Foq.MockMode"; "Foq.Reflection" }
+   "Foq.Operators" -> { rank=none; "Foq.Emit"; "Foq.Mock"; "Foq.Times" }
+   "Foq.Reflection" -> { rank=none; "Foq.Emit"; "Foq.PredicateAttribute"; "Foq.QuotationEvaluation"; "Foq.RaisesAttribute"; "Foq.ReturnsAttribute"; "Foq.WildcardAttribute" }
+   "Foq.ResultBuilder`2" -> { rank=none; "Foq.Emit"; "Foq.MockMode" }
+   "Foq.ReturnBuilder`2" -> { rank=none; "Foq.Emit" }
+   "Foq.TimesModule" -> { rank=none; "Foq.Times" }
+   "Foq.Verification" -> { rank=none; "Foq.Emit"; "Foq.IMockObject"; "Foq.Invocation" }
+   }

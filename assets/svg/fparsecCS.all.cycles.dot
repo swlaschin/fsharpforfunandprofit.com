@@ -1,0 +1,12 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FParsec.CharStream" -> { rank=none; "FParsec.CharStreamIndexToken" }
+   "FParsec.CharStreamIndexToken" -> { rank=none; "FParsec.CharStream" }
+   "FParsec.Cloning.CloneEventHandlers" -> { rank=none; "FParsec.Cloning.Cloner" }
+   "FParsec.Cloning.Cloner" -> { rank=none; "FParsec.Cloning.CloneEventHandlers" }
+   "FParsec.ErrorMessage" -> { rank=none; "FParsec.ErrorMessageList" }
+   "FParsec.ErrorMessageList" -> { rank=none; "FParsec.ErrorMessage" }
+   }

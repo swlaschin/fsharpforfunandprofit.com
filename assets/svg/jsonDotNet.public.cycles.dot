@@ -1,0 +1,17 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Newtonsoft.Json.JsonConverter" -> { rank=none; "Newtonsoft.Json.JsonSerializer"; "Newtonsoft.Json.Schema.JsonSchema" }
+   "Newtonsoft.Json.JsonConverterCollection" -> { rank=none; "Newtonsoft.Json.JsonConverter" }
+   "Newtonsoft.Json.JsonSerializer" -> { rank=none; "Newtonsoft.Json.JsonConverterCollection"; "Newtonsoft.Json.JsonSerializerSettings"; "Newtonsoft.Json.Serialization.IContractResolver" }
+   "Newtonsoft.Json.JsonSerializerSettings" -> { rank=none; "Newtonsoft.Json.JsonConverter"; "Newtonsoft.Json.Serialization.IContractResolver" }
+   "Newtonsoft.Json.Linq.JContainer" -> { rank=none; "Newtonsoft.Json.Linq.JToken" }
+   "Newtonsoft.Json.Linq.JToken" -> { rank=none; "Newtonsoft.Json.JsonSerializer"; "Newtonsoft.Json.Linq.JContainer"; "Newtonsoft.Json.Linq.JTokenEqualityComparer" }
+   "Newtonsoft.Json.Linq.JTokenEqualityComparer" -> { rank=none; "Newtonsoft.Json.Linq.JToken" }
+   "Newtonsoft.Json.Schema.JsonSchema" -> { rank=none; "Newtonsoft.Json.Linq.JToken"; "Newtonsoft.Json.Schema.JsonSchemaResolver" }
+   "Newtonsoft.Json.Schema.JsonSchemaResolver" -> { rank=none; "Newtonsoft.Json.Schema.JsonSchema" }
+   "Newtonsoft.Json.Serialization.IContractResolver" -> { rank=none; "Newtonsoft.Json.Serialization.JsonContract" }
+   "Newtonsoft.Json.Serialization.JsonContract" -> { rank=none; "Newtonsoft.Json.JsonConverter" }
+   }

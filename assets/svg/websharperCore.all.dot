@@ -1,0 +1,16 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "IntelliFactory.WebSharper.Core.Json" -> { rank=none; "IntelliFactory.WebSharper.Core.Metadata"; "IntelliFactory.WebSharper.Core.Reflection" }
+   "IntelliFactory.WebSharper.Core.Macros" -> { rank=none; "IntelliFactory.WebSharper.Core.Metadata"; "IntelliFactory.WebSharper.Core.Quotations" }
+   "IntelliFactory.WebSharper.Core.Metadata" -> { rank=none; "IntelliFactory.WebSharper.Core.Binary"; "IntelliFactory.WebSharper.Core.Reflection"; "IntelliFactory.WebSharper.Core.Resources" }
+   "IntelliFactory.WebSharper.Core.Plugins.Configuration" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.IPlugin"; "IntelliFactory.WebSharper.Core.Plugins.PluginElement"; "IntelliFactory.WebSharper.Core.Plugins.PluginsCollection"; "IntelliFactory.WebSharper.Core.Plugins.PluginsSection" }
+   "IntelliFactory.WebSharper.Core.Plugins.IPlugin" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.IEnvironment"; "IntelliFactory.WebSharper.Core.Plugins.Result" }
+   "IntelliFactory.WebSharper.Core.Plugins.PluginsCollection" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.PluginElement" }
+   "IntelliFactory.WebSharper.Core.Plugins.PluginsSection" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.PluginsCollection" }
+   "IntelliFactory.WebSharper.Core.Quotations" -> { rank=none; "IntelliFactory.WebSharper.Core.Reflection" }
+   "IntelliFactory.WebSharper.Core.Remoting" -> { rank=none; "IntelliFactory.WebSharper.Core.Invocation"; "IntelliFactory.WebSharper.Core.Json"; "IntelliFactory.WebSharper.Core.Metadata"; "IntelliFactory.WebSharper.Core.Reflection" }
+   "IntelliFactory.WebSharper.Core.Resources" -> { rank=none; "IntelliFactory.WebSharper.Core.Reflection" }
+   }

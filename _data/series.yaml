@@ -1,0 +1,1578 @@
+"Why use F#?":
+  title: Why use F#?
+  permalink: /series/why-use-fsharp.html
+  posts:
+    - slug: why-use-fsharp-intro
+      seriesOrder: 1
+      url: /posts/why-use-fsharp-intro/
+      title: "Introduction to the 'Why use F#' series"
+      description: "An overview of the benefits of F#"
+      nextUrl: /posts/fsharp-in-60-seconds/
+      nextTitle: "F# syntax in 60 seconds"
+      nextOrder: "2"
+
+    - slug: fsharp-in-60-seconds
+      seriesOrder: 2
+      url: /posts/fsharp-in-60-seconds/
+      title: "F# syntax in 60 seconds"
+      description: "A very quick overview on how to read F# code"
+      prevUrl: /posts/why-use-fsharp-intro/
+      prevTitle: "Introduction to the 'Why use F#' series"
+      prevOrder: "1"
+      nextUrl: /posts/fvsc-sum-of-squares/
+      nextTitle: "Comparing F# with C#: A simple sum"
+      nextOrder: "3"
+
+    - slug: fvsc-sum-of-squares
+      seriesOrder: 3
+      url: /posts/fvsc-sum-of-squares/
+      title: "Comparing F# with C#: A simple sum"
+      description: "In which we attempt to sum the squares from 1 to N without using a loop"
+      prevUrl: /posts/fsharp-in-60-seconds/
+      prevTitle: "F# syntax in 60 seconds"
+      prevOrder: "2"
+      nextUrl: /posts/fvsc-quicksort/
+      nextTitle: "Comparing F# with C#: Sorting"
+      nextOrder: "4"
+
+    - slug: fvsc-quicksort
+      seriesOrder: 4
+      url: /posts/fvsc-quicksort/
+      title: "Comparing F# with C#: Sorting"
+      description: "In which we see that F# is more declarative than C#, and we are introduced to pattern matching."
+      prevUrl: /posts/fvsc-sum-of-squares/
+      prevTitle: "Comparing F# with C#: A simple sum"
+      prevOrder: "3"
+      nextUrl: /posts/fvsc-download/
+      nextTitle: "Comparing F# with C#: Downloading a web page"
+      nextOrder: "5"
+
+    - slug: fvsc-download
+      seriesOrder: 5
+      url: /posts/fvsc-download/
+      title: "Comparing F# with C#: Downloading a web page"
+      description: "In which we see that F# excels at callbacks, and we are introduced to the 'use' keyword"
+      prevUrl: /posts/fvsc-quicksort/
+      prevTitle: "Comparing F# with C#: Sorting"
+      prevOrder: "4"
+      nextUrl: /posts/key-concepts/
+      nextTitle: "Four Key Concepts"
+      nextOrder: "6"
+
+    - slug: key-concepts
+      seriesOrder: 6
+      url: /posts/key-concepts/
+      title: "Four Key Concepts"
+      description: "The concepts that differentiate F# from a standard imperative language"
+      prevUrl: /posts/fvsc-download/
+      prevTitle: "Comparing F# with C#: Downloading a web page"
+      prevOrder: "5"
+      nextUrl: /posts/conciseness-intro/
+      nextTitle: "Conciseness"
+      nextOrder: "7"
+
+    - slug: conciseness-intro
+      seriesOrder: 7
+      url: /posts/conciseness-intro/
+      title: "Conciseness"
+      description: "Why is conciseness important?"
+      prevUrl: /posts/key-concepts/
+      prevTitle: "Four Key Concepts"
+      prevOrder: "6"
+      nextUrl: /posts/conciseness-type-inference/
+      nextTitle: "Type inference"
+      nextOrder: "8"
+
+    - slug: conciseness-type-inference
+      seriesOrder: 8
+      url: /posts/conciseness-type-inference/
+      title: "Type inference"
+      description: "How to avoid getting distracted by complex type syntax"
+      prevUrl: /posts/conciseness-intro/
+      prevTitle: "Conciseness"
+      prevOrder: "7"
+      nextUrl: /posts/conciseness-type-definitions/
+      nextTitle: "Low overhead type definitions"
+      nextOrder: "9"
+
+    - slug: conciseness-type-definitions
+      seriesOrder: 9
+      url: /posts/conciseness-type-definitions/
+      title: "Low overhead type definitions"
+      description: "No penalty for making new types"
+      prevUrl: /posts/conciseness-type-inference/
+      prevTitle: "Type inference"
+      prevOrder: "8"
+      nextUrl: /posts/conciseness-extracting-boilerplate/
+      nextTitle: "Using functions to extract boilerplate code"
+      nextOrder: "10"
+
+    - slug: conciseness-extracting-boilerplate
+      seriesOrder: 10
+      url: /posts/conciseness-extracting-boilerplate/
+      title: "Using functions to extract boilerplate code"
+      description: "The functional approach to the DRY principle"
+      prevUrl: /posts/conciseness-type-definitions/
+      prevTitle: "Low overhead type definitions"
+      prevOrder: "9"
+      nextUrl: /posts/conciseness-functions-as-building-blocks/
+      nextTitle: "Using functions as building blocks"
+      nextOrder: "11"
+
+    - slug: conciseness-functions-as-building-blocks
+      seriesOrder: 11
+      url: /posts/conciseness-functions-as-building-blocks/
+      title: "Using functions as building blocks"
+      description: "Function composition and mini-languages make code more readable"
+      prevUrl: /posts/conciseness-extracting-boilerplate/
+      prevTitle: "Using functions to extract boilerplate code"
+      prevOrder: "10"
+      nextUrl: /posts/conciseness-pattern-matching/
+      nextTitle: "Pattern matching for conciseness"
+      nextOrder: "12"
+
+    - slug: conciseness-pattern-matching
+      seriesOrder: 12
+      url: /posts/conciseness-pattern-matching/
+      title: "Pattern matching for conciseness"
+      description: "Pattern matching can match and bind in a single step"
+      prevUrl: /posts/conciseness-functions-as-building-blocks/
+      prevTitle: "Using functions as building blocks"
+      prevOrder: "11"
+      nextUrl: /posts/convenience-intro/
+      nextTitle: "Convenience"
+      nextOrder: "13"
+
+    - slug: convenience-intro
+      seriesOrder: 13
+      url: /posts/convenience-intro/
+      title: "Convenience"
+      description: "Features that reduce programming drudgery and boilerplate code"
+      prevUrl: /posts/conciseness-pattern-matching/
+      prevTitle: "Pattern matching for conciseness"
+      prevOrder: "12"
+      nextUrl: /posts/convenience-types/
+      nextTitle: "Out-of-the-box behavior for types"
+      nextOrder: "14"
+
+    - slug: convenience-types
+      seriesOrder: 14
+      url: /posts/convenience-types/
+      title: "Out-of-the-box behavior for types"
+      description: "Immutability and built-in equality with no coding"
+      prevUrl: /posts/convenience-intro/
+      prevTitle: "Convenience"
+      prevOrder: "13"
+      nextUrl: /posts/convenience-functions-as-interfaces/
+      nextTitle: "Functions as interfaces"
+      nextOrder: "15"
+
+    - slug: convenience-functions-as-interfaces
+      seriesOrder: 15
+      url: /posts/convenience-functions-as-interfaces/
+      title: "Functions as interfaces"
+      description: "OO design patterns can be trivial when functions are used"
+      prevUrl: /posts/convenience-types/
+      prevTitle: "Out-of-the-box behavior for types"
+      prevOrder: "14"
+      nextUrl: /posts/convenience-partial-application/
+      nextTitle: "Partial Application"
+      nextOrder: "16"
+
+    - slug: convenience-partial-application
+      seriesOrder: 16
+      url: /posts/convenience-partial-application/
+      title: "Partial Application"
+      description: "How to fix some of a function's parameters"
+      prevUrl: /posts/convenience-functions-as-interfaces/
+      prevTitle: "Functions as interfaces"
+      prevOrder: "15"
+      nextUrl: /posts/convenience-active-patterns/
+      nextTitle: "Active patterns"
+      nextOrder: "17"
+
+    - slug: convenience-active-patterns
+      seriesOrder: 17
+      url: /posts/convenience-active-patterns/
+      title: "Active patterns"
+      description: "Dynamic patterns for powerful matching"
+      prevUrl: /posts/convenience-partial-application/
+      prevTitle: "Partial Application"
+      prevOrder: "16"
+      nextUrl: /posts/correctness-intro/
+      nextTitle: "Correctness"
+      nextOrder: "18"
+
+    - slug: correctness-intro
+      seriesOrder: 18
+      url: /posts/correctness-intro/
+      title: "Correctness"
+      description: "How to write 'compile time unit tests'"
+      prevUrl: /posts/convenience-active-patterns/
+      prevTitle: "Active patterns"
+      prevOrder: "17"
+      nextUrl: /posts/correctness-immutability/
+      nextTitle: "Immutability"
+      nextOrder: "19"
+
+    - slug: correctness-immutability
+      seriesOrder: 19
+      url: /posts/correctness-immutability/
+      title: "Immutability"
+      description: "Making your code predictable"
+      prevUrl: /posts/correctness-intro/
+      prevTitle: "Correctness"
+      prevOrder: "18"
+      nextUrl: /posts/correctness-exhaustive-pattern-matching/
+      nextTitle: "Exhaustive pattern matching"
+      nextOrder: "20"
+
+    - slug: correctness-exhaustive-pattern-matching
+      seriesOrder: 20
+      url: /posts/correctness-exhaustive-pattern-matching/
+      title: "Exhaustive pattern matching"
+      description: "A powerful technique to ensure correctness"
+      prevUrl: /posts/correctness-immutability/
+      prevTitle: "Immutability"
+      prevOrder: "19"
+      nextUrl: /posts/correctness-type-checking/
+      nextTitle: "Using the type system to ensure correct code"
+      nextOrder: "21"
+
+    - slug: correctness-type-checking
+      seriesOrder: 21
+      url: /posts/correctness-type-checking/
+      title: "Using the type system to ensure correct code"
+      description: "In F# the type system is your friend, not your enemy"
+      prevUrl: /posts/correctness-exhaustive-pattern-matching/
+      prevTitle: "Exhaustive pattern matching"
+      prevOrder: "20"
+      nextUrl: /posts/designing-for-correctness/
+      nextTitle: "Worked example: Designing for correctness"
+      nextOrder: "22"
+
+    - slug: designing-for-correctness
+      seriesOrder: 22
+      url: /posts/designing-for-correctness/
+      title: "Worked example: Designing for correctness"
+      description: "How to make illegal states unrepresentable"
+      prevUrl: /posts/correctness-type-checking/
+      prevTitle: "Using the type system to ensure correct code"
+      prevOrder: "21"
+      nextUrl: /posts/concurrency-intro/
+      nextTitle: "Concurrency"
+      nextOrder: "23"
+
+    - slug: concurrency-intro
+      seriesOrder: 23
+      url: /posts/concurrency-intro/
+      title: "Concurrency"
+      description: "The next major revolution in how we write software?"
+      prevUrl: /posts/designing-for-correctness/
+      prevTitle: "Worked example: Designing for correctness"
+      prevOrder: "22"
+      nextUrl: /posts/concurrency-async-and-parallel/
+      nextTitle: "Asynchronous programming"
+      nextOrder: "24"
+
+    - slug: concurrency-async-and-parallel
+      seriesOrder: 24
+      url: /posts/concurrency-async-and-parallel/
+      title: "Asynchronous programming"
+      description: "Encapsulating a background task with the Async class"
+      prevUrl: /posts/concurrency-intro/
+      prevTitle: "Concurrency"
+      prevOrder: "23"
+      nextUrl: /posts/concurrency-actor-model/
+      nextTitle: "Messages and Agents"
+      nextOrder: "25"
+
+    - slug: concurrency-actor-model
+      seriesOrder: 25
+      url: /posts/concurrency-actor-model/
+      title: "Messages and Agents"
+      description: "Making it easier to think about concurrency"
+      prevUrl: /posts/concurrency-async-and-parallel/
+      prevTitle: "Asynchronous programming"
+      prevOrder: "24"
+      nextUrl: /posts/concurrency-reactive/
+      nextTitle: "Functional Reactive Programming"
+      nextOrder: "26"
+
+    - slug: concurrency-reactive
+      seriesOrder: 26
+      url: /posts/concurrency-reactive/
+      title: "Functional Reactive Programming"
+      description: "Turning events into streams"
+      prevUrl: /posts/concurrency-actor-model/
+      prevTitle: "Messages and Agents"
+      prevOrder: "25"
+      nextUrl: /posts/completeness-intro/
+      nextTitle: "Completeness"
+      nextOrder: "27"
+
+    - slug: completeness-intro
+      seriesOrder: 27
+      url: /posts/completeness-intro/
+      title: "Completeness"
+      description: "F# is part of the whole .NET ecosystem"
+      prevUrl: /posts/concurrency-reactive/
+      prevTitle: "Functional Reactive Programming"
+      prevOrder: "26"
+      nextUrl: /posts/completeness-seamless-dotnet-interop/
+      nextTitle: "Seamless interoperation with .NET libraries"
+      nextOrder: "28"
+
+    - slug: completeness-seamless-dotnet-interop
+      seriesOrder: 28
+      url: /posts/completeness-seamless-dotnet-interop/
+      title: "Seamless interoperation with .NET libraries"
+      description: "Some convenient features for working with .NET libraries"
+      prevUrl: /posts/completeness-intro/
+      prevTitle: "Completeness"
+      prevOrder: "27"
+      nextUrl: /posts/completeness-anything-csharp-can-do/
+      nextTitle: "Anything C# can do..."
+      nextOrder: "29"
+
+    - slug: completeness-anything-csharp-can-do
+      seriesOrder: 29
+      url: /posts/completeness-anything-csharp-can-do/
+      title: "Anything C# can do..."
+      description: "A whirlwind tour of object-oriented code in F#"
+      prevUrl: /posts/completeness-seamless-dotnet-interop/
+      prevTitle: "Seamless interoperation with .NET libraries"
+      prevOrder: "28"
+      nextUrl: /posts/why-use-fsharp-conclusion/
+      nextTitle: "Why use F#: Conclusion"
+      nextOrder: "30"
+
+    - slug: why-use-fsharp-conclusion
+      seriesOrder: 30
+      url: /posts/why-use-fsharp-conclusion/
+      title: "Why use F#: Conclusion"
+      description: ""
+      prevUrl: /posts/completeness-anything-csharp-can-do/
+      prevTitle: "Anything C# can do..."
+      prevOrder: "29"
+
+
+"Thinking functionally":
+  title: Thinking functionally
+  permalink: /series/thinking-functionally.html
+  posts:
+    - slug: thinking-functionally-intro
+      seriesOrder: 1
+      url: /posts/thinking-functionally-intro/
+      title: "Thinking Functionally: Introduction"
+      description: "A look at the basics of functional programming"
+      nextUrl: /posts/mathematical-functions/
+      nextTitle: "Mathematical functions"
+      nextOrder: "2"
+
+    - slug: mathematical-functions
+      seriesOrder: 2
+      url: /posts/mathematical-functions/
+      title: "Mathematical functions"
+      description: "The impetus behind functional programming"
+      prevUrl: /posts/thinking-functionally-intro/
+      prevTitle: "Thinking Functionally: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/function-values-and-simple-values/
+      nextTitle: "Function Values and Simple Values"
+      nextOrder: "3"
+
+    - slug: function-values-and-simple-values
+      seriesOrder: 3
+      url: /posts/function-values-and-simple-values/
+      title: "Function Values and Simple Values"
+      description: "Binding not assignment"
+      prevUrl: /posts/mathematical-functions/
+      prevTitle: "Mathematical functions"
+      prevOrder: "2"
+      nextUrl: /posts/how-types-work-with-functions/
+      nextTitle: "How types work with functions"
+      nextOrder: "4"
+
+    - slug: how-types-work-with-functions
+      seriesOrder: 4
+      url: /posts/how-types-work-with-functions/
+      title: "How types work with functions"
+      description: "Understanding the type notation"
+      prevUrl: /posts/function-values-and-simple-values/
+      prevTitle: "Function Values and Simple Values"
+      prevOrder: "3"
+      nextUrl: /posts/currying/
+      nextTitle: "Currying"
+      nextOrder: "5"
+
+    - slug: currying
+      seriesOrder: 5
+      url: /posts/currying/
+      title: "Currying"
+      description: "Breaking multi-parameter functions into smaller one-parameter functions"
+      prevUrl: /posts/how-types-work-with-functions/
+      prevTitle: "How types work with functions"
+      prevOrder: "4"
+      nextUrl: /posts/partial-application/
+      nextTitle: "Partial application"
+      nextOrder: "6"
+
+    - slug: partial-application
+      seriesOrder: 6
+      url: /posts/partial-application/
+      title: "Partial application"
+      description: "Baking-in some of the parameters of a function"
+      prevUrl: /posts/currying/
+      prevTitle: "Currying"
+      prevOrder: "5"
+      nextUrl: /posts/function-composition/
+      nextTitle: "Function associativity and composition"
+      nextOrder: "7"
+
+    - slug: function-composition
+      seriesOrder: 7
+      url: /posts/function-composition/
+      title: "Function associativity and composition"
+      description: "Building new functions from existing ones"
+      prevUrl: /posts/partial-application/
+      prevTitle: "Partial application"
+      prevOrder: "6"
+      nextUrl: /posts/defining-functions/
+      nextTitle: "Defining functions"
+      nextOrder: "8"
+
+    - slug: defining-functions
+      seriesOrder: 8
+      url: /posts/defining-functions/
+      title: "Defining functions"
+      description: "Lambdas and more"
+      prevUrl: /posts/function-composition/
+      prevTitle: "Function associativity and composition"
+      prevOrder: "7"
+      nextUrl: /posts/function-signatures/
+      nextTitle: "Function signatures"
+      nextOrder: "9"
+
+    - slug: function-signatures
+      seriesOrder: 9
+      url: /posts/function-signatures/
+      title: "Function signatures"
+      description: "A function signature can give you some idea of what it does"
+      prevUrl: /posts/defining-functions/
+      prevTitle: "Defining functions"
+      prevOrder: "8"
+      nextUrl: /posts/organizing-functions/
+      nextTitle: "Organizing functions"
+      nextOrder: "10"
+
+    - slug: organizing-functions
+      seriesOrder: 10
+      url: /posts/organizing-functions/
+      title: "Organizing functions"
+      description: "Nested functions and modules"
+      prevUrl: /posts/function-signatures/
+      prevTitle: "Function signatures"
+      prevOrder: "9"
+      nextUrl: /posts/type-extensions/
+      nextTitle: "Attaching functions to types"
+      nextOrder: "11"
+
+    - slug: type-extensions
+      seriesOrder: 11
+      url: /posts/type-extensions/
+      title: "Attaching functions to types"
+      description: "Creating methods the F# way"
+      prevUrl: /posts/organizing-functions/
+      prevTitle: "Organizing functions"
+      prevOrder: "10"
+
+    - slug: stack-based-calculator
+      seriesOrder: 13
+      url: /posts/stack-based-calculator/
+      title: "Worked example: A stack based calculator"
+      description: "Using combinators to build functionality"
+
+
+"Expressions and syntax":
+  title: Expressions and syntax
+  permalink: /series/expressions-and-syntax.html
+  posts:
+    - slug: expressions-intro
+      seriesOrder: 1
+      url: /posts/expressions-intro/
+      title: "Expressions and syntax: Introduction"
+      description: "How to code in F#"
+      nextUrl: /posts/expressions-vs-statements/
+      nextTitle: "Expressions vs. statements"
+      nextOrder: "2"
+
+    - slug: expressions-vs-statements
+      seriesOrder: 2
+      url: /posts/expressions-vs-statements/
+      title: "Expressions vs. statements"
+      description: "Why expressions are safer and make better building blocks"
+      prevUrl: /posts/expressions-intro/
+      prevTitle: "Expressions and syntax: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/understanding-fsharp-expressions/
+      nextTitle: "Overview of F# expressions"
+      nextOrder: "3"
+
+    - slug: understanding-fsharp-expressions
+      seriesOrder: 3
+      url: /posts/understanding-fsharp-expressions/
+      title: "Overview of F# expressions"
+      description: "Control flows, lets, dos, and more"
+      prevUrl: /posts/expressions-vs-statements/
+      prevTitle: "Expressions vs. statements"
+      prevOrder: "2"
+      nextUrl: /posts/let-use-do/
+      nextTitle: "Binding with let, use, and do"
+      nextOrder: "4"
+
+    - slug: let-use-do
+      seriesOrder: 4
+      url: /posts/let-use-do/
+      title: "Binding with let, use, and do"
+      description: "How to use them"
+      prevUrl: /posts/understanding-fsharp-expressions/
+      prevTitle: "Overview of F# expressions"
+      prevOrder: "3"
+      nextUrl: /posts/fsharp-syntax/
+      nextTitle: "F# syntax: indentation and verbosity"
+      nextOrder: "5"
+
+    - slug: fsharp-syntax
+      seriesOrder: 5
+      url: /posts/fsharp-syntax/
+      title: "F# syntax: indentation and verbosity"
+      description: "Understanding the offside rule"
+      prevUrl: /posts/let-use-do/
+      prevTitle: "Binding with let, use, and do"
+      prevOrder: "4"
+      nextUrl: /posts/naming-conventions/
+      nextTitle: "Parameter and value naming conventions"
+      nextOrder: "6"
+
+    - slug: naming-conventions
+      seriesOrder: 6
+      url: /posts/naming-conventions/
+      title: "Parameter and value naming conventions"
+      description: "a, f, x and friends"
+      prevUrl: /posts/fsharp-syntax/
+      prevTitle: "F# syntax: indentation and verbosity"
+      prevOrder: "5"
+      nextUrl: /posts/control-flow-expressions/
+      nextTitle: "Control flow expressions"
+      nextOrder: "7"
+
+    - slug: control-flow-expressions
+      seriesOrder: 7
+      url: /posts/control-flow-expressions/
+      title: "Control flow expressions"
+      description: "And how to avoid using them"
+      prevUrl: /posts/naming-conventions/
+      prevTitle: "Parameter and value naming conventions"
+      prevOrder: "6"
+      nextUrl: /posts/exceptions/
+      nextTitle: "Exceptions"
+      nextOrder: "8"
+
+    - slug: exceptions
+      seriesOrder: 8
+      url: /posts/exceptions/
+      title: "Exceptions"
+      description: "Syntax for throwing and catching"
+      prevUrl: /posts/control-flow-expressions/
+      prevTitle: "Control flow expressions"
+      prevOrder: "7"
+      nextUrl: /posts/match-expression/
+      nextTitle: "Match expressions"
+      nextOrder: "9"
+
+    - slug: match-expression
+      seriesOrder: 9
+      url: /posts/match-expression/
+      title: "Match expressions"
+      description: "The workhorse of F#"
+      prevUrl: /posts/exceptions/
+      prevTitle: "Exceptions"
+      prevOrder: "8"
+      nextUrl: /posts/printf/
+      nextTitle: "Formatted text using printf"
+      nextOrder: "10"
+
+    - slug: printf
+      seriesOrder: 10
+      url: /posts/printf/
+      title: "Formatted text using printf"
+      description: "Tips and techniques for printing and logging"
+      prevUrl: /posts/match-expression/
+      prevTitle: "Match expressions"
+      prevOrder: "9"
+      nextUrl: /posts/pattern-matching-command-line/
+      nextTitle: "Worked example: Parsing command line arguments"
+      nextOrder: "11"
+
+    - slug: pattern-matching-command-line
+      seriesOrder: 11
+      url: /posts/pattern-matching-command-line/
+      title: "Worked example: Parsing command line arguments"
+      description: "Pattern matching in practice"
+      prevUrl: /posts/printf/
+      prevTitle: "Formatted text using printf"
+      prevOrder: "10"
+      nextUrl: /posts/roman-numerals/
+      nextTitle: "Worked example: Roman numerals"
+      nextOrder: "12"
+
+    - slug: roman-numerals
+      seriesOrder: 12
+      url: /posts/roman-numerals/
+      title: "Worked example: Roman numerals"
+      description: "More pattern matching in practice"
+      prevUrl: /posts/pattern-matching-command-line/
+      prevTitle: "Worked example: Parsing command line arguments"
+      prevOrder: "11"
+
+
+"Understanding F# types":
+  title: Understanding F# types
+  permalink: /series/understanding-fsharp-types.html
+  posts:
+    - slug: types-intro
+      seriesOrder: 1
+      url: /posts/types-intro/
+      title: "Understanding F# types: Introduction"
+      description: "A new world of types"
+      nextUrl: /posts/overview-of-types-in-fsharp/
+      nextTitle: "Overview of types in F#"
+      nextOrder: "2"
+
+    - slug: overview-of-types-in-fsharp
+      seriesOrder: 2
+      url: /posts/overview-of-types-in-fsharp/
+      title: "Overview of types in F#"
+      description: "A look at the big picture"
+      prevUrl: /posts/types-intro/
+      prevTitle: "Understanding F# types: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/type-abbreviations/
+      nextTitle: "Type abbreviations"
+      nextOrder: "3"
+
+    - slug: type-abbreviations
+      seriesOrder: 3
+      url: /posts/type-abbreviations/
+      title: "Type abbreviations"
+      description: "Also known as aliases"
+      prevUrl: /posts/overview-of-types-in-fsharp/
+      prevTitle: "Overview of types in F#"
+      prevOrder: "2"
+      nextUrl: /posts/tuples/
+      nextTitle: "Tuples"
+      nextOrder: "4"
+
+    - slug: tuples
+      seriesOrder: 4
+      url: /posts/tuples/
+      title: "Tuples"
+      description: "Multiplying types together"
+      prevUrl: /posts/type-abbreviations/
+      prevTitle: "Type abbreviations"
+      prevOrder: "3"
+      nextUrl: /posts/records/
+      nextTitle: "Records"
+      nextOrder: "5"
+
+    - slug: records
+      seriesOrder: 5
+      url: /posts/records/
+      title: "Records"
+      description: "Extending tuples with labels"
+      prevUrl: /posts/tuples/
+      prevTitle: "Tuples"
+      prevOrder: "4"
+      nextUrl: /posts/discriminated-unions/
+      nextTitle: "Discriminated Unions"
+      nextOrder: "6"
+
+    - slug: discriminated-unions
+      seriesOrder: 6
+      url: /posts/discriminated-unions/
+      title: "Discriminated Unions"
+      description: "Adding types together"
+      prevUrl: /posts/records/
+      prevTitle: "Records"
+      prevOrder: "5"
+      nextUrl: /posts/the-option-type/
+      nextTitle: "The Option type"
+      nextOrder: "7"
+
+    - slug: the-option-type
+      seriesOrder: 7
+      url: /posts/the-option-type/
+      title: "The Option type"
+      description: "And why it is not null or nullable"
+      prevUrl: /posts/discriminated-unions/
+      prevTitle: "Discriminated Unions"
+      prevOrder: "6"
+      nextUrl: /posts/enum-types/
+      nextTitle: "Enum types"
+      nextOrder: "8"
+
+    - slug: enum-types
+      seriesOrder: 8
+      url: /posts/enum-types/
+      title: "Enum types"
+      description: "Not the same as a union type"
+      prevUrl: /posts/the-option-type/
+      prevTitle: "The Option type"
+      prevOrder: "7"
+
+    - slug: cli-types
+      seriesOrder: 10
+      url: /posts/cli-types/
+      title: "Built-in .NET types"
+      description: "Ints, strings, bools, etc"
+      nextUrl: /posts/units-of-measure/
+      nextTitle: "Units of measure"
+      nextOrder: "11"
+
+    - slug: units-of-measure
+      seriesOrder: 11
+      url: /posts/units-of-measure/
+      title: "Units of measure"
+      description: "Type safety for numerics"
+      prevUrl: /posts/cli-types/
+      prevTitle: "Built-in .NET types"
+      prevOrder: "10"
+      nextUrl: /posts/type-inference/
+      nextTitle: "Understanding type inference"
+      nextOrder: "12"
+
+    - slug: type-inference
+      seriesOrder: 12
+      url: /posts/type-inference/
+      title: "Understanding type inference"
+      description: "Behind the magic curtain"
+      prevUrl: /posts/units-of-measure/
+      prevTitle: "Units of measure"
+      prevOrder: "11"
+
+
+"Object-oriented programming in F#":
+  title: Object-oriented programming in F#
+  permalink: /series/object-oriented-programming-in-fsharp.html
+  posts:
+    - slug: object-oriented-intro
+      seriesOrder: 1
+      url: /posts/object-oriented-intro/
+      title: "Object-oriented programming in F#: Introduction"
+      description: ""
+      nextUrl: /posts/classes/
+      nextTitle: "Classes"
+      nextOrder: "2"
+
+    - slug: classes
+      seriesOrder: 2
+      url: /posts/classes/
+      title: "Classes"
+      description: ""
+      prevUrl: /posts/object-oriented-intro/
+      prevTitle: "Object-oriented programming in F#: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/inheritance/
+      nextTitle: "Inheritance and abstract classes"
+      nextOrder: "3"
+
+    - slug: inheritance
+      seriesOrder: 3
+      url: /posts/inheritance/
+      title: "Inheritance and abstract classes"
+      description: ""
+      prevUrl: /posts/classes/
+      prevTitle: "Classes"
+      prevOrder: "2"
+      nextUrl: /posts/interfaces/
+      nextTitle: "Interfaces"
+      nextOrder: "4"
+
+    - slug: interfaces
+      seriesOrder: 4
+      url: /posts/interfaces/
+      title: "Interfaces"
+      description: ""
+      prevUrl: /posts/inheritance/
+      prevTitle: "Inheritance and abstract classes"
+      prevOrder: "3"
+      nextUrl: /posts/object-expressions/
+      nextTitle: "Object expressions"
+      nextOrder: "5"
+
+    - slug: object-expressions
+      seriesOrder: 5
+      url: /posts/object-expressions/
+      title: "Object expressions"
+      description: ""
+      prevUrl: /posts/interfaces/
+      prevTitle: "Interfaces"
+      prevOrder: "4"
+
+
+"Porting from C#":
+  title: Porting from C#
+  permalink: /series/porting-from-csharp.html
+  posts:
+    - slug: porting-to-csharp-intro
+      seriesOrder: 1
+      url: /posts/porting-to-csharp-intro/
+      title: "Porting from C# to F#: Introduction"
+      description: "Three approaches to porting existing C# code to F#"
+      nextUrl: /posts/porting-to-csharp-getting-started/
+      nextTitle: "Getting started with direct porting"
+      nextOrder: "2"
+
+    - slug: porting-to-csharp-getting-started
+      seriesOrder: 2
+      url: /posts/porting-to-csharp-getting-started/
+      title: "Getting started with direct porting"
+      description: "F# equivalents to C#"
+      prevUrl: /posts/porting-to-csharp-intro/
+      prevTitle: "Porting from C# to F#: Introduction"
+      prevOrder: "1"
+
+
+"Designing with types":
+  title: Designing with types
+  permalink: /series/designing-with-types.html
+  posts:
+    - slug: designing-with-types-intro
+      seriesOrder: 1
+      url: /posts/designing-with-types-intro/
+      title: "Designing with types: Introduction"
+      description: "Making design more transparent and improving correctness"
+      nextUrl: /posts/designing-with-types-single-case-dus/
+      nextTitle: "Designing with types: Single case union types"
+      nextOrder: "2"
+
+    - slug: designing-with-types-single-case-dus
+      seriesOrder: 2
+      url: /posts/designing-with-types-single-case-dus/
+      title: "Designing with types: Single case union types"
+      description: "Adding meaning to primitive types"
+      prevUrl: /posts/designing-with-types-intro/
+      prevTitle: "Designing with types: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/designing-with-types-making-illegal-states-unrepresentable/
+      nextTitle: "Designing with types: Making illegal states unrepresentable"
+      nextOrder: "3"
+
+    - slug: designing-with-types-making-illegal-states-unrepresentable
+      seriesOrder: 3
+      url: /posts/designing-with-types-making-illegal-states-unrepresentable/
+      title: "Designing with types: Making illegal states unrepresentable"
+      description: "Encoding business logic in types"
+      prevUrl: /posts/designing-with-types-single-case-dus/
+      prevTitle: "Designing with types: Single case union types"
+      prevOrder: "2"
+      nextUrl: /posts/designing-with-types-discovering-the-domain/
+      nextTitle: "Designing with types: Discovering new concepts"
+      nextOrder: "4"
+
+    - slug: designing-with-types-discovering-the-domain
+      seriesOrder: 4
+      url: /posts/designing-with-types-discovering-the-domain/
+      title: "Designing with types: Discovering new concepts"
+      description: "Gaining deeper insight into the domain"
+      prevUrl: /posts/designing-with-types-making-illegal-states-unrepresentable/
+      prevTitle: "Designing with types: Making illegal states unrepresentable"
+      prevOrder: "3"
+      nextUrl: /posts/designing-with-types-representing-states/
+      nextTitle: "Designing with types: Making state explicit"
+      nextOrder: "5"
+
+    - slug: designing-with-types-representing-states
+      seriesOrder: 5
+      url: /posts/designing-with-types-representing-states/
+      title: "Designing with types: Making state explicit"
+      description: "Using state machines to ensure correctness"
+      prevUrl: /posts/designing-with-types-discovering-the-domain/
+      prevTitle: "Designing with types: Discovering new concepts"
+      prevOrder: "4"
+      nextUrl: /posts/designing-with-types-more-semantic-types/
+      nextTitle: "Designing with types: Constrained strings"
+      nextOrder: "6"
+
+    - slug: designing-with-types-more-semantic-types
+      seriesOrder: 6
+      url: /posts/designing-with-types-more-semantic-types/
+      title: "Designing with types: Constrained strings"
+      description: "Adding more semantic information to a primitive type"
+      prevUrl: /posts/designing-with-types-representing-states/
+      prevTitle: "Designing with types: Making state explicit"
+      prevOrder: "5"
+      nextUrl: /posts/designing-with-types-non-strings/
+      nextTitle: "Designing with types: Non-string types"
+      nextOrder: "7"
+
+    - slug: designing-with-types-non-strings
+      seriesOrder: 7
+      url: /posts/designing-with-types-non-strings/
+      title: "Designing with types: Non-string types"
+      description: "Working with integers and dates safely"
+      prevUrl: /posts/designing-with-types-more-semantic-types/
+      prevTitle: "Designing with types: Constrained strings"
+      prevOrder: "6"
+      nextUrl: /posts/designing-with-types-conclusion/
+      nextTitle: "Designing with types: Conclusion"
+      nextOrder: "8"
+
+    - slug: designing-with-types-conclusion
+      seriesOrder: 8
+      url: /posts/designing-with-types-conclusion/
+      title: "Designing with types: Conclusion"
+      description: "A before and after comparison"
+      prevUrl: /posts/designing-with-types-non-strings/
+      prevTitle: "Designing with types: Non-string types"
+      prevOrder: "7"
+
+
+"Computation Expressions":
+  title: Computation Expressions
+  permalink: /series/computation-expressions.html
+  posts:
+    - slug: computation-expressions-intro
+      seriesOrder: 1
+      url: /posts/computation-expressions-intro/
+      title: "Computation expressions: Introduction"
+      description: "Unwrapping the enigma..."
+      nextUrl: /posts/computation-expressions-continuations/
+      nextTitle: "Understanding continuations"
+      nextOrder: "2"
+
+    - slug: computation-expressions-continuations
+      seriesOrder: 2
+      url: /posts/computation-expressions-continuations/
+      title: "Understanding continuations"
+      description: "How 'let' works behind the scenes"
+      prevUrl: /posts/computation-expressions-intro/
+      prevTitle: "Computation expressions: Introduction"
+      prevOrder: "1"
+      nextUrl: /posts/computation-expressions-bind/
+      nextTitle: "Introducing 'bind'"
+      nextOrder: "3"
+
+    - slug: computation-expressions-bind
+      seriesOrder: 3
+      url: /posts/computation-expressions-bind/
+      title: "Introducing 'bind'"
+      description: "Steps towards creating our own 'let!'"
+      prevUrl: /posts/computation-expressions-continuations/
+      prevTitle: "Understanding continuations"
+      prevOrder: "2"
+      nextUrl: /posts/computation-expressions-wrapper-types/
+      nextTitle: "Computation expressions and wrapper types"
+      nextOrder: "4"
+
+    - slug: computation-expressions-wrapper-types
+      seriesOrder: 4
+      url: /posts/computation-expressions-wrapper-types/
+      title: "Computation expressions and wrapper types"
+      description: "Using types to assist the workflow"
+      prevUrl: /posts/computation-expressions-bind/
+      prevTitle: "Introducing 'bind'"
+      prevOrder: "3"
+      nextUrl: /posts/computation-expressions-wrapper-types-part2/
+      nextTitle: "More on wrapper types"
+      nextOrder: "5"
+
+    - slug: computation-expressions-wrapper-types-part2
+      seriesOrder: 5
+      url: /posts/computation-expressions-wrapper-types-part2/
+      title: "More on wrapper types"
+      description: "We discover that even lists can be wrapper types"
+      prevUrl: /posts/computation-expressions-wrapper-types/
+      prevTitle: "Computation expressions and wrapper types"
+      prevOrder: "4"
+      nextUrl: /posts/computation-expressions-builder-part1/
+      nextTitle: "Implementing a builder: Zero and Yield"
+      nextOrder: "6"
+
+    - slug: computation-expressions-builder-part1
+      seriesOrder: 6
+      url: /posts/computation-expressions-builder-part1/
+      title: "Implementing a builder: Zero and Yield"
+      description: "Getting started with the basic builder methods"
+      prevUrl: /posts/computation-expressions-wrapper-types-part2/
+      prevTitle: "More on wrapper types"
+      prevOrder: "5"
+      nextUrl: /posts/computation-expressions-builder-part2/
+      nextTitle: "Implementing a builder: Combine"
+      nextOrder: "7"
+
+    - slug: computation-expressions-builder-part2
+      seriesOrder: 7
+      url: /posts/computation-expressions-builder-part2/
+      title: "Implementing a builder: Combine"
+      description: "How to return multiple values at once"
+      prevUrl: /posts/computation-expressions-builder-part1/
+      prevTitle: "Implementing a builder: Zero and Yield"
+      prevOrder: "6"
+      nextUrl: /posts/computation-expressions-builder-part3/
+      nextTitle: "Implementing a builder: Delay and Run"
+      nextOrder: "8"
+
+    - slug: computation-expressions-builder-part3
+      seriesOrder: 8
+      url: /posts/computation-expressions-builder-part3/
+      title: "Implementing a builder: Delay and Run"
+      description: "Controlling when functions execute"
+      prevUrl: /posts/computation-expressions-builder-part2/
+      prevTitle: "Implementing a builder: Combine"
+      prevOrder: "7"
+      nextUrl: /posts/computation-expressions-builder-part4/
+      nextTitle: "Implementing a builder: Overloading"
+      nextOrder: "9"
+
+    - slug: computation-expressions-builder-part4
+      seriesOrder: 9
+      url: /posts/computation-expressions-builder-part4/
+      title: "Implementing a builder: Overloading"
+      description: "Stupid method tricks"
+      prevUrl: /posts/computation-expressions-builder-part3/
+      prevTitle: "Implementing a builder: Delay and Run"
+      prevOrder: "8"
+      nextUrl: /posts/computation-expressions-builder-part5/
+      nextTitle: "Implementing a builder: Adding laziness"
+      nextOrder: "10"
+
+    - slug: computation-expressions-builder-part5
+      seriesOrder: 10
+      url: /posts/computation-expressions-builder-part5/
+      title: "Implementing a builder: Adding laziness"
+      description: "Delaying a workflow externally"
+      prevUrl: /posts/computation-expressions-builder-part4/
+      prevTitle: "Implementing a builder: Overloading"
+      prevOrder: "9"
+      nextUrl: /posts/computation-expressions-builder-part6/
+      nextTitle: "Implementing a builder: The rest of the standard methods"
+      nextOrder: "11"
+
+    - slug: computation-expressions-builder-part6
+      seriesOrder: 11
+      url: /posts/computation-expressions-builder-part6/
+      title: "Implementing a builder: The rest of the standard methods"
+      description: "Implementing While, Using, and exception handling"
+      prevUrl: /posts/computation-expressions-builder-part5/
+      prevTitle: "Implementing a builder: Adding laziness"
+      prevOrder: "10"
+
+
+"A recipe for a functional app":
+  title: A recipe for a functional app
+  permalink: /series/a-recipe-for-a-functional-app.html
+  posts:
+    - slug: recipe-part1
+      seriesOrder: 1
+      url: /posts/recipe-part1/
+      title: "How to design and code a complete program"
+      description: "A recipe for a functional app, part 1"
+      nextUrl: /posts/recipe-part2/
+      nextTitle: "Railway oriented programming"
+      nextOrder: "2"
+
+    - slug: recipe-part2
+      seriesOrder: 2
+      url: /posts/recipe-part2/
+      title: "Railway oriented programming"
+      description: "A recipe for a functional app, part 2"
+      prevUrl: /posts/recipe-part1/
+      prevTitle: "How to design and code a complete program"
+      prevOrder: "1"
+      nextUrl: /posts/recipe-part3/
+      nextTitle: "Organizing modules in a project"
+      nextOrder: "3"
+
+    - slug: recipe-part3
+      seriesOrder: 3
+      url: /posts/recipe-part3/
+      title: "Organizing modules in a project"
+      description: "A recipe for a functional app, Part 3"
+      prevUrl: /posts/recipe-part2/
+      prevTitle: "Railway oriented programming"
+      prevOrder: "2"
+
+
+"Dependency cycles":
+  title: Dependency cycles
+  permalink: /series/dependency-cycles.html
+  posts:
+    - slug: cyclic-dependencies
+      seriesOrder: 1
+      url: /posts/cyclic-dependencies/
+      title: "Cyclic dependencies are evil"
+      description: "Cyclic dependencies: Part 1"
+      nextUrl: /posts/removing-cyclic-dependencies/
+      nextTitle: "Refactoring to remove cyclic dependencies"
+      nextOrder: "2"
+
+    - slug: removing-cyclic-dependencies
+      seriesOrder: 2
+      url: /posts/removing-cyclic-dependencies/
+      title: "Refactoring to remove cyclic dependencies"
+      description: "Cyclic dependencies: Part 2"
+      prevUrl: /posts/cyclic-dependencies/
+      prevTitle: "Cyclic dependencies are evil"
+      prevOrder: "1"
+      nextUrl: /posts/cycles-and-modularity-in-the-wild/
+      nextTitle: "Cycles and modularity in the wild"
+      nextOrder: "3"
+
+    - slug: cycles-and-modularity-in-the-wild
+      seriesOrder: 3
+      url: /posts/cycles-and-modularity-in-the-wild/
+      title: "Cycles and modularity in the wild"
+      description: "Comparing some real-world metrics of C# and F# projects"
+      prevUrl: /posts/removing-cyclic-dependencies/
+      prevTitle: "Refactoring to remove cyclic dependencies"
+      prevOrder: "2"
+
+
+"Understanding monoids":
+  title: Understanding monoids
+  permalink: /series/understanding-monoids.html
+  posts:
+    - slug: monoids-without-tears
+      seriesOrder: 1
+      url: /posts/monoids-without-tears/
+      title: "Monoids without tears"
+      description: "A mostly mathless discussion of a common functional pattern"
+      nextUrl: /posts/monoids-part2/
+      nextTitle: "Monoids in practice"
+      nextOrder: "2"
+
+    - slug: monoids-part2
+      seriesOrder: 2
+      url: /posts/monoids-part2/
+      title: "Monoids in practice"
+      description: "Monoids without tears - Part 2"
+      prevUrl: /posts/monoids-without-tears/
+      prevTitle: "Monoids without tears"
+      prevOrder: "1"
+      nextUrl: /posts/monoids-part3/
+      nextTitle: "Working with non-monoids"
+      nextOrder: "3"
+
+    - slug: monoids-part3
+      seriesOrder: 3
+      url: /posts/monoids-part3/
+      title: "Working with non-monoids"
+      description: "Monoids without tears - Part 3"
+      prevUrl: /posts/monoids-part2/
+      prevTitle: "Monoids in practice"
+      prevOrder: "2"
+
+
+"Low-risk ways to use F# at work":
+  title: Low-risk ways to use F# at work
+  permalink: /series/low-risk-ways-to-use-fsharp-at-work.html
+  posts:
+    - slug: low-risk-ways-to-use-fsharp-at-work
+      seriesOrder: 1
+      url: /posts/low-risk-ways-to-use-fsharp-at-work/
+      title: "Twenty six low-risk ways to use F# at work"
+      description: "You can start right now -- no permission needed"
+      nextUrl: /posts/low-risk-ways-to-use-fsharp-at-work-2/
+      nextTitle: "Using F# for development and devops scripts"
+      nextOrder: "2"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-2
+      seriesOrder: 2
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-2/
+      title: "Using F# for development and devops scripts"
+      description: "Twenty six low-risk ways to use F# at work (part 2)"
+      prevUrl: /posts/low-risk-ways-to-use-fsharp-at-work/
+      prevTitle: "Twenty six low-risk ways to use F# at work"
+      prevOrder: "1"
+      nextUrl: /posts/low-risk-ways-to-use-fsharp-at-work-3/
+      nextTitle: "Using F# for testing"
+      nextOrder: "3"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-3
+      seriesOrder: 3
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-3/
+      title: "Using F# for testing"
+      description: "Twenty six low-risk ways to use F# at work (part 3)"
+      prevUrl: /posts/low-risk-ways-to-use-fsharp-at-work-2/
+      prevTitle: "Using F# for development and devops scripts"
+      prevOrder: "2"
+      nextUrl: /posts/low-risk-ways-to-use-fsharp-at-work-4/
+      nextTitle: "Using F# for database related tasks"
+      nextOrder: "4"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-4
+      seriesOrder: 4
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-4/
+      title: "Using F# for database related tasks"
+      description: "Twenty six low-risk ways to use F# at work (part 4)"
+      prevUrl: /posts/low-risk-ways-to-use-fsharp-at-work-3/
+      prevTitle: "Using F# for testing"
+      prevOrder: "3"
+      nextUrl: /posts/low-risk-ways-to-use-fsharp-at-work-5/
+      nextTitle: "Other interesting ways of using F# at work"
+      nextOrder: "5"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-5
+      seriesOrder: 5
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-5/
+      title: "Other interesting ways of using F# at work"
+      description: "Twenty six low-risk ways to use F# at work (part 5)"
+      prevUrl: /posts/low-risk-ways-to-use-fsharp-at-work-4/
+      prevTitle: "Using F# for database related tasks"
+      prevOrder: "4"
+
+
+"Annotated walkthroughs":
+  title: Annotated walkthroughs
+  permalink: /series/annotated-walkthroughs.html
+  posts:
+    - slug: calculator-design
+      seriesOrder: 1
+      url: /posts/calculator-design/
+      title: "Calculator Walkthrough: Part 1"
+      description: "The type-first approach to designing a Calculator"
+      nextUrl: /posts/calculator-implementation/
+      nextTitle: "Calculator Walkthrough: Part 2"
+      nextOrder: "2"
+
+    - slug: calculator-implementation
+      seriesOrder: 2
+      url: /posts/calculator-implementation/
+      title: "Calculator Walkthrough: Part 2"
+      description: "Testing the design with a trial implementation"
+      prevUrl: /posts/calculator-design/
+      prevTitle: "Calculator Walkthrough: Part 1"
+      prevOrder: "1"
+      nextUrl: /posts/calculator-complete-v1/
+      nextTitle: "Calculator Walkthrough: Part 3"
+      nextOrder: "3"
+
+    - slug: calculator-complete-v1
+      seriesOrder: 3
+      url: /posts/calculator-complete-v1/
+      title: "Calculator Walkthrough: Part 3"
+      description: "Adding the services and user interface, and dealing with disaster"
+      prevUrl: /posts/calculator-implementation/
+      prevTitle: "Calculator Walkthrough: Part 2"
+      prevOrder: "2"
+      nextUrl: /posts/calculator-complete-v2/
+      nextTitle: "Calculator Walkthrough: Part 4"
+      nextOrder: "4"
+
+    - slug: calculator-complete-v2
+      seriesOrder: 4
+      url: /posts/calculator-complete-v2/
+      title: "Calculator Walkthrough: Part 4"
+      description: "Designing using a state machine"
+      prevUrl: /posts/calculator-complete-v1/
+      prevTitle: "Calculator Walkthrough: Part 3"
+      prevOrder: "3"
+      nextUrl: /posts/enterprise-tic-tac-toe/
+      nextTitle: "Enterprise Tic-Tac-Toe"
+      nextOrder: "5"
+
+    - slug: enterprise-tic-tac-toe
+      seriesOrder: 5
+      url: /posts/enterprise-tic-tac-toe/
+      title: "Enterprise Tic-Tac-Toe"
+      description: "A walkthrough of the design decisions in a purely functional implementation"
+      prevUrl: /posts/calculator-complete-v2/
+      prevTitle: "Calculator Walkthrough: Part 4"
+      prevOrder: "4"
+      nextUrl: /posts/enterprise-tic-tac-toe-2/
+      nextTitle: "Enterprise Tic-Tac-Toe, part 2"
+      nextOrder: "6"
+
+    - slug: enterprise-tic-tac-toe-2
+      seriesOrder: 6
+      url: /posts/enterprise-tic-tac-toe-2/
+      title: "Enterprise Tic-Tac-Toe, part 2"
+      description: "In which I throw away the previous design, and switch to a capability-centric approach"
+      prevUrl: /posts/enterprise-tic-tac-toe/
+      prevTitle: "Enterprise Tic-Tac-Toe"
+      prevOrder: "5"
+
+
+"A functional approach to authorization":
+  title: A functional approach to authorization
+  permalink: /series/a-functional-approach-to-authorization.html
+  posts:
+    - slug: capability-based-security
+      seriesOrder: 1
+      url: /posts/capability-based-security/
+      title: "A functional approach to authorization"
+      description: "Capability based security and more"
+      nextUrl: /posts/capability-based-security-2/
+      nextTitle: "Constraining capabilities based on identity and role"
+      nextOrder: "2"
+
+    - slug: capability-based-security-2
+      seriesOrder: 2
+      url: /posts/capability-based-security-2/
+      title: "Constraining capabilities based on identity and role"
+      description: "A functional approach to authorization, part 2"
+      prevUrl: /posts/capability-based-security/
+      prevTitle: "A functional approach to authorization"
+      prevOrder: "1"
+      nextUrl: /posts/capability-based-security-3/
+      nextTitle: "Using types as access tokens"
+      nextOrder: "3"
+
+    - slug: capability-based-security-3
+      seriesOrder: 3
+      url: /posts/capability-based-security-3/
+      title: "Using types as access tokens"
+      description: "A functional approach to authorization, part 3"
+      prevUrl: /posts/capability-based-security-2/
+      prevTitle: "Constraining capabilities based on identity and role"
+      prevOrder: "2"
+
+
+"Handling State":
+  title: Handling State
+  permalink: /series/handling-state.html
+  posts:
+    - slug: monadster
+      seriesOrder: 1
+      url: /posts/monadster/
+      title: "Dr Frankenfunctor and the Monadster"
+      description: "Or, how a 19th century scientist nearly invented the state monad"
+      nextUrl: /posts/monadster-2/
+      nextTitle: "Completing the body of the Monadster"
+      nextOrder: "2"
+
+    - slug: monadster-2
+      seriesOrder: 2
+      url: /posts/monadster-2/
+      title: "Completing the body of the Monadster"
+      description: "Dr Frankenfunctor and the Monadster, part 2"
+      prevUrl: /posts/monadster/
+      prevTitle: "Dr Frankenfunctor and the Monadster"
+      prevOrder: "1"
+      nextUrl: /posts/monadster-3/
+      nextTitle: "Refactoring the Monadster"
+      nextOrder: "3"
+
+    - slug: monadster-3
+      seriesOrder: 3
+      url: /posts/monadster-3/
+      title: "Refactoring the Monadster"
+      description: "Dr Frankenfunctor and the Monadster, part 3"
+      prevUrl: /posts/monadster-2/
+      prevTitle: "Completing the body of the Monadster"
+      prevOrder: "2"
+
+
+"Map and Bind and Apply, Oh my!":
+  title: Map and Bind and Apply, Oh my!
+  permalink: /series/map-and-bind-and-apply-oh-my.html
+  posts:
+    - slug: elevated-world
+      seriesOrder: 1
+      url: /posts/elevated-world/
+      title: "Understanding map and apply"
+      description: "A toolset for working with elevated worlds"
+      nextUrl: /posts/elevated-world-2/
+      nextTitle: "Understanding bind"
+      nextOrder: "2"
+
+    - slug: elevated-world-2
+      seriesOrder: 2
+      url: /posts/elevated-world-2/
+      title: "Understanding bind"
+      description: "Or, how to compose world-crossing functions"
+      prevUrl: /posts/elevated-world/
+      prevTitle: "Understanding map and apply"
+      prevOrder: "1"
+      nextUrl: /posts/elevated-world-3/
+      nextTitle: "Using the core functions in practice"
+      nextOrder: "3"
+
+    - slug: elevated-world-3
+      seriesOrder: 3
+      url: /posts/elevated-world-3/
+      title: "Using the core functions in practice"
+      description: "Working with independent and dependent data"
+      prevUrl: /posts/elevated-world-2/
+      prevTitle: "Understanding bind"
+      prevOrder: "2"
+      nextUrl: /posts/elevated-world-4/
+      nextTitle: "Understanding traverse and sequence"
+      nextOrder: "4"
+
+    - slug: elevated-world-4
+      seriesOrder: 4
+      url: /posts/elevated-world-4/
+      title: "Understanding traverse and sequence"
+      description: "Mixing lists and elevated values"
+      prevUrl: /posts/elevated-world-3/
+      prevTitle: "Using the core functions in practice"
+      prevOrder: "3"
+      nextUrl: /posts/elevated-world-5/
+      nextTitle: "Using map, apply, bind and sequence in practice"
+      nextOrder: "5"
+
+    - slug: elevated-world-5
+      seriesOrder: 5
+      url: /posts/elevated-world-5/
+      title: "Using map, apply, bind and sequence in practice"
+      description: "A real-world example that uses all the techniques"
+      prevUrl: /posts/elevated-world-4/
+      prevTitle: "Understanding traverse and sequence"
+      prevOrder: "4"
+      nextUrl: /posts/elevated-world-6/
+      nextTitle: "Reinventing the Reader monad"
+      nextOrder: "6"
+
+    - slug: elevated-world-6
+      seriesOrder: 6
+      url: /posts/elevated-world-6/
+      title: "Reinventing the Reader monad"
+      description: "Or, designing your own elevated world"
+      prevUrl: /posts/elevated-world-5/
+      prevTitle: "Using map, apply, bind and sequence in practice"
+      prevOrder: "5"
+      nextUrl: /posts/elevated-world-7/
+      nextTitle: "Map and Bind and Apply, a summary"
+      nextOrder: "7"
+
+    - slug: elevated-world-7
+      seriesOrder: 7
+      url: /posts/elevated-world-7/
+      title: "Map and Bind and Apply, a summary"
+      description: ""
+      prevUrl: /posts/elevated-world-6/
+      prevTitle: "Reinventing the Reader monad"
+      prevOrder: "6"
+
+
+"Recursive types and folds":
+  title: Recursive types and folds
+  permalink: /series/recursive-types-and-folds.html
+  posts:
+    - slug: recursive-types-and-folds
+      seriesOrder: 1
+      url: /posts/recursive-types-and-folds/
+      title: "Introduction to recursive types"
+      description: "Don't fear the catamorphism..."
+      nextUrl: /posts/recursive-types-and-folds-1b/
+      nextTitle: "Catamorphism examples"
+      nextOrder: "2"
+
+    - slug: recursive-types-and-folds-1b
+      seriesOrder: 2
+      url: /posts/recursive-types-and-folds-1b/
+      title: "Catamorphism examples"
+      description: "Applying the rules to other domains"
+      prevUrl: /posts/recursive-types-and-folds/
+      prevTitle: "Introduction to recursive types"
+      prevOrder: "1"
+      nextUrl: /posts/recursive-types-and-folds-2/
+      nextTitle: "Introducing Folds"
+      nextOrder: "3"
+
+    - slug: recursive-types-and-folds-2
+      seriesOrder: 3
+      url: /posts/recursive-types-and-folds-2/
+      title: "Introducing Folds"
+      description: "Threading state through a recursive data structure"
+      prevUrl: /posts/recursive-types-and-folds-1b/
+      prevTitle: "Catamorphism examples"
+      prevOrder: "2"
+      nextUrl: /posts/recursive-types-and-folds-2b/
+      nextTitle: "Understanding Folds"
+      nextOrder: "4"
+
+    - slug: recursive-types-and-folds-2b
+      seriesOrder: 4
+      url: /posts/recursive-types-and-folds-2b/
+      title: "Understanding Folds"
+      description: "Recursion vs. iteration"
+      prevUrl: /posts/recursive-types-and-folds-2/
+      prevTitle: "Introducing Folds"
+      prevOrder: "3"
+      nextUrl: /posts/recursive-types-and-folds-3/
+      nextTitle: "Generic recursive types"
+      nextOrder: "5"
+
+    - slug: recursive-types-and-folds-3
+      seriesOrder: 5
+      url: /posts/recursive-types-and-folds-3/
+      title: "Generic recursive types"
+      description: "Implementing a domain in three ways"
+      prevUrl: /posts/recursive-types-and-folds-2b/
+      prevTitle: "Understanding Folds"
+      prevOrder: "4"
+      nextUrl: /posts/recursive-types-and-folds-3b/
+      nextTitle: "Trees in the real world"
+      nextOrder: "6"
+
+    - slug: recursive-types-and-folds-3b
+      seriesOrder: 6
+      url: /posts/recursive-types-and-folds-3b/
+      title: "Trees in the real world"
+      description: "Examples using databases, JSON and error handling"
+      prevUrl: /posts/recursive-types-and-folds-3/
+      prevTitle: "Generic recursive types"
+      prevOrder: "5"
+
+
+"Understanding Parser Combinators":
+  title: Understanding Parser Combinators
+  permalink: /series/understanding-parser-combinators.html
+  posts:
+    - slug: understanding-parser-combinators
+      seriesOrder: 1
+      url: /posts/understanding-parser-combinators/
+      title: "Understanding Parser Combinators"
+      description: "Building a parser combinator library from scratch"
+      nextUrl: /posts/understanding-parser-combinators-2/
+      nextTitle: "Building a useful set of parser combinators"
+      nextOrder: "2"
+
+    - slug: understanding-parser-combinators-2
+      seriesOrder: 2
+      url: /posts/understanding-parser-combinators-2/
+      title: "Building a useful set of parser combinators"
+      description: "15 or so combinators that can be combined to parse almost anything"
+      prevUrl: /posts/understanding-parser-combinators/
+      prevTitle: "Understanding Parser Combinators"
+      prevOrder: "1"
+      nextUrl: /posts/understanding-parser-combinators-3/
+      nextTitle: "Improving the parser library"
+      nextOrder: "3"
+
+    - slug: understanding-parser-combinators-3
+      seriesOrder: 3
+      url: /posts/understanding-parser-combinators-3/
+      title: "Improving the parser library"
+      description: "Adding more informative errors"
+      prevUrl: /posts/understanding-parser-combinators-2/
+      prevTitle: "Building a useful set of parser combinators"
+      prevOrder: "2"
+      nextUrl: /posts/understanding-parser-combinators-4/
+      nextTitle: "Writing a JSON parser from scratch"
+      nextOrder: "4"
+
+    - slug: understanding-parser-combinators-4
+      seriesOrder: 4
+      url: /posts/understanding-parser-combinators-4/
+      title: "Writing a JSON parser from scratch"
+      description: "In 250 lines of code"
+      prevUrl: /posts/understanding-parser-combinators-3/
+      prevTitle: "Improving the parser library"
+      prevOrder: "3"
+
+

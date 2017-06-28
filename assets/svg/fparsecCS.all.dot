@@ -1,0 +1,30 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FParsec.CharStream" -> { rank=none; "FParsec.Buffer"; "FParsec.CaseFoldTable"; "FParsec.CharStreamIndexToken"; "FParsec.Cloning.CloneImage"; "FParsec.Cloning.Cloner"; "FParsec.Position"; "FParsec.StringBuffer"; "FParsec.Text"; "FParsec.TwoChars" }
+   "FParsec.CharStreamIndexToken" -> { rank=none; "FParsec.CharStream" }
+   "FParsec.CharStreamState`1" -> { rank=none; "FParsec.CharStream"; "FParsec.CharStreamIndexToken"; "FParsec.Position" }
+   "FParsec.CharStream`1" -> { rank=none; "FParsec.Buffer"; "FParsec.CharStream"; "FParsec.Position"; "FParsec.Text" }
+   "FParsec.Cloning.CloneEventHandlers" -> { rank=none; "FParsec.Cloning.CloneEvents"; "FParsec.Cloning.Cloner" }
+   "FParsec.Cloning.Cloner" -> { rank=none; "FParsec.Cloning.CloneEventHandlers"; "FParsec.Cloning.CloneEvents"; "FParsec.Cloning.CloneImage" }
+   "FParsec.ErrorMessage" -> { rank=none; "FParsec.ErrorMessageList"; "FParsec.ErrorMessageType"; "FParsec.Position"; "FParsec.Text" }
+   "FParsec.ErrorMessageList" -> { rank=none; "FParsec.ErrorMessage" }
+   "FParsec.Errors" -> { rank=none; "FParsec.ErrorMessage"; "FParsec.ErrorMessageList"; "FParsec.Strings" }
+   "FParsec.FastGenericEqualityERComparer`1" -> { rank=none; "FParsec.FastGenericEqualityERComparer" }
+   "FParsec.IdentifierValidator" -> { rank=none; "FParsec.Buffer"; "FParsec.Text"; "FParsec.UnmanagedMemoryPool" }
+   "FParsec.InfixOperator`3" -> { rank=none; "FParsec.Associativity" }
+   "FParsec.Internal.ParserCombinatorInInfiniteLoopHelper" -> { rank=none; "FParsec.CharStream" }
+   "FParsec.Many1CharsTill`3" -> { rank=none; "FParsec.CharStream"; "FParsec.Internal.ParserCombinatorInInfiniteLoopHelper"; "FParsec._16CharBuffer" }
+   "FParsec.Many1Chars`1" -> { rank=none; "FParsec.CharStream"; "FParsec.Internal.ParserCombinatorInInfiniteLoopHelper"; "FParsec._16CharBuffer" }
+   "FParsec.ManyCharsTill`3" -> { rank=none; "FParsec.CharStream"; "FParsec.ErrorMessageList" }
+   "FParsec.ManyChars`1" -> { rank=none; "FParsec.CharStream" }
+   "FParsec.OperatorPrecedenceParser`3" -> { rank=none; "FParsec.Associativity"; "FParsec.CharStream"; "FParsec.CharStreamIndexToken"; "FParsec.ErrorMessageList"; "FParsec.Errors"; "FParsec.Position"; "FParsec.TwoChars" }
+   "FParsec.Operator`3" -> { rank=none; "FParsec.Associativity"; "FParsec.OperatorType" }
+   "FParsec.Position" -> { rank=none; "FParsec.Text" }
+   "FParsec.Reply`1" -> { rank=none; "FParsec.ErrorMessageList"; "FParsec.ReplyStatus"; "FParsec.Text" }
+   "FParsec.Strings" -> { rank=none; "FParsec.Position"; "FParsec.Text" }
+   "FParsec.TernaryOperator`3" -> { rank=none; "FParsec.Associativity" }
+   "FParsec.Text" -> { rank=none; "FParsec.Buffer"; "FParsec.CaseFoldTable"; "FParsec.UnmanagedMemoryPool" }
+   }

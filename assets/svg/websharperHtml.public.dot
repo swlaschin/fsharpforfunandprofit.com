@@ -1,0 +1,16 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "IntelliFactory.WebSharper.Html.AttributeBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.Default" -> { rank=none; "IntelliFactory.WebSharper.Html.AttributeBuilder"; "IntelliFactory.WebSharper.Html.DeprecatedTagBuilder"; "IntelliFactory.WebSharper.Html.Element"; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.TagBuilder" }
+   "IntelliFactory.WebSharper.Html.DeprecatedAttributeBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.DeprecatedTagBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.Element"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.Element" -> { rank=none; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.EventsPervasives" -> { rank=none; "IntelliFactory.WebSharper.Html.Events" }
+   "IntelliFactory.WebSharper.Html.Html5AttributeBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.Html5TagBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.Element"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   "IntelliFactory.WebSharper.Html.Operators" -> { rank=none; "IntelliFactory.WebSharper.Html.Element" }
+   "IntelliFactory.WebSharper.Html.TagBuilder" -> { rank=none; "IntelliFactory.WebSharper.Html.Element"; "IntelliFactory.WebSharper.Html.IPagelet"; "IntelliFactory.WebSharper.Html.Interfaces" }
+   }

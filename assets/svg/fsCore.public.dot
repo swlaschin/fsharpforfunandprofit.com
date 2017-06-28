@@ -1,0 +1,35 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Microsoft.FSharp.Collections.Array2DModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.Array3DModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.ArrayModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.ListModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.MapModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.SeqModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Collections.SetModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.CommonExtensions" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.EventModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.FSharpAsync" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.FSharpAsyncBuilder" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.FSharpMailboxProcessor`1" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.LazyExtensions" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Control.ObservableModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.CompilationMappingAttribute" -> { rank=none; "Microsoft.FSharp.Core.SourceConstructFlags" }
+   "Microsoft.FSharp.Core.CompilationRepresentationAttribute" -> { rank=none; "Microsoft.FSharp.Core.CompilationRepresentationFlags" }
+   "Microsoft.FSharp.Core.CompilerServices.RuntimeHelpers" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.ExtraTopLevelOperators" -> { rank=none; "Microsoft.FSharp.Control.FSharpAsyncBuilder"; "Microsoft.FSharp.Core.Unit"; "Microsoft.FSharp.Quotations.FSharpExpr" }
+   "Microsoft.FSharp.Core.FuncConvert" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.Operators" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.OptionModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.PrintfModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Core.StringModule" -> { rank=none; "Microsoft.FSharp.Core.Unit" }
+   "Microsoft.FSharp.Quotations.DerivedPatternsModule" -> { rank=none; "Microsoft.FSharp.Core.Unit"; "Microsoft.FSharp.Quotations.FSharpExpr"; "Microsoft.FSharp.Quotations.FSharpVar" }
+   "Microsoft.FSharp.Quotations.ExprShapeModule" -> { rank=none; "Microsoft.FSharp.Quotations.FSharpExpr"; "Microsoft.FSharp.Quotations.FSharpVar" }
+   "Microsoft.FSharp.Quotations.FSharpExpr" -> { rank=none; "Microsoft.FSharp.Quotations.FSharpVar"; "Microsoft.FSharp.Reflection.UnionCaseInfo" }
+   "Microsoft.FSharp.Quotations.FSharpExpr`1" -> { rank=none; "Microsoft.FSharp.Quotations.FSharpExpr" }
+   "Microsoft.FSharp.Quotations.PatternsModule" -> { rank=none; "Microsoft.FSharp.Quotations.FSharpExpr"; "Microsoft.FSharp.Quotations.FSharpVar"; "Microsoft.FSharp.Reflection.UnionCaseInfo" }
+   "Microsoft.FSharp.Reflection.FSharpValue" -> { rank=none; "Microsoft.FSharp.Reflection.UnionCaseInfo" }
+   }

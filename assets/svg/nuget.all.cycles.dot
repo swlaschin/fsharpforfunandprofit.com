@@ -1,0 +1,30 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "NuGet.Constants" -> { rank=none; "NuGet.IPackage" }
+   "NuGet.Crc32" -> { rank=none; "NuGet.StreamExtensions" }
+   "NuGet.DataServicePackage" -> { rank=none; "NuGet.MachineCache"; "NuGet.OptimizedZipPackage"; "NuGet.PackageRepositoryExtensions"; "NuGet.ZipPackage" }
+   "NuGet.DataServicePackageRepository" -> { rank=none; "NuGet.DataServicePackage"; "NuGet.PackageRepositoryExtensions" }
+   "NuGet.IPackage" -> { rank=none; "NuGet.IPackageMetadata" }
+   "NuGet.IPackageMetadata" -> { rank=none; "NuGet.PackageDependencySet"; "NuGet.PackageReferenceSet" }
+   "NuGet.LocalPackageRepository" -> { rank=none; "NuGet.OptimizedZipPackage"; "NuGet.UnzippedPackage" }
+   "NuGet.MachineCache" -> { rank=none; "NuGet.LocalPackageRepository" }
+   "NuGet.Manifest" -> { rank=none; "NuGet.ManifestReader"; "NuGet.ManifestSchemaUtility" }
+   "NuGet.ManifestReader" -> { rank=none; "NuGet.Manifest" }
+   "NuGet.ManifestSchemaUtility" -> { rank=none; "NuGet.Manifest" }
+   "NuGet.NetPortableProfile" -> { rank=none; "NuGet.NetPortableProfileTable"; "NuGet.VersionUtility" }
+   "NuGet.NetPortableProfileCollection" -> { rank=none; "NuGet.NetPortableProfile" }
+   "NuGet.NetPortableProfileTable" -> { rank=none; "NuGet.NetPortableProfile"; "NuGet.NetPortableProfileCollection" }
+   "NuGet.OptimizedZipPackage" -> { rank=none; "NuGet.ZipPackage" }
+   "NuGet.PackageDependency" -> { rank=none; "NuGet.VersionUtility" }
+   "NuGet.PackageDependencySet" -> { rank=none; "NuGet.PackageDependency" }
+   "NuGet.PackageReferenceSet" -> { rank=none; "NuGet.VersionUtility" }
+   "NuGet.PackageRepositoryExtensions" -> { rank=none; "NuGet.DataServicePackageRepository" }
+   "NuGet.PackageUtility" -> { rank=none; "NuGet.PackageRepositoryExtensions" }
+   "NuGet.StreamExtensions" -> { rank=none; "NuGet.Crc32" }
+   "NuGet.UnzippedPackage" -> { rank=none; "NuGet.PackageUtility" }
+   "NuGet.VersionUtility" -> { rank=none; "NuGet.Constants"; "NuGet.NetPortableProfile" }
+   "NuGet.ZipPackage" -> { rank=none; "NuGet.PackageUtility" }
+   }

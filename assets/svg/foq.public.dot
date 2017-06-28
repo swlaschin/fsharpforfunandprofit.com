@@ -1,0 +1,14 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Foq.IMockObject" -> { rank=none; "Foq.Invocation" }
+   "Foq.Linq.Mock" -> { rank=none; "Foq.Times" }
+   "Foq.Linq.Mock`1" -> { rank=none; "Foq.Linq.MockMode" }
+   "Foq.Linq.Times" -> { rank=none; "Foq.Times" }
+   "Foq.Mock" -> { rank=none; "Foq.Times" }
+   "Foq.Mock`1" -> { rank=none; "Foq.MockMode" }
+   "Foq.Operators" -> { rank=none; "Foq.Times" }
+   "Foq.TimesModule" -> { rank=none; "Foq.Times" }
+   }

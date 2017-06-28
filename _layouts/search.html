@@ -1,0 +1,34 @@
+---
+layout: default
+---
+
+<div class="container">
+<div class="row">
+
+{% include series_toc_sidebar.inc %}
+
+<div class="span8">
+
+{% unless page.hideHeader %}
+	<div class="page-header">
+	<h1>{{ page.title | escape }}</h1>
+	{% if page.description %}
+	<p class="subtitle">{{ page.description | escape }}</p>
+	{% endif %}
+	</div>
+{% endunless  %}
+		
+Search: <gcse:search></gcse:search>
+
+</div>
+
+
+<div class="span2 sidebar">
+{% include sidebar.inc %}
+</div>
+
+		
+	
+</div>
+</div>
+	

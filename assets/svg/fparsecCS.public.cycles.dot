@@ -1,0 +1,8 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FParsec.CharStream" -> { rank=none; "FParsec.CharStreamIndexToken" }
+   "FParsec.CharStreamIndexToken" -> { rank=none; "FParsec.CharStream" }
+   }

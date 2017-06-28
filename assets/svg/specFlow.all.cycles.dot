@@ -1,0 +1,17 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "TechTalk.SpecFlow.Assist.PropertyExtensionMethods" -> { rank=none; "TechTalk.SpecFlow.Assist.TEHelpers" }
+   "TechTalk.SpecFlow.Assist.TEHelpers" -> { rank=none; "TechTalk.SpecFlow.Assist.PropertyExtensionMethods" }
+   "TechTalk.SpecFlow.Bindings.Reflection.BindingReflectionExtensions" -> { rank=none; "TechTalk.SpecFlow.Bindings.Reflection.RuntimeBindingMethod" }
+   "TechTalk.SpecFlow.Bindings.Reflection.RuntimeBindingMethod" -> { rank=none; "TechTalk.SpecFlow.Bindings.Reflection.BindingReflectionExtensions" }
+   "TechTalk.SpecFlow.ITestRunner" -> { rank=none; "TechTalk.SpecFlow.ScenarioContext" }
+   "TechTalk.SpecFlow.Infrastructure.IStepErrorHandler" -> { rank=none; "TechTalk.SpecFlow.Infrastructure.TestExecutionEngine" }
+   "TechTalk.SpecFlow.Infrastructure.TestExecutionEngine" -> { rank=none; "TechTalk.SpecFlow.Infrastructure.IStepErrorHandler" }
+   "TechTalk.SpecFlow.ScenarioContext" -> { rank=none; "TechTalk.SpecFlow.ITestRunner" }
+   "TechTalk.SpecFlow.Table" -> { rank=none; "TechTalk.SpecFlow.TableRow"; "TechTalk.SpecFlow.TableRows" }
+   "TechTalk.SpecFlow.TableRow" -> { rank=none; "TechTalk.SpecFlow.Table" }
+   "TechTalk.SpecFlow.TableRows" -> { rank=none; "TechTalk.SpecFlow.TableRow" }
+   }

@@ -1,0 +1,19 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Microsoft.FSharp.Math.ComplexModule" -> { rank=none; "Microsoft.FSharp.Math.Complex" }
+   "Microsoft.FSharp.Math.ComplexTopLevelOperators" -> { rank=none; "Microsoft.FSharp.Math.Complex" }
+   "Microsoft.FSharp.Math.Instances" -> { rank=none; "Microsoft.FSharp.Math.BigRational" }
+   "Microsoft.FSharp.Math.NumericLiteralN" -> { rank=none; "Microsoft.FSharp.Math.BigRational" }
+   "Microsoft.FSharp.Text.ArgInfo" -> { rank=none; "Microsoft.FSharp.Text.ArgType" }
+   "Microsoft.FSharp.Text.ArgParser" -> { rank=none; "Microsoft.FSharp.Text.ArgInfo" }
+   "Microsoft.FSharp.Text.Lexing.LexBuffer`1" -> { rank=none; "Microsoft.FSharp.Text.Lexing.Position" }
+   "Microsoft.FSharp.Text.Parsing.IParseState" -> { rank=none; "Microsoft.FSharp.Text.Lexing.Position" }
+   "Microsoft.FSharp.Text.Parsing.ParseErrorContext`1" -> { rank=none; "Microsoft.FSharp.Text.Parsing.IParseState" }
+   "Microsoft.FSharp.Text.StructuredFormat.DisplayModule" -> { rank=none; "Microsoft.FSharp.Text.StructuredFormat.FormatOptions"; "Microsoft.FSharp.Text.StructuredFormat.Layout" }
+   "Microsoft.FSharp.Text.StructuredFormat.IEnvironment" -> { rank=none; "Microsoft.FSharp.Text.StructuredFormat.Layout" }
+   "Microsoft.FSharp.Text.StructuredFormat.Layout" -> { rank=none; "Microsoft.FSharp.Text.StructuredFormat.Joint" }
+   "Microsoft.FSharp.Text.StructuredFormat.LayoutOpsModule" -> { rank=none; "Microsoft.FSharp.Text.StructuredFormat.Layout" }
+   }
