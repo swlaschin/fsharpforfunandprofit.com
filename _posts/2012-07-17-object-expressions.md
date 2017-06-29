@@ -19,7 +19,7 @@ To do this, you use the syntax `new MyInterface with ...`, and the wrap the whol
 
 Here is some example code that creates a number of objects, each of which implements `IDisposable`.
 
-{% highlight fsharp %}
+```fsharp
 // create a new object that implements IDisposable
 let makeResource name = 
    { new System.IDisposable 
@@ -35,7 +35,7 @@ let useAndDisposeResources =
     use r2 = makeResource "second resource"
     printfn "using second resource" 
     printfn "done." 
-{% endhighlight %}
+```
 
 If you execute this code, you will see the output below. You can see that `Dispose()` is indeed being called when the objects go out of scope. 
 
@@ -55,7 +55,7 @@ first resource disposed
 
 We can take the same approach with the `IAddingService` and create one on the fly as well.
 
-{% highlight fsharp %}
+```fsharp
 let makeAdder id = 
    { new IAddingService with 
      member this.Add x y =
@@ -70,6 +70,6 @@ let testAdders =
         let adder = makeAdder i
         let result = adder.Add i i 
         () //ignore result
-{% endhighlight %}
+```
 
 Object expressions are extremely convenient, and can greatly reduce the number of classes you need to create if you are interacting with an interface heavy library.

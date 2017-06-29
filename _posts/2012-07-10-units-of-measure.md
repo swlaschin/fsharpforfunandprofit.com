@@ -15,32 +15,32 @@ The F# compiler will then make sure that only numerics with the same unit-of-mea
 
 A unit of measure definition consists of the attribute `[<Measure>]`, followed by the `type` keyword and then a name. For example:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] 
 type cm
 
 [<Measure>] 
 type inch
-{% endhighlight %} 
+``` 
 
 Often you will see the whole definition written on one line instead:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type cm
 [<Measure>] type inch
-{% endhighlight %} 
+``` 
 
 Once you have a definition, you can associate a measure type with a numeric type by using angle brackets with measure name inside:
 
-{% highlight fsharp %}
+```fsharp
 let x = 1<cm>    // int
 let y = 1.0<cm>  // float
 let z = 1.0m<cm> // decimal 
-{% endhighlight %} 
+``` 
 
 You can even combine measures within the angle brackets to create compound measures:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type m
 [<Measure>] type sec
 [<Measure>] type kg
@@ -50,20 +50,20 @@ let time = 2.0<sec>
 let speed = 2.0<m/sec>    
 let acceleration = 2.0<m/sec^2>    
 let force = 5.0<kg m/sec^2>    
-{% endhighlight %} 
+``` 
 
 ### Derived units of measure
 
 If you use certain combinations of units a lot, you can define a *derived* measure and use that instead.
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type N = kg m/sec^2
 
 let force1 = 5.0<kg m/sec^2>    
 let force2 = 5.0<N>
 
 force1 = force2 // true
-{% endhighlight %} 
+``` 
 
 ### SI units and constants
 
@@ -77,7 +77,7 @@ If you are using the units-of-measure for physics or other scientific applicatio
 
 The units-of-measure are just like proper types; you get static checking *and* type inference.
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type foot
 [<Measure>] type inch
 
@@ -89,15 +89,15 @@ let distance2 = distance * 2.0
 // type inference for input and output
 let addThreeFeet ft = 
     ft + 3.0<foot>    
-{% endhighlight %} 
+``` 
 
 And of course, when using them, the type checking is strict:
 
-{% highlight fsharp %}
+```fsharp
 addThreeFeet 1.0        //error
 addThreeFeet 1.0<inch>  //error
 addThreeFeet 1.0<foot>  //OK
-{% endhighlight %} 
+``` 
 
 
 
@@ -106,13 +106,13 @@ addThreeFeet 1.0<foot>  //OK
 If you want to be explicit in specifying a unit-of-measure type annotation, you can do so in the usual way. 
 The numeric type must have angle brackets with the unit-of-measure.
 
-{% highlight fsharp %}
+```fsharp
 let untypedTimesThree (ft:float) = 
     ft * 3.0
 
 let footTimesThree (ft:float<foot>) = 
     ft * 3.0
-{% endhighlight %} 
+``` 
 
     
 ### Combining units of measure with multiplication and division
@@ -120,7 +120,7 @@ let footTimesThree (ft:float<foot>) =
 The compiler understands how units of measure transform when individual values are multiplied or divided.  
 For example, in the following, the `speed` value has been automatically given the measure `<m/sec>`.
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type m
 [<Measure>] type sec
 [<Measure>] type kg
@@ -131,7 +131,7 @@ let speed = distance/time
 let acceleration = speed/time
 let mass = 5.0<kg>    
 let force = mass * speed/time
-{% endhighlight %} 
+``` 
 
 Look at the types of the `acceleration` and `force` values above to see other examples of how this works.
 
@@ -140,26 +140,26 @@ Look at the types of the `acceleration` and `force` values above to see other ex
 
 A numeric value without any specific unit of measure is called *dimensionless*. If you want to be explicit that a value is dimensionless, you can use the measure called `1`.
 
-{% highlight fsharp %}
+```fsharp
 // dimensionless
 let x = 42
 
 // also dimensionless
 let x = 42<1>
-{% endhighlight %} 
+``` 
 
 ### Mixing units of measure with dimensionless values
 
 Note that you cannot *add* a dimensionless value to a value with a unit of measure, but you can *multiply or divide* by dimensionless values.
 
-{% highlight fsharp %}
+```fsharp
 // test addition
 3.0<foot> + 2.0<foot>  // OK
 3.0<foot> + 2.0        // error
 
 // test multiplication
 3.0<foot> * 2.0        // OK   
-{% endhighlight %} 
+``` 
 
 But see the section on "generics" below for an alternative approach.
 
@@ -171,7 +171,7 @@ It's straightforward. You first need to define a conversion value that uses *bot
 
 Here's an example with feet and inches:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type foot
 [<Measure>] type inch
 
@@ -181,11 +181,11 @@ let inchesPerFoot = 12.0<inch/foot>
 // test    
 let distanceInFeet = 3.0<foot>    
 let distanceInInches = distanceInFeet * inchesPerFoot 
-{% endhighlight %} 
+``` 
 
 And here's an example with temperature:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type degC
 [<Measure>] type degF
 
@@ -194,50 +194,50 @@ let convertDegCToF c =
 
 // test    
 let f = convertDegCToF 0.0<degC>    
-{% endhighlight %} 
+``` 
 
 The compiler correctly inferred the signature of the conversion function.
 
-{% highlight fsharp %}
+```fsharp
 val convertDegCToF : float<degC> -> float<degF>
-{% endhighlight %} 
+``` 
 
 Note that the constant `32.0<degF>` was explicitly annotated with the `degF` so that the result would be in `degF` as well. If you leave off this annotation, the result is a plain float, and the function signature changes to something much stranger! Try it and see:
 
-{% highlight fsharp %}
+```fsharp
 let badConvertDegCToF c = 
     c * 1.8<degF/degC> + 32.0
-{% endhighlight %} 
+``` 
 
 ### Conversion between dimensionless values and unit-of-measure values
 
 To convert from a dimensionless numeric value to a value with a measure type, just multiply it by one, but with the one annotated with the appropriate unit.
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type foot
 
 let ten = 10.0   // normal
 
 //converting from non-measure to measure 
 let tenFeet = ten * 1.0<foot>  // with measure
-{% endhighlight %} 
+``` 
 
 And to convert the other way, either divide by one, or multiply with the inverse unit.
 
-{% highlight fsharp %}
+```fsharp
 //converting from measure to non-measure
 let tenAgain = tenFeet / 1.0<foot>  // without measure
 let tenAnotherWay = tenFeet * 1.0<1/foot>  // without measure
-{% endhighlight %} 
+``` 
 
 The above methods are type safe, and will cause errors if you try to convert the wrong type. 
 
 If you don't care about type checking, you can do the conversion with the standard casting functions instead:
 
-{% highlight fsharp %}
+```fsharp
 let tenFeet = 10.0<foot>  // with measure
 let tenDimensionless = float tenFeet // without measure
-{% endhighlight %} 
+``` 
 
 ## Generic units of measure
 
@@ -245,36 +245,36 @@ Often, we want to write functions that will work with any value, no matter what 
 
 For example, here is our old friend `square`. But when we try to use it with a unit of measure, we get an error.
 
-{% highlight fsharp %}
+```fsharp
 let square x = x * x
 
 // test
 square 10<foot>   // error
-{% endhighlight %} 
+``` 
 
 What can we do? We don't want to specify a particular unit of measure, but on the other hand we must specify *something*, because the simple definition above doesn't work.
 
 The answer is to use *generic* units of measure, indicated with an underscore where the measure name normally is.
 
-{% highlight fsharp %}
+```fsharp
 let square (x:int<_>) = x * x
 
 // test
 square 10<foot>   // OK
 square 10<sec>   // OK
-{% endhighlight %} 
+``` 
 
 Now the `square` function works as desired, and you can see that the function signature has used the letter `'u` to indicate a generic unit of measure. 
 And also note that the compiler has inferred that the return value is of type "unit squared".
 
-{% highlight fsharp %}
+```fsharp
 val square : int<'u> -> int<'u ^ 2>
-{% endhighlight %} 
+``` 
 
 
 Indeed, you can specify the generic type using letters as well if you like:
 
-{% highlight fsharp %}
+```fsharp
 // with underscores
 let square (x:int<_>) = x * x
 
@@ -288,53 +288,53 @@ let speed (distance:float<_>) (time:float<_>) =
 // with letters
 let speed (distance:float<'u>) (time:float<'v>) = 
     distance / time
-{% endhighlight %} 
+``` 
 
 You may need to use letters sometimes to explicitly indicate that the units are the same:
 
-{% highlight fsharp %}
+```fsharp
 let ratio (distance1:float<'u>) (distance2:float<'u>) = 
     distance1 / distance2
-{% endhighlight %} 
+``` 
 
 
 ### Using generic measures with lists
 
 You cannot always use a measure directly. For example, you cannot define a list of feet directly:
 
-{% highlight fsharp %}
+```fsharp
 //error
 [1.0<foot>..10.0<foot>]
-{% endhighlight %} 
+``` 
 
 Instead, you have to use the "multiply by one" trick mentioned above:
 
-{% highlight fsharp %}
+```fsharp
 //converting using map -- OK
 [1.0..10.0] |> List.map (fun i-> i * 1.0<foot>)
 
 //using a generator -- OK
 [ for i in [1.0..10.0] -> i * 1.0<foot> ]
-{% endhighlight %} 
+``` 
 
 
 ### Using generic measures for constants
 
 Multiplication by constants is OK (as we saw above), but if you try to do addition, you will get an error.
 
-{% highlight fsharp %}
+```fsharp
 let x = 10<foot> + 1  // error
-{% endhighlight %} 
+``` 
 
 The fix is to add a generic type to the constant, like this:
 
-{% highlight fsharp %}
+```fsharp
 let x = 10<foot> + 1<_>  // ok
-{% endhighlight %} 
+``` 
 
 A similar situation occurs when passing in constants to a higher order function such as `fold`.
 
-{% highlight fsharp %}
+```fsharp
 let feet = [ for i in [1.0..10.0] -> i * 1.0<foot> ]
 
 // OK
@@ -345,13 +345,13 @@ feet |> List.fold (+) 0.0
 
 // Fixed with generic 0
 feet |> List.fold (+) 0.0<_>  
-{% endhighlight %} 
+``` 
 
 ### Issues with generic measures with functions
 
 There are some cases where type inference fails us. For example, let's try to create a simple `add1` function that uses units.
 
-{% highlight fsharp %}
+```fsharp
 // try to define a generic function
 let add1 n = n + 1.0<_>
 // warning FS0064: This construct causes code to be less generic than 
@@ -362,49 +362,49 @@ let add1 n = n + 1.0<_>
 add1 10.0<foot>   
 // error FS0001: This expression was expected to have type float    
 // but here has type float<foot>    
-{% endhighlight %} 
+``` 
 
 The warning message has the clue. The input parameter `n` has no measure, so the measure for `1<_>` will always be ignored. The `add1` function does not have a unit of measure so when you try to call it with a value that does have a measure, you get an error.
 
 So maybe the solution is to explicitly annotate the measure type, like this:
 
-{% highlight fsharp %}
+```fsharp
 // define a function with explicit type annotation
 let add1 (n:float<'u>) : float<'u> =  n + 1.0<_>
-{% endhighlight %} 
+``` 
 
 But no, you get the same warning FS0064 again.
 
 Maybe we can replace the underscore with something more explicit such as `1.0<'u>`?
 
-{% highlight fsharp %}
+```fsharp
 let add1 (n:float<'u>) : float<'u> = n + 1.0<'u>  
 // error FS0634: Non-zero constants cannot have generic units. 
-{% endhighlight %} 
+``` 
 
 But this time we get a compiler error!
 
 The answer is to use one of the helpful utility functions in the LanguagePrimitives module: `FloatWithMeasure`, `Int32WithMeasure`, etc.
 
-{% highlight fsharp %}
+```fsharp
 // define the function
 let add1 n  = 
     n + (LanguagePrimitives.FloatWithMeasure 1.0)
 
 // test
 add1 10.0<foot>   // Yes!
-{% endhighlight %} 
+``` 
 
 And for generic ints, you can use the same approach:
 
-{% highlight fsharp %}
+```fsharp
 open LanguagePrimitives
 
 let add2Int n  = 
     n + (Int32WithMeasure 2)
 
 add2Int 10<foot>   // OK
-{% endhighlight %} 
+``` 
 
 ### Using generic measures with type definitions
 
@@ -412,34 +412,34 @@ That takes care of functions. What about when we need to use a unit of measure i
 
 Say we want to define a generic coordinate record that works with an unit of measure. Let's start with a naive approach:
 
-{% highlight fsharp %}
+```fsharp
 type Coord = 
     { X: float<'u>; Y: float<'u>; }
 // error FS0039: The type parameter 'u' is not defined
-{% endhighlight %} 
+``` 
 
 That didn't work, so what about adding the measure as a type parameter:
 
-{% highlight fsharp %}
+```fsharp
 type Coord<'u> = 
     { X: float<'u>; Y: float<'u>; }
 // error FS0702: Expected unit-of-measure parameter, not type parameter.
 // Explicit unit-of-measure parameters must be marked with the [<Measure>] attribute.
-{% endhighlight %} 
+``` 
 
 That didn't work either, but the error message tells us what to do. Here is the final, correct version, using the `Measure` attribute:
 
-{% highlight fsharp %}
+```fsharp
 type Coord<[<Measure>] 'u> = 
     { X: float<'u>; Y: float<'u>; }
 
 // Test
 let coord = {X=10.0<foot>; Y=2.0<foot>}
-{% endhighlight %} 
+``` 
 
 In some cases, you might need to define more than one measure. In the following example, the currency exchange rate is defined as the ratio of two currencies, and so needs two generic measures to be defined.
  
-{% highlight fsharp %}
+```fsharp
 type CurrencyRate<[<Measure>]'u, [<Measure>]'v> = 
     { Rate: float<'u/'v>; Date: System.DateTime}
 
@@ -454,16 +454,16 @@ let eurToGbpOnMar1 = {Rate= 0.8<GBP/EUR>; Date=mar1 }
 
 let tenEur = 10.0<EUR>
 let tenEurInUsd = eurToUsdOnMar1.Rate * tenEur 
-{% endhighlight %} 
+``` 
 
 And of course, you can mix regular generic types with unit of measure types. 
 
 For example, a product price might consist of a generic product type, plus a price with a currency:
 
-{% highlight fsharp %} 
+```fsharp 
 type ProductPrice<'product, [<Measure>] 'currency> = 
     { Product: 'product; Price: float<'currency>; }
-{% endhighlight %} 
+``` 
     
 ### Units of measure at runtime
 

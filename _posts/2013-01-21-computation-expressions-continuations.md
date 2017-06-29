@@ -11,7 +11,7 @@ In the previous post we saw how some complex code could be condensed using compu
 
 Here's the code before using a computation expression:
 
-{% highlight fsharp %}
+```fsharp
 
 let log p = printfn "expression is %A" p
 
@@ -24,11 +24,11 @@ let loggedWorkflow =
     log z
     //return
     z
-{% endhighlight fsharp %}
+```
 
 And here's the same code after using a computation expression:
 
-{% highlight fsharp %}
+```fsharp
 let loggedWorkflow = 
     logger
         {
@@ -37,7 +37,7 @@ let loggedWorkflow =
         let! z = x + y
         return z
         }
-{% endhighlight fsharp %}
+```
 
 The use of `let!` rather than a normal `let` is important.  Can we emulate this ourselves so we can understand what is going on?  Yes, but we need to understand continuations first.
 
@@ -47,7 +47,7 @@ In imperative programming, we have the concept of "returning" from a function. W
 
 Here is some typical C# code which works like this. Notice the use of the `return` keyword.
 
-{% highlight csharp %}
+```csharp
 public int Divide(int top, int bottom)
 {
     if (bottom==0)
@@ -65,7 +65,7 @@ public bool IsEven(int aNumber)
     var isEven = (aNumber % 2 == 0);
     return isEven;
 }
-{% endhighlight csharp %}
+```
 
 You've seen this a million times, but there is a subtle point about this approach that you might not have considered: *the called function always decides what to do*.
 
@@ -77,7 +77,7 @@ So this is what continuations are.  A **continuation** is simply a function that
 
 Here's the same C# code rewritten to allow the caller to pass in functions which the callee uses to handle each case. If it helps, you can think of this as somewhat analogous to a visitor pattern. Or maybe not.
 
-{% highlight csharp %}
+```csharp
 public T Divide<T>(int top, int bottom, Func<T> ifZero, Func<int,T> ifSuccess)
 {
     if (bottom==0)
@@ -100,7 +100,7 @@ public T IsEven<T>(int aNumber, Func<int,T> ifOdd, Func<int,T> ifEven)
     {   return ifOdd(aNumber);
     }
 }
-{% endhighlight csharp %}
+```
 
 Note that the C# functions have been changed to return a generic `T` now, and both continuations are a `Func` that returns a `T`.
 
@@ -108,7 +108,7 @@ Well, passing in lots of `Func` parameters always looks pretty ugly in C#, so it
 
 Here's the "before" code:
 
-{% highlight fsharp %}
+```fsharp
 let divide top bottom = 
     if (bottom=0) 
     then invalidOp "div by 0"
@@ -116,11 +116,11 @@ let divide top bottom =
     
 let isEven aNumber = 
     aNumber % 2 = 0     
-{% endhighlight fsharp %}
+```
 
 and here's the "after" code:
 
-{% highlight fsharp %}
+```fsharp
 let divide ifZero ifSuccess top bottom = 
     if (bottom=0) 
     then ifZero()
@@ -130,7 +130,7 @@ let isEven ifOdd ifEven aNumber =
     if (aNumber % 2 = 0)
     then aNumber |> ifEven 
     else aNumber |> ifOdd 
-{% endhighlight fsharp %}
+```
 
 A few things to note. First, you can see that I have put the extra functions (`ifZero`, etc) *first* in the parameter list, rather than last, as in the C# example. Why? Because I am probably going to want to use [partial application](/posts/partial-application/).
 
@@ -146,7 +146,7 @@ Here are three scenarios we can create quickly:
 * convert the result to an option using `None` for the bad case and `Some` for the good case,
 * or throw an exception in the bad case and just return the result in the good case.
 
-{% highlight fsharp %}
+```fsharp
 // Scenario 1: pipe the result into a message
 // ----------------------------------------
 // setup the functions to print a message
@@ -181,13 +181,13 @@ let divide3  = divide ifZero3 ifSuccess3
 //test
 let good3 = divide3 6 3
 let bad3 = divide3 6 0
-{% endhighlight fsharp %}
+```
 
 Notice that with this approach, the caller *never* has to catch an exception from `divide` anywhere. The caller decides whether an exception will be thrown, not the callee. So not only has the `divide` function become much more reusable in different contexts,  but the cyclomatic complexity has just dropped a level as well.
 
 The same three scenarios can be applied to the `isEven` implementation:
 
-{% highlight fsharp %}
+```fsharp
 // Scenario 1: pipe the result into a message
 // ----------------------------------------
 // setup the functions to print a message
@@ -222,7 +222,7 @@ let isEven3  = isEven ifOdd3 ifEven3
 //test
 let good3 = isEven3 6 
 let bad3 = isEven3 5 
-{% endhighlight fsharp %}
+```
 
 In this case, the benefits are subtler, but the same: the caller never had to handle booleans with an `if/then/else` anywhere.  There is less complexity and less chance of error.
 
@@ -230,20 +230,20 @@ It might seem like a trivial difference, but by passing functions around like th
 
 We have also met continuations before, in the series on [designing with types](/posts/designing-with-types-single-case-dus/). We saw that their use enabled the caller to decide what would happen in case of possible validation errors in a constructor, rather than just throwing an exception.
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 
 let CreateEmailAddressWithContinuations success failure (s:string) = 
     if System.Text.RegularExpressions.Regex.IsMatch(s,@"^\S+@\S+\.\S+$") 
         then success (EmailAddress s)
         else failure "Email address must contain an @ sign"
-{% endhighlight fsharp %}
+```
         
 The success function takes the email as a parameter and the error function takes a string. Both functions must return the same type, but the type is up to you.
 
 And here is a simple example of the continuations in use. Both functions do a printf, and return nothing (i.e. unit).
 
-{% highlight fsharp %}
+```fsharp
 // setup the functions 
 let success (EmailAddress s) = printfn "success creating email %s" s        
 let failure  msg = printfn "error creating email: %s" msg
@@ -252,7 +252,7 @@ let createEmail = CreateEmailAddressWithContinuations success failure
 // test
 let goodEmail = createEmail "x@example.com"
 let badEmail = createEmail "example.com"
-{% endhighlight fsharp %}
+```
 
 ### Continuation passing style
 
@@ -262,24 +262,24 @@ To see the difference, let's look at the standard, direct style of programming.
 
 When you use the direct style, you go "in" and "out" of functions, like this
 
-{% highlight text %}
+```text
 call a function ->
    <- return from the function
 call another function ->
    <- return from the function
 call yet another function ->
    <- return from the function
-{% endhighlight  %}
+```
  
 In continuation passing style, on the other hand, you end up with a chain of functions, like this: 
  
-{% highlight text %}
+```text
 evaluate something and pass it into ->
    a function that evaluates something and passes it into ->
       another function that evaluates something and passes it into ->
          yet another function that evaluates something and passes it into ->
             ...etc...
-{% endhighlight  %}
+```
 
 There is obviously a big difference between the two styles.
 
@@ -299,68 +299,68 @@ Remember that a (non-top-level) "let" can never be used in isolation -- it must 
 
 That is:
 
-{% highlight fsharp %}
+```fsharp
 let x = someExpression
-{% endhighlight fsharp %}
+```
 
 really means:
 
-{% highlight fsharp %}
+```fsharp
 let x = someExpression in [an expression involving x]
-{% endhighlight fsharp %}
+```
 
 And then every time you see the `x` in the second expression (the body expression), substitute it with the first expression (`someExpression`).
 
 So for example, the expression:
 
-{% highlight fsharp %}
+```fsharp
 let x = 42
 let y = 43
 let z = x + y          
-{% endhighlight fsharp %}
+```
   
 really means (using the verbose `in` keyword):
 
-{% highlight fsharp %}
+```fsharp
 let x = 42 in   
   let y = 43 in 
     let z = x + y in
        z    // the result
-{% endhighlight fsharp %}
+```
 
 Now funnily enough, a lambda looks very similar to a `let`:
 
-{% highlight fsharp %}
+```fsharp
 fun x -> [an expression involving x]
-{% endhighlight fsharp %}
+```
 
 and if we pipe in the value of `x` as well, we get the following:
 
-{% highlight fsharp %}
+```fsharp
 someExpression |> (fun x -> [an expression involving x] )
-{% endhighlight fsharp %}
+```
 
 Doesn't this look awfully like a `let` to you? Here is a let and a lambda side by side:
 
-{% highlight fsharp %}
+```fsharp
 // let
 let x = someExpression in [an expression involving x]
 
 // pipe a value into a lambda
 someExpression |> (fun x -> [an expression involving x] )
-{% endhighlight fsharp %}
+```
 
 They both have an `x`, and a `someExpression`, and everywhere you see `x` in the body of the lambda you replace it with  `someExpression`.
 Yes, the `x` and the `someExpression` are reversed in the lambda case, but otherwise it is basically the same thing as a `let`.
 
 So, using this technique, we can rewrite the original example in this style:
 
-{% highlight fsharp %}
+```fsharp
 42 |> (fun x ->
   43 |> (fun y -> 
      x + y |> (fun z -> 
        z)))
-{% endhighlight fsharp %}
+```
 
 When it is written this way, you can see that we have transformed the `let` style into a continuation passing style! 
 
@@ -376,30 +376,30 @@ The "x" is on the right hand side, and the "someExpression" is on the left hand 
 
 The definition of `pipeInto` is really obvious:
 
-{% highlight fsharp %}
+```fsharp
 let pipeInto (someExpression,lambda) =
     someExpression |> lambda 
-{% endhighlight fsharp %}
+```
 
 *Note that we are passing both parameters in at once using a tuple rather than as two distinct parameters separated by whitespace. They will always come as a pair.*
 
 So, with this `pipeInto` function we can then rewrite the example once more as:
       
-{% highlight fsharp %}
+```fsharp
 pipeInto (42, fun x ->
   pipeInto (43, fun y -> 
     pipeInto (x + y, fun z -> 
        z)))
-{% endhighlight fsharp %}
+```
 
 or we can eliminate the indents and write it like this:
       
-{% highlight fsharp %}
+```fsharp
 pipeInto (42, fun x ->
 pipeInto (43, fun y -> 
 pipeInto (x + y, fun z -> 
 z)))
-{% endhighlight fsharp %}
+```
 
 You might be thinking: so what? Why bother to wrap the pipe into a function?
 
@@ -409,29 +409,29 @@ The answer is that we can add *extra code* in the `pipeInto` function to do stuf
 
 Let's redefine `pipeInto` to add a little bit of logging, like this:
 
-{% highlight fsharp %}
+```fsharp
 let pipeInto (someExpression,lambda) =
    printfn "expression is %A" someExpression 
    someExpression |> lambda 
-{% endhighlight fsharp %}
+```
 
 Now... run that code again.
 
-{% highlight fsharp %}
+```fsharp
 pipeInto (42, fun x ->
 pipeInto (43, fun y -> 
 pipeInto (x + y, fun z -> 
 z
 )))
-{% endhighlight fsharp %}
+```
 
 What is the output?
 
-{% highlight text %}
+```text
 expression is 42
 expression is 43
 expression is 85
-{% endhighlight  %}
+```
 
 This is exactly the same output as we had in the earlier implementations.  We have created our own little computation expression workflow!
 
@@ -443,7 +443,7 @@ If we compare this side by side with the computation expression version, we can 
 
 Let's do the same thing with the "safe divide" example. Here was the original code:
 
-{% highlight fsharp %}
+```fsharp
 let divideBy bottom top =
     if bottom = 0
     then None
@@ -464,7 +464,7 @@ let divideByWorkflow x y w z =
             | Some c' ->    // keep going
                 //return 
                 Some c'
-{% endhighlight fsharp %}
+```
 
 You should see now that this "stepped" style is an obvious clue that we really should be using continuations.
 
@@ -475,18 +475,18 @@ Let's see if we can add extra code to `pipeInto` to do the matching for us. The 
 
 Here it is:
 
-{% highlight fsharp %}
+```fsharp
 let pipeInto (someExpression,lambda) =
    match someExpression with
    | None -> 
        None
    | Some x -> 
        x |> lambda 
-{% endhighlight fsharp %}
+```
 
 With this new version of `pipeInto` we can rewrite the original code like this:
 
-{% highlight fsharp %}
+```fsharp
 let divideByWorkflow x y w z = 
     let a = x |> divideBy y 
     pipeInto (a, fun a' ->
@@ -496,37 +496,37 @@ let divideByWorkflow x y w z =
             pipeInto (c, fun c' ->
                 Some c' //return 
                 )))
-{% endhighlight fsharp %} 
+``` 
 
 We can clean this up quite a bit. 
 
 First we can eliminate the `a`, `b` and `c`, and replace them with the `divideBy` expression directly. So that this:
 
-{% highlight fsharp %}
+```fsharp
 let a = x |> divideBy y 
 pipeInto (a, fun a' ->
-{% endhighlight fsharp %} 
+``` 
 
 becomes just this:
 
-{% highlight fsharp %}
+```fsharp
 pipeInto (x |> divideBy y, fun a' ->
-{% endhighlight fsharp %} 
+``` 
 
 Now we can relabel `a'` as just `a`, and so on, and we can also remove the stepped indentation, so that we get this:
 
-{% highlight fsharp %}
+```fsharp
 let divideByResult x y w z = 
     pipeInto (x |> divideBy y, fun a ->
     pipeInto (a |> divideBy w, fun b ->
     pipeInto (b |> divideBy z, fun c ->
     Some c //return 
     )))
-{% endhighlight fsharp %}
+```
 
 Finally, we'll create a little helper function called `return'` to wrap the result in an option. Putting it all together, the code looks like this:
 
-{% highlight fsharp %}
+```fsharp
 let divideBy bottom top =
     if bottom = 0
     then None
@@ -550,7 +550,7 @@ let divideByWorkflow x y w z =
 
 let good = divideByWorkflow 12 3 2 1
 let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 Again, if we compare this side by side with the computation expression version, we can see that our homebrew version is identical in meaning. Only the syntax is different.
 

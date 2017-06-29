@@ -56,7 +56,7 @@ In F#, most types that contain fields or properties are defined as record types 
 
 Here is an example of a simple immutable record in F#, with comments attached to the type and each property.
 
-{% highlight fsharp %}
+```fsharp
 /// Example of a simple immutable record 
 type FinalGameScore = { 
     /// Game property
@@ -64,11 +64,11 @@ type FinalGameScore = {
     /// FinalScore property
     FinalScore : int
     }
-{% endhighlight fsharp %}
+```
 
 In C# the equivalent of the generated code would look like this (I'll discuss the code in detail below).
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Example of a simple immutable record 
 /// </summary>
@@ -184,7 +184,7 @@ public sealed class FinalGameScore :
     }
 
 }
-{% endhighlight csharp %}
+```
 
 *[Source for FinalGameScore.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/RecordTypeExamples/FinalGameScore.cs)*
 
@@ -192,14 +192,14 @@ Let's go through the generated C# code in sections.
 
 The first thing to notice is that the generated code implements a number of interfaces:
 
-{% highlight csharp %}
+```csharp
 public sealed class FinalGameScore :
     IEquatable<FinalGameScore>,
     IStructuralEquatable,
     IComparable<FinalGameScore>,
     IComparable,
     IStructuralComparable
-{% endhighlight csharp %}
+```
 
 In particular it overrides equality (both the generic one from `Object` and `IEquatable<T>`) and comparison (both `IComparable` and `IComparable<T>`) and also
 `IStructuralEquatable` and `IStructuralComparable` (for details on what these are for, see
@@ -207,7 +207,7 @@ In particular it overrides equality (both the generic one from `Object` and `IEq
 
 The first part of the class body is similar to what we would write ourselves. Two get-only properties and a constructor.
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 /// Game property
 /// </summary>
@@ -226,14 +226,14 @@ public FinalGameScore(string game, int finalScore)
     this.Game = game;
     this.FinalScore = finalScore;
 }
-{% endhighlight csharp %}
+```
 
 Note that the F# code generates `internal set` properties rather than `private` ones. Since all the code in the assembly is F#,
 and there is no special behavior in the getter or setter, this makes no practical difference.
 
 The next section implements `GetHashCode` and three kinds of `Equals`. 
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Needed for custom equality
 /// </summary>
@@ -281,14 +281,14 @@ public bool Equals(object obj, IEqualityComparer comp)
     // ignore the IEqualityComparer as a simplification -- the generated F# code is more complex
     return Equals(obj);
 }
-{% endhighlight csharp %}
+```
 
 The code that is generated for the third `Equals` method (using `IEqualityComparer`) is almost a duplicate of the primary `Equals` method, so to make the comparison fairer,
 and to be more like the code that someone would write by hand, I have removed it and replaced with a call to the primary `Equals` method.
 
 Finally, the various kinds of comparisons are implemented. Again I have removed the duplicated logic and tidied up the code to be a bit more idiomatic.
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Implement custom comparison
 /// </summary>
@@ -324,7 +324,7 @@ public int CompareTo(object obj, IComparer comp)
     // ignore the IComparer as a simplification -- the generated F# code is more complex
     return this.CompareTo((FinalGameScore)obj);
 }
-{% endhighlight csharp %}
+```
 
 You might not always need special equality and comparison code to be generated, in which case you can mark a type with
 `NoEqualityAttribute` and/or `NoComparisonAttribute`.
@@ -335,7 +335,7 @@ We'll see `NoComparisonAttribute` used in the next example.
 
 Let's have a look at how you would implement a record with one mutable property, such as a mutable `CurrentScore`, and without generating comparison code:
 
-{% highlight fsharp %}
+```fsharp
 /// Example of a simple mutable record 
 [<NoComparisonAttribute>]
 type UpdatableGameScore = {
@@ -344,12 +344,12 @@ type UpdatableGameScore = {
     /// Mutable CurrentScore property
     mutable CurrentScore : int
     }
-{% endhighlight fsharp %}
+```
 
 In the generated C# code, the `CurrentScore` property now has a setter as well as a getter, and the `IComparable` interfaces and the `CompareTo` implementations have been eliminated. 
 Here is the relevant excerpt:
 
-{% highlight csharp %}
+```csharp
 [Serializable]
 public sealed class UpdatableGameScore :
     IEquatable<UpdatableGameScore>,
@@ -375,7 +375,7 @@ public sealed class UpdatableGameScore :
     }
     
 // remaining code snipped    
-{% endhighlight csharp %}
+```
 
 *[Source for UpdatableGameScore.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/RecordTypeExamples/UpdatableGameScore.cs)*
 
@@ -386,7 +386,7 @@ Finally, we often want to add extra properties or methods to a type.
 In the example below, I've defined a `Person` type that has a `FullName` property and a `IsBirthday` method
 in addition to the core properties of `FirstName`, `LastName` and `DateOfBirth`.
 
-{% highlight fsharp %}
+```fsharp
 /// Definition of a Person
 type Person = {
     /// Stores first name
@@ -406,11 +406,11 @@ type Person = {
     member this.IsBirthday() = 
         DateTime.Today.Month = this.DateOfBirth.Month 
         && DateTime.Today.Day = this.DateOfBirth.Day
-{% endhighlight fsharp %}
+```
 
 The first part of the generated C# code looks like this:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Definition of a Person
 /// </summary>
@@ -467,11 +467,11 @@ public sealed class Person :
     }
 
 // remaining code snipped    
-{% endhighlight csharp %}
+```
 
 and of course there is the usual extra code for equality and comparison. Here is just one piece of that:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Implement custom equality
 /// </summary>
@@ -482,7 +482,7 @@ public bool Equals(Person obj)
            && string.Equals(this.LastName, obj.LastName)
            && LanguagePrimitives.HashCompare.GenericEqualityERIntrinsic(this.DateOfBirth, obj.DateOfBirth);
 }
-{% endhighlight csharp %}
+```
 
 The `LanguagePrimitives` namespace comes from the F# core library, and contains helper code for hashing, equality testing, comparision, etc.  
 
@@ -498,7 +498,7 @@ Sometimes you need inheritance or other OO features. So let's see what F# classe
 
 Here's a simple class `Product` with one immutable property (`Id`), two mutable properties, a secondary constructor, two methods, and a static property containing a constant.
 
-{% highlight fsharp %}
+```fsharp
 /// Example of a simple class
 type Product(id, name, price) = 
 
@@ -528,11 +528,11 @@ type Product(id, name, price) =
     
     /// Example of static property
     static member DefaultPrice = 9.99
-{% endhighlight fsharp %}
+```
 
 Here's what that looks like in the generated C#:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Example of a simple class
 /// </summary>
@@ -612,7 +612,7 @@ public class Product
         return true;
     }
 }
-{% endhighlight csharp %}
+```
 
 *[Source for Product.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/ClassExamples/Product.cs)*
 
@@ -626,7 +626,7 @@ Other than that, the generated code looks mostly as you would expect.
 
 Now what happens if we want a class with a custom implementation of equality, let's say an `Entity` class that compares using an `Id`?
 
-{% highlight fsharp %}
+```fsharp
 /// Example of custom equality
 type Entity(id:int, name:string) = 
 
@@ -651,13 +651,13 @@ type Entity(id:int, name:string) =
     interface IEquatable<Entity> with
         member this.Equals(ent) =
             this.Id = ent.Id  // no null checking needed
-{% endhighlight fsharp %}
+```
 
 Note that I have annotated the class constructor `type Entity(id:int, name:string)` to force the `id` to be an `int` and the `name` to be a `string`.
 
 Here's the corresponding generated C#:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Example of custom equality
 /// </summary>
@@ -706,7 +706,7 @@ public class Entity : IEquatable<Entity>
         return this.Id == ent.Id;
     }
 }
-{% endhighlight csharp %}
+```
 
 Again, this code looks like standard C# code. 
 
@@ -716,16 +716,16 @@ Again, this code looks like standard C# code.
 
 Finally, let's look at some OO code in F# and C#.  We'll start with an interface:
 
-{% highlight fsharp %}
+```fsharp
 /// Interface
 type IShape =
     abstract Name : string
     abstract Draw : unit -> unit
-{% endhighlight fsharp %}
+```
 
 And the generated C# is similar:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Interface
 /// </summary>
@@ -734,11 +734,11 @@ public interface IShape
     string Name { get; }
     void Draw();
 }
-{% endhighlight csharp %}
+```
 
 Next, we'll define an abstract base class that implements `IShape`. The `Name` property is concrete, but the subclasses are expected to provide their own `Draw` method.
 
-{% highlight fsharp %}
+```fsharp
 /// Abstract Base Class
 [<AbstractClass>]
 type ShapeBase(name) as self = 
@@ -753,11 +753,11 @@ type ShapeBase(name) as self =
     interface IShape with
         member this.Name = self.Name
         member this.Draw() = self.Draw()
-{% endhighlight fsharp %}
+```
 
 And the generated C#:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Abstract Base Class
 /// </summary>
@@ -778,11 +778,11 @@ public abstract class ShapeBase : IShape
     {
         this.Name = name;
     }
-{% endhighlight csharp %}
+```
 
 And finally, here's a subclass of `ShapeBase` in F#:
 
-{% highlight fsharp %}
+```fsharp
 /// Concrete class Square
 type Square(name,size) =
     inherit ShapeBase(name)
@@ -793,11 +793,11 @@ type Square(name,size) =
     /// concrete implementation of Draw method
     override this.Draw() =
         Console.Write("I am a square with size {0}",size)
-{% endhighlight fsharp %}
+```
 
 And in C#:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  Concrete class Square
 /// </summary>
@@ -823,7 +823,7 @@ public class Square : ShapeBase
         Console.Write("I am a square with size {0}", this.Size);
     }
 }
-{% endhighlight csharp %}
+```
 
 Source for all these examples:
 
@@ -843,16 +843,16 @@ Now to discriminated unions, a feature that C# does not have. So how are they re
 
 We'll start with a single-case union, typically used to wrap a more primitive type to avoid [primitive obsession](http://blog.ploeh.dk/2015/01/19/from-primitive-obsession-to-domain-modelling/).
 
-{% highlight fsharp %}
+```fsharp
 /// example of single-case union as a wrapper round a primitive
 type ProductId = ProductId of int
-{% endhighlight fsharp %}
+```
 
 One of the nice things about F# is that this type gets implementations of equality and comparison, just like record types.
 
 This means that the generated C# code is going to be very long again, alas.  
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  example of single-case union as a wrapper round a primitive
 /// </summary>
@@ -969,7 +969,7 @@ public class ProductId :
         return this.CompareTo((ProductId)obj);
     }
 }
-{% endhighlight csharp %}
+```
 
 *[Source for ProductId.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/UnionTypeExamples/ProductId.cs)*
 
@@ -979,7 +979,7 @@ I know that, personally, I am *much* less likely to create a wrapper class in C#
 
 Anyway, ignoring the equality and comparison code, we can see that the meat of the implementation is just a wrapper around a `Item` property, along with a static constructor `NewProductId`.
 
-{% highlight csharp %}
+```csharp
 public class ProductId 
 {
     /// <summary>
@@ -1002,7 +1002,7 @@ public class ProductId
     {
         this.Item = item;
     }
-{% endhighlight csharp %}
+```
 
 
 ### "Enum" style unions
@@ -1011,14 +1011,14 @@ Another common use of discriminated unions is to emulate an Enum.
 
 For example, here's one with three colors:
 
-{% highlight fsharp %}
+```fsharp
 /// example of simple "enum"
 type Color = Red | Green | Blue
-{% endhighlight fsharp %}
+```
 
 This generates the following C# code:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  example of simple "enum"
 /// </summary>
@@ -1188,7 +1188,7 @@ public class Color :
         return CompareTo((Color)obj);
     }
 }
-{% endhighlight csharp %}
+```
 
 *[Source for Color.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/UnionTypeExamples/Color.cs)*
 
@@ -1198,14 +1198,14 @@ The C# implementation creates a set of static singleton instances (`_unique_Red`
 
 In F#, you can also create a "real" enum by assigning int values to each case, like this:
 
-{% highlight fsharp %}
+```fsharp
 /// example of a real C# enum
 type ColorEnum = Red=1 | Green=2 | Blue=3
-{% endhighlight fsharp %}
+```
 
 When decompiled into C# the definition is exactly an `enum`:
 
-{% highlight csharp %}
+```csharp
 [Serializable]
 public enum ColorEnum
 {
@@ -1213,7 +1213,7 @@ public enum ColorEnum
     Green,
     Blue
 }
-{% endhighlight csharp %}
+```
 
 So, why not use this all the time in F#?  The main reason is that the `enum` style is not suitable for exhaustive pattern matching.
 
@@ -1227,7 +1227,7 @@ Finally, let's look at a more complex union type.
 
 Say that we have a `PaymentMethod` type that can be cash, check or credit card. We might model it like this:
     
-{% highlight fsharp %}
+```fsharp
 type CheckNumber = CheckNumber of int
 type CardType = MasterCard | Visa
 type CardNumber = CardNumber of string
@@ -1241,7 +1241,7 @@ type PaymentMethod =
     | Check of CheckNumber 
     /// CreditCard needs a CardType and CardNumber 
     | CreditCard of CardType * CardNumber 
-{% endhighlight fsharp %}
+```
 
 Note that I'm using the `[<NoComparisonAttribute>]` since I don't expect to be sorting the payment methods.
 
@@ -1251,7 +1251,7 @@ First we need to define classes for the three helper types `CheckNumber`, `CardT
 
 For example, here's the first few lines of `CheckNumber`:
 
-{% highlight csharp %}
+```csharp
 [Serializable]
 public class CheckNumber : 
     IEquatable<CheckNumber>, 
@@ -1282,7 +1282,7 @@ public class CheckNumber :
     }
 
 // [snipped rest of file]
-{% endhighlight csharp %}
+```
 
 This is similar to the `ProductId` type, as is `CardNumber`. And `CardType` is very similar to `Color`.
 
@@ -1297,7 +1297,7 @@ I'm going to ignore all the equality and comparison code, and just focus on how 
 
 Here's the core code:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 ///  PaymentMethod is cash, check or card
 /// </summary>
@@ -1506,7 +1506,7 @@ public abstract class PaymentMethod :
         return Equals(obj);
     }
 }
-{% endhighlight csharp %}
+```
 
 In comparison with the 12 lines of F# code, the generated C# looks like this:
 
@@ -1526,7 +1526,7 @@ Now let's look at modules.
 
 In F#, a module is the standard technique for grouping standalone functions.
 
-{% highlight fsharp %}
+```fsharp
 module ModuleExample
 
 /// add two numbers
@@ -1534,11 +1534,11 @@ let Add x y = x + y
 
 /// add 1 to a number
 let Add1 x = x + 1
-{% endhighlight fsharp %}
+```
 
 Behind the scenes, this code is implemented as static methods on a static class. Here's the generated C# code:
 
-{% highlight csharp %}
+```csharp
 public static class ModuleExample
 {
     /// <summary>
@@ -1556,22 +1556,22 @@ public static class ModuleExample
     {
         return x + 1;
     }
-{% endhighlight csharp %}
+```
 
 ### Types defined in modules
 
 In F#, types can also be defined in modules:
 
-{% highlight fsharp %}
+```fsharp
 module ModuleExample
 
 /// define a empty class inside a module
 type Something() = class end 
-{% endhighlight fsharp %}
+```
 
 This is represented in C# as a inner class -- defined inside the static module class:
 
-{% highlight csharp %}
+```csharp
 public static class ModuleExample
 {
     // [snipped Add and Add1]
@@ -1583,13 +1583,13 @@ public static class ModuleExample
         {
         }
     }
-{% endhighlight csharp %}
+```
 
 ### Submodules
 
 In F#, a module can contain submodules. For example, I might want to group some functions that work with the `FinalGameScore` type defined at the top of this post.
 
-{% highlight fsharp %}
+```fsharp
 module ModuleExample
 
 // [snipped Add and Add1]
@@ -1608,11 +1608,11 @@ module GameFunctions =
     /// Example of a higher order function
     let MapScore f game = 
         {game with FinalScore=f game.FinalScore}
-{% endhighlight fsharp %}
+```
 
 In the generated C#, this code becomes another inner static class:
 
-{% highlight csharp %}
+```csharp
 public static class ModuleExample
 {
     // [snipped Add and Add1]
@@ -1647,7 +1647,7 @@ public static class ModuleExample
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 A couple of things to note:
 
@@ -1673,7 +1673,7 @@ Finally, let's see what F# pattern matching code looks like when turned into C# 
 
 Let's start with a simple integer pattern match.  The code below has some integer pattern matching, plus a guard `when x%2 = 0`, and finally the wildcard.
 
-{% highlight fsharp %}
+```fsharp
 /// demonstrates some simple pattern matching
 let IntPatternMatching x = 
     match x with
@@ -1685,11 +1685,11 @@ let IntPatternMatching x =
     | e when x%2 = 0 -> "even" 
     // wildcard
     | _ -> "other"
-{% endhighlight fsharp %}
+```
 
 The generated code is a straightforward switch statement.
 
-{% highlight csharp %}
+```csharp
 public static string IntPatternMatching(int x)
 {
     switch (x)
@@ -1710,7 +1710,7 @@ public static string IntPatternMatching(int x)
             return "other";
     }
 }
-{% endhighlight csharp %}
+```
 
 ### Nested matching
 
@@ -1718,7 +1718,7 @@ But what if the value being matching on is not a primitive? In F# we can do nest
 
 For example, let's say that we have a `Person` type that contains a `Name` type. Then in F# we can write:
 
-{% highlight fsharp %}
+```fsharp
 type Name= {First:string; Last:string}
 type Person = {Name:Name; Age:int}
 
@@ -1732,11 +1732,11 @@ let NestedPatternMatching person =
     | {Age=age} when age > 18 -> "Adult" 
     // wildcard
     | _ -> "other"
-{% endhighlight fsharp %}
+```
 
 The generated code looks like this in C#, which is quite clunky, but similar to what you would have to write by hand: 
 
-{% highlight csharp %}
+```csharp
 public static string NestedPatternMatching(Person person)
 {
     if (string.Equals(person.Name.First, "Jane"))
@@ -1760,7 +1760,7 @@ public static string NestedPatternMatching(Person person)
         return "other";
     }
 }
-{% endhighlight csharp %}
+```
 
 Note that the static `string.Equals` is used to avoid an additional null check for `person.Name.First` and `person.Name.Last`.
 
@@ -1770,15 +1770,15 @@ F# supports pattern matching in function parameters as well. This is a great way
 
 For example, in the following code, we extract the inner string from the `Email` value, lowercase it, and return a new `Email` value.
 
-{% highlight fsharp %}
+```fsharp
 /// demonstrates some in-parameter pattern matching
 let LowercaseEmail (Email e) = 
     e.ToLowerInvariant() |> Email
-{% endhighlight fsharp %}
+```
 
 The C# for this is very similar, except that the parameter type must be given explicitly:
 
-{% highlight csharp %}
+```csharp
 /// <summary>
 /// demonstrates some in-parameter pattern matching
 /// </summary>
@@ -1788,13 +1788,13 @@ public static Email LowercaseEmail(Email email)
     return Email.NewEmail(lower);
 }
 
-{% endhighlight csharp %}
+```
 
 ### List pattern matching 
 
 When it comes to pattern matching on lists, F# provides some nice syntax for fixed sized lists (e.g. `[a;b]`) or heads and tails (e.g. `a::b::rest`).
 
-{% highlight fsharp %}
+```fsharp
 /// demonstrates some list-testing pattern matching
 let ListTesting list = 
     match list with 
@@ -1806,11 +1806,11 @@ let ListTesting list =
         sprintf "Two or more elements starting with  %A and %A" a b
     | a::rest -> 
         sprintf "One or more elements starting with  %A" a
-{% endhighlight fsharp %}
+```
 
 When we look at the generated code this pattern matching consists of a series of `if` statements as shown below.  
 
-{% highlight csharp %}
+```csharp
 public static string ListTesting<T>(FSharpList<T> list)
 {
     // test for empty
@@ -1849,7 +1849,7 @@ public static string ListTesting<T>(FSharpList<T> list)
         new PrintfFormat<FSharpFunc<T, FSharpFunc<T, string>>, Unit, string, string, Tuple<T, T>>("Two or more elements starting with  %A and %A"));
     return print3.Invoke(firstElem).Invoke(secondElem);
 }
-{% endhighlight csharp %}
+```
 
 Notes:
 
@@ -1860,7 +1860,7 @@ Notes:
 
 So, replacing the F# printing with `string.Format`, a more idiomatic C# version would look like this:
 
-{% highlight csharp %}
+```csharp
 public static string ListTesting<T>(FSharpList<T> list)
 {
     // test for empty
@@ -1892,13 +1892,13 @@ public static string ListTesting<T>(FSharpList<T> list)
     // test for two or more elements
     return string.Format("Two or more elements starting with {0} and {1}", firstElem, secondElem);
 }
-{% endhighlight csharp %}
+```
         
 ### Type-testing pattern matching 
 
 Finally, let's look at how pattern matching on types is done using the `:?` operator.
 
-{% highlight fsharp %}
+```fsharp
 /// demonstrates some type-testing pattern matching
 let TypeTesting obj = 
     match box obj with
@@ -1910,11 +1910,11 @@ let TypeTesting obj =
         sprintf "Obj is Person with name %s %s" p.Name.First p.Name.Last
     | _ -> 
         sprintf "Obj is something else" 
-{% endhighlight fsharp %}
+```
 
 The generated code looks like this:
 
-{% highlight csharp %}
+```csharp
 public static string TypeTesting<T>(T obj)
 {
     // NOTE: This is a simplified version of the real generated code
@@ -1946,7 +1946,7 @@ public static string TypeTesting<T>(T obj)
     return ExtraTopLevelOperators.PrintFormatToString(
         new PrintfFormat<string, Unit, string, string, Unit>("Obj is something else"));
 }
-{% endhighlight csharp %}
+```
 
 
 Notes:

@@ -18,7 +18,7 @@ First, let's revisit the definition:
 
 For example, if strings are the things, and string concatenation is the operation, then we have a monoid. Here's some code that demonstrates this:
 
-{% highlight fsharp %}
+```fsharp
 let s1 = "hello"
 let s2 = " world!"
 
@@ -34,35 +34,35 @@ assert (s4a = s4b)
 // an empty string is the identity
 assert (s1 + "" = s1)
 assert ("" + s1 = s1)
-{% endhighlight fsharp %}
+```
 
 But now let's try to apply this to a more complicated object.
 
 Say that we have have an `OrderLine`, a little structure that represents a line in a sales order, say.
 
-{% highlight fsharp %}
+```fsharp
 type OrderLine = {
     ProductCode: string
     Qty: int
     Total: float
     }
-{% endhighlight %}
+```
 
 And then perhaps we might want to find the total for an order, that is, we want to sum the `Total` field for a list of lines.
 
 The standard imperative approach would be to create a local `total` variable, and then loop through the lines, summing as we go, like this:
 
-{% highlight fsharp %}
+```fsharp
 let calculateOrderTotal lines = 
     let mutable total = 0.0
     for line in lines do
         total <- total + line.Total
     total
-{% endhighlight %}
+```
 
 Let's try it:
 
-{% highlight fsharp %}
+```fsharp
 module OrdersUsingImperativeLoop = 
 
     type OrderLine = {
@@ -86,11 +86,11 @@ module OrdersUsingImperativeLoop =
     orderLines 
     |> calculateOrderTotal 
     |> printfn "Total is %g"
-{% endhighlight %}
+```
 
 But of course, being an experienced functional programmer, you would sneer at this, and use `fold` in `calculateOrderTotal` instead, like this:
 
-{% highlight fsharp %}
+```fsharp
 module OrdersUsingFold = 
 
     type OrderLine = {
@@ -114,37 +114,37 @@ module OrdersUsingFold =
     orderLines 
     |> calculateOrderTotal 
     |> printfn "Total is %g"
-{% endhighlight %}
+```
 
 So far, so good. Now let's look at a solution using a monoid approach.
 
 For a monoid, we need to define some sort of addition or combination operation. How about something like this?
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     orderLine1.Total + orderLine2.Total
-{% endhighlight fsharp %}
+```
 
 But this is no good, because we forgot a key aspect of monoids. The addition must return a value of the same type!
 
 If we look at the signature for the `addLine` function...
 
-{% highlight fsharp %}
+```fsharp
 addLine : OrderLine -> OrderLine -> float
-{% endhighlight fsharp %}
+```
 
 ...we can see that the return type is `float` not `OrderLine`.
 
 What we need to do is return a whole other `OrderLine`.  Here's a correct implementation:
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     {
     ProductCode = "TOTAL"
     Qty = orderLine1.Qty + orderLine2.Qty
     Total = orderLine1.Total + orderLine2.Total
     }
-{% endhighlight fsharp %}
+```
 
 Now the signature is correct: `addLine : OrderLine -> OrderLine -> OrderLine`.
 
@@ -153,7 +153,7 @@ The `Qty` is easy, we can just do a sum. For the `ProductCode`, I decided to use
 
 Let's give this a little test:
 
-{% highlight fsharp %}
+```fsharp
 // utility method to print an OrderLine
 let printLine {ProductCode=p; Qty=q;Total=t} = 
     printfn "%-10s %5i %6g" p q t 
@@ -164,19 +164,19 @@ let orderLine2 = {ProductCode="BBB"; Qty=1; Total=1.99}
 //add two lines to make a third
 let orderLine3 = addLine orderLine1 orderLine2 
 orderLine3 |> printLine // and print it
-{% endhighlight fsharp %}
+```
 
 We should get this result:
 
-{% highlight text %}
+```text
 TOTAL          3  21.97
-{% endhighlight fsharp %}
+```
 
 *NOTE: For more on the printf formatting options used, see the post on [printf here](/posts/printf/).*
 
 Now let's apply this to a list using `reduce`:
 
-{% highlight fsharp %}
+```fsharp
 let orderLines = [
     {ProductCode="AAA"; Qty=2; Total=19.98}
     {ProductCode="BBB"; Qty=1; Total=1.99}
@@ -186,20 +186,20 @@ let orderLines = [
 orderLines 
 |> List.reduce addLine
 |> printLine 
-{% endhighlight fsharp %}
+```
 
 With the result:
 
-{% highlight text %}
+```text
 TOTAL          6  25.96
-{% endhighlight fsharp %}
+```
 
 At first, this might seem like extra work, and just to add up a total.
 But note that we now have more information than just the total; we also have the sum of the qtys as well.
 
 For example, we can easily reuse the `printLine` function to make a simple receipt printing function that includes the total, like this:
 
-{% highlight fsharp %}
+```fsharp
 let printReceipt lines = 
     lines 
     |> List.iter printLine
@@ -212,36 +212,36 @@ let printReceipt lines =
 
 orderLines 
 |> printReceipt
-{% endhighlight fsharp %}
+```
 
 Which gives an output like this:
 
-{% highlight text %}
+```text
 AAA            2  19.98
 BBB            1   1.99
 CCC            3   3.99
 -----------------------
 TOTAL          6  25.96
-{% endhighlight text %}
+```
 
 More importantly, we can now use the incremental nature of monoids to keep a running subtotal that we update every time a new line is added. 
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 let subtotal = orderLines |> List.reduce addLine 
 let newLine = {ProductCode="DDD"; Qty=1; Total=29.98}
 let newSubtotal = subtotal |> addLine newLine 
 newSubtotal |> printLine
-{% endhighlight fsharp %}
+```
 
 We could even define a custom operator such as `++` so that we can add lines together naturally as it they were numbers:
 
-{% highlight fsharp %}
+```fsharp
 let (++) a b = addLine a b  // custom operator
 
 let newSubtotal = subtotal ++ newLine 
-{% endhighlight fsharp %}
+```
     
 You can see that using the monoid pattern opens up a whole new way of thinking. You can apply this "add" approach to almost any kind of object.
 
@@ -261,7 +261,7 @@ One workaround would be to change the `addLine` function to ignore empty product
 
 Here's what I mean:
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     match orderLine1.ProductCode, orderLine2.ProductCode with
     // is one of them zero? If so, return the other one
@@ -277,14 +277,14 @@ let addLine orderLine1 orderLine2 =
 
 let zero = {ProductCode=""; Qty=0; Total=0.0}
 let orderLine1 = {ProductCode="AAA"; Qty=2; Total=19.98}
-{% endhighlight fsharp %}
+```
 
 We can then test that identity works as expected:
 
-{% highlight fsharp %}
+```fsharp
 assert (orderLine1 = addLine orderLine1 zero)
 assert (orderLine1 = addLine zero orderLine1)
-{% endhighlight fsharp %}
+```
 
 This does seem a bit hacky, so I wouldn't recommend this technique in general. There's another way to get an identity that we'll be discussing later.
 
@@ -294,19 +294,19 @@ In the example above, the `OrderLine` type was very simple and it was easy to ov
 
 But what would happen if the `OrderLine` type was more complicated?  For example, if it had a `Price` field as well, like this:
 
-{% highlight fsharp %}
+```fsharp
 type OrderLine = {
     ProductCode: string
     Qty: int
     Price: float
     Total: float
     }
-{% endhighlight fsharp %}
+```
 
 Now we have introduced a complication.
 What should we set the `Price` to when we combine two lines?  The average price? No price?
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     {
     ProductCode = "TOTAL"
@@ -314,7 +314,7 @@ let addLine orderLine1 orderLine2 =
     Price = 0 // or use average price? 
     Total = orderLine1.Total + orderLine2.Total
     }
-{% endhighlight fsharp %}
+```
 
 Neither seems very satisfactory.
 
@@ -326,7 +326,7 @@ With a discriminated union of course! One case can be used for product lines, an
 
 Here's what I mean:
 
-{% highlight fsharp %}
+```fsharp
 type ProductLine = {
     ProductCode: string
     Qty: int
@@ -342,7 +342,7 @@ type TotalLine = {
 type OrderLine = 
     | Product of ProductLine
     | Total of TotalLine
-{% endhighlight fsharp %}
+```
 
 This design is much nicer. We now have a special structure just for totals and we don't have to use contortions to make the excess data fit. We can even remove the dummy "TOTAL" product code.
 
@@ -350,7 +350,7 @@ This design is much nicer. We now have a special structure just for totals and w
 
 Unfortunately, the addition logic is more complicated now, as we have to handle every combination of cases:
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     let totalLine = 
         match orderLine1,orderLine2 with
@@ -367,7 +367,7 @@ let addLine orderLine1 orderLine2 =
             {Qty = t1.Qty + t2.Qty;
             OrderTotal = t1.OrderTotal + t2.OrderTotal}
     Total totalLine // wrap totalLine to make OrderLine
-{% endhighlight fsharp %}
+```
 
 Note that we cannot just return the `TotalLine` value. We have to wrap in the `Total` case to make a proper `OrderLine`.
 If we didn't do that, then our `addLine` would have the signature `OrderLine -> OrderLine -> TotalLine`, which is not correct. 
@@ -375,17 +375,17 @@ We have to have the signature `OrderLine -> OrderLine -> OrderLine` -- nothing e
 
 Now that we have two cases, we need to handle both of them in the `printLine` function:
 
-{% highlight fsharp %}
+```fsharp
 let printLine =  function
     | Product {ProductCode=p; Qty=q; Price=pr; LineTotal=t} -> 
         printfn "%-10s %5i @%4g each %6g" p q pr t 
     | Total {Qty=q; OrderTotal=t} -> 
         printfn "%-10s %5i            %6g" "TOTAL" q t 
-{% endhighlight fsharp %}
+```
 
 But once we have done this, we can now use addition just as before:
 
-{% highlight fsharp %}
+```fsharp
 let orderLine1 = Product {ProductCode="AAA"; Qty=2; Price=9.99; LineTotal=19.98}
 let orderLine2 = Product {ProductCode="BBB"; Qty=1; Price=1.99; LineTotal=1.99}
 let orderLine3 = addLine orderLine1 orderLine2 
@@ -393,7 +393,7 @@ let orderLine3 = addLine orderLine1 orderLine2
 orderLine1 |> printLine 
 orderLine2 |> printLine 
 orderLine3 |> printLine 
-{% endhighlight fsharp %}
+```
 
 ### Identity again
 
@@ -401,7 +401,7 @@ Again, we haven't dealt with the identity requirement.  We could try using the s
 
 To get a proper identity, we really need to introduce a *third* case, `EmptyOrder` say, to the union type:
 
-{% highlight fsharp %}
+```fsharp
 type ProductLine = {
     ProductCode: string
     Qty: int
@@ -418,11 +418,11 @@ type OrderLine =
     | Product of ProductLine
     | Total of TotalLine
     | EmptyOrder
-{% endhighlight fsharp %}
+```
 
 With this extra case available, we rewrite the `addLine` function to handle it:
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     match orderLine1,orderLine2 with
     // is one of them zero? If so, return the other one
@@ -441,11 +441,11 @@ let addLine orderLine1 orderLine2 =
     | Total t1, Total t2 ->
         Total {Qty = t1.Qty + t2.Qty;
         OrderTotal = t1.OrderTotal + t2.OrderTotal}
-{% endhighlight fsharp %}
+```
 
 And now we can test it:
 
-{% highlight fsharp %}
+```fsharp
 let zero = EmptyOrder
 
 // test identity
@@ -456,7 +456,7 @@ assert (productLine = addLine zero productLine)
 let totalLine = Total {Qty=2; OrderTotal=19.98}
 assert (totalLine = addLine totalLine zero)
 assert (totalLine = addLine zero totalLine)
-{% endhighlight fsharp %}
+```
 
 
 ## Using the built in List.sum function
@@ -466,15 +466,15 @@ If you tell it what the addition operation is, and what the zero is, then you ca
 
 The way you do this is by attaching two static members, `+` and `Zero` to your type, like this:
 
-{% highlight fsharp %}
+```fsharp
 type OrderLine with
     static member (+) (x,y) = addLine x y 
     static member Zero = EmptyOrder   // a property 
-{% endhighlight fsharp %}
+```
 
 Once this has been done, you can use `List.sum` and it will work as expected.
 
-{% highlight fsharp %}
+```fsharp
 let lines1 = [productLine]
 // using fold with explicit op and zero
 lines1 |> List.fold addLine zero |> printfn "%A"  
@@ -486,7 +486,7 @@ let emptyList: OrderLine list = []
 emptyList |> List.fold addLine zero |> printfn "%A"  
 // using sum with implicit op and zero
 emptyList |> List.sum |> printfn "%A"  
-{% endhighlight fsharp %}
+```
 
 Note that for this to work you mustn't already have a method or case called `Zero`.  If I had used the name `Zero` instead of `EmptyOrder` for the third case it would not have worked.
 
@@ -500,7 +500,7 @@ For example, in the code below, I'm trying to define the empty string as the "ze
 `List.fold` works because `String.Zero` is visible as an extension method in this code right here,
 but `List.sum` fails because the extension method is not visible to it.
  
-{% highlight fsharp %}
+```fsharp
 module StringMonoid =
 
     // define extension method
@@ -521,7 +521,7 @@ module StringMonoid =
     ["a";"b";"c"] 
     |> List.sum          
     |> printfn "Using sum: %s"
-{% endhighlight fsharp %}
+```
 
 ## Mapping to a different structure
 
@@ -529,14 +529,14 @@ Having two different cases in a union might be acceptable in the order line case
 
 Consider a customer record like this:
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 type Customer = {
     Name:string // and many more string fields!
     LastActive:DateTime 
     TotalSpend:float }
-{% endhighlight fsharp %}
+```
 
 How would we "add" two of these customers?
 
@@ -544,7 +544,7 @@ A helpful tip is to realize that aggregation really only works for numeric and s
 
 So rather than trying to aggregate `Customer`, let's define a separate class `CustomerStats` that contains all the aggregatable information:
 
-{% highlight fsharp %}
+```fsharp
 // create a type to track customer statistics
 type CustomerStats = {
     // number of customers contributing to these stats
@@ -553,11 +553,11 @@ type CustomerStats = {
     TotalInactiveDays:int 
     // total amount of money spent
     TotalSpend:float }
-{% endhighlight fsharp %}
+```
 
 All the fields in `CustomerStats` are numeric, so it is obvious how we can add two stats together:
 
-{% highlight fsharp %}
+```fsharp
 let add stat1 stat2 = {
     Count = stat1.Count + stat2.Count;
     TotalInactiveDays = stat1.TotalInactiveDays + stat2.TotalInactiveDays
@@ -566,7 +566,7 @@ let add stat1 stat2 = {
 
 // define an infix version as well
 let (++) a b = add a b
-{% endhighlight fsharp %}
+```
 
 
 As always, the inputs and output of the `add` function must be the same type.
@@ -580,7 +580,7 @@ We can't add the customers directly, so what we need to do is first convert each
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 // convert a customer to a stat
 let toStats cust =
     let inactiveDays= DateTime.Now.Subtract(cust.LastActive).Days;
@@ -597,7 +597,7 @@ customers
 |> List.map toStats
 |> List.reduce add
 |> printfn "result = %A"
-{% endhighlight fsharp %}
+```
 
 
 The first thing to note is that the `toStats` creates statistics for just one customer. We set the count to just 1.
@@ -639,24 +639,24 @@ In this section, we'll look at a simple monoid homomorphism. It's the "hello wor
 
 Let's say we have a type which represents text blocks, something like this:
 
-{% highlight fsharp %}
+```fsharp
 type Text = Text of string
-{% endhighlight fsharp %}
+```
 
 And of course we can add two smaller text blocks to make a larger text block:
 
-{% highlight fsharp %}
+```fsharp
 let addText (Text s1) (Text s2) =
     Text (s1 + s2)
-{% endhighlight fsharp %}
+```
 
 Here's an example of how adding works:
 
-{% highlight fsharp %}
+```fsharp
 let t1 = Text "Hello"
 let t2 = Text " World"
 let t3 = addText t1 t2
-{% endhighlight fsharp %}
+```
 
 Since you are now a expert, you will quickly recognize this as a monoid, with the zero obviously being `Text ""`.
 
@@ -665,7 +665,7 @@ we want a word count to show how much we have written.
 
 Here's a very crude implementation, plus a test:
 
-{% highlight fsharp %}
+```fsharp
 let wordCount (Text s) =
     s.Split(' ').Length
 
@@ -673,7 +673,7 @@ let wordCount (Text s) =
 Text "Hello world"
 |> wordCount
 |> printfn "The word count is %i"
-{% endhighlight fsharp %}
+```
 
 So we are writing away, and now we have produced three pages of text.  How do we calculate the word count for the complete document?
 
@@ -723,7 +723,7 @@ We're now ready to create some code that will demonstrate these two different te
 
 Let's start with the basic definitions from above, except that I will change the word count to use regular expressions instead of `split`.
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
     open System 
 
@@ -734,11 +734,11 @@ module WordCountTest =
 
     let wordCount (Text s) =
         System.Text.RegularExpressions.Regex.Matches(s,@"\S+").Count
-{% endhighlight fsharp %}
+```
 
 Next, we'll create a page with 1000 words in it, and a document with 1000 pages.
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
     
     // code as above
@@ -750,11 +750,11 @@ module WordCountTest =
 
     let document() = 
         page() |> List.replicate 1000 
-{% endhighlight fsharp %}
+```
 
 We'll want to time the code to see if there is any difference between the implementations. Here's a little helper function.
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
     
     // code as above
@@ -765,11 +765,11 @@ module WordCountTest =
         f() 
         stopwatch.Stop()
         printfn "Time taken for %s was %ims" msg stopwatch.ElapsedMilliseconds
-{% endhighlight fsharp %}
+```
 
 Ok, let's implement the first approach. We'll add all the pages together using `addText` and then do a word count on the entire million word document.
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
     
     // code as above
@@ -781,11 +781,11 @@ module WordCountTest =
         |> printfn "The word count is %i"
 
     time wordCountViaAddText "reduce then count"
-{% endhighlight fsharp %}
+```
 
 For the second approach, we'll do `wordCount` on each page first, and then add all the results together (using `reduce` of course).
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
     
     // code as above
@@ -797,28 +797,28 @@ module WordCountTest =
         |> printfn "The word count is %i"
 
     time wordCountViaMap "map then reduce"
-{% endhighlight fsharp %}
+```
 
 Note that we have only changed two lines of code!
 
 In `wordCountViaAddText` we had:
 
-{% highlight fsharp %}
+```fsharp
 |> List.reduce addText
 |> wordCount
-{% endhighlight fsharp %}
+```
 
 And in `wordCountViaMap` we have basically swapped these lines. We now do `wordCount` *first* and then `reduce` afterwards, like this:
 
-{% highlight fsharp %}
+```fsharp
 |> List.map wordCount
 |> List.reduce (+)
-{% endhighlight fsharp %}
+```
 
 Finally, let's see what difference parallelism makes. We'll use the built-in `Array.Parallel.map` instead of `List.map`,
 which means we'll need to convert the list into an array first.
 
-{% highlight fsharp %}
+```fsharp
 module WordCountTest = 
 
     // code as above
@@ -831,7 +831,7 @@ module WordCountTest =
         |> printfn "The word count is %i"
 
     time wordCountViaParallelAddCounts "parallel map then reduce"
-{% endhighlight fsharp %}
+```
 
 I hope that you are following along with the implementations, and that you understand what is going on. 
 
@@ -839,11 +839,11 @@ I hope that you are following along with the implementations, and that you under
 
 Here are the results for the different implementations running on my 4 core machine:
 
-{% highlight text %}
+```text
 Time taken for reduce then count was 7955ms
 Time taken for map then reduce was 698ms
 Time taken for parallel map then reduce was 603ms
-{% endhighlight text %}
+```
 
 We must recognize that these are crude results, not a proper performance profile.
 But even so, it is very obvious that the map/reduce version is about 10 times faster that the `ViaAddText` version.
@@ -869,7 +869,7 @@ For this example, rather than using counting words, we're going to return the mo
 
 Here's the basic code.
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordTest = 
 
     open System 
@@ -889,7 +889,7 @@ module FrequentWordTest =
         |> Seq.sortBy (fun (_,v) -> -v)
         |> Seq.head
         |> fst
-{% endhighlight fsharp %}
+```
 
 The `mostFrequentWord` function is bit more complicated than the previous `wordCount` function, so I'll take you through it step by step.
 
@@ -905,7 +905,7 @@ Ok, let's continue, and create some pages and a document as before.  This time w
 But we do want to create *different* pages. We'll create one containing nothing but "hello world", another containing nothing but "goodbye world",
 and a third containing "foobar". (Not a very interesting book IMHO!)
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordTest = 
 
     // code as above 
@@ -927,7 +927,7 @@ module FrequentWordTest =
 
     let document() = 
         [page1(); page2(); page3()]
-{% endhighlight fsharp %}
+```
 
 It is obvious that, with respect to the entire document, "world" is the most frequent word overall.
 
@@ -941,7 +941,7 @@ The second approach will do `mostFrequentWord` separately on each page and then 
 
 Here's the code:
         
-{% highlight fsharp %}
+```fsharp
 module FrequentWordTest = 
 
     // code as above 
@@ -955,14 +955,14 @@ module FrequentWordTest =
     |> List.map mostFrequentWord
     |> List.reduce (+)
     |> printfn "Using map reduce, the most frequent word is %s"
-{% endhighlight fsharp %}
+```
 
 Can you see what happened?  The first approach was correct. But the second approach gave a completely wrong answer!
 
-{% highlight text %}
+```text
 Using add first, the most frequent word is world
 Using map reduce, the most frequent word is hellogoodbyefoobar
-{% endhighlight text %}
+```
 
 The second approach just concatenated the most frequent words from each page. The result is a new string that was not on *any* of the pages. A complete fail!
 
@@ -988,26 +988,26 @@ But for the most frequent word example, we did *not* get the same answer from th
 
 In other words, for `wordCount`, we had
 
-{% highlight text %}
+```text
 wordCount(page1) + wordCount(page2) EQUALS wordCount(page1 + page)
-{% endhighlight text %}
+```
 
 But for `mostFrequentWord`, we had:
 
-{% highlight text %}
+```text
 mostFrequentWord(page1) + mostFrequentWord(page2) NOT EQUAL TO mostFrequentWord(page1 + page)
-{% endhighlight text %}
+```
 
 
 So this brings us to a slightly more precise definition of a monoid homomorphism:
 
-{% highlight text %}
+```text
 Given a function that maps from one monoid to another (like 'wordCount' or 'mostFrequentWord')
 
 Then to be a monoid homomorphism, the function must meet the requirement that:
 
 function(chunk1) + function(chunk2) MUST EQUAL function(chunk1 + chunk2)
-{% endhighlight text %}
+```
 
 Alas, then, `mostFrequentWord` is not a monoid homomorphism.
 

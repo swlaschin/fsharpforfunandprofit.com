@@ -226,13 +226,13 @@ If you know the size of the collection in advance, it is generally more efficien
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 let list0 = List.empty
 // list0 = []
 
 let list1 = List.singleton "hello"
 // list1 = ["hello"]
-{% endhighlight fsharp %}
+```
 
 
 <a id="4"></a> 
@@ -260,7 +260,7 @@ If you want to create a new collection of known size with each element having th
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 let repl = List.replicate 3 "hello"
 // val repl : string list = ["hello"; "hello"; "hello"]
 
@@ -272,7 +272,7 @@ let intArr0 : int[] = Array.zeroCreate 3
 
 let stringArr0 : string[] = Array.zeroCreate 3
 // val stringArr0 : string [] = [|null; null; null|]
-{% endhighlight fsharp %}
+```
 
 Note that for `zeroCreate`, the target type must be known to the compiler.
 
@@ -290,7 +290,7 @@ If you want to create a new collection of known size with each element having a 
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 // using list initializer
 let listInit1 = List.init 5 (fun i-> i*i)
 // val listInit1 : int list = [0; 1; 4; 9; 16]
@@ -305,19 +305,19 @@ let listInit3 = [1; 4; 9; 16; 25]
 
 let arrayInit3 = [|1; 4; 9; 16; 25|]
 // val arrayInit3 : int [] = [|1; 4; 9; 16; 25|]
-{% endhighlight fsharp %}
+```
 
 Literal syntax allows for an increment as well:
 
-{% highlight fsharp %}
+```fsharp
 // literal with +2 increment
 let listOdd= [1..2..10]
 // val listOdd : int list = [1; 3; 5; 7; 9]
-{% endhighlight fsharp %}
+```
 
 The comprehension syntax is even more flexible because you can `yield` more than once:
 
-{% highlight fsharp %}
+```fsharp
 // using list comprehension
 let listFunny = [
     for i in [2..3] do 
@@ -326,11 +326,11 @@ let listFunny = [
         yield i*i*i
         ]
 // val listFunny : int list = [2; 4; 8; 3; 9; 27]
-{% endhighlight fsharp %}
+```
 
 and it can also be used as a quick and dirty inline filter:
 
-{% highlight fsharp %}
+```fsharp
 let primesUpTo n = 
    let rec sieve l  = 
       match l with 
@@ -341,7 +341,7 @@ let primesUpTo n =
 
 primesUpTo 20
 // [2; 3; 5; 7; 11; 13; 17; 19]
-{% endhighlight fsharp %}
+```
 
 Two other tricks: 
 
@@ -350,7 +350,7 @@ Two other tricks:
 
 Here is an example of both tricks being used to count up to 10 by twos:
 
-{% highlight fsharp %}
+```fsharp
 let rec listCounter n = [
     if n <= 10 then
         yield n
@@ -361,7 +361,7 @@ listCounter 3
 // val it : int list = [3; 5; 7; 9]
 listCounter 4
 // val it : int list = [4; 6; 8; 10]
-{% endhighlight fsharp %}
+```
 
 <a id="7"></a> 
 <hr>  
@@ -375,7 +375,7 @@ If you want an infinite list, you have to use a seq rather than a list or array.
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 // generator version
 let seqOfSquares = Seq.initInfinite (fun i -> i*i)
 let firstTenSquares = seqOfSquares |> Seq.take 10
@@ -390,7 +390,7 @@ let seqOfSquares_v2 =
         }
     loop 1
 let firstTenSquares_v2 = seqOfSquares_v2 |> Seq.take 10 
-{% endhighlight fsharp %}
+```
 
 <a id="8"></a> 
 <hr>  
@@ -406,7 +406,7 @@ Sometimes you don't know how big the collection will be in advance. In this case
 
 This example reads from the console in a loop until an empty line is entered:
 
-{% highlight fsharp %}
+```fsharp
 let getInputFromConsole lineNo =
     let text = System.Console.ReadLine()
     if System.String.IsNullOrEmpty(text) then
@@ -417,12 +417,12 @@ let getInputFromConsole lineNo =
         Some (text,lineNo+1)
 
 let listUnfold = List.unfold getInputFromConsole 1
-{% endhighlight fsharp %}
+```
 
 `unfold` requires that a state be threaded through the generator. You can ignore it (as in the `ReadLine` example above), or you can
 use it to keep track of what you have done so far. For example, you can create a Fibonacci series generator using `unfold`:
 
-{% highlight fsharp %}
+```fsharp
 let fibonacciUnfolder max (f1,f2)  =
     if f1 > max then
         None
@@ -436,7 +436,7 @@ let fibonacciUnfolder max (f1,f2)  =
 let fibonacci max = List.unfold (fibonacciUnfolder max) (1,1)
 fibonacci 100
 // int list = [1; 1; 2; 3; 5; 8; 13; 21; 34; 55; 89]
-{% endhighlight fsharp %}
+```
 
 <a id="9"></a> 
 <hr>  
@@ -495,7 +495,7 @@ I would therefore recommend that you avoid these functions in general and use th
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 let head = [1;2;3] |> List.head
 // val head : int = 1
 
@@ -517,12 +517,12 @@ let goodItemOpt =
 let badItemOpt = 
     [1;2;3] |> List.tryItem 99
 // val badItemOpt : int option = None
-{% endhighlight fsharp %}
+```
 
 As noted, the `item` function should be avoided for lists. For example, if you want to process each item in a list, and you come from an imperative background,
 you might write a loop with something like this:
 
-{% highlight fsharp %}
+```fsharp
 // Don't do this!
 let helloBad = 
     let list = ["a";"b";"c"]
@@ -532,16 +532,16 @@ let helloBad =
         yield "hello " + element 
     ]
 // val helloBad : string list = ["hello a"; "hello b"; "hello c"]
-{% endhighlight fsharp %}
+```
 
 Don't do that! Use something like `map` instead. It's both more concise and more efficient:
 
-{% highlight fsharp %}
+```fsharp
 let helloGood = 
     let list = ["a";"b";"c"]
     list |> List.map (fun element -> "hello " + element)
 // val helloGood : string list = ["hello a"; "hello b"; "hello c"]
-{% endhighlight fsharp %}
+```
 
 <a id="11"></a> 
 <hr>  
@@ -584,7 +584,7 @@ If you are doing a `map` before a `find` you can often combine the two steps int
 
 ### Usage examples
 
-{% highlight fsharp %}
+```fsharp
 let listOfTuples = [ (1,"a"); (2,"b"); (3,"b"); (4,"a"); ]
 
 listOfTuples |> List.find ( fun (x,y) -> y = "b")
@@ -601,14 +601,14 @@ listOfTuples |> List.findIndexBack ( fun (x,y) -> y = "b")
 
 listOfTuples |> List.find ( fun (x,y) -> y = "c")
 // KeyNotFoundException
-{% endhighlight fsharp %}
+```
 
 With `pick`, rather than returning a bool, you return an option:
 
-{% highlight fsharp %}
+```fsharp
 listOfTuples |> List.pick ( fun (x,y) -> if y = "b" then Some (x,y) else None)
 // (2, "b")
-{% endhighlight fsharp %}
+```
 
 <a id="pick-vs-find"></a> 
 ### Pick vs. Find
@@ -617,13 +617,13 @@ That 'pick' function might seem unnecessary, but it is useful when dealing with 
 
 For example, say that there is a function `tryInt` that parses a string and returns `Some int` if the string is a valid int, otherwise `None`.
 
-{% highlight fsharp %}
+```fsharp
 // string -> int option
 let tryInt str = 
     match System.Int32.TryParse(str) with
     | true, i -> Some i
     | false, _ -> None
-{% endhighlight fsharp %}
+```
 
 And now say that we want to find the first valid int in a list. The crude way would be:
 
@@ -633,7 +633,7 @@ And now say that we want to find the first valid int in a list. The crude way wo
 
 The code might look something like this:
 
-{% highlight fsharp %}
+```fsharp
 let firstValidNumber = 
     ["a";"2";"three"]
     // map the input
@@ -643,15 +643,15 @@ let firstValidNumber =
     // get the data from the option
     |> Option.get
 // val firstValidNumber : int = 2
-{% endhighlight fsharp %}
+```
 
 But `pick` will do all these steps at once! So the code becomes much simpler:
 
-{% highlight fsharp %}
+```fsharp
 let firstValidNumber = 
     ["a";"2";"three"]
     |> List.pick tryInt 
-{% endhighlight fsharp %}
+```
 
 If you want to return many elements in the same way as `pick`, consider using `choose` (see [section 12](#12)).
 
@@ -705,7 +705,7 @@ To reduce the list to distinct elements, use one of these:
   
 Taking elements from the front:
 
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.take 3    
 // [1; 2; 3]
 
@@ -723,11 +723,11 @@ Taking elements from the front:
 
 [1..2] |> List.truncate 4
 // [1; 2]   // no error!
-{% endhighlight fsharp %}
+```
 
 Taking elements from the rear:
 
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.skip 3    
 // [4; 5; 6; 7; 8; 9; 10]
 
@@ -745,11 +745,11 @@ Taking elements from the rear:
 
 [1] |> List.tail |> List.tail
 // System.ArgumentException: The input list was empty.
-{% endhighlight fsharp %}
+```
 
 To extract other subsets of elements:
 
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.filter (fun i -> i%2 = 0) // even
 // [2; 4; 6; 8; 10]
 
@@ -758,11 +758,11 @@ To extract other subsets of elements:
 
 [1..10] |> List.except [3;4;5]
 // [1; 2; 6; 7; 8; 9; 10]
-{% endhighlight fsharp %}
+```
 
 To extract a slice:
 
-{% highlight fsharp %}
+```fsharp
 Array.sub [|1..10|] 3 5
 // [|4; 5; 6; 7; 8|]
 
@@ -774,19 +774,19 @@ Array.sub [|1..10|] 3 5
 
 [1..10].[..5] 
 // [1; 2; 3; 4; 5; 6]
-{% endhighlight fsharp %}
+```
 
 Note that slicing on lists can be slow, because they are not random access. Slicing on arrays is fast however.
   
 To extract the distinct elements:
   
-{% highlight fsharp %}
+```fsharp
 [1;1;1;2;3;3] |> List.distinct
 // [1; 2; 3]
 
 [ (1,"a"); (1,"b"); (1,"c"); (2,"d")] |> List.distinctBy fst
 // [(1, "a"); (2, "d")]
-{% endhighlight fsharp %}
+```
 
   
 <a id="choose-vs-fliter"></a> 
@@ -798,13 +798,13 @@ In fact, `choose` is to `filter` as [`pick` is to `find`](#pick-vs-find), Rather
 
 As before, say that there is a function `tryInt` that parses a string and returns `Some int` if the string is a valid int, otherwise `None`.
 
-{% highlight fsharp %}
+```fsharp
 // string -> int option
 let tryInt str = 
     match System.Int32.TryParse(str) with
     | true, i -> Some i
     | false, _ -> None
-{% endhighlight fsharp %}
+```
 
 And now say that we want to find all the valid ints in a list. The crude way would be:
 
@@ -814,7 +814,7 @@ And now say that we want to find all the valid ints in a list. The crude way wou
 
 The code might look something like this:
 
-{% highlight fsharp %}
+```fsharp
 let allValidNumbers = 
     ["a";"2";"three"; "4"]
     // map the input
@@ -824,24 +824,24 @@ let allValidNumbers =
     // get the data from each option
     |> List.map Option.get
 // val allValidNumbers : int list = [2; 4]
-{% endhighlight fsharp %}
+```
 
 But `choose` will do all these steps at once! So the code becomes much simpler:
 
-{% highlight fsharp %}
+```fsharp
 let allValidNumbers = 
     ["a";"2";"three"; "4"]
     |> List.choose tryInt 
-{% endhighlight fsharp %}
+```
 
 If you already have a list of options, you can filter and return the "Some" in one step by passing `id` into `choose`:
 
-{% highlight fsharp %}
+```fsharp
 let reduceOptions = 
     [None; Some 1; None; Some 2]
     |> List.choose id
 // val reduceOptions : int list = [1; 2]
-{% endhighlight fsharp %}
+```
 
 If you want to return the first element in the same way as `choose`, consider using `pick` (see [section 11](#11)).
 
@@ -871,7 +871,7 @@ There are lots of different ways to split a collection! Have a look at the usage
   
 ### Usage examples
   
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.chunkBySize 3
 // [[1; 2; 3]; [4; 5; 6]; [7; 8; 9]; [10]]  
 // note that the last chunk has one element
@@ -896,11 +896,11 @@ let isEven i = (i%2 = 0)
 let firstLetter (str:string) = str.[0]
 ["apple"; "alice"; "bob"; "carrot"] |> List.groupBy firstLetter 
 // [('a', ["apple"; "alice"]); ('b', ["bob"]); ('c', ["carrot"])]  
-{% endhighlight fsharp %}
+```
 
 All the functions other than `splitAt` and `pairwise` handle edge cases gracefully:
 
-{% highlight fsharp %}
+```fsharp
 [1] |> List.chunkBySize 3
 // [[1]]
 
@@ -921,7 +921,7 @@ All the functions other than `splitAt` and `pairwise` handle edge cases graceful
 
 [] |> List.groupBy firstLetter 
 //  []
-{% endhighlight fsharp %}
+```
 
 
 <a id="14"></a> 
@@ -967,25 +967,25 @@ Finally there are some counting functions:
 `reduce` is a variant of `fold` without an initial state -- see [section 19](#19) for more on `fold`.  One way to think of it is just inserting a operator between
 each element.
 
-{% highlight fsharp %}
+```fsharp
 ["a";"b";"c"] |> List.reduce (+)     
 // "abc"
-{% endhighlight fsharp %}
+```
 
 is the same as 
 
-{% highlight fsharp %}
+```fsharp
 "a" + "b" + "c"
-{% endhighlight fsharp %}
+```
 
 Here's another example:
 
-{% highlight fsharp %}
+```fsharp
 [2;3;4] |> List.reduce (*)     
 // is same as
 2 * 3 * 4
 // Result is 24
-{% endhighlight fsharp %}
+```
 
 Some ways of combining elements depend on the order of combining, and so there are two variants of "reduce":
 
@@ -994,7 +994,7 @@ Some ways of combining elements depend on the order of combining, and so there a
 
 Here's a demonstration of the difference. First `reduce`:
 
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4] |> List.reduce (fun state x -> (state)*10 + x)
 
 // built up from                // state at each step
@@ -1004,11 +1004,11 @@ Here's a demonstration of the difference. First `reduce`:
 (((1)*10 + 2)*10 + 3)*10 + 4    // 1234
 
 // Final result is 1234   
-{% endhighlight fsharp %}
+```
   
 Using the *same* combining function with `reduceBack` produces a different result! It looks like this:
   
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4] |> List.reduceBack (fun x state -> x + 10*(state))
 
 // built up from                // state at each step
@@ -1018,13 +1018,13 @@ Using the *same* combining function with `reduceBack` produces a different resul
 1 + 10*(2 + 10*(3 + 10*(4)))    // 4321  
 
 // Final result is 4321   
-{% endhighlight fsharp %}
+```
   
 Again, see [section 19](#19) for a more detailed discussion of the related functions `fold` and `foldBack`.  
 
 The other aggregation functions are much more straightforward.
   
-{% highlight fsharp %}
+```fsharp
 type Suit = Club | Diamond | Spade | Heart 
 type Rank = Two | Three | King | Ace
 let cards = [ (Club,King); (Diamond,Ace); (Spade,Two); (Heart,Three); ]
@@ -1057,11 +1057,11 @@ cards |> List.minBy snd  // (Spade, Two)
   
 [ ("a","A"); ("b","B"); ("a","C") ]  |> List.countBy snd
 // [("A", 1); ("B", 1); ("C", 1)]
-{% endhighlight fsharp %}
+```
 
 Most of the aggregation functions do not like empty lists!  You might consider using one of the `fold` functions to be safe -- see [section 19](#19).
 
-{% highlight fsharp %}
+```fsharp
 let emptyListOfInts : int list = []
 
 emptyListOfInts |> List.reduce (+)     
@@ -1082,7 +1082,7 @@ emptyListOfInts |> List.averageBy float
 let emptyListOfTuples : (int*int) list = []
 emptyListOfTuples |> List.countBy fst
 // (int * int) list = []
-{% endhighlight fsharp %}
+```
   
 <a id="15"></a> 
 <hr>  
@@ -1116,7 +1116,7 @@ And there are also some array-only functions that sort in place:
 
 ### Usage examples
   
-{% highlight fsharp %}
+```fsharp
 [1..5] |> List.rev
 // [5; 4; 3; 2; 1]
 
@@ -1149,7 +1149,7 @@ let tupleComparer tuple1 tuple2  =
 
 [1..10] |> List.permute (fun i -> 9 - i)
 // [10; 9; 8; 7; 6; 5; 4; 3; 2; 1]
-{% endhighlight fsharp %}
+```
 
 <a id="16"></a> 
 <hr>  
@@ -1168,7 +1168,7 @@ These set of functions all return true or false.
 
 ### Usage examples
   
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.contains 5
 // true
 
@@ -1189,7 +1189,7 @@ These set of functions all return true or false.
 
 [1..10] |> List.isEmpty
 // false
-{% endhighlight fsharp %}
+```
 
 <a id="17"></a> 
 <hr>  
@@ -1216,7 +1216,7 @@ Other transformation functions include:
   
 Here are some examples of using `map` in the conventional way, as a function that accepts a list and a mapping function and returns a new transformed list:  
 
-{% highlight fsharp %}
+```fsharp
 let add1 x = x + 1
 
 // map as a list transformer
@@ -1227,11 +1227,11 @@ let add1 x = x + 1
 let times2 x = x * 2
 [ add1; times2] |> List.map (fun f -> f 5)
 // [6; 10]
-{% endhighlight fsharp %}
+```
 
 You can also think of `map` as a *function transformer*. It turns an element-to-element function into a list-to-list function.
 
-{% highlight fsharp %}
+```fsharp
 let add1ToEachElement = List.map add1
 // "add1ToEachElement" transforms lists to lists rather than ints to ints
 // val add1ToEachElement : (int list -> int list)
@@ -1239,11 +1239,11 @@ let add1ToEachElement = List.map add1
 // now use it
 [1..5] |> add1ToEachElement 
 // [2; 3; 4; 5; 6]
-{% endhighlight fsharp %}
+```
 
 `collect` works to flatten lists. If you already have a list of lists, you can use `collect` with `id` to flatten them.
  
-{% highlight fsharp %}
+```fsharp
 [2..5] |> List.collect (fun x -> [x; x*x; x*x*x] )
 // [2; 4; 8; 3; 9; 27; 4; 16; 64; 5; 25; 125]
 
@@ -1252,7 +1252,7 @@ let list1 = [1..3]
 let list2 = [4..6]
 [list1; list2] |> List.collect id
 // [1; 2; 3; 4; 5; 6]
-{% endhighlight fsharp %}
+```
 
 ### Seq.cast
 
@@ -1260,7 +1260,7 @@ Finally, `Seq.cast` is useful when working with older parts of the BCL that have
 
 For example, the Regex library has this problem, and so the code below won't compile because `MatchCollection` is not an `IEnumerable<T>`
 
-{% highlight fsharp %}
+```fsharp
 open System.Text.RegularExpressions
 
 let matches = 
@@ -1270,11 +1270,11 @@ let matches =
     |> Seq.map (fun m -> m.Value)     // ERROR
     // ERROR: The type 'MatchCollection' is not compatible with the type 'seq<'a>'
     |> Seq.toList
-{% endhighlight fsharp %}
+```
 
 The fix is to cast `MatchCollection` to a `Seq<Match>` and then the code will work nicely:
 
-{% highlight fsharp %}
+```fsharp
 let matches = 
     let pattern = "\d\d\d"
     let matchCollection = Regex.Matches("123 456 789",pattern)
@@ -1283,7 +1283,7 @@ let matches =
     |> Seq.map (fun m -> m.Value)
     |> Seq.toList
 // output = ["123"; "456"; "789"]
-{% endhighlight fsharp %}
+```
 
 <a id="18"></a> 
 <hr>  
@@ -1301,7 +1301,7 @@ produce a useful value (a "unit function").
 The most common examples of unit functions are all about side-effects: printing to the console, updating a database, putting a message on a queue, etc.
 For the examples below, I will just use `printfn` as my unit function.
 
-{% highlight fsharp %}
+```fsharp
 [1..3] |> List.iter (fun i -> printfn "i is %i" i)
 (*
 i is 1
@@ -1319,11 +1319,11 @@ for i = 1 to 3 do
 // or using a for-in loop
 for i in [1..3] do
     printfn "i is %i" i
-{% endhighlight fsharp %}
+```
 
 As noted above, the expression inside an `iter` or for-loop must return unit.  In the following examples, we try to add 1 to the element, and get a compiler error:
 
-{% highlight fsharp %}
+```fsharp
 [1..3] |> List.iter (fun i -> i + 1)
 //                               ~~~
 // ERROR error FS0001: The type 'unit' does not match the type 'int'
@@ -1333,16 +1333,16 @@ for i in [1..3] do
      i + 1  // ERROR
      // This expression should have type 'unit', 
      // but has type 'int'. Use 'ignore' ...
-{% endhighlight fsharp %}
+```
 
 If you are sure that this is not a logic bug in your code, and you want to get rid of this error, you can pipe the results into `ignore`:
 
-{% highlight fsharp %}
+```fsharp
 [1..3] |> List.iter (fun i -> i + 1 |> ignore)
 
 for i in [1..3] do
      i + 1 |> ignore
-{% endhighlight fsharp %}
+```
 
 <a id="19"></a> 
 <hr>  
@@ -1378,7 +1378,7 @@ Finally, `mapFold` combines `map` and `fold` into one awesome superpower. More c
 
 One way of thinking about `fold` is that it is like `reduce` but with an extra parameter for the initial state:
 
-{% highlight fsharp %}
+```fsharp
 ["a";"b";"c"] |> List.fold (+) "hello: "    
 // "hello: abc"
 // "hello: " + "a" + "b" + "c"
@@ -1386,11 +1386,11 @@ One way of thinking about `fold` is that it is like `reduce` but with an extra p
 [1;2;3] |> List.fold (+) 10    
 // 16
 // 10 + 1 + 2 + 3
-{% endhighlight fsharp %}
+```
 
 As with `reduce`, `fold` and `foldBack` can give very different answers.
 
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4] |> List.fold (fun state x -> (state)*10 + x) 0
                                 // state at each step
 1                               // 1
@@ -1398,11 +1398,11 @@ As with `reduce`, `fold` and `foldBack` can give very different answers.
 ((1)*10 + 2)*10 + 3             // 123 
 (((1)*10 + 2)*10 + 3)*10 + 4    // 1234
 // Final result is 1234   
-{% endhighlight fsharp %}
+```
 
 And here's the `foldBack` version:
 
-{% highlight fsharp %}
+```fsharp
 List.foldBack (fun x state -> x + 10*(state)) [1;2;3;4] 0
                                 // state at each step  
 4                               // 4
@@ -1410,7 +1410,7 @@ List.foldBack (fun x state -> x + 10*(state)) [1;2;3;4] 0
 2 + 10*(3 + 10*(4))             // 432  
 1 + 10*(2 + 10*(3 + 10*(4)))    // 4321  
 // Final result is 4321   
-{% endhighlight fsharp %}
+```
 
 Note that `foldBack` has a different parameter order to `fold`: the list is second last, and the initial state is last, which means that piping is not as convenient.
 
@@ -1421,27 +1421,27 @@ It's easy to get confused between `fold` vs. `foldBack`. I find it helpful to th
 Let's say we want to calculate the sum of a list. The iterative way would be to use a for-loop.
 You start with a (mutable) accumulator and thread it through each iteration, updating it as you go.
 
-{% highlight fsharp %}
+```fsharp
 let iterativeSum list = 
     let mutable total = 0
     for e in list do
         total <- total + e
     total // return sum
-{% endhighlight fsharp %}
+```
 
 On the other hand, the recursive approach says that
 if the list has a head and tail, calculate the sum of the tail (a smaller list) first, and then add the head to it.
 
 Each time the tail gets smaller and smaller until it is empty, at which point you're done.
 
-{% highlight fsharp %}
+```fsharp
 let rec recursiveSum list = 
     match list with
     | [] -> 
         0
     | head::tail -> 
         head + (recursiveSum tail)
-{% endhighlight fsharp %}
+```
 
 Which approach is better?
 
@@ -1451,7 +1451,7 @@ But for things like constructing new lists, the recursive way is (`foldBack`) is
 For example, if we were going to going to create a function from scratch that turned each element into the corresponding string,
 we might write something like this:
 
-{% highlight fsharp %}
+```fsharp
 let rec mapToString list = 
     match list with
     | [] -> 
@@ -1461,7 +1461,7 @@ let rec mapToString list =
 
 [1..3] |> mapToString 
 // ["1"; "2"; "3"]
-{% endhighlight fsharp %}
+```
 
 Using `foldBack` we can transfer that same logic "as is":
 
@@ -1470,7 +1470,7 @@ Using `foldBack` we can transfer that same logic "as is":
 
 Here is the resulting function:
 
-{% highlight fsharp %}
+```fsharp
 let foldToString list = 
     let folder head state = 
         head.ToString() :: state
@@ -1478,19 +1478,19 @@ let foldToString list =
 
 [1..3] |> foldToString 
 // ["1"; "2"; "3"]
-{% endhighlight fsharp %}
+```
 
 On the other hand, a big advantage of `fold` is that it is easier to use "inline" because it plays better with piping.
 
 Luckily, you can use `fold` (for list construction at least) just like `foldBack` as long as you reverse the list at the end.
 
-{% highlight fsharp %}
+```fsharp
 // inline version of "foldToString"
 [1..3] 
 |> List.fold (fun state head -> head.ToString() :: state) []
 |> List.rev
 // ["1"; "2"; "3"]
-{% endhighlight fsharp %}
+```
 
 ### Using `fold` to implement other functions
 
@@ -1499,7 +1499,7 @@ although perhaps not as efficiently as a custom implementation.
 
 For example, here is `map` implemented using `fold`:
 
-{% highlight fsharp %}
+```fsharp
 /// map a function "f" over all elements
 let myMap f list = 
     // helper function
@@ -1513,11 +1513,11 @@ let myMap f list =
 
 [1..3] |> myMap (fun x -> x + 2)
 // [3; 4; 5]
-{% endhighlight fsharp %}
+```
 
 And here is `filter` implemented using `fold`:
 
-{% highlight fsharp %}
+```fsharp
 /// return a new list of elements for which "pred" is true
 let myFilter pred list = 
     // helper function
@@ -1535,7 +1535,7 @@ let myFilter pred list =
 let isOdd n = (n%2=1)
 [1..5] |> myFilter isOdd 
 // [1; 3; 5]
-{% endhighlight fsharp %}
+```
 
 And of course, you can emulate the other functions in a similar way.
 
@@ -1543,7 +1543,7 @@ And of course, you can emulate the other functions in a similar way.
 
 Earlier, I showed an example of the intermediate steps of `fold`:
 
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4] |> List.fold (fun state x -> (state)*10 + x) 0
                                 // state at each step
 1                               // 1
@@ -1551,23 +1551,23 @@ Earlier, I showed an example of the intermediate steps of `fold`:
 ((1)*10 + 2)*10 + 3             // 123 
 (((1)*10 + 2)*10 + 3)*10 + 4    // 1234
 // Final result is 1234   
-{% endhighlight fsharp %}
+```
 
 For that example, I had to manually calculate the intermediate states,
 
 Well, if I had used `scan`, I would have got those intermediate states for free!
 
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4] |> List.scan (fun state x -> (state)*10 + x) 0
 // accumulates from left ===> [0; 1; 12; 123; 1234]
-{% endhighlight fsharp %}
+```
 
 `scanBack` works the same way, but backwards of course:
 
-{% highlight fsharp %}
+```fsharp
 List.scanBack (fun x state -> (state)*10 + x) [1;2;3;4] 0
 // [4321; 432; 43; 4; 0]  <=== accumulates from right
-{% endhighlight fsharp %}
+```
 
 Just as with `foldBack` the parameter order for "scan right" is inverted compared with "scan left".
 
@@ -1583,7 +1583,7 @@ Here's one way of doing it using `scan`:
 * Use `scan` to concat the words back together, generating a list of fragments, each with an extra word added.
 * Get the longest fragment under 50 chars.
 
-{% highlight fsharp %}
+```fsharp
 // start by splitting the text into words
 let text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
 let words = text.Split(' ')
@@ -1612,13 +1612,13 @@ let longestFragUnder50Trimmed =
 
 // The result is:
 //   "Lorem ipsum dolor sit amet, consectetur"
-{% endhighlight fsharp %}
+```
 
 Note that I'm using `Seq.scan` rather than `Array.scan`. This does a lazy scan and avoids having to create fragments that are not needed.
 
 Finally, here is the complete logic as a utility function:
 
-{% highlight fsharp %}
+```fsharp
 // the whole thing as a function
 let truncText max (text:string) = 
     if text.Length <= max then
@@ -1635,7 +1635,7 @@ let truncText max (text:string) =
 
 text |> truncText 50
 // "Lorem ipsum dolor sit amet, consectetur..."
-{% endhighlight fsharp %}
+```
 
 Yes, I know that there is a more efficient implementation than this, but I hope that this little example shows off the power of `scan`.
 
@@ -1645,7 +1645,7 @@ The `mapFold` function can do a map and a fold in one step, which can be conveni
 
 Here's an example of combining an addition and a sum in one step using `mapFold`:
 
-{% highlight fsharp %}
+```fsharp
 let add1 x = x + 1
 
 // add1 using map
@@ -1659,7 +1659,7 @@ let add1 x = x + 1
 // map and sum using mapFold
 [1..5] |> List.mapFold (fun state x -> add1 x, (state + x)) 0   
 // Result => ([2; 3; 4; 5; 6], 15)
-{% endhighlight fsharp %}
+```
 
 
 <a id="20"></a> 
@@ -1678,7 +1678,7 @@ Often, you need the index of the element as you do an iteration. You could use a
   
 ### Usage examples
   
-{% highlight fsharp %}
+```fsharp
 ['a'..'c'] |> List.mapi (fun index ch -> sprintf "the %ith element is '%c'" index ch)
 // ["the 0th element is 'a'"; "the 1th element is 'b'"; "the 2th element is 'c'"]
 
@@ -1692,18 +1692,18 @@ the 0th element is 'a'
 the 1th element is 'b'
 the 2th element is 'c'
 *)
-{% endhighlight fsharp %}
+```
 
 `indexed` generates a tuple with the index -- a shortcut for a specific use of `mapi`:
 
-{% highlight fsharp %}
+```fsharp
 ['a'..'c'] |> List.mapi (fun index ch -> (index, ch) )
 // [(0, 'a'); (1, 'b'); (2, 'c')]
 
 // "indexed" is a shorter version of above
 ['a'..'c'] |> List.indexed
 // [(0, 'a'); (1, 'b'); (2, 'c')]
-{% endhighlight fsharp %}
+```
 
 
 <a id="21"></a> 
@@ -1732,11 +1732,11 @@ The `toXXX` are used to convert from the module type to the type `XXX`. For exam
 
 ### Usage examples
   
-{% highlight fsharp %}
+```fsharp
 [1..5] |> List.toArray      // [|1; 2; 3; 4; 5|]
 [1..5] |> Array.ofList      // [|1; 2; 3; 4; 5|]
 // etc
-{% endhighlight fsharp %}
+```
 
 ### Using sequences with disposables
 
@@ -1764,7 +1764,7 @@ There are some special functions (for Seq only) that change the behavior of the 
   
 Here's an example of `cache` in use:
   
-{% highlight fsharp %}
+```fsharp
 let uncachedSeq = seq {
     for i = 1 to 3 do
         printfn "Calculating %i" i
@@ -1774,42 +1774,42 @@ let uncachedSeq = seq {
 // iterate twice    
 uncachedSeq |> Seq.iter ignore
 uncachedSeq |> Seq.iter ignore
-{% endhighlight fsharp %}
+```
 
 The result of iterating over the sequence twice is as you would expect:
 
-{% highlight text %}
+```text
 Calculating 1
 Calculating 2
 Calculating 3
 Calculating 1
 Calculating 2
 Calculating 3
-{% endhighlight text %}
+```
 
 But if we cache the sequence...
 
-{% highlight fsharp %}
+```fsharp
 let cachedSeq = uncachedSeq |> Seq.cache
 
 // iterate twice    
 cachedSeq |> Seq.iter ignore
 cachedSeq |> Seq.iter ignore
-{% endhighlight fsharp %}
+```
 
 ... then each item is only printed once:
 
-{% highlight text %}
+```text
 Calculating 1
 Calculating 2
 Calculating 3
-{% endhighlight text %}
+```
 
 ### `readonly` example
 
 Here's an example of `readonly` being used to hide the underlying type of the sequence:
 
-{% highlight fsharp %}
+```fsharp
 // print the underlying type of the sequence
 let printUnderlyingType (s:seq<_>) =
     let typeName = s.GetType().Name 
@@ -1820,13 +1820,13 @@ let printUnderlyingType (s:seq<_>) =
 
 [|1;2;3|] |> Seq.readonly |> printUnderlyingType 
 // mkSeq@589   // a temporary type
-{% endhighlight fsharp %}
+```
 
 ### `delay` example
 
 Here's an example of `delay`.
 
-{% highlight fsharp %}
+```fsharp
 let makeNumbers max =
     [ for i = 1 to max do
         printfn "Evaluating %d." i
@@ -1843,11 +1843,11 @@ let delayedSeq =
     let list = Seq.delay (fun () -> makeNumbers 5 |> Seq.ofList)
     printfn "Finished creating delayedSeq" 
     list
-{% endhighlight fsharp %}
+```
 
 If we run the code above, we find that just by creating `eagerList`, we print all the "Evaluating" messages. But creating `delayedSeq` does not trigger the list iteration.
 
-{% highlight text %}
+```text
 Started creating eagerList
 Evaluating 1.
 Evaluating 2.
@@ -1858,24 +1858,24 @@ Finished creating eagerList
 
 Started creating delayedSeq
 Finished creating delayedSeq
-{% endhighlight text %}
+```
 
 Only when the sequence is iterated over does the list creation happen:
 
-{% highlight fsharp %}
+```fsharp
 eagerList |> Seq.take 3  // list already created
 delayedSeq |> Seq.take 3 // list creation triggered
-{% endhighlight fsharp %}
+```
 
 An alternative to using delay is just to embed the list in a `seq` like this:
 
-{% highlight fsharp %}
+```fsharp
 let embeddedList = seq {
     printfn "Started creating embeddedList" 
     yield! makeNumbers 5 
     printfn "Finished creating embeddedList" 
     }
-{% endhighlight fsharp %}
+```
 
 As with `delayedSeq`, the `makeNumbers` function will not be called until the sequence is iterated over.
 
@@ -1910,7 +1910,7 @@ If you have two lists, there are analogues of most of the common functions like 
   
 These functions are straightforward to use:
 
-{% highlight fsharp %}
+```fsharp
 let intList1 = [2;3;4]
 let intList2 = [5;6;7]
 
@@ -1953,13 +1953,13 @@ List.foldBack2 (fun i1 i2 state -> i1 + i2 + (10*state)) intList1 intList2 0
 
 (intList1,intList2) ||> List.zip
 // [(2, 5); (3, 6); (4, 7)]
-{% endhighlight fsharp %}
+```
 
 ### Need a function that's not here?
 
 By using `fold2` and `foldBack2` you can easily create your own functions. For example, some `filter2` functions can be defined like this:
 
-{% highlight fsharp %}
+```fsharp
 /// Apply a function to each element in a pair
 /// If either result passes, include that pair in the result
 let filterOr2 filterPredicate list1 list2 =
@@ -1991,7 +1991,7 @@ let strList2 = ["A2"; "B1"]
 // [("A1", "A2"); ("A3", "B1")]
 (strList1, strList2) ||> filterAnd2 startsWithA 
 // [("A1", "A2")]
-{% endhighlight fsharp %}
+```
 
 See also [section 25](#25).
 
@@ -2015,7 +2015,7 @@ If this happens infrequently, then you could just collapse the lists into a sing
 
 Alternatively you can "lift" your function to the world of "zip lists" using applicatives. 
 
-{% highlight fsharp %}
+```fsharp
 let (<*>) fList xList = 
     List.map2 (fun f x -> f x) fList xList 
 
@@ -2027,7 +2027,7 @@ let addFourParams x y z w =
 // lift "addFourParams" to List world and pass lists as parameters rather than ints
 addFourParams <!> [1;2;3] <*> [1;2;3] <*> [1;2;3] <*> [1;2;3] 
 // Result = [4; 8; 12]
-{% endhighlight fsharp %}
+```
 
 If that seems like magic, see [this series](/posts/elevated-world/#lift) for a explanation of what this code is doing.
 
@@ -2057,7 +2057,7 @@ Finally, there are a number of functions that combine and uncombine collections.
   
 These functions are straightforward to use:
 
-{% highlight fsharp %}
+```fsharp
 List.append [1;2;3] [4;5;6]
 // [1; 2; 3; 4; 5; 6]
 
@@ -2078,14 +2078,14 @@ List.unzip [(1, 10); (2, 20)]
 
 List.unzip3 [(1, 10, 100); (2, 20, 200)]
 // ([1; 2], [10; 20], [100; 200])
-{% endhighlight fsharp %}
+```
 
 Note that the `zip` functions require the lengths to be the same.
 
-{% highlight fsharp %}
+```fsharp
 List.zip [1;2] [10] 
 // ArgumentException: The lists had different lengths.
-{% endhighlight fsharp %}
+```
 
 <a id="27"></a> 
 <hr>  
@@ -2117,7 +2117,7 @@ while the resource is available you may encounter errors accessing the elements 
 
 This will be an extended example, so let's start with some helper functions that emulate a database and a UI:
 
-{% highlight fsharp %}
+```fsharp
 // a disposable database connection
 let DbConnection() = 
     printfn "Opening connection"
@@ -2140,11 +2140,11 @@ let readNCustomersFromDb dbConnection n =
 // show some records on the screen
 let showCustomersinUI customers = 
     customers |> Seq.iter (printfn "Showing %s in UI")
-{% endhighlight fsharp %}
+```
 
 A naive implementation will cause the sequence to be evaluated *after* the connection is closed:
 
-{% highlight fsharp %}
+```fsharp
 let readCustomersFromDb() =
     use dbConnection = DbConnection()
     let results = readNCustomersFromDb dbConnection 2
@@ -2152,22 +2152,22 @@ let readCustomersFromDb() =
 
 let customers = readCustomersFromDb()
 customers |> showCustomersinUI
-{% endhighlight fsharp %}
+```
 
 The output is below. You can see that the connection is closed and only then is the sequence evaluated.
 
-{% highlight text %}
+```text
 Opening connection
 Disposing connection
 Loading Customer 1 from db  // error! connection closed!
 Showing Customer 1 in UI
 Loading Customer 2 from db
 Showing Customer 2 in UI
-{% endhighlight text %}
+```
 
 A better implementation will convert the sequence to a list while the connection is open, causing the sequence to be evaluated immediately:
 
-{% highlight fsharp %}
+```fsharp
 let readCustomersFromDb() =
     use dbConnection = DbConnection()
     let results = readNCustomersFromDb dbConnection 2
@@ -2176,22 +2176,22 @@ let readCustomersFromDb() =
 
 let customers = readCustomersFromDb()
 customers |> showCustomersinUI
-{% endhighlight fsharp %}
+```
 
 The result is much better. All the records are loaded before the connection is disposed:
 
-{% highlight text %}
+```text
 Opening connection
 Loading Customer 1 from db
 Loading Customer 2 from db
 Disposing connection
 Showing Customer 1 in UI
 Showing Customer 2 in UI
-{% endhighlight text %}
+```
 
 A third alternative is to embed the disposable in the sequence itself:
 
-{% highlight fsharp %}
+```fsharp
 let readCustomersFromDb() =
     seq {
         // put disposable inside the sequence
@@ -2201,18 +2201,18 @@ let readCustomersFromDb() =
 
 let customers = readCustomersFromDb()
 customers |> showCustomersinUI
-{% endhighlight fsharp %}
+```
 
 The output shows that now the UI display is also done while the connection is open:
 
-{% highlight text %}
+```text
 Opening connection
 Loading Customer 1 from db
 Showing Customer 1 in UI
 Loading Customer 2 from db
 Showing Customer 2 in UI
 Disposing connection
-{% endhighlight text %}
+```
 
 This may be a bad thing (longer time for the connection to stay open) or a good thing (minimal memory use), depending on the context.
 

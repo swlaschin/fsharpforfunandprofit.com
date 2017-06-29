@@ -15,10 +15,10 @@ These types act both as documentation and as a compile time constraint to ensure
 
 For example, if I have two types `CustomerId` and `OrderId`, I can represent them as separate types:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = CustomerId of int
 type OrderId = OrderId of int
-{% endhighlight fsharp %}
+```
 
 and by doing this, I guarantee that I can't use an `OrderId` where I need an `CustomerId`.
 
@@ -48,7 +48,7 @@ Admittedly, it's a bit silly adding 1 to a customer id -- we'll look at a better
 
 Anyway, here's the code:
 
-{% highlight fsharp %}
+```fsharp
 // type is an wrapper for a primitive type
 type CustomerId = CustomerId of int
 
@@ -72,7 +72,7 @@ Array.init 1000000 CustomerId
 |> Array.filter isCustomerIdSmall 
 |> ignore
 #time
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-1-fsx)*.
 
@@ -80,9 +80,9 @@ Array.init 1000000 CustomerId
 
 A typical timed result looks like this:
 
-{% highlight text %}
+```text
 Real: 00:00:00.296, CPU: 00:00:00.296, GC gen0: 6, gen1: 4, gen2: 0
-{% endhighlight text %}
+```
 
 That is, it takes about 0.3 seconds to do those steps, and it creates quite a bit of garbage, triggering four gen1 collections.
 If you are not sure what "gen0", "gen1", and "gen2" mean, then [this is a good place to start](https://msdn.microsoft.com/en-us/library/ms973837.aspx).
@@ -92,9 +92,9 @@ Past performance is no guarantee of future results. Draw conclusions at your own
 
 If we increase the array size to 10 million, we get a more than 10x slower result:
 
-{% highlight text %}
+```text
 Real: 00:00:03.489, CPU: 00:00:03.541, GC gen0: 68, gen1: 46, gen2: 2
-{% endhighlight text %}
+```
 
 That is, it takes about 3.5 seconds to do those steps, and it creates *a lot* of garbage, including a few gen2 GC's, which are really bad. 
 In fact, you might even get an "out of memory" exception, in which case, you'll have to restart F# Interactive! 
@@ -110,26 +110,26 @@ Let's start with type aliases.
 
 In the type alias approach, I would simply dispense with the wrapper, but keep the type around as documentation.
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = int
 type OrderId = int
-{% endhighlight fsharp %}
+```
 
 If I want to use the type as documentation, I must then annotate the functions appropriately.
 
 For example, in the `add1ToCustomerId` below
 both the parameter and the return value have been annotated so that it has the type `CustomerId -> CustomerId` rather than `int -> int`.
 
-{% highlight fsharp %}
+```fsharp
 let add1ToCustomerId (id:CustomerId) :CustomerId = 
     id+1
-{% endhighlight fsharp %}
+```
 
 ### Micro-benchmarking a type alias
 
 Let's create another micro-benchmark:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = int
 
 // create two silly functions for mapping and filtering 
@@ -154,23 +154,23 @@ Array.init 1000000 (fun i -> i)
 |> Array.filter isCustomerIdSmall 
 |> Array.length
 #time
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-2-fsx)*.
 
 The results are spectacularly better!
 
-{% highlight text %}
+```text
 Real: 00:00:00.017, CPU: 00:00:00.015, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 It takes about 17 milliseconds to do those steps, and more importantly, very little garbage was generated. 
 
 If we increase the array size to 10 million, we get a 10x slower result, but still no garbage:
 
-{% highlight text %}
+```text
 Real: 00:00:00.166, CPU: 00:00:00.156, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 Compared with the earlier version at over three seconds, that's excellent.
 
@@ -180,23 +180,23 @@ Alas, the problem with type aliases is that we have completely lost type safety 
 
 To demonstrate, here's some code that creates a `CustomerId` and an `OrderId`:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = int
 type OrderId = int
 
 // create two
 let cid : CustomerId = 12
 let oid : OrderId = 12
-{% endhighlight fsharp %}
+```
 
 And sadly, the two ids compare equal, and we can pass an `OrderId` to function expecting a `CustomerId` without any complaint from the compiler.
 
-{% highlight fsharp %}
+```fsharp
 cid = oid              // true
 
 // pass OrderId to function expecting a CustomerId 
 add1ToCustomerId oid   // CustomerId = 13
-{% endhighlight fsharp %}
+```
 
 Ok, so that doesn't look promising! What next?
 
@@ -204,19 +204,19 @@ Ok, so that doesn't look promising! What next?
 
 The other common option is to use units of measure to distinguish the two types, like this:
 
-{% highlight fsharp %}
+```fsharp
 type [<Measure>] CustomerIdUOM 
 type [<Measure>] OrderIdUOM 
 
 type CustomerId = int<CustomerIdUOM>
 type OrderId = int<OrderIdUOM>
-{% endhighlight fsharp %}
+```
 
 `CustomerId` and `OrderId` are still two different types, but the unit of measure is erased, so by the time the JIT sees it the type looks like an primitive int.
 
 We can see that this is true when we time the same steps as before:
 
-{% highlight fsharp %}
+```fsharp
 // create two silly functions for mapping and filtering 
 let add1ToCustomerId id  = 
     id+1<CustomerIdUOM>
@@ -237,23 +237,23 @@ Array.init 1000000 (fun i -> LanguagePrimitives.Int32WithMeasure<CustomerIdUOM> 
 |> Array.filter isCustomerIdSmall 
 |> ignore
 #time
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-3-fsx)*.
 
 A typical timed result looks like this:
 
-{% highlight text %}
+```text
 Real: 00:00:00.022, CPU: 00:00:00.031, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 Again, the code is very fast (22 milliseconds), and just as importantly, very little garbage was generated again. 
 
 If we increase the array size to 10 million, we maintain the high performance (just as with the type alias approach) and still no garbage:
 
-{% highlight text %}
+```text
 Real: 00:00:00.157, CPU: 00:00:00.156, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 ### Problems with units of measure
 
@@ -263,17 +263,17 @@ But I find them unsatisfactory from an esthetic point of view. I like my wrapper
 
 And also, units of measure are really meant to be used with numeric values. For example, I can create a customer id and order id:
 
-{% highlight fsharp %}
+```fsharp
 let cid = 12<CustomerIdUOM>
 let oid = 4<OrderIdUOM>
-{% endhighlight fsharp %}
+```
 
 and then I can divide CustomerId(12) by OrderId(4) to get three...
 
-{% highlight fsharp %}
+```fsharp
 let ratio = cid / oid
 // val ratio : int<CustomerIdUOM/OrderIdUOM> = 3
-{% endhighlight fsharp %}
+```
 
 Three what though? Three customer ids per order id?  What does that even mean?
 
@@ -297,7 +297,7 @@ For this to work:
 Here's an example, using the `COMPILED` and `INTERACTIVE` directives so that you can play with it interactively.
 Obviously, in real code, you would use your own directive such as `FASTTYPES` or similar.
 
-{% highlight fsharp %}
+```fsharp
 #if COMPILED  // uncomment to use aliased version   
 //#if INTERACTIVE // uncomment to use wrapped version
 
@@ -327,13 +327,13 @@ let inline customerIdValue (id:CustomerId) = id
 let inline (|CustomerId|) (id:CustomerId) :int = id
 
 #endif
-{% endhighlight fsharp %}
+```
 
 You can see that for both versions I've created a constructor `createCustomerId` and a getter `customerIdValue` and, for the type alias version, an active pattern that looks just like `CustomerId`.
 
 With this code in place, we can use `CustomerId` without caring about the implementation:
 
-{% highlight fsharp %}
+```fsharp
 // test the getter
 let testGetter c1 c2 =
     let i1 = customerIdValue c1
@@ -361,11 +361,11 @@ let test() =
     // test them
     testGetter c1 c2 
     testPatternMatching c1 
-{% endhighlight fsharp %}
+```
 
 And now we can run the *same* micro-benchmark with both implementations:
 
-{% highlight fsharp %}
+```fsharp
 // create two silly functions for mapping and filtering 
 let add1ToCustomerId (CustomerId i) = 
     createCustomerId (i+1)
@@ -386,29 +386,29 @@ Array.init 1000000 createCustomerId
 |> Array.filter isCustomerIdSmall 
 |> Array.length
 #time
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-4-fsx)*.
 
 The results are similar to the previous examples. The aliased version is much faster and does not create GC pressure:
 
-{% highlight text %}
+```text
 // results using wrapped version
 Real: 00:00:00.408, CPU: 00:00:00.405, GC gen0: 7, gen1: 4, gen2: 1
 
 // results using aliased version
 Real: 00:00:00.022, CPU: 00:00:00.031, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 and for the 10 million element version:
 
-{% highlight text %}
+```text
 // results using wrapped version
 Real: 00:00:03.199, CPU: 00:00:03.354, GC gen0: 67, gen1: 45, gen2: 2
 
 // results using aliased version
 Real: 00:00:00.239, CPU: 00:00:00.202, GC gen0: 0, gen1: 0, gen2: 0
-{% endhighlight text %}
+```
 
 ## A more complex example
 
@@ -417,7 +417,7 @@ In practice, we might want something more complex than a simple wrapper.
 For example, here is an `EmailAddress` (a simple wrapper type, but constrained to be non-empty and containing a "@") and
 some sort of `Activity` record that stores an email and the number of visits, say.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress =
     // type with private constructor 
     type EmailAddress = private EmailAddress of string
@@ -450,7 +450,7 @@ module ActivityHistory =
     // get data
     let email {emailAddress=e} = e
     let visits {visits=a} = a
-{% endhighlight fsharp %}
+```
 
 As before, for each type there is a constructor and a getter for each field.
 
@@ -460,7 +460,7 @@ from the type, or use the OCaml convention of calling the main type in a module 
 
 To make a more performant version, we replace `EmailAddress` with a type alias, and `Activity` with a struct, like this:
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress =
 
     // aliased type 
@@ -494,7 +494,7 @@ module ActivityHistory =
     let email (act:ActivityHistory) = act.EmailAddress
     let visits (act:ActivityHistory) = act.Visits
 
-{% endhighlight fsharp %}
+```
 
 This version reimplements the constructor and a getter for each field.
 I could have made the field names for `ActivityHistory` be the same in both cases too, but. in the struct case, type inference would not work.
@@ -502,7 +502,7 @@ By making them different, the user is forced to use the getter functions rather 
 
 Both implementations have the same "API", so we can create code that works with both:
 
-{% highlight fsharp %}
+```fsharp
 let rand = new System.Random()
 
 let createCustomerWithRandomActivityHistory() = 
@@ -534,7 +534,7 @@ let mapAndFilter noOfRecords =
     // filter it 
     |> Array.filter isCustomerInactive 
     |> ignore  // we don't actually care!
-{% endhighlight fsharp %}
+```
 
 ### Pros and cons of this approach
 
@@ -552,7 +552,7 @@ But you should really only be using this technique with small records (2-3 field
 
 Rather than using `#time`, this time I wrote a custom timer that runs a function 10 times and prints out the GC and memory used on each run.
 
-{% highlight fsharp %}
+```fsharp
 /// Do countN repetitions of the function f and print the 
 /// time elapsed, number of GCs and change in total memory
 let time countN label f  = 
@@ -584,21 +584,21 @@ let time countN label f  =
         // convert memory used to K
         let changeInMem = (mem'-mem) / 1000L
         printfn "#%2i elapsed:%6ims gen0:%3i gen1:%3i gen2:%3i mem:%6iK" iteration stopwatch.ElapsedMilliseconds (gen0'-gen0) (gen1'-gen1) (gen2'-gen2) changeInMem 
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-5-fsx)*.
 
 Let's now run `mapAndFilter` with a million records in the array:
 
-{% highlight fsharp %}
+```fsharp
 let size = 1000000
 let label = sprintf "mapAndFilter: %i records" size 
 time 10 label (fun () -> mapAndFilter size)
-{% endhighlight fsharp %}
+```
  
 The results are shown below:
  
-{% highlight text %}
+```text
 =======================
 mapAndFilter: 1000000 records (Wrapped)
 =======================
@@ -626,7 +626,7 @@ mapAndFilter: 1000000 records (Aliased)
 # 8 elapsed:   140ms gen0:  8 gen1:  0 gen2:  0 mem: 23777K
 # 9 elapsed:   174ms gen0:  7 gen1:  0 gen2:  0 mem: 25327K
 #10 elapsed:   180ms gen0:  8 gen1:  0 gen2:  0 mem: 23762K
-{% endhighlight text %}
+```
 
 Now this code no longer consists of only value types, so the profiling is getting muddier now!
 The `mapAndFilter` function uses `createCustomerWithRandomActivity` which in turn uses `Option`, a reference type,
@@ -647,7 +647,7 @@ My suggestion is to turn the DU into a struct with a tag for each case, and fiel
 For example, let's say that we have DU that classifies an `Activity` into `Active` and `Inactive`, and for the `Active` case we store the email and visits and for
 the inactive case we only store the email:
  
-{% highlight fsharp %}
+```fsharp
 module Classification =
     open EmailAddress
     open ActivityHistory
@@ -664,11 +664,11 @@ module Classification =
 
     // pattern matching
     // not needed
-{% endhighlight fsharp %}
+```
 
 To turn this into a struct, I would do something like this:
 
-{% highlight fsharp %}
+```fsharp
 module Classification =
     open EmailAddress
     open ActivityHistory
@@ -692,13 +692,13 @@ module Classification =
             Active (c.Email,c.Visits)
         else
             Inactive (c.Email)
-{% endhighlight fsharp %}
+```
 
 Note that `Visits` is not used in the `Inactive` case, so is set to a default value.
 
 Now let's create a function that classifies the activity history, creates a `Classification` and then filters and extracts the email only for active customers.
 
-{% highlight fsharp %}
+```fsharp
 open Classification
 
 let createClassifiedCustomer activity = 
@@ -720,13 +720,13 @@ let extractActiveEmails noOfRecords =
         | Active (email,visits) -> email |> Some
         | Inactive _ -> None )
     |> ignore
-{% endhighlight fsharp %}
+```
 
 *The code sample above is [available on GitHub](https://gist.github.com/swlaschin/348b6b9e64d4b150cf86#file-typesafe-performance-with-compiler-directives-5-fsx)*.
 
 The results of profiling this function with the two different implementations are shown below:
  
-{% highlight text %}
+```text
 =======================
 extractActiveEmails: 1000000 records (Wrapped)
 =======================
@@ -754,7 +754,7 @@ extractActiveEmails: 1000000 records (Aliased)
 # 8 elapsed:   200ms gen0: 32 gen1:  0 gen2:  0 mem: 33096K
 # 9 elapsed:   189ms gen0: 33 gen1:  0 gen2:  0 mem: 31531K
 #10 elapsed:  3732ms gen0: 33 gen1:  1 gen2:  1 mem:-256432K
-{% endhighlight text %}
+```
 
 As before, the aliased/struct version is more performant, being faster and generating less garbage (although there was a GC pause at the end, oh dear).
 

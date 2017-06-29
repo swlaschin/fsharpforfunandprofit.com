@@ -14,7 +14,7 @@ In F#, this is done using a feature called "type extensions".  And any F# type, 
 
 Here's an example of attaching a function to a record type.
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     type T = {First:string; Last:string} with
         // member defined with type declaration
@@ -28,7 +28,7 @@ module Person =
 // test
 let person = Person.create "John" "Doe"
 let fullname = person.FullName
-{% endhighlight %}
+```
 
 The key things to note are:
 
@@ -39,7 +39,7 @@ There is no requirement to use a particular word, just as long as it is consiste
 
 You don't have to add a member at the same time that you declare the type, you can always add it later in the same module:
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     type T = {First:string; Last:string} with
        // member defined with type declaration
@@ -58,7 +58,7 @@ module Person =
 let person = Person.create "John" "Doe"
 let fullname = person.FullName
 let sortableName = person.SortableName
-{% endhighlight %}
+```
 
 
 These examples demonstrate what are called "intrinsic extensions". They are compiled into the type itself and are always available whenever the type is used. They also show up when you use reflection.
@@ -73,7 +73,7 @@ These are called "optional extensions". They are not compiled into the type itse
 
 For example, let's say we have a `Person` type defined:
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     type T = {First:string; Last:string} with
        // member defined with type declaration
@@ -88,38 +88,38 @@ module Person =
     type T with 
         member this.SortableName = 
             this.Last + ", " + this.First        
-{% endhighlight %}    
+```    
 
 The example below demonstrates how to add an `UppercaseName` extension to it in a different module:
             
-{% highlight fsharp %}            
+```fsharp            
 // in a different module
 module PersonExtensions = 
 
     type Person.T with 
     member this.UppercaseName = 
         this.FullName.ToUpper()
-{% endhighlight %}        
+```        
 
 So now let's test this extension:
 
-{% highlight fsharp %}
+```fsharp
 let person = Person.create "John" "Doe"
 let uppercaseName = person.UppercaseName 
-{% endhighlight %}
+```
 
 Uh-oh, we have an error. What's wrong is that the `PersonExtensions` is not in scope. 
 Just as for C#, any extensions have to be brought into scope in order to be used.
 
 Once we do that, everything is fine:
 
-{% highlight fsharp %}
+```fsharp
 // bring the extension into scope first!
 open PersonExtensions
 
 let person = Person.create "John" "Doe"
 let uppercaseName = person.UppercaseName 
-{% endhighlight %}
+```
 
 
 ## Extending system types
@@ -128,21 +128,21 @@ You can extend types that are in the .NET libraries as well. But be aware that w
 
 For example, if you try to extend `int`, you will fail, because `int` is not the true name of the type:
 
-{% highlight fsharp %}
+```fsharp
 type int with
     member this.IsEven = this % 2 = 0
-{% endhighlight %}
+```
 
 You must use `System.Int32` instead:
 
-{% highlight fsharp %}
+```fsharp
 type System.Int32 with
     member this.IsEven = this % 2 = 0
 
 //test
 let i = 20
 if i.IsEven then printfn "'%i' is even" i
-{% endhighlight %}
+```
 
 ## Static members
 
@@ -151,7 +151,7 @@ You can make the member functions static by:
 * adding the keyword `static` 
 * dropping the `this` placeholder
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     type T = {First:string; Last:string} with
         // member defined with type declaration
@@ -165,11 +165,11 @@ module Person =
 // test
 let person = Person.T.Create "John" "Doe"
 let fullname = person.FullName
-{% endhighlight %}
+```
 
 And you can create static members for system types as well:
 
-{% highlight fsharp %}
+```fsharp
 type System.Int32 with
     static member IsOdd x = x % 2 = 1
     
@@ -179,7 +179,7 @@ type System.Double with
 //test
 let result = System.Int32.IsOdd 20 
 let pi = System.Double.Pi
-{% endhighlight %}
+```
 
 <a name="attaching-existing-functions" ></a>
 ## Attaching existing functions
@@ -191,7 +191,7 @@ A very common pattern is to attach pre-existing standalone functions to a type. 
 
 One example of this in the F# libraries is the function that calculates a list's length. It is available as a standalone function in the `List` module, but also as a method on a list instance.
 
-{% highlight fsharp %}
+```fsharp
 let list = [1..10]
 
 // functional style
@@ -199,11 +199,11 @@ let len1 = List.length list
 
 // OO style
 let len2 = list.Length
-{% endhighlight %}
+```
 
 In the following example, we start with a type with no members initially, then define some functions, then finally attach the `fullName` function to the type.
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     // type with no members initially
     type T = {First:string; Last:string} 
@@ -224,7 +224,7 @@ module Person =
 let person = Person.create "John" "Doe"
 let fullname = Person.fullName person  // functional style
 let fullname2 = person.FullName        // OO style
-{% endhighlight %}
+```
 
 The standalone `fullName` function has one parameter, the person. In the attached member, the parameter comes from the `this` self-reference.
 
@@ -234,7 +234,7 @@ One nice thing is that when the previously defined function has multiple paramet
 
 In the example below, the `hasSameFirstAndLastName` function has three parameters. Yet when we attach it, we only need to specify one! 
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     // type with no members initially
     type T = {First:string; Last:string} 
@@ -255,7 +255,7 @@ module Person =
 let person = Person.create "John" "Doe"
 let result1 = Person.hasSameFirstAndLastName person "bob" "smith" // functional style
 let result2 = person.HasSameFirstAndLastName "bob" "smith" // OO style
-{% endhighlight %}
+```
 
 
 Why does this work? Hint: think about currying and partial application!
@@ -275,7 +275,7 @@ The tuple form is also how F# interacts with the standard .NET libraries, so let
 As a testbed, here is a Product type with two methods, each implemented using one of the approaches.
 The `CurriedTotal` and `TupleTotal` methods each do the same thing: work out the total price for a given quantity and discount.
 
-{% highlight fsharp %}
+```fsharp
 type Product = {SKU:string; Price: float} with
 
     // curried style
@@ -285,26 +285,26 @@ type Product = {SKU:string; Price: float} with
     // tuple style
     member this.TupleTotal(qty,discount) = 
         (this.Price * float qty) - discount
-{% endhighlight  %}
+```
 
 And here's some test code:
 
-{% highlight fsharp %}
+```fsharp
 let product = {SKU="ABC"; Price=2.0}
 let total1 = product.CurriedTotal 10 1.0 
 let total2 = product.TupleTotal(10,1.0)
-{% endhighlight  %}
+```
 
 No difference so far.
 
 We know that curried version can be partially applied:
 
-{% highlight fsharp %}
+```fsharp
 let totalFor10 = product.CurriedTotal 10
 let discounts = [1.0..5.0] 
 let totalForDifferentDiscounts 
     = discounts |> List.map totalFor10 
-{% endhighlight  %}
+```
 
 But the tuple approach can do a few things that that the curried one can't, namely:
 
@@ -316,11 +316,11 @@ But the tuple approach can do a few things that that the curried one can't, name
 
 The tuple-style approach supports named parameters:
 
-{% highlight fsharp %}
+```fsharp
 let product = {SKU="ABC"; Price=2.0}
 let total3 = product.TupleTotal(qty=10,discount=1.0)
 let total4 = product.TupleTotal(discount=1.0, qty=10)
-{% endhighlight  %}
+```
 
 As you can see, when names are used, the parameter order can be changed.  
 
@@ -335,7 +335,7 @@ For tuple-style methods, you can specify an optional parameter by prefixing the 
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 type Product = {SKU:string; Price: float} with
 
     // optional discount
@@ -344,11 +344,11 @@ type Product = {SKU:string; Price: float} with
         match discount with
         | None -> extPrice
         | Some discount -> extPrice - discount
-{% endhighlight  %}
+```
 
 And here's a test:
 
-{% highlight fsharp %}
+```fsharp
 let product = {SKU="ABC"; Price=2.0}
 
 // discount not specified
@@ -356,7 +356,7 @@ let total1 = product.TupleTotal2(10)
 
 // discount specified
 let total2 = product.TupleTotal2(10,1.0) 
-{% endhighlight  %}
+```
 
 This explicit matching of the `None` and `Some` can be tedious, and there is a slightly more elegant solution for handling optional parameters.
 
@@ -365,7 +365,7 @@ And if not, the default value is returned.
 
 Let's see the same code rewritten to use `defaultArg` 
 
-{% highlight fsharp %}
+```fsharp
 type Product = {SKU:string; Price: float} with
 
     // optional discount
@@ -374,7 +374,7 @@ type Product = {SKU:string; Price: float} with
         let discount = defaultArg discount 0.0
         //return
         extPrice - discount
-{% endhighlight  %}
+```
 
 <a id="method-overloading"></a>
 
@@ -389,7 +389,7 @@ However, F# *does* support method overloading, but only for methods (that is fun
 
 Here's an example, with yet another variant on the `TupleTotal` method!
 
-{% highlight fsharp %}
+```fsharp
 type Product = {SKU:string; Price: float} with
 
     // no discount
@@ -401,7 +401,7 @@ type Product = {SKU:string; Price: float} with
     member this.TupleTotal3(qty, discount) = 
         printfn "using discount method"
         (this.Price * float qty) - discount
-{% endhighlight  %}
+```
 
 Normally, the F# compiler would complain that there are two methods with the same name, but in this case, because they are tuple based and because their signatures are different, it is acceptable.
 (To make it obvious which one is being called, I have added a small debugging message.)
@@ -409,7 +409,7 @@ Normally, the F# compiler would complain that there are two methods with the sam
 And here's a test:
 
 
-{% highlight fsharp %}
+```fsharp
 let product = {SKU="ABC"; Price=2.0}
 
 // discount not specified
@@ -417,7 +417,7 @@ let total1 = product.TupleTotal3(10)
 
 // discount specified
 let total2 = product.TupleTotal3(10,1.0) 
-{% endhighlight  %}
+```
 
 <a id="downsides-of-methods"></a>
 
@@ -437,7 +437,7 @@ Let's see what I mean.
 
 Let's go back to our Person example again, the one that had the same logic implemented both as a standalone function and as a method:
 
-{% highlight fsharp %}
+```fsharp
 module Person = 
     // type with no members initially
     type T = {First:string; Last:string} 
@@ -453,13 +453,13 @@ module Person =
     // function as a member 
     type T with 
         member this.FullName = fullName this
-{% endhighlight  %}
+```
 
 Now let's see how well each one works with type inference.  Say that I want to print the full name of a person, so I will define a function `printFullName` that takes a person as a parameter.
 
 Here's the code using the module level standalone function.
 
-{% highlight fsharp %}
+```fsharp
 open Person
 
 // using standalone function            
@@ -468,19 +468,19 @@ let printFullName person =
     
 // type inference worked:
 //    val printFullName : Person.T -> unit    
-{% endhighlight  %}
+```
 
 This compiles without problems, and the type inference has correctly deduced that parameter was a person
 
 Now let's try the "dotted" version:
 
-{% highlight fsharp %}
+```fsharp
 open Person
 
 // using method with "dotting into"
 let printFullName2 person = 
     printfn "Name is %s" (person.FullName) 
-{% endhighlight  %}
+```
 
 This does not compile at all, because the type inference does not have enough information to deduce the parameter. *Any* object might implement `.FullName` -- there is just not enough to go on.
 
@@ -492,7 +492,7 @@ A similar problem happens with higher order functions. For example, let's say th
 
 With a standalone function, this is trivial:
 
-{% highlight fsharp %}
+```fsharp
 open Person
 
 let list = [
@@ -502,11 +502,11 @@ let list = [
 
 //get all the full names at once
 list |> List.map fullName
-{% endhighlight  %}
+```
 
 With object methods, we have to create special lambdas everywhere:
 
-{% highlight fsharp %}
+```fsharp
 open Person
 
 let list = [
@@ -516,7 +516,7 @@ let list = [
 
 //get all the full names at once
 list |> List.map (fun p -> p.FullName)
-{% endhighlight  %}
+```
 
 And this is just a simple example. Object methods don't compose well, are hard to pipe, and so on.
 

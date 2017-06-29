@@ -74,7 +74,7 @@ Let's take this use-case and do two different OO implementations, one with and o
 
 First, let's define the domain types that will be shared across all the implementations (OO and functional):
 
-{% highlight fsharp %}
+```fsharp
 type UserId = int
 type UserName = string
 type EmailAddress = string
@@ -84,14 +84,14 @@ type UpdateProfileRequest = {
     Name : UserName 
     EmailAddress : EmailAddress 
 }
-{% endhighlight fsharp %}
+```
 
 For now, I'm just going to use type aliases for `UserId`, `UserName`. For a more sophisticated approach, we would use [constrained types](/posts/designing-with-types-more-semantic-types/) instead of primitives such as `int` and `string`. And also, I won't be doing
 any kind of validation either. That's a big topic for another time!
 
 So, here's the first OO version, without dependency injection:
 
-{% highlight fsharp %}
+```fsharp
 type UserProfileUpdater() = 
 
   member this.UpdateCustomerProfile(json: string) =
@@ -107,7 +107,7 @@ type UserProfileUpdater() =
     with
     | ex -> 
       Logger.Error(sprintf "UpdateCustomerProfile failed: '%s'" ex.Message)
-{% endhighlight fsharp %}
+```
 
 You can see that we have hard-coded the services such as `DbService` and `EmailService` and `Logger` right into the method. This is not good!
 
@@ -115,7 +115,7 @@ The standard OO way to fix this is to define interfaces for each service, and th
 
 Here are the interfaces we will use:
 
-{% highlight fsharp %}
+```fsharp
 type ILogger =
   abstract Info : string -> unit
   abstract Error : string -> unit
@@ -126,7 +126,7 @@ type IDbService =
 
 type IEmailService = 
   abstract SendEmailChangedNotification : EmailAddress * EmailAddress -> unit
-{% endhighlight fsharp %}
+```
 
 You can read these interfaces like this: 
 
@@ -137,7 +137,7 @@ You can read these interfaces like this:
 
 Here's the updated implementation, now with dependency injection:
 
-{% highlight fsharp %}
+```fsharp
 type UserProfileUpdater 
   ( dbService:IDbService, 
     emailService:IEmailService, 
@@ -159,7 +159,7 @@ type UserProfileUpdater
 
   member this.ParseRequest(json:string) : UpdateProfileRequest =
     ...            
-{% endhighlight fsharp %}
+```
 
 This is better. All the services are injected in the class constructor, and there are no direct dependencies on the service implementations. 
 So we have gained the benefits of loose coupling, mockability and parallel development, as promised.
@@ -182,7 +182,7 @@ but typically, there is some application-level component (the ["Composition Root
 
 For example, in our implementation, we might have something like this:
 
-{% highlight fsharp %}
+```fsharp
 module CompositionRoot = 
 
   // read from config file for example
@@ -196,7 +196,7 @@ module CompositionRoot =
 
   // construct the class, injecting the services
   let customerUpdater = UserProfileUpdater(dbService,emailService,logger)
-{% endhighlight fsharp %}
+```
 
 Ok. That should all be quite familiar. Notice that the `DbService` needs a `dbConnectionString`, which is passed in to its constructor. Similarly, the `EmailService`
 needs a `smtpConnectionString`.
@@ -209,7 +209,7 @@ In FP, we don't have classes, only functions. So rather than a class constructor
 
 Now, we could copy the OO approach, and pass interfaces in to the function as parameters like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile 
   (dbService:IDbService) 
   (emailService:IEmailService) 
@@ -221,7 +221,7 @@ let updateCustomerProfile
     let currentEmail = dbService.GetEmail(request.UserId)
     dbService.UpdateProfile(request.UserId, request.Name, request.EmailAddress)
     // etc
-{% endhighlight fsharp %}
+```
 
 But using interfaces still has the same problems with accidental dependencies that we mentioned above.
 
@@ -229,7 +229,7 @@ A better approach is to break out each separate dependency into a standalone fun
 
 For example, if each interface had only *one* method, then they would look like this:
 
-{% highlight fsharp %}
+```fsharp
 type ILogInfo  = 
     abstract LogInfo : string -> unit
 
@@ -244,18 +244,18 @@ type IDbUpdateProfile =
 
 type ISendEmailChangedNotification = 
     abstract Notify : EmailAddress * EmailAddress -> unit
-{% endhighlight fsharp %}
+```
 
 But of course, an interface with one method is just a function type, so we could rewrite these "interfaces" as:
 
-{% highlight fsharp %}
+```fsharp
 type LogInfo = string -> unit
 type LogError = string -> unit
 
 type DbGetEmail = UserId -> EmailAddress
 type DbUpdateProfile = UserId * UserName * EmailAddress -> unit
 type Notify = EmailAddress * EmailAddress -> unit
-{% endhighlight fsharp %}
+```
 
 Notice that in the functional approach, `DbGetEmail` and `DbUpdateProfile` do *not* have any `dbConnectionString` parameter. These functions define only what is needed from
 the caller's point of view, and the caller shouldn't need to know anything about connection strings.
@@ -263,7 +263,7 @@ But as a result, there's nothing in these functions that mentions a database at 
 
 Ok, let's change our function to use these function types rather than interfaces. It now looks like this:
 
-{% highlight fsharp %}
+```fsharp
 module CustomerUpdater = 
 
   let updateCustomerProfile 
@@ -279,11 +279,11 @@ module CustomerUpdater =
       updateProfile(request.UserId, request.Name, request.EmailAddress)
       logInfo("Updated Profile")
     // etc    
-{% endhighlight fsharp %}
+```
 
 We actually don't need the type annotations for the parameters at all, and we could equally well write it like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile logInfo logError getEmail updateProfile notify json =
     try
       let request = parseRequest(json) 
@@ -291,7 +291,7 @@ let updateCustomerProfile logInfo logError getEmail updateProfile notify json =
       updateProfile(request.UserId, request.Name, request.EmailAddress)
       logInfo("Updated Profile")
     // etc    
-{% endhighlight fsharp %}
+```
 
 However, the type annotations may be useful if you are working top-down -- you know what the services are and you want to ensure that compiler errors occur within `updateCustomerProfile` if you get it wrong.
 
@@ -312,7 +312,7 @@ for a guideline such as the Interface Segregation Principle is much diminished.
 Let's look at how this function would be created. Just as with the OO design, we need some component that is responsible for setting everything up.
 I'll steal the OO vocabulary for now and call it `CompositionRoot` again.
 
-{% highlight fsharp %}
+```fsharp
 module CompositionRoot = 
 
   let dbConnectionString = "server=dbserver; database=mydatabase"
@@ -338,7 +338,7 @@ module CompositionRoot =
   let updateCustomerProfile = 
       // partial application
       CustomerUpdater.updateCustomerProfile logInfo logError getEmail updateProfile notify
-{% endhighlight fsharp %}
+```
 
 What we're doing here is using *partial application* to provide all the dependencies that each function needs.
 (If you are not familiar with partial application, see [this discussion](https://www.youtube.com/watch?v=E8I19uA-wGY&t=1548))
@@ -347,7 +347,7 @@ What we're doing here is using *partial application* to provide all the dependen
 
 For example, the database functions might be implemented like this, with an explicit `connectionString` parameter in addition to the main parameters:
 
-{% highlight fsharp %}
+```fsharp
 module DbService = 
 
     let getEmail connectionString (userId:UserId) :EmailAddress =
@@ -355,11 +355,11 @@ module DbService =
 
     let updateProfile connectionString ((userId:UserId),(name:UserName),(emailAddress:EmailAddress)) =
         // ...
-{% endhighlight fsharp %}
+```
 
 In our composition root, we are passing in just the `dbConnectionString`, leaving the other parameters open:
 
-{% highlight fsharp %}
+```fsharp
 let getEmail = 
   // partial application
   DbService.getEmail dbConnectionString 
@@ -367,36 +367,36 @@ let getEmail =
 let updateProfile = 
   // partial application
   DbService.updateProfile dbConnectionString 
-{% endhighlight fsharp %}
+```
 
 The resulting functions match the types that we need to pass into the main `updateCustomerProfile` function:
 
-{% highlight fsharp %}
+```fsharp
 type DbGetEmail = UserId -> EmailAddress
 type DbUpdateProfile = UserId * UserName * EmailAddress -> unit
-{% endhighlight fsharp %}
+```
 
 And at the end of the module we take the same approach with `updateCustomerProfile` itself. We pass in the five dependencies, leaving the `json` string parameter open, to be supplied later.
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile = 
   // partial application
   CustomerUpdater.updateCustomerProfile logInfo logError getEmail updateProfile notify
-{% endhighlight fsharp %}
+```
 
 That means that when we actually use the function, we only need to pass in the json string, like this:
 
-{% highlight fsharp %}
+```fsharp
 let json = """{"UserId" : "1","Name" : "Alice","EmailAddress" : "new@example.com"}"""
 CompositionRoot.updateCustomerProfile json 
-{% endhighlight fsharp %}
+```
 
 In this way, the caller does not need to know exactly what the dependencies of `updateCustomerProfile` are. We have the decoupling that we wanted.
 
 And of course, it is easy to test because all the dependencies can be mocked. Here's an example of a test that checks that the email
 notification is not sent if the database update fails. You can see that we can quickly mock every single dependency.
 
-{% highlight fsharp %}
+```fsharp
 // test
 let ``when email changes but db update fails, expect notification email not sent``() =
 
@@ -433,7 +433,7 @@ let ``when email changes but db update fails, expect notification email not sent
   // --------------------
   
   if notificationWasSent then failwith "test failed"
-{% endhighlight fsharp %}
+```
 
 ## Passing dependencies to inner functions
 
@@ -441,7 +441,7 @@ What happens if the inner dependencies share parameters with the main function?
 
 For example, let's say that the `DbService` functions need logging functions as well, like this?
 
-{% highlight fsharp %}
+```fsharp
 module DbService = 
 
   let getEmail connectionString logInfo logError userId  =
@@ -451,11 +451,11 @@ module DbService =
   let updateProfile connectionString logInfo logError (userId,name,emailAddress) =
                    // logging functions ^
     ...
-{% endhighlight fsharp %}
+```
 
 How should we deal with this? Should we take the `logInfo` parameter and pass it to the dependency like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile logInfo logError getEmail updateProfile notify json =
     try
         let request = parseRequest json 
@@ -464,13 +464,13 @@ let updateCustomerProfile logInfo logError getEmail updateProfile notify json =
         updateProfile logInfo logError (request.UserId, request.Name, request.EmailAddress)
                Added ^logInfo ^logError 
         ...
-{% endhighlight fsharp %}
+```
 
 No, this is (generally) the wrong approach. What dependencies `getEmail` has is no concern of `updateCustomerProfile`.
 
 Instead, passing in these new dependencies should be the responsibility of the top-level composition root:
 
-{% highlight fsharp %}
+```fsharp
 module CompositionRoot = 
 
     let logInfo = Logger.info
@@ -485,7 +485,7 @@ module CompositionRoot =
     let updateProfile = 
         DbService.updateProfile dbConnectionString logInfo logError 
                                        // Pass in ^logInfo ^logError 
-{% endhighlight fsharp %}
+```
 
 The end result is that `getEmail` and `updateProfile` have exactly the same "interface" as before, and we haven't broken any code that depends on them.
 
@@ -502,7 +502,7 @@ there is generally more information available to log. It also means that the cal
 
 So, as before, assume that the logging functions are passed in to the services, and they do their own logging:
 
-{% highlight fsharp %}
+```fsharp
 module DbService =
   let getEmail connectionString logInfo logError userId  =
     ...
@@ -514,11 +514,11 @@ module EmailService =
 
   let sendEmailChangedNotification smtpConnectionString logInfo (oldEmailAddress,newEmailAddress) =
     logInfo (sprintf "email sent to old %s and new %s" oldEmailAddress newEmailAddress) 
-{% endhighlight fsharp %}
+```
 
 With these changes, the main function doesn't really need any logging at all now:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile logError getEmail updateProfile notify json =
   try
     let request = parseRequest json 
@@ -529,7 +529,7 @@ let updateCustomerProfile logError getEmail updateProfile notify json =
       notify(currentEmail,request.EmailAddress)
   with
   | ex -> logError (sprintf "UpdateCustomerProfile failed: '%s'" ex.Message)
-{% endhighlight fsharp %}
+```
 
 Um, except for `logError` in the exception handling!  We'll get rid of that in the next section.
 
@@ -539,18 +539,18 @@ The answer is simple -- just wrap the dependency in your own logging logic when 
 
 For example, let's say that `updateProfile` and `notify` are just given to you, and do *not* have any logging, like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateProfile = 
     DbService.updateProfile dbConnectionString 
                                 // No logging ^
 let notify = 
     EmailService.sendEmailChangedNotification smtpConnectionString   
                                                      // No logging ^
-{% endhighlight fsharp %}
+```
 
 All you need to do is create a little logging helper function and "decorate" the functions with it:
 
-{% highlight fsharp %}
+```fsharp
 // helper function
 let withLogInfo msg f x = 
     logInfo msg
@@ -561,16 +561,16 @@ let updateProfileWithLog =
 
 let notifyWithLog = 
     notify |> withLogInfo "Sending Email Changed Notification"
-{% endhighlight fsharp %}
+```
 
 The new functions `updateProfileWithLog` and `notifyWithLog` have exactly the same signature as the originals, and so can be passed into `updateCustomerProfile`
 just as the originals were.
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile = 
     updateCustomerProfile logError getEmail updateProfileWithLog notifyWithLog
                                   // With logging ^    With logging ^
-{% endhighlight fsharp %}
+```
 
 This is a very simple example, but of course you can extend the idea to handle more complex scenarios.
 
@@ -580,14 +580,14 @@ As promised, let's get rid of the exception handling logic now.
 
 Here's the exception handling code we are using:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile ... = 
     try
        ...
     with
     | ex -> 
       logError(sprintf "UpdateCustomerProfile failed: '%s'" ex.Message)
-{% endhighlight fsharp %}
+```
 
 It's not very well designed, because it catches *all* exceptions, even ones we probably want to fail-fast due to a programming error (such as `NullReferenceException`). 
 
@@ -595,15 +595,15 @@ Let's replace the exception handling logic with the choice type `Result` (see my
 
 First we can define the `Result` type itself (and this is built-in to F# 4.1, hooray!).
 
-{% highlight fsharp %}
+```fsharp
 type Result<'a> = 
     | Ok of 'a
     | Error of string
-{% endhighlight fsharp %}
+```
     
 And then we need some common functions such as `map` and `bind`:
 
-{% highlight fsharp %}
+```fsharp
 module Result =
 
     let map f xResult = 
@@ -615,22 +615,22 @@ module Result =
         match xResult with
         | Ok x -> f x
         | Error err -> Error err
-{% endhighlight fsharp %}
+```
 
 And finally, a minimal "result" computation expression
 
-{% highlight fsharp %}
+```fsharp
 type ResultBuilder() =
     member this.Return x = Ok x
     member this.Zero() = Ok ()
     member this.Bind(xResult,f) = Result.bind f xResult
     
 let result = ResultBuilder()
-{% endhighlight fsharp %}
+```
 
 Assuming that our services now return `Result` rather than throw exceptions, we can rewrite the `updateCustomerProfile` inside the `result` computation expression like this:
 
-{% highlight fsharp %}
+```fsharp
 let parseRequest json :Result<UpdateProfileRequest> =
     ...
   
@@ -643,7 +643,7 @@ let updateCustomerProfile getEmail updateProfile notify json :Result<unit> =
         if currentEmail <> request.EmailAddress then
             do! notify (currentEmail,request.EmailAddress)
     }
-{% endhighlight fsharp %}
+```
 
 It's cleaner now and we've removed the dependency on `logError`, but we can do even better!
 
@@ -664,7 +664,7 @@ Let's see how this might work in practice.
 
 Here's an example of the original approach, using three different functions for logging:
 
-{% highlight fsharp %}
+```fsharp
 let example1 logDebug logInfo logError =
     //       ^ three  ^ dependencies ^
     logDebug "Testing"
@@ -672,20 +672,20 @@ let example1 logDebug logInfo logError =
         logInfo "OK"
     else
         logError "Unexpected"
-{% endhighlight fsharp %}
+```
 
 But we could instead define a discriminated union with a case associated with each function:
 
-{% highlight fsharp %}
+```fsharp
 type LogMessage =
     | Debug of string
     | Info of string
     | Error of string
-{% endhighlight fsharp %}
+```
 
 The code that uses the logging now only needs *one* dependency:
 
-{% highlight fsharp %}
+```fsharp
 let example2 logger =
     //       ^ one dependency
     logger (Debug "Testing")
@@ -693,17 +693,17 @@ let example2 logger =
         logger (Info "OK")
     else
         logger (Error "Unexpected")
-{% endhighlight fsharp %}
+```
 
 The implementation of the logging function then just matches on the case to determine how to handle the message:
 
-{% highlight fsharp %}
+```fsharp
 let logger logMessage =
     match logMessage with
     | Debug msg -> printfn "DEBUG %s" msg
     | Info msg -> printfn "INFO %s" msg
     | Error msg -> printfn "ERROR %s" msg
-{% endhighlight fsharp %}
+```
 
 Can we use this approach everywhere?  For example, we have two separate database functions `getEmail` and `updateProfile`. Could we merge them into
 one dependency using the same trick?
@@ -720,26 +720,26 @@ However, we shouldn't give up on replacing those two database functions.
 If we look at the code, we can see that we are making some assumptions, in particular, that we need two calls to the database: one to fetch the old email,
 and one to do the update.
 
-{% highlight fsharp %}
+```fsharp
 ...
 let! currentEmail = getEmail request.UserId
 do! updateProfile(request.UserId,request.Name,request.EmailAddres
 if currentEmail <> request.EmailAddress then
     ...
 ...
-{% endhighlight fsharp %}
+```
 
 Perhaps that's wrong? Perhaps our SQL expert can write a stored procedure that can do it in one call?
 
 But how can we merge them into one? One way would be to have `updateProfile` return the original email that was updated:
 
-{% highlight fsharp %}
+```fsharp
 ...
 let! oldEmail = updateProfile(request.UserId,request.Name,request.EmailAddress)
 if oldEmail <> request.EmailAddress then
     do! notify (oldEmail,request.EmailAddress)
 ...    
-{% endhighlight fsharp %}
+```
 
 This is better. We no longer care how many SQL calls are needed, we are just focusing on what is needed by the caller.
 
@@ -750,11 +750,11 @@ with no need of notification, or the email changed and a notification is needed.
 
 These two cases can be captured in a type:
 
-{% highlight fsharp %}
+```fsharp
 type ProfileUpdated =
     | NoNotificationNeeded
     | NotificationNeeded of oldEmail:EmailAddress * newEmail:EmailAddress
-{% endhighlight fsharp %}
+```
 
 When the `updateProfile` function returns a value of this type, at least the business logic is more explicit now.
 
@@ -762,7 +762,7 @@ We've now separated the logic from the implementation. This type tells us when s
 
 We could put the pattern matching for the two cases directly in the `updateCustomerProfile` like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile updateProfile notify json =
     result {
         let! request = parseRequest json 
@@ -772,11 +772,11 @@ let updateCustomerProfile updateProfile notify json =
         | NotificationNeeded (oldEmail,newEmail) -> 
             do! notify oldEmail newEmail
     }
-{% endhighlight fsharp %}
+```
 
 But personally, I'd prefer to create a helper function to hide it, and then the main function is just a linear series of calls with no branching:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile updateProfile handleProfileUpdateResult json =
     //                                  ^replaces "notify"
     result {
@@ -793,7 +793,7 @@ let handleProfileUpdateResult notify updateResult =
         | NotificationNeeded (oldEmail,newEmail) -> 
             do! notify oldEmail newEmail
     }
-{% endhighlight fsharp %}
+```
 
 Note that the `handleProfileUpdateResult` is passed into `updateCustomerProfile` as a parameter, replacing the `notify` parameter. We haven't hard-coded it.
 
@@ -801,7 +801,7 @@ Note that the `handleProfileUpdateResult` is passed into `updateCustomerProfile`
 
 One final thing I'm tempted to do is pass in the `parseRequest` function as a parameter as well, like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile parseRequest updateProfile handleProfileUpdateResult json =
     //                    ^new parameter
     result {
@@ -809,7 +809,7 @@ let updateCustomerProfile parseRequest updateProfile handleProfileUpdateResult j
         let! updateResult = updateProfile(request.UserId,request.Name,request.EmailAddress)
         do! handleProfileUpdateResult updateResult 
     }
-{% endhighlight fsharp %}
+```
 
 Why on earth would I want to do that? Why add an *extra* parameter -- we are trying to get rid of them!
 
@@ -822,21 +822,21 @@ Another reason for doing this is that `updateCustomerProfile` really shouldn't c
 
 A final reason that I want to do this is that we are now very close to being able to chain the three functions (`parseRequest`, `updateProfile`, `handleProfileUpdateResult`) together directly like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCustomerProfile parseRequest updateProfile handleProfileUpdateResult =
     parseRequest 
     >=> updateProfile 
     >=> handleProfileUpdateResult 
-{% endhighlight fsharp %}
+```
 
 The `>=>` is the [Kleisli composition](http://fsharpforfunandprofit.com/posts/elevated-world-3/#kleisli) operator -- it composes two `Result`-returning functions into a new `Result`-returning function.
 That is, if function `f` has signature `'a -> Result<'b>` and function `g` has signature `'b -> Result<'c>`, then `f >=> g` is a new function with signature `'a -> Result<'c>`
 
 Using the code we have written so far, we can define it like this:
 
-{% highlight fsharp %}
+```fsharp
 let (>=>) f g = f >> Result.bind g
-{% endhighlight fsharp %}
+```
 
 But here's a thought. Once we have the ability to chain the functions directly, do we even need a separate `updateCustomerProfile` function at all?
 
@@ -844,7 +844,7 @@ No! We can do everything in the composition root and get rid of `updateCustomerP
 
 Here's the final version of the composition root module, where the various components are assembled:
 
-{% highlight fsharp %}
+```fsharp
 module CompositionRoot = 
 
     // -------------
@@ -890,7 +890,7 @@ module CompositionRoot =
         parseRequest  
         >=> updateProfile'
         >=> handleProfileUpdateResult 
-{% endhighlight fsharp %}
+```
 
 In this version of `CompositionRoot`, it is no longer merely a place where dependencies are injected, but a place where entire pipelines are assembled for use in the
 rest of the application. And if the pieces of the pipeline don't quite fit together properly, some little helper functions are created to even out the rough spots.
@@ -898,7 +898,7 @@ rest of the application. And if the pieces of the pipeline don't quite fit toget
 You can see this approach at work with the [Suave (web framework) combinators](https://suave.io/composing.html).
 For example, we might see code for a Suave web application that looks like this:
 
-{% highlight fsharp %}
+```fsharp
 // define the routes and the pipelines for each route
 let app = 
     choose [
@@ -908,7 +908,7 @@ let app =
 
 // start the app      
 startWebServer defaultConfig app      
-{% endhighlight fsharp %}
+```
 
 There is no need for a special `UserProfileUpdater` class or module any longer. Instead, the various pipelines are assembled right there in the application (or controller). 
 

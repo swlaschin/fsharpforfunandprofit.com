@@ -42,13 +42,13 @@ We just have to define the "add" function to do the appropriate "add" on the com
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 type MyType = {count:int; items:int list}
 
 let addMyType t1 t2 = 
     {count = t1.count + t2.count; 
      items = t1.items @ t2.items}
-{% endhighlight fsharp %}
+```
 
 The `addMyType` function uses integer addition on the `int` field, and list concatenation on the `list` field.
 As a result the `MyType` is closed using the function `addMyType` -- in fact, not only is it closed, it is a monoid too. So in this case, we're done!
@@ -67,23 +67,23 @@ The approach above works when creating compound types. But what about non-numeri
 
 Here's a very simple case. Say that you have some chars that you want to add together, like this:
 
-{% highlight fsharp %}
+```fsharp
 'a' + 'b' -> what?
-{% endhighlight fsharp %}
+```
 
 But, a char plus a char is not another char. If anything, it is a string.
 
-{% highlight fsharp %}
+```fsharp
 'a' + 'b' -> "ab" // Closure fail!
-{% endhighlight fsharp %}
+```
 
 But that is very unhelpful, as it does not meet the closure requirement.
 
 One way to fix this is to force the chars into strings, which does work:
 
-{% highlight fsharp %}
+```fsharp
 "a" + "b" -> "ab" 
-{% endhighlight fsharp %}
+```
 
 But that is a specific solution for chars -- is there a more generic solution that will work for other types?
 
@@ -91,9 +91,9 @@ Well, think for a minute what the relationship of a `string` to a `char` is. A s
 
 In other words, we could have used lists of chars instead, like this:
 
-{% highlight fsharp %}
+```fsharp
 ['a'] @ ['b'] -> ['a'; 'b'] // Lists FTW!
-{% endhighlight fsharp %}
+```
 
 This meets the closure requirement as well.
 
@@ -109,7 +109,7 @@ For example, in the `Char` case, you would do all your manipulation on lists of 
 
 So let's have a go at creating a "monoidal char" module.
 
-{% highlight fsharp %}
+```fsharp
 module MonoidalChar =
     open System
 
@@ -129,13 +129,13 @@ module MonoidalChar =
     /// convert to a string
     let toString (MChar cs) = 
         new System.String(List.toArray cs)
-{% endhighlight fsharp %}
+```
 
 You can see that `MChar` is a wrapper around a list of chars, rather than a single char.
 
 Now let's test it:
 
-{% highlight fsharp %}
+```fsharp
 open MonoidalChar
 
 // add two chars and convert to string
@@ -144,11 +144,11 @@ let b = 'b' |> toMChar
 let c = a ++ b
 c |> toString |> printfn "a + b = %s"  
 // result: "a + b = ab"
-{% endhighlight fsharp %}
+```
 
 If we want to get fancy we can use map/reduce to work on a set of chars, like this:
 
-{% highlight fsharp %}
+```fsharp
 [' '..'z']   // get a lot of chars
 |> List.filter System.Char.IsPunctuation
 |> List.map toMChar
@@ -156,7 +156,7 @@ If we want to get fancy we can use map/reduce to work on a set of chars, like th
 |> toString
 |> printfn "punctuation chars are %s" 
 // result: "punctuation chars are !"#%&'()*,-./:;?@[\]_"
-{% endhighlight fsharp %}
+```
 
 ### Monoids for errors
 
@@ -164,7 +164,7 @@ The `MonoidalChar` example is trivial, and could perhaps be implemented in other
 
 For example, here is a simple module for doing some validation. There are two options, `Success` and `Failure`, and the `Failure` case also has a error string associated with it.
 
-{% highlight fsharp %}
+```fsharp
 module Validation = 
 
     type ValidationResult = 
@@ -182,7 +182,7 @@ module Validation =
             Failure "string is too long"
         else 
             Success 
-{% endhighlight fsharp %}
+```
 
 In practice, we might perform multiple validations on a string, and we would like to return all the results at once, added together somehow.
 
@@ -190,12 +190,12 @@ This calls out for being a monoid! If we can add two results pairwise, then we c
 
 So then the question is, how do we combine *two* validation results?
 
-{% highlight fsharp %}
+```fsharp
 let result1 = Failure "string is null or empty"
 let result2 = Failure "string is too long"
 
 result1 + result2 = ????
-{% endhighlight fsharp %}
+```
 
 A naive approach would be to concatenate the strings, but that wouldn't work if we were using format strings, or resource ids with localization, etc.
 
@@ -203,7 +203,7 @@ No, a better way is to convert the `Failure` case to use a *list* of strings ins
 
 Here's the same code as above, with the `Failure` case redefined to use a list:
 
-{% highlight fsharp %}
+```fsharp
 module MonoidalValidation = 
 
     type ValidationResult = 
@@ -225,7 +225,7 @@ module MonoidalValidation =
             fail "string is too long"
         else 
             Success 
-{% endhighlight fsharp %}
+```
             
 You can see that the individual validations call `fail` with a single string, but behind the scenes it is being stored as a list of strings, which can, in turn, be concatenated together.           
             
@@ -239,7 +239,7 @@ The logic will be:
 
 Here's the code:
             
-{% highlight fsharp %}
+```fsharp
 module MonoidalValidation = 
 
     // as above
@@ -251,11 +251,11 @@ module MonoidalValidation =
         | Failure f1, Success -> Failure f1
         | Success,    Failure f2 -> Failure f2
         | Failure f1, Failure f2 -> Failure (f1 @ f2)
-{% endhighlight fsharp %}
+```
 
 Here are some tests to check the logic:
 
-{% highlight fsharp %}
+```fsharp
 open MonoidalValidation 
 
 let test1 = 
@@ -281,11 +281,11 @@ let test3 =
     // Result is Failure 
     //   [ "string is null or empty"; 
     //     "string is too long"]
-{% endhighlight fsharp %}
+```
 
 And here's a more realistic example, where we have a list of validation functions that we want to apply:
 
-{% highlight fsharp %}
+```fsharp
 let test4 = 
     let validationResults str = 
         [
@@ -299,15 +299,15 @@ let test4 =
     |> validationResults 
     |> List.reduce add
     |> printfn "Result is %A"
-{% endhighlight fsharp %}
+```
 
 The output is a `Failure` with three error messages.
 
-{% highlight text %}
+```text
 Result is Failure
   ["string is too long"; "string contains a bad word: monad";
    "string contains a bad word: cobol"]
-{% endhighlight text %}
+```
    
 One more thing is needed to finish up this monoid. We need a "zero" as well.  What should it be?
 
@@ -315,19 +315,19 @@ By definition, it is something that when combined with another result, leaves th
 
 I hope you can see that by this definition, "zero" is just `Success`.
 
-{% highlight fsharp %}
+```fsharp
 module MonoidalValidation = 
 
     // as above
     
     // identity
     let zero = Success
-{% endhighlight fsharp %}
+```
 
 As you know, we would need to use zero if the list to reduce over is empty.
 So here's an example where we don't apply any validation functions at all, giving us an empty list of `ValidationResult`.
 
-{% highlight fsharp %}
+```fsharp
 let test5 = 
     let validationResults str = 
         []
@@ -339,7 +339,7 @@ let test5 =
     |> printfn "Result is %A"
     
     // Result is Success
-{% endhighlight fsharp %}
+```
 
 Note that we needed to change `reduce` to `fold` as well, otherwise we would get a runtime error.
 
@@ -350,23 +350,23 @@ because the objects being pointed to don't have to change or be reallocated.
 
 For example, in the previous post, we defined a `Text` block that wrapped a string, and used string concatenation to add their contents.
 
-{% highlight fsharp %}
+```fsharp
 type Text = Text of string
 
 let addText (Text s1) (Text s2) =
     Text (s1 + s2)
-{% endhighlight fsharp %}
+```
 
 But for large strings this continual concatenation can be expensive.
 
 Consider a different implementation, where the `Text` block contains a *list* of strings instead.
 
-{% highlight fsharp %}
+```fsharp
 type Text = Text of string list
 
 let addText (Text s1) (Text s2) =
     Text (s1 @ s2)
-{% endhighlight fsharp %}
+```
 
 Almost no change in implementation, but performance will probably be greatly improved.  
 
@@ -397,24 +397,24 @@ There's no single correct answer in these cases, because you might genuinely car
 
 In fact, the F# standard libraries have two versions of `fold` and `reduce` to cater for each preference.  The normal `fold` and `reduce` work left to right, like this:
 
-{% highlight fsharp %}
+```fsharp
 //same as (12 - 3) - 2
 [12;3;2] |> List.reduce (-)  // => 7 
 
 //same as ((12 - 3) - 2) - 1
 [12;3;2;1] |> List.reduce (-)  // => 6
 
-{% endhighlight fsharp %}
+```
 
 But there is also `foldBack` and `reduceBack` that work from right to left, like this:
 
-{% highlight fsharp %}
+```fsharp
 //same as 12 - (3 - 2)
 [12;3;2] |> List.reduceBack (-) // => 11
 
 //same as 12 - (3 - (2 - 1))
 [12;3;2;1] |> List.reduceBack (-) // => 10
-{% endhighlight fsharp %}
+```
 
 In a sense, then, the associativity requirement is just a way of saying that you should get the *same* answer no matter whether you use `fold` or `foldBack`.
 
@@ -441,7 +441,7 @@ If you recall, in the first post we tried to come up with a non-associative oper
 
 Here's a simple implementation of `subtractChars`
 
-{% highlight fsharp %}
+```fsharp
 let subtractChars (s1:string) (s2:string) = 
     let isIncluded (ch:char) = s2.IndexOf(ch) = -1
     let chars = s1.ToCharArray() |> Array.filter isIncluded
@@ -449,21 +449,21 @@ let subtractChars (s1:string) (s2:string) =
 
 // infix version        
 let (--) = subtractChars
-{% endhighlight fsharp %}
+```
 
 With this implementation we can do some interactive tests:
 
-{% highlight fsharp %}
+```fsharp
 "abcdef" -- "abd"   //  "cef"
 "abcdef" -- ""      //  "abcdef"
-{% endhighlight fsharp %}
+```
 
 And we can see for ourselves that the associativity requirement is violated:
 
-{% highlight fsharp %}
+```fsharp
 ("abc" -- "abc") -- "abc"  // ""
 "abc" -- ("abc" -- "abc")  // "abc"
-{% endhighlight fsharp %}
+```
 
 How can we make this associative?
 
@@ -471,29 +471,29 @@ The trick is move the "subtract-ness" from the operator into the object, just as
 
 What I mean is that we replace the plain strings with a "subtract" or "chars to remove" data structure that captures what we want to remove, like so:
 
-{% highlight fsharp %}
+```fsharp
 let removalAction = (subtract "abd") // a data structure
-{% endhighlight fsharp %}
+```
 
 And then we "apply" the data structure to the string:
 
-{% highlight fsharp %}
+```fsharp
 let removalAction = (subtract "abd") 
 removalAction |> applyTo "abcdef"  // "Result is cef"
-{% endhighlight fsharp %}
+```
 
 Once we use this approach, we can rework the non-associative example above to look something like this:
 
-{% highlight fsharp %}
+```fsharp
 let removalAction = (subtract "abc") + (subtract "abc") + (subtract "abc")   
 removalAction |> applyTo "abc"    // "Result is "
-{% endhighlight fsharp %}
+```
 
 Yes, it is not exactly the same as the original code, but you might find that this is actually a better fit in many situations.
 
 The implementation is below. We define a `CharsToRemove` to contain a set of chars, and the other function implementations fall out from that in a straightforward way.
 
-{% highlight fsharp %}
+```fsharp
 /// store a list of chars to remove
 type CharsToRemove = CharsToRemove of Set<char>
 
@@ -510,11 +510,11 @@ let applyTo (s:string) (CharsToRemove chs) =
 // combine two CharsToRemove to get a new one
 let (++) (CharsToRemove c1) (CharsToRemove c2) = 
     CharsToRemove (Set.union c1 c2) 
-{% endhighlight fsharp %}
+```
 
 Let's test!
 
-{% highlight fsharp %}
+```fsharp
 let test1 = 
     let removalAction = (subtract "abd") 
     removalAction |> applyTo "abcdef" |> printfn "Result is %s"
@@ -524,7 +524,7 @@ let test2 =
     let removalAction = (subtract "abc") ++ (subtract "abc") ++ (subtract "abc")   
     removalAction |> applyTo "abcdef" |> printfn "Result is %s"
     // "Result is "
-{% endhighlight fsharp %}
+```
 
 The way to think about this approach is that, in a sense, we are modelling *actions* rather than *data*. We have a list of `CharsToRemove` actions,
 then we combine them into a single "big" `CharsToRemove` action,
@@ -536,7 +536,7 @@ In fact rather than creating this `CharsToRemove` data structure, we could have 
 
 (Note that we reverse the parameters to make partial application easier)
 
-{% highlight fsharp %}
+```fsharp
 // reverse for partial application
 let subtract str charsToSubtract = 
     subtractChars charsToSubtract str 
@@ -544,24 +544,24 @@ let subtract str charsToSubtract =
 let removalAction = subtract "abd" 
 "abcdef" |> removalAction |> printfn "Result is %s"
 // "Result is cef"
-{% endhighlight fsharp %}
+```
 
 And now we don't even need a special `applyTo` function.
 
 But when we have more than one of these subtraction functions, what do we do? 
 Each of these partially applied functions has signature `string -> string`, so how can we "add" them together?
 
-{% highlight fsharp %}
+```fsharp
 (subtract "abc") + (subtract "abc") + (subtract "abc")  = ?
-{% endhighlight fsharp %}
+```
 
 The answer is function composition, of course!
 
-{% highlight fsharp %}
+```fsharp
 let removalAction2 = (subtract "abc") >> (subtract "abc") >> (subtract "abc") 
 removalAction2 "abcdef" |> printfn "Result is %s"
 // "Result is def"
-{% endhighlight fsharp %}
+```
 
 This is the functional equivalent of creating the `CharsToRemove` data structure.  
 
@@ -588,26 +588,26 @@ Seriously!
 
 We have already seen an example of this in the previous post, when we added an `EmptyOrder` case to the `OrderLine` type:
 
-{% highlight fsharp %}
+```fsharp
 type OrderLine = 
     | Product of ProductLine
     | Total of TotalLine
     | EmptyOrder
-{% endhighlight fsharp %}
+```
 
 Let's look at this more closely. We performed two steps: 
 
 * First, we created a new case and added it to the list of alternatives for an `OrderLine` (as shown above).
 * Second, we adjusted the `addLine` function to take it into account (as shown below).
 
-{% highlight fsharp %}
+```fsharp
 let addLine orderLine1 orderLine2 =
     match orderLine1,orderLine2 with
     // is one of them zero? If so, return the other one
     | EmptyOrder, _ -> orderLine2
     | _, EmptyOrder -> orderLine1
     // logic for other cases ...
-{% endhighlight fsharp %}
+```
 
 That's all there is to it.
 
@@ -627,7 +627,7 @@ For example, we noted earlier that strictly positive numbers (under addition) di
 If we wanted to create a zero using the "augmentation with extra case" technique (rather than just using `0`!) we would
 first define a special `Zero` case (not an integer), and then create an `addPositive` function that can handle it, like this:
 
-{% highlight fsharp %}
+```fsharp
 type PositiveNumberOrIdentity = 
     | Positive of int
     | Zero
@@ -637,7 +637,7 @@ let addPositive i1 i2 =
     | Zero, _ -> i2
     | _, Zero -> i1
     | Positive p1, Positive p2 -> Positive (p1 + p2)
-{% endhighlight fsharp %}
+```
 
 Admittedly, `PositiveNumberOrIdentity` is a contrived example, but you can see how this same approach would work for any situation where you have "normal" values and a special, separate, zero value.
 
@@ -654,11 +654,11 @@ If you have a system with no natural zero, and you create an artificial one, the
 But there *is* something you can do about the second issue!  Rather than create a new custom type over and over,
 perhaps can we create a *generic* type that has two cases: one for all normal values and one for the artificial zero, like this:
 
-{% highlight fsharp %}
+```fsharp
 type NormalOrIdentity<'T> = 
     | Normal of 'T
     | Zero
-{% endhighlight fsharp %}
+```
 
 Does this type look familiar?  It's just the **Option type** in disguise!
 
@@ -666,25 +666,25 @@ In other words, any time we need an identity which is outside the normal set of 
 
 Another benefit of using `Option` is that we can also write a completely generic "add" function as well. Here's a first attempt:
 
-{% highlight fsharp %}
+```fsharp
 let optionAdd o1 o2 =
     match o1, o2 with
     | None, _ -> o2
     | _, None -> o1
     | Some s1, Some s2 -> Some (s1 + s2)
-{% endhighlight fsharp %}
+```
 
 The logic is straightforward. If either option is `None`, the other option is returned.  If both are `Some`, then they are unwrapped, added together, and then wrapped in a `Some` again.
 
 But the `+` in the last line makes assumptions about the types that we are adding. Better to pass in the addition function explicitly, like this:
 
-{% highlight fsharp %}
+```fsharp
 let optionAdd f o1 o2 =
     match o1, o2 with
     | None, _ -> o2
     | _, None -> o1
     | Some s1, Some s2 -> Some (f s1 s2)
-{% endhighlight fsharp %}
+```
 
 In practice, this would used with partial application to bake in the addition function.
 
@@ -696,10 +696,10 @@ So now we have another important tip:
 
 So here is the Positive Number example again, now using the `Option` type.
 
-{% highlight fsharp %}
+```fsharp
 type PositiveNumberOrIdentity = int option
 let addPositive = optionAdd (+)
-{% endhighlight fsharp %}
+```
 
 Much simpler!
 
@@ -712,7 +712,7 @@ In other words, `optionAdd` turns any function `'a -> 'a -> 'a` into the *same* 
 
 So, let's test it! Some test code might look like this:
 
-{% highlight fsharp %}
+```fsharp
 // create some values
 let p1 = Some 1
 let p2 = Some 2
@@ -723,14 +723,14 @@ addPositive p1 p2
 addPositive p1 zero
 addPositive zero p2
 addPositive zero zero
-{% endhighlight fsharp %}
+```
 
 You can see that unfortunately we do have to wrap the normal values in `Some` in order to get the `None` as identity.
 
 That sounds tedious but in practice, it is easy enough. The code below shows how we might handle the two distinct cases when summing a list.
 First how to sum a non-empty list, and then how to sum an empty list.
 
-{% highlight fsharp %}
+```fsharp
 [1..10]
 |> List.map Some
 |> List.fold addPositive zero 
@@ -738,18 +738,18 @@ First how to sum a non-empty list, and then how to sum an empty list.
 []
 |> List.map Some
 |> List.fold addPositive zero 
-{% endhighlight fsharp %}
+```
 
 
 ### ValidationResult revisited
 
 While we're at it, let's also revisit the `ValidationResult` type that we described earlier when talking about using lists to get closure. Here it is again:
 
-{% highlight fsharp %}
+```fsharp
 type ValidationResult = 
     | Success
     | Failure of string list
-{% endhighlight fsharp %}
+```
 
 Now that we've got some insight into the positive integer case, let's look at this type from a different angle as well. 
 
@@ -758,11 +758,11 @@ As Leo Tolstoy nearly said "All validation successes are alike; each validation 
 
 So, rather than thinking of it as a "Result", let's think of the type as *storing failures*, and rewrite it like this instead, with the failure case first:
 
-{% highlight fsharp %}
+```fsharp
 type ValidationFailure = 
     | Failure of string list
     | Success
-{% endhighlight fsharp %}
+```
 
 Does this type appear familar now? 
 
@@ -770,28 +770,28 @@ Yes! It's the option type again! Can we never get away from the darn thing?
 
 Using the option type, we can simplify the design of the `ValidationFailure` type to just this:
 
-{% highlight fsharp %}
+```fsharp
 type ValidationFailure = string list option
-{% endhighlight fsharp %}
+```
 
 The helper to convert a string into the failure case is now just `Some` with a list:
 
-{% highlight fsharp %}
+```fsharp
 let fail str =
     Some [str]
-{% endhighlight fsharp %}
+```
         
 And the "add" function can reuse `optionAdd`, but this time with list concatenation as the underlying operation:
 
-{% highlight fsharp %}
+```fsharp
 let addFailure f1 f2 = optionAdd (@) f1 f2
-{% endhighlight fsharp %}
+```
 
 Finally, the "zero" that was the `Success` case in the original design now simply becomes `None` in the new design.
 
 Here's all the code, plus tests
 
-{% highlight fsharp %}
+```fsharp
 module MonoidalValidationOption = 
 
     type ValidationFailure = string list option
@@ -876,7 +876,7 @@ module MonoidalValidationOptionTest =
         |> List.fold addFailure Success
         |> printfn "Result is %A"
         // Result is <null>
-{% endhighlight fsharp %}
+```
 
 ## Summary of the design tips 
 
@@ -897,14 +897,14 @@ So now we have the toolkit that will enable us to deal with the thorny case of a
 
 Here's a simple implementation of a pairwise average function:
 
-{% highlight fsharp %}
+```fsharp
 let avg i1 i2 = 
     float (i1 + i2) / 2.0
 
 // test
 avg 4 5 |> printfn "Average is %g"
 // Average is 4.5
-{% endhighlight fsharp %}
+```
 
 As we mentioned briefly in the first post, `avg` fails on all three monoid requirements!
 
@@ -912,7 +912,7 @@ First, it is not closed. Two ints that are combined together using `avg` do not 
 
 Second, even if it was closed, `avg` is not associative, as we can see by defining a similar float function `avgf`:
 
-{% highlight fsharp %}
+```fsharp
 let avgf i1 i2 = 
     (i1 + i2) / 2.0
 
@@ -922,7 +922,7 @@ avgf 1.0 (avgf 3.0 5.0)  |> printfn "Average from right is %g"
 
 // Average from left is 3.5
 // Average from right is 2.5
-{% endhighlight fsharp %}
+```
 
 Finally, there is no identity. 
 
@@ -948,7 +948,7 @@ The answer is that we create a structure that is not actually an average, but a 
 
 That is, we need a data structure with *two* components: a total, and a count.  With these two numbers we can calculate an average as needed.
 
-{% highlight fsharp %}
+```fsharp
 // store all the info needed for an average
 type Avg = {total:int; count:int}
 
@@ -956,7 +956,7 @@ type Avg = {total:int; count:int}
 let addAvg avg1 avg2 = 
     {total = avg1.total + avg2.total; 
      count = avg1.count + avg2.count}
-{% endhighlight fsharp %}
+```
 
 The good thing about this, is that structure stores `ints`, not `floats`, so we don't need to worry about loss of precision or associativity of floats.
 
@@ -966,15 +966,15 @@ The last tip is:
 
 In this case, the tip is not needed, as we can easily create a zero by setting the two components to be zero:
 
-{% highlight fsharp %}
+```fsharp
 let zero = {total=0; count=0}
-{% endhighlight fsharp %}
+```
 
 We could also have used `None` for the zero, but it seems like overkill in this case. If the list is empty, the `Avg` result is valid, even though we can't do the division.
 
 Once we have had this insight into the data structure, the rest of the implementation follows easily.  Here is all the code, plus some tests:
 
-{% highlight fsharp %}
+```fsharp
 module Average = 
 
     // store all the info needed for an average
@@ -1025,7 +1025,7 @@ module Average =
     |> calcAvg
     |> printfn "Average is %g"
     // Average is 5.5
-{% endhighlight fsharp %}
+```
 
 In the code above, you can see that I created a `calcAvg` function that uses the `Avg` structure to calculate a (floating point) average. One nice thing
 about this approach is that we can delay having to make a decision about what to do with a zero divisor. We can just return `0`, or alternatively `None`, or
@@ -1059,15 +1059,15 @@ Averages and other rates are not monoids, but "total" and "count" are, and then 
 
 In the last post, we implemented a "most frequent word" function, but found that it wasn't a monoid homomorphism. That is, 
 
-{% highlight text %}
+```text
 mostFrequentWord(text1) + mostFrequentWord(text2)
-{% endhighlight text  %}
+```
 
 did *not* give the same result as:
 
-{% highlight text %}
+```text
 mostFrequentWord( text1 + text2 )
-{% endhighlight text %}
+```
 
 Again, we can use the design tips to fix this up so that it works.
 
@@ -1075,7 +1075,7 @@ The insight here is again to delay the calculation until the last minute, just a
 
 Rather than calculating the most frequent word upfront then, we create a data structure that stores all the information that we need to calculate the most frequent word later.
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordMonoid = 
 
     open System 
@@ -1094,14 +1094,14 @@ module FrequentWordMonoid =
         |> Seq.groupBy id
         |> Seq.map (fun (k,v) -> k,Seq.length v)
         |> Map.ofSeq
-{% endhighlight fsharp %}
+```
 
 In the code above we have a new function `wordFreq`, that returns a `Map<string,int>` rather just a single word.
 That is, we are now working with dictionaries, where each slot has a word and its associated frequency.
 
 Here is a demonstration of how it works:
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordMonoid = 
 
     // code from above
@@ -1139,11 +1139,11 @@ module FrequentWordMonoid =
     //The frequency map for the document is map [
     //      ("foobar", 1000); ("goodbye", 1000); 
     //      ("hello", 1000); ("world", 2000)]
-{% endhighlight fsharp %}
+```
     
 With this map structure in place, we can create a function `addMap` to add two maps. It simply merges the frequency counts of the words from both maps.
     
-{% highlight fsharp %}
+```fsharp
 module FrequentWordMonoid = 
 
     // code from above
@@ -1156,11 +1156,11 @@ module FrequentWordMonoid =
             | None -> mapSoFar |> Map.add word count 
 
         map2 |> Map.fold increment map1
-{% endhighlight fsharp %}
+```
 
 And when we have combined all the maps together, we can then calculate the most frequent word by looping through the map and finding the word with the largest frequency.
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordMonoid = 
 
     // code from above
@@ -1174,7 +1174,7 @@ module FrequentWordMonoid =
             else (candidateWord,maxCountSoFar) 
         
         map |> Map.fold max ("None",0)
-{% endhighlight fsharp %}
+```
 
 So, here are the two scenarios revisited using the new approach.
 
@@ -1183,7 +1183,7 @@ The first scenario combines all the pages into a single text, then applies `word
 The second scenario applies `wordFreq` to each page separately to get a map for each page.
 These maps are then combined with `addMap` to get a single global map. Then `mostFrequentWord` is applied as the last step, as before.
 
-{% highlight fsharp %}
+```fsharp
 module FrequentWordMonoid = 
 
     // code from above
@@ -1205,7 +1205,7 @@ module FrequentWordMonoid =
     |> printfn "Using map reduce, the most frequent and count is %A"
     
     //Using map reduce, the most frequent and count is ("world", 2000)
-{% endhighlight fsharp %}
+```
 
 If you run this code, you will see that you now get the *same* answer. 
 
@@ -1266,7 +1266,7 @@ In that case, of course, we were using `map` rather than `list`, but the set of 
 
 Ok, here's the code:
 
-{% highlight fsharp %}
+```fsharp
 module Performance =
 
     let printHeader() =
@@ -1311,7 +1311,7 @@ module Performance =
         let reduce() = resizeArrays |> List.reduce append 
         let iter = Seq.iter ignore
         time "ResizeArray.append" reduce iter listSize 
-{% endhighlight fsharp %}
+```
 
 Let's go through the code quickly:
 
@@ -1327,7 +1327,7 @@ The left one mutates and grows larger as needed, using a [growth strategy](http:
 
 Now let's write code to check the performance on various sized lists. I chose to start with a count of 2000 and move by increments of 4000 up to 50000.
 
-{% highlight fsharp %}
+```fsharp
 open Performance
 
 printHeader() 
@@ -1346,7 +1346,7 @@ printHeader()
 
 [2000..4000..50000]
 |> List.iter testSeqPerformance_Yield 
-{% endhighlight fsharp %}
+```
 
 I won't list all the detailed output -- you can run the code for yourself -- but here is a chart of the results.
 

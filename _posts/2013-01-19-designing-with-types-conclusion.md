@@ -23,7 +23,7 @@ For this final post, let's see them all applied together.
 
 Here's the original example we started off with in the [first post](/posts/designing-with-types-intro/) in the series:
 
-{% highlight fsharp %}
+```fsharp
 type Contact = 
     {
     FirstName: string;
@@ -42,7 +42,7 @@ type Contact =
     //true if validated against address service
     IsAddressValid: bool; 
     }
-{% endhighlight fsharp %}
+```
 
 And how does that compare to the final result after applying all the techniques above?
 
@@ -50,7 +50,7 @@ And how does that compare to the final result after applying all the techniques 
 
 First, let's start with the types that are not application specific.  These types could probably be reused in many applications.
 
-{% highlight fsharp %}
+```fsharp
 // ========================================
 // WrappedString 
 // ========================================
@@ -286,11 +286,11 @@ module PersonalName =
         |> left 100     // truncate
         |> string100    // wrap
         |> Option.get   // this will always be ok
-{% endhighlight fsharp %}
+```
 
 And now the application specific types.  
  
-{% highlight fsharp %}
+```fsharp
 
 // ========================================
 // EmailContactInfo -- state machine
@@ -402,7 +402,7 @@ type Contact =
     SecondaryContactMethods: ContactMethod list;
     }
 
-{% endhighlight fsharp %}
+```
 
 ## Conclusion ##
 

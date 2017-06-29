@@ -172,7 +172,7 @@ the parameter order affects how you might use map functions in practice.
 
 Here are two examples of how map can be defined for options and lists in F#.
 
-{% highlight fsharp %}
+```fsharp
 /// map for Options
 let mapOption f opt =
     match opt with
@@ -191,7 +191,7 @@ let rec mapList f list =
         // new head + new tail
         (f head) :: (mapList f tail)
 // has type : ('a -> 'b) -> 'a list -> 'b list
-{% endhighlight fsharp %}
+```
 
 These functions are built-in of course, so we don't need to define them, I've done it just to show what they might look for some common types.
 
@@ -199,7 +199,7 @@ These functions are built-in of course, so we don't need to define them, I've do
 
 Here are some examples of how map can be used in F#:
 
-{% highlight fsharp %}
+```fsharp
 // Define a function in the normal world
 let add1 x = x + 1
 // has type : int -> int
@@ -211,21 +211,21 @@ let add1IfSomething = Option.map add1
 // A function lifted to the world of Lists
 let add1ToEachElement = List.map add1
 // has type : int list -> int list
-{% endhighlight fsharp %}
+```
 
 With these mapped versions in place you can write code like this:
 
-{% highlight fsharp %}
+```fsharp
 Some 2 |> add1IfSomething    // Some 3 
 [1;2;3] |> add1ToEachElement // [2; 3; 4]
-{% endhighlight fsharp %}
+```
 
 In many cases, we don't bother to create an intermediate function -- partial application is used instead:
 
-{% highlight fsharp %}
+```fsharp
 Some 2 |> Option.map add1    // Some 3 
 [1;2;3] |> List.map add1     // [2; 3; 4]
-{% endhighlight fsharp %}
+```
 
 ### The properties of a correct map implementation
 
@@ -298,7 +298,7 @@ This function goes by many names, but I'm going to be consistent and call it `re
 
 Here are two examples of `return` implementations in F#:
 
-{% highlight fsharp %}
+```fsharp
 // A value lifted to the world of Options
 let returnOption x = Some x
 // has type : 'a -> 'a option
@@ -306,7 +306,7 @@ let returnOption x = Some x
 // A value lifted to the world of Lists
 let returnList x  = [x]
 // has type : 'a -> 'a list
-{% endhighlight fsharp %}
+```
 
 Obviously, we don't need to define special functions like this for options and lists. Again, I've just done it to show what `return` might look for some common types.
 
@@ -351,7 +351,7 @@ You can continue to use this technique to work with as many parameters as you wi
 
 Here are some examples of defining `apply` for two different types in F#:
 
-{% highlight fsharp %}
+```fsharp
 module Option =
 
     // The apply function for Options
@@ -368,7 +368,7 @@ module List =
         [ for f in fList do
           for x in xList do
               yield f x ]
-{% endhighlight fsharp %}
+```
 
 In this case, rather than have names like `applyOption` and `applyList`, I have given the functions the same name but put them in a per-type module.
 
@@ -386,7 +386,7 @@ I did this for clarity in showing how `apply` works. It's easy enough to create 
 Using the `apply` function as it stands can be awkward, so it is common to create an infix version, typically called `<*>`.
 With this in place you can write code like this:
 
-{% highlight fsharp %}
+```fsharp
 let resultOption =  
     let (<*>) = Option.apply
     (Some add) <*> (Some 2) <*> (Some 3)
@@ -396,7 +396,7 @@ let resultList =
     let (<*>) = List.apply
     [add] <*> [1;2] <*> [10;20]
 // resultList = [11; 21; 12; 22]
-{% endhighlight fsharp %}
+```
 
 ### Apply vs. Map 
 
@@ -411,7 +411,7 @@ This gives you the same result as if you had simply done `map` in the first plac
 This trick also means that our infix notation can be simplified a little. The initial `return` then `apply` can be replaced with `map`,
 and we so typically create an infix operator for `map` as well, such as `<!>` in F#.
 
-{% highlight fsharp %}
+```fsharp
 let resultOption2 =  
     let (<!>) = Option.map
     let (<*>) = Option.apply
@@ -425,14 +425,14 @@ let resultList2 =
 
     add <!> [1;2] <*> [10;20]
 // resultList2 = [11; 21; 12; 22]
-{% endhighlight fsharp %}
+```
 
 This makes the code look more like using the function normally. That is, instead of the normal `add x y`, we can use the similar looking `add <!> x <*> y`,
 but now `x` and `y` can be elevated values rather than normal values.  Some people have even called this style "overloaded whitespace"!
 
 Here's one more for fun:
 
-{% highlight fsharp %}
+```fsharp
 let batman = 
     let (<!>) = List.map
     let (<*>) = List.apply
@@ -442,7 +442,7 @@ let batman =
     
 // result =
 // ["bam!"; "bam!!"; "kapow!"; "kapow!!"; "zap!"; "zap!!"]
-{% endhighlight fsharp %}
+```
 
 ### The properties of a correct apply/return implementation
 
@@ -492,7 +492,7 @@ Note that `lift1` is just `map`, and so it is not usually defined as a separate 
 
 Here's what an implementation might look like:
 
-{% highlight fsharp %}
+```fsharp
 module Option = 
     let (<*>) = apply 
     let (<!>) = Option.map
@@ -505,7 +505,7 @@ module Option =
         
     let lift4 f x y z w = 
         f <!> x <*> y <*> z <*> w
-{% endhighlight fsharp %}
+```
 
 Here's a visual representation of `lift2`:
 
@@ -516,7 +516,7 @@ by using one of the pre-made `lift` functions, we can avoid the `<*>` syntax.
 
 First, here's an example of lifting a two-parameter function:
 
-{% highlight fsharp %}
+```fsharp
 // define a two-parameter function to test with
 let addPair x y = x + y 
 
@@ -526,11 +526,11 @@ let addPairOpt = Option.lift2 addPair
 // call as normal
 addPairOpt (Some 1) (Some 2) 
 // result => Some 3
-{% endhighlight fsharp %}
+```
 
 And here's an example of lifting a three-parameter function:
 
-{% highlight fsharp %}
+```fsharp
 // define a three-parameter function to test with
 let addTriple x y z = x + y + z
 
@@ -540,7 +540,7 @@ let addTripleOpt = Option.lift3 addTriple
 // call as normal
 addTripleOpt (Some 1) (Some 2) (Some 3)   
 // result => Some 6
-{% endhighlight fsharp %}
+```
 
 ### Interpreting "lift2" as a "combiner"
 
@@ -550,10 +550,10 @@ For example, when using `lift2`, the first parameter is a parameter specifying h
 
 Here's an example where the same values are combined in two different ways: first with addition, then with multiplication.
 
-{% highlight fsharp %}
+```fsharp
 Option.lift2 (+) (Some 2) (Some 3)   // Some 5
 Option.lift2 (*) (Some 2) (Some 3)   // Some 6
-{% endhighlight fsharp %}
+```
 
 Going further, can we eliminate the need for this first function parameter and have a *generic* way of combining the values?
 
@@ -566,7 +566,7 @@ Here's what it looks like in a diagram:
 
 and here's how you might implement it for options and lists:
 
-{% highlight fsharp %}
+```fsharp
 // define a tuple creation function
 let tuple x y = x,y
 
@@ -577,23 +577,23 @@ let combineOpt x y = Option.lift2 tuple x y
 // create a generic combiner of lists
 // with the tuple constructor baked in
 let combineList x y = List.lift2 tuple x y 
-{% endhighlight fsharp %} 
+``` 
 
 Let's see what happens when we use the combiners:
 
-{% highlight fsharp %}
+```fsharp
 combineOpt (Some 1) (Some 2)        
 // Result => Some (1, 2)
 
 combineList [1;2] [100;200]         
 // Result => [(1, 100); (1, 200); (2, 100); (2, 200)]
-{% endhighlight fsharp %} 
+``` 
 
 Now that we have an elevated tuple, we can work with the pair in any way we want, we just need to use `map` to do the actual combining.
 
 Want to add the values? Just use `+` in the `map` function:
 
-{% highlight fsharp %}
+```fsharp
 combineOpt (Some 2) (Some 3)        
 |> Option.map (fun (x,y) -> x + y)  
 // Result => // Some 5
@@ -601,11 +601,11 @@ combineOpt (Some 2) (Some 3)
 combineList [1;2] [100;200]         
 |> List.map (fun (x,y) -> x + y)    
 // Result => [101; 201; 102; 202]
-{% endhighlight fsharp %} 
+``` 
 
 Want to multiply the values? Just use `*` in the `map` function:
 
-{% highlight fsharp %}
+```fsharp
 combineOpt (Some 2) (Some 3)        
 |> Option.map (fun (x,y) -> x * y)  
 // Result => Some 6
@@ -613,7 +613,7 @@ combineOpt (Some 2) (Some 3)
 combineList [1;2] [100;200]         
 |> List.map (fun (x,y) -> x * y)    
 // Result => [100; 200; 200; 400]
-{% endhighlight fsharp %} 
+``` 
 
 And so on. Obviously, real-world uses would be somewhat more interesting.
 
@@ -625,7 +625,7 @@ That is, we can define `apply` in terms of the `lift2` function by setting the c
 
 Here's a demonstration of how this works for `Option`:
 
-{% highlight fsharp %}
+```fsharp
 module Option = 
 
     /// define lift2 from scratch
@@ -637,7 +637,7 @@ module Option =
     /// define apply in terms of lift2
     let apply fOpt xOpt = 
         lift2 (fun f x -> f x) fOpt xOpt 
-{% endhighlight fsharp %} 
+``` 
 
 This alternative approach is worth knowing about because for some types it's easier to define `lift2` than `apply`.
 
@@ -648,7 +648,7 @@ Notice that in all the combiners we've looked at, if one of the elevated values 
 For example, with `combineList`, if one of the parameters is an empty list, the result is also an empty list,
 and with `combineOpt`, if one of the parameters is `None`, the result is also `None`.
 
-{% highlight fsharp %}
+```fsharp
 combineOpt (Some 2) None    
 |> Option.map (fun (x,y) -> x + y)    
 // Result => None
@@ -656,7 +656,7 @@ combineOpt (Some 2) None
 combineList [1;2] []         
 |> List.map (fun (x,y) -> x * y)    
 // Result => Empty list
-{% endhighlight fsharp %} 
+``` 
 
 It's possible to create an alternative kind of combiner that ignores missing or bad values, just as adding "0" to a number is ignored.
 For more information, see my post on ["Monoids without tears"](/posts/monoids-without-tears/).
@@ -667,24 +667,24 @@ In some cases you might have two elevated values, and want to discard the value 
 
 Here's an example for lists:
 
-{% highlight fsharp %}
+```fsharp
 let ( <* ) x y = 
     List.lift2 (fun left right -> left) x y 
 
 let ( *> ) x y = 
     List.lift2 (fun left right -> right) x y 
-{% endhighlight fsharp %}
+```
 
 We can then combine a 2-element list and a 3-element list to get a 6-element list as expected, but the contents come from only one side or the other.
 
-{% highlight fsharp %}
+```fsharp
 [1;2] <* [3;4;5]   // [1; 1; 1; 2; 2; 2]
 [1;2] *> [3;4;5]   // [3; 4; 5; 3; 4; 5]
-{% endhighlight fsharp %}
+```
 
 We can turn this into a feature! We can replicate a value N times by crossing it with `[1..n]`.
 
-{% highlight fsharp %}
+```fsharp
 let repeat n pattern =
     [1..n] *> pattern 
 
@@ -696,7 +696,7 @@ repeat 3 ["a";"b"]
 
 replicate 5 "A"
 // ["A"; "A"; "A"; "A"; "A"]
-{% endhighlight fsharp %}
+```
 
 Of course, this is by no means an efficient way to replicate a value, but it does show that starting with just the two functions `apply` and `return`,
 you can build up some quite complex behavior.
@@ -705,10 +705,10 @@ On a more practical note though, why might this "throwing away data" be useful? 
 
 For example, in a parser, you might see code like this:
 
-{% highlight fsharp %}
+```fsharp
 let readQuotedString =
    readQuoteChar *> readNonQuoteChars <* readQuoteChar
-{% endhighlight fsharp %}
+```
 
 In this snippet, `readQuoteChar` means "match and read a quote character from the input stream" and
 `readNonQuoteChars` means "read a series of non-quote characters from the input stream".
@@ -741,7 +741,7 @@ commonly called `ZipList` or some variant of that.
 In this implementation, the corresponding elements in each list are processed at the same time, and then both lists are shifted to get the next element. 
 That is, the list of functions `[f; g]` applied to the list of values `[x; y]` becomes the two-element list `[f x; g y]`
 
-{% highlight fsharp %}
+```fsharp
 // alternate "zip" implementation
 // [f;g] apply [x;y] becomes [f x; g y]
 let rec zipList fList xList  = 
@@ -754,7 +754,7 @@ let rec zipList fList xList  =
         // new head + new tail
         (f x) :: (zipList fTail xTail)
 // has type : ('a -> 'b) -> 'a list -> 'b list
-{% endhighlight fsharp %}
+```
 
 *WARNING: This implementation is just for demonstration. It's not tail-recursive, so don't use it for large lists!*
 
@@ -763,7 +763,7 @@ while others silently ignore the extra data (as the implementation above does).
 
 Ok, let's see it in use:
 
-{% highlight fsharp %}
+```fsharp
 let add10 x = x + 10
 let add20 x = x + 20
 let add30 x = x + 30
@@ -772,7 +772,7 @@ let result =
     let (<*>) = zipList 
     [add10; add20; add30] <*> [1; 2; 3] 
 // result => [11; 22; 33]
-{% endhighlight fsharp %}
+```
 
 Note that the result is `[11; 22; 33]` -- only three elements. If we had used the standard `List.apply`, there would have been nine elements.
 
@@ -780,7 +780,7 @@ Note that the result is `[11; 22; 33]` -- only three elements. If we had used th
 
 We saw above that `List.apply`, or rather `List.lift2`, could be intepreted as a combiner. Similarly, so can `zipList`. 
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y
 
 let resultAdd =  
@@ -788,7 +788,7 @@ let resultAdd =
     [add;add] <*> [1;2] <*> [10;20]
 // resultAdd = [11; 22]
 // [ (add 1 10); (add 2 20) ]
-{% endhighlight fsharp %}
+```
 
 Note that we can't just have *one* `add` function in the first list -- we have to have one `add` for every element in the second and third lists!  
 
@@ -811,7 +811,7 @@ ZipList world, it has to be an infinitely repeated value!
 In a non-lazy language like F#, we can't do this, but if we replace `List` with `Seq` (aka `IEnumerable`) then
 we *can* create an infinitely repeated value, as shown below:
 
-{% highlight fsharp %}
+```fsharp
 module ZipSeq =
 
     // define "return" for ZipSeqWorld
@@ -837,7 +837,7 @@ module ZipSeq =
     triangularNumbers |> Seq.take 10 |> List.ofSeq |> printfn "%A"
     // Result =>
     // [0; 1; 3; 6; 10; 15; 21; 28; 36; 45]
-{% endhighlight fsharp %}
+```
 
 This example demonstrates that an elevated world is *not* just a data type (like the List type) but consists of the datatype *and* the functions that work with it.
 In this particular case, "List world" and "ZipList world" share the same data type but have quite different environments.

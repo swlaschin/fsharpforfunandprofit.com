@@ -27,23 +27,23 @@ In F#, a sum type is called a "discriminated union" type.  Each component type (
 
 Here's how we might define the type above:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = 
   | I of int
   | B of bool
-{% endhighlight %}
+```
 
 The "I" and the "B" are just arbitrary labels; we could have used any other labels that were meaningful.
 
 For small types, we can put the definition on one line:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = I of int | B of bool
-{% endhighlight %}
+```
 
 The component types can be any other type you like, including tuples, records, other union types, and so on.
 
-{% highlight fsharp %}
+```fsharp
 type Person = {first:string; last:string}  // define a record type 
 type IntOrBool = I of int | B of bool
 
@@ -52,7 +52,7 @@ type MixedType =
   | P of Person       // use the record type defined above
   | L of int list     // a list of ints
   | U of IntOrBool    // use the union type defined above
-{% endhighlight %}
+```
 
 You can even have types that are recursive, that is, they refer to themselves. This is typically how tree structures are defined. Recursive types will be discussed in more detail shortly.
 
@@ -66,42 +66,42 @@ Some key things to know about union types are:
 
 * 	The vertical bar is optional before the first component, so that the following definitions are all equivalent, as you can see by examining the output of the interactive window:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = I of int | B of bool     // without initial bar
 type IntOrBool = | I of int | B of bool   // with initial bar
 type IntOrBool = 
    | I of int 
    | B of bool      // with initial bar on separate lines
-{% endhighlight %}
+```
 
 * 	The tags or labels must start with an uppercase letter. So the following will give an error:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = int of int| bool of bool
 //  error FS0053: Discriminated union cases 
 //                must be uppercase identifiers
-{% endhighlight %}
+```
 
 * 	Other named types (such as `Person` or `IntOrBool`) must be pre-defined outside the union type.  You can't define them "inline" and write something like this:
 
-{% highlight fsharp %}
+```fsharp
 type MixedType = 
   | P of  {first:string; last:string}  // error
-{% endhighlight %}
+```
 
 or
 
-{% highlight fsharp %}
+```fsharp
 type MixedType = 
   | U of (I of int | B of bool)  // error
-{% endhighlight %}
+```
 
 * 	The labels can be any identifier, including the names of the component type themselves, which can be quite confusing if you are not expecting it. For example, if the `Int32` and `Boolean` types (from the `System` namespace) were used instead, and the labels were named the same, we would have this perfectly valid definition:
 
-{% highlight fsharp %}
+```fsharp
 open System
 type IntOrBool = Int32 of Int32 | Boolean of Boolean
-{% endhighlight %}
+```
 
 This "duplicate naming" style is actually quite common, because it documents exactly what the component types are.
 
@@ -109,7 +109,7 @@ This "duplicate naming" style is actually quite common, because it documents exa
 
 To create a value of a union type, you use a "constructor" that refers to only one of the possible union cases. The constructor then follows the form of the definition, using the case label as if it were a function. In the `IntOrBool` example, you would write:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = I of int | B of bool
 
 let i  = I 99    // use the "I" constructor
@@ -117,19 +117,19 @@ let i  = I 99    // use the "I" constructor
 
 let b  = B true  // use the "B" constructor
 // val b : IntOrBool = B true
-{% endhighlight %}
+```
 
 The resulting value is printed out with the label along with the component type:
 
-{% highlight fsharp %}
+```fsharp
 val [value name] : [type]    = [label] [print of component type]
 val i            : IntOrBool = I       99
 val b            : IntOrBool = B       true
-{% endhighlight %}
+```
 
 If the case constructor has more than one "parameter", you construct it in the same way that you would call a function:
 
-{% highlight fsharp %}
+```fsharp
 type Person = {first:string; last:string}
 
 type MixedType = 
@@ -141,11 +141,11 @@ let myTup  = Tup (2,99)    // use the "Tup" constructor
 
 let myP  = P {first="Al"; last="Jones"} // use the "P" constructor
 // val myP : MixedType = P {first = "Al";last = "Jones";}
-{% endhighlight %}
+```
 
 The case constructors for union types are normal functions, so you can use them anywhere a function is expected. For example, in `List.map`:
 
-{% highlight fsharp %}
+```fsharp
 type C = Circle of int | Rectangle of int * int
 
 [1..10]
@@ -154,7 +154,7 @@ type C = Circle of int | Rectangle of int * int
 [1..10]
 |> List.zip [21..30]
 |> List.map Rectangle
-{% endhighlight %}
+```
 
 ### Naming conflicts
 
@@ -162,27 +162,27 @@ If a particular case has a unique name, then the type to construct will be unamb
 
 But what happens if you have two types which have cases with the same labels? 
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool1 = I of int | B of bool
 type IntOrBool2 = I of int | B of bool
-{% endhighlight %}
+```
 
 In this case, the last one defined is generally used:
 
-{% highlight fsharp %}
+```fsharp
 let x = I 99                // val x : IntOrBool2 = I 99
-{% endhighlight %}
+```
 
 But it is much better to explicitly qualify the type, as shown:
 
-{% highlight fsharp %}
+```fsharp
 let x1 = IntOrBool1.I 99    // val x1 : IntOrBool1 = I 99
 let x2 = IntOrBool2.B true  // val x2 : IntOrBool2 = B true
-{% endhighlight %}
+```
 
 And if the types come from different modules, you can use the module name as well:
 
-{% highlight fsharp %}
+```fsharp
 module Module1 = 
   type IntOrBool = I of int | B of bool
 
@@ -191,7 +191,7 @@ module Module2 =
 
 module Module3 =
   let x = Module1.IntOrBool.I 99 // val x : Module1.IntOrBool = I 99
-{% endhighlight %}
+```
 
 
 ### Matching on union types
@@ -200,7 +200,7 @@ For tuples and records, we have seen that "deconstructing" a value uses the same
 
 This is exactly what the "match" expression is designed for. As you should now realize, the match expression syntax has parallels to how a union type is defined.
 
-{% highlight fsharp %}
+```fsharp
 // definition of union type
 type MixedType = 
   | Tup of int * int
@@ -219,7 +219,7 @@ matcher myTup
 
 let myP = P {first="Al"; last="Jones"} // use the "P" constructor
 matcher myP
-{% endhighlight %}
+```
 
 Let's analyze what is going on here:  
 
@@ -232,7 +232,7 @@ Let's analyze what is going on here:
 
 The label for a union case does not have to have to have any type after it. The following are all valid union types:
 
-{% highlight fsharp %}
+```fsharp
 type Directory = 
   | Root                   // no need to name the root
   | Subdirectory of string // other directories need to be named 
@@ -240,20 +240,20 @@ type Directory =
 type Result = 
   | Success                // no string needed for success state
   | ErrorMessage of string // error message needed 
-{% endhighlight %}
+```
 
 If *all* the cases are empty, then we have an "enum style" union:
 
-{% highlight fsharp %}
+```fsharp
 type Size = Small | Medium | Large
 type Answer = Yes | No | Maybe
-{% endhighlight %}
+```
 
 Note that this "enum style" union is *not* the same as a true C# enum type, discussed later.
 
 To create an empty case, just use the label as a constructor without any parameters:
 
-{% highlight fsharp %}
+```fsharp
 let myDir1 = Root
 let myDir2 = Subdirectory "bin"
 
@@ -262,7 +262,7 @@ let myResult2 = ErrorMessage "not found"
 
 let mySize1 = Small
 let mySize2 = Medium
-{% endhighlight %}
+```
 
 <a id="single-case"></a>
 
@@ -276,7 +276,7 @@ For example, let's say that we have customer ids and order ids which are both re
 
 As we saw before, a type alias approach will not work, because an alias is just a synonym and doesn't create a distinct type.  Here's how you might try to do it with aliases:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = int   // define a type alias
 type OrderId = int      // define another type alias
 
@@ -286,13 +286,13 @@ let printOrderId (orderId:OrderId) =
 //try it
 let custId = 1          // create a customer id
 printOrderId custId   // Uh-oh! 
-{% endhighlight %}
+```
 
 But even though I explicitly annotated the `orderId` parameter to be of type `OrderId`, I can't ensure that customer ids are not accidentally passed in.
 
 On the other hand, if we create simple union types, we can easily enforce the type distinctions.
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = CustomerId of int   // define a union type 
 type OrderId = OrderId of int         // define another union type 
 
@@ -302,13 +302,13 @@ let printOrderId (OrderId orderId) =  // deconstruct in the param
 //try it
 let custId = CustomerId 1             // create a customer id
 printOrderId custId                   // Good! A compiler error now.
-{% endhighlight %}
+```
 
 This approach is feasible in C# and Java as well, but is rarely used because of the overhead of creating and managing the special classes for each type.  In F# this approach is lightweight and therefore quite common.
 
 A convenient thing about single case union types is you can pattern match directly against a value without having to use a full `match-with` expression.
 
-{% highlight fsharp %}
+```fsharp
 // deconstruct in the param
 let printCustomerId (CustomerId customerIdInt) =     
    printfn "The CustomerId is %i" customerIdInt
@@ -322,46 +322,46 @@ let printCustomerId2 custId =
 let custId = CustomerId 1             // create a customer id
 printCustomerId custId                   
 printCustomerId2 custId                   
-{% endhighlight %}
+```
 
 But a common "gotcha" is that in some cases, the pattern match must have parens around it, otherwise the compiler will think you are defining a function!
 
-{% highlight fsharp %}
+```fsharp
 let custId = CustomerId 1                
 let (CustomerId customerIdInt) = custId  // Correct pattern matching
 let CustomerId customerIdInt = custId    // Wrong! New function?
-{% endhighlight %}
+```
 
 Similarly, if you ever do need to create an enum-style union type with a single case, you will have to start the case with a vertical bar in the type definition; otherwise the compiler will think you are creating an alias.
 
-{% highlight fsharp %}
+```fsharp
 type TypeAlias = A     // type alias!
 type SingleCase = | A   // single case union type
-{% endhighlight %}
+```
 
 
 ## Union equality ##
 
 Like other core F# types, union types have an automatically defined equality operation: two unions are equal if they have the same type and the same case and the values for that case is equal.
 
-{% highlight fsharp %}
+```fsharp
 type Contact = Email of string | Phone of int
 
 let email1 = Email "bob@example.com"
 let email2 = Email "bob@example.com"
 
 let areEqual = (email1=email2)
-{% endhighlight  %}
+```
 
 
 ## Union representation ##
 
 Union types have a nice default string representation, and can be serialized easily. But unlike tuples, the ToString() representation is unhelpful.
 
-{% highlight fsharp %}
+```fsharp
 type Contact = Email of string | Phone of int
 let email = Email "bob@example.com"
 printfn "%A" email    // nice
 printfn "%O" email    // ugly!
-{% endhighlight  %}
+```
 

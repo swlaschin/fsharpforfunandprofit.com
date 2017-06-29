@@ -30,7 +30,7 @@ The F# type checker is not that much stricter than the C# type checker.  But bec
 
 Here is a simple example:
 
-{% highlight fsharp %}
+```fsharp
 //define a "safe" email address type
 type EmailAddress = EmailAddress of string
 
@@ -44,7 +44,7 @@ sendEmail aliceEmail
 
 //try to send a plain string
 sendEmail "bob@example.com"   //error
-{% endhighlight %}
+```
 
 By wrapping the email address in a special type, we ensure that normal strings cannot be used as arguments to email specific functions. (In practice, we would also hide the constructor of the `EmailAddress` type as well, to ensure that only valid values could be created in the first place.)
 
@@ -60,7 +60,7 @@ Here is a minor feature that demonstrates one of the ways that F# is more type-s
 
 Try evaluating the following and look at the errors generated:
 
-{% highlight fsharp %}
+```fsharp
 let printingExample = 
    printf "an int %i" 2                        // ok
    printf "an int %i" 2.0                      // wrong type
@@ -75,27 +75,27 @@ let printingExample =
    printf "an int %i and string %s" 2 "hello"  // ok
    printf "an int %i and string %s" "hello" 2  // wrong type
    printf "an int %i and string %s" 2          // missing param
-{% endhighlight %}
+```
 
 Unlike C#, the compiler analyses the format string and determines what the number and types of the arguments are supposed to be. 
 
 This can be used to constrain the types of parameters without explicitly having to specify them. So for example, in the code below, the compiler can deduce the types of the arguments automatically.
 
-{% highlight fsharp %}
+```fsharp
 let printAString x = printf "%s" x
 let printAnInt x = printf "%i" x
 
 // the result is:
 // val printAString : string -> unit  //takes a string parameter
 // val printAnInt : int -> unit       //takes an int parameter
-{% endhighlight %}
+```
 
 <a name="units-of-measure"></a>
 ### Units of measure ###
 
 F# has the ability to define units of measure and associate them with floats. The unit of measure is then "attached" to the float as a type and prevents mixing different types. This is another feature that can be very handy if you need it.
 
-{% highlight fsharp %}
+```fsharp
 // define some measures
 [<Measure>] 
 type cm
@@ -132,7 +132,7 @@ gbp10 + gbp10             // allowed: same currency
 gbp10 + usd10             // not allowed: different currency
 gbp10 + 1.0               // not allowed: didn't specify a currency
 gbp10 + 1.0<_>            // allowed using wildcard
-{% endhighlight %}
+```
 
 ### Type-safe equality ###
 
@@ -140,21 +140,21 @@ One final example. In C# any class can be equated with any other class (using re
 
 Here is some C# code which is perfectly valid and compiles fine:
 
-{% highlight csharp %}
+```csharp
 using System;
 var obj = new Object();
 var ex = new Exception();
 var b = (obj == ex);
-{% endhighlight %}
+```
 
 If we write the identical code in F#, we get a compile-time error:
 
-{% highlight fsharp %}
+```fsharp
 open System
 let obj = new Object()
 let ex = new Exception()
 let b = (obj = ex)
-{% endhighlight %}
+```
 
 Chances are, if you are testing equality between two different types, you are doing something wrong.
 
@@ -162,7 +162,7 @@ In F#, you can even stop a type being compared at all!  This is not as silly as 
 
 Here is an example of this:
 
-{% highlight fsharp %}
+```fsharp
 // deny comparison
 [<NoEquality; NoComparison>]
 type CustomerAccount = {CustomerAccountId: int}
@@ -171,4 +171,4 @@ let x = {CustomerAccountId = 1}
 
 x = x       // error!
 x.CustomerAccountId = x.CustomerAccountId // no error
-{% endhighlight %}
+```

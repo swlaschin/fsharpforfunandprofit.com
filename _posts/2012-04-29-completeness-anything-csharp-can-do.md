@@ -18,7 +18,7 @@ Some of these will be dealt with in much more depth in a later series on .NET in
 
 First, here are some examples of an interface, an abstract class, and a concrete class that inherits from the abstract class.
 
-{% highlight fsharp %}
+```fsharp
 // interface
 type IEnumerator<'a> = 
     abstract member Current : 'a
@@ -48,11 +48,11 @@ let r = Rectangle(2,3)
 printfn "The width is %i" r.Width
 printfn "The area is %i" r.BoundingArea
 r.Print()
-{% endhighlight  %}
+```
 
 Classes can have multiple constructors, mutable properties, and so on.
 
-{% highlight fsharp %}
+```fsharp
 type Circle(rad:int) = 
     inherit Shape()
 
@@ -80,13 +80,13 @@ printfn "The width is %i" c2.Width
 // test mutable property
 c2.Radius <- 3
 printfn "The width is %i" c2.Width
-{% endhighlight  %}
+```
 
 ## Generics ##
 
 F# supports generics and all the associated constraints.
 
-{% highlight fsharp %}
+```fsharp
 // standard generics
 type KeyValuePair<'a,'b>(key:'a, value: 'b) = 
     member this.Key = key
@@ -99,13 +99,13 @@ type Container<'a,'b
     (name:'a, values:'b) = 
     member this.Name = name
     member this.Values = values
-{% endhighlight  %}
+```
 
 ## Structs ##
 
 F# supports not just classes, but the .NET struct types as well, which can help to boost performance in certain cases.
 
-{% highlight fsharp %}
+```fsharp
 
 type Point2D =
    struct
@@ -117,13 +117,13 @@ type Point2D =
 //test
 let p = Point2D()  // zero initialized
 let p2 = Point2D(2.0,3.0)  // explicitly initialized
-{% endhighlight  %}
+```
 
 ## Exceptions ##
 
 F# can create exception classes, raise them and catch them.
 
-{% highlight fsharp %}
+```fsharp
 // create a new Exception class
 exception MyError of string
 
@@ -135,13 +135,13 @@ with
         printfn "The exception error was %s" msg
     | _ -> 
         printfn "Some other exception" 
-{% endhighlight  %}
+```
 
 ## Extension methods ##
 
 Just as in C#, F# can extend existing classes with extension methods.
 
-{% highlight fsharp %}
+```fsharp
 type System.String with
     member this.StartsWithA = this.StartsWith "A"
 
@@ -155,13 +155,13 @@ type System.Int32 with
 //test
 let i = 20
 if i.IsEven then printfn "'%i' is even" i
-{% endhighlight  %}
+```
 
 ## Parameter arrays ##
 
 Just like C#'s variable length "params" keyword, this allows a variable length list of arguments to be converted to a single array parameter.
 
-{% highlight fsharp %}
+```fsharp
 open System
 type MyConsole() =
     member this.WriteLine([<ParamArray>] args: Object[]) =
@@ -170,13 +170,13 @@ type MyConsole() =
 
 let cons = new MyConsole()
 cons.WriteLine("abc", 42, 3.14, true)
-{% endhighlight  %}
+```
 
 ## Events ##
 
 F# classes can have events, and the events can be triggered and responded to.
 
-{% highlight fsharp %}
+```fsharp
 type MyButton() =
     let clickEvent = new Event<_>()
 
@@ -192,24 +192,24 @@ myButton.OnClick.Add(fun (sender, arg) ->
         printfn "Click event with arg=%O" arg)
 
 myButton.TestEvent("Hello World!")
-{% endhighlight  %}
+```
 
 ## Delegates ##
 
 F# can do delegates.
 
-{% highlight fsharp %}
+```fsharp
 // delegates
 type MyDelegate = delegate of int -> int
 let f = MyDelegate (fun x -> x * x)
 let result = f.Invoke(5)
-{% endhighlight  %}
+```
 
 ## Enums ##
 
 F# supports CLI enums types, which look similar to the "union" types, but are actually different behind the scenes.
 
-{% highlight fsharp %}
+```fsharp
 // enums
 type Color = | Red=1 | Green=2 | Blue=3
 
@@ -221,7 +221,7 @@ let color3 = System.Enum.Parse(typeof<Color>,"Green") :?> Color // :?> is a down
 [<System.FlagsAttribute>]
 type FileAccess = | Read=1 | Write=2 | Execute=4 
 let fileaccess = FileAccess.Read ||| FileAccess.Write
-{% endhighlight  %}
+```
 
 ## Working with the standard user interface ##
 
@@ -229,12 +229,12 @@ Finally, F# can work with the WinForms and WPF user interface libraries, just li
 
 Here is a trivial example of opening a form and handling a click event.
 
-{% highlight fsharp %}
+```fsharp
 open System.Windows.Forms 
 
 let form = new Form(Width= 400, Height = 300, Visible = true, Text = "Hello World") 
 form.TopMost <- true
 form.Click.Add (fun args-> printfn "the form was clicked")
 form.Show()
-{% endhighlight  %}
+```
 

@@ -24,31 +24,31 @@ Nevertheless, there are a number of extremely common errors that beginners make,
 
 In F#, whitespace is the standard separator for function parameters. You will rarely need to use parentheses, and in particular, do not use parentheses when calling a function.
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y
 let result = add (1 2)  //wrong
     // error FS0003: This value is not a function and cannot be applied
 let result = add 1 2    //correct
-{% endhighlight  %}
+```
 
 ### Don't mix up tuples with multiple parameters ###
 
 If it has a comma, it is a tuple. And a tuple is one object not two. So you will get errors about passing the wrong type of parameter, or too few parameters.
 
-{% highlight fsharp %}
+```fsharp
 addTwoParams (1,2)  // trying to pass a single tuple rather than two args
    // error FS0001: This expression was expected to have type
    //               int but here has type 'a * 'b    
-{% endhighlight  %}
+```
 
 The compiler treats `(1,2)` as a generic tuple, which it attempts to pass to "`addTwoParams`". Then it complains that the first parameter of `addTwoParams` is an int, and we're trying to pass a tuple.
 
 If you attempt to pass *two* arguments to a function expecting *one* tuple, you will get another obscure error.
 
-{% highlight fsharp %}
+```fsharp
 addTuple 1 2   // trying to pass two args rather than one tuple
   // error FS0003: This value is not a function and cannot be applied
-{% endhighlight  %}  
+```  
   
 ### Watch out for too few or too many arguments ###
 
@@ -64,58 +64,58 @@ This is a very important topic -- it is critical that you understand how partial
 
 In the few places where F# needs an explicit separator character, such as lists and records, the semicolon is used.  Commas are never used. (Like a broken record, I will remind you that commas are for tuples).
 
-{% highlight fsharp %}
+```fsharp
 let list1 = [1,2,3]    // wrong! This is a ONE-element list containing 
                        // a three-element tuple
 let list1 = [1;2;3]    // correct
 
 type Customer = {Name:string, Address: string}  // wrong
 type Customer = {Name:string; Address: string}  // correct
-{% endhighlight %}
+```
 
 ### Don't use ! for not or != for not-equal ###
 
 The exclamation point symbol is not the "NOT" operator. It is the deferencing operator for mutable references. If you use it by mistake, you will get the following error:
 
-{% highlight fsharp %}
+```fsharp
 let y = true
 let z = !y
 // => error FS0001: This expression was expected to have 
 //    type 'a ref but here has type bool    
-{% endhighlight %}
+```
 
 The correct construction is to use the "not" keyword. Think SQL or VB syntax rather than C syntax.
 
-{% highlight fsharp %}
+```fsharp
 let y = true
 let z = not y       //correct
-{% endhighlight %}
+```
 
 And for "not equal", use "<>", again like SQL or VB.
 
-{% highlight fsharp %}
+```fsharp
 let z = 1 <> 2      //correct
-{% endhighlight %}
+```
 
 ### Don't use = for assignment ###
 
 If you are using mutable values, the assignment operation is written "`<-`".  If you use the equals symbol you might not even get an error, just an unexpected result.
 
-{% highlight fsharp %}
+```fsharp
 let mutable x = 1
 x = x + 1          // returns false. x is not equal to x+1 
 x <- x + 1         // assigns x+1 to x 
-{% endhighlight %}
+```
 
 ### Watch out for hidden tab characters ###
 
 The indenting rules are very straightforward, and it is easy to get the hang of them. But you are not allowed to use tabs, only spaces.
 
-{% highlight fsharp %}
+```fsharp
 let add x y = 	
 {tab}x + y   
 // => error FS1161: TABs are not allowed in F# code 
-{% endhighlight %}
+```
 
 Be sure to set your editor to convert tabs to spaces. And watch out if you are pasting code in from elsewhere. If you do run into persistent problems with a bit of code, try removing the whitespace and re-adding it.
 
@@ -125,7 +125,7 @@ If you are trying to create a function pointer or delegate, watch out that you d
 
 If you want a parameterless function that you can reuse, you will need to explicitly pass a unit parameter, or define it as a lambda.
 
-{% highlight fsharp %}
+```fsharp
 let reader = new System.IO.StringReader("hello")
 let nextLineFn   =  reader.ReadLine()  //wrong
 let nextLineFn() =  reader.ReadLine()  //correct
@@ -135,7 +135,7 @@ let r = new System.Random()
 let randomFn   =  r.Next()  //wrong
 let randomFn() =  r.Next()  //correct
 let randomFn   =  fun () -> r.Next()  //correct
-{% endhighlight %}
+```
 
 See the series ["thinking functionally"](/series/thinking-functionally.html) for more discussion of parameterless functions.
 
@@ -252,57 +252,57 @@ This is probably the most common error you will run into. It can manifest itself
 
 Unlike C# and most imperative languages, ints and floats cannot be mixed in expressions. You will get a type error if you attempt this:
 
-{% highlight fsharp %}
+```fsharp
 1 + 2.0  //wrong
    // => error FS0001: The type 'float' does not match the type 'int'
-{% endhighlight %}
+```
    
 The fix is to cast the int into a `float` first:
 
-{% highlight fsharp %}
+```fsharp
 float 1 + 2.0  //correct
-{% endhighlight %}
+```
 
 This issue can also manifest itself in library functions and other places. For example, you cannot do "`average`" on a list of ints.
 
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.average   // wrong
    // => error FS0001: The type 'int' does not support any 
    //    operators named 'DivideByInt'
-{% endhighlight %}
+```
    
 You must cast each int to a float first, as shown below:
 
-{% highlight fsharp %}
+```fsharp
 [1..10] |> List.map float |> List.average  //correct 
 [1..10] |> List.averageBy float  //correct (uses averageBy)
-{% endhighlight %}
+```
 
 <a id="FS0001B"></a>
 ### B. Using the wrong numeric type ###
 
 You will get a "not compatible" error when a numeric cast failed.
 
-{% highlight fsharp %}
+```fsharp
 printfn "hello %i" 1.0  // should be a int not a float
   // error FS0001: The type 'float' is not compatible 
   //               with any of the types byte,int16,int32...
-{% endhighlight %}
+```
 
 One possible fix is to cast it if appropriate.
 
-{% highlight fsharp %}
+```fsharp
 printfn "hello %i" (int 1.0)
-{% endhighlight %}
+```
 
 <a id="FS0001C"></a>
 ### C. Passing too many arguments to a function ###
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y
 let result = add 1 2 3
 // ==> error FS0001: The type ''a -> 'b' does not match the type 'int'
-{% endhighlight %}
+```
 
 The clue is in the error. 
 
@@ -310,7 +310,7 @@ The fix is to remove one of the arguments!
 
 Similar errors are caused by passing too many arguments to `printf`.
 
-{% highlight fsharp %}
+```fsharp
 printfn "hello" 42
 // ==> error FS0001: This expression was expected to have type 'a -> 'b    
 //                   but here has type unit    
@@ -322,67 +322,67 @@ printfn "hello %i" 42 43
 printfn "hello %i %i" 42 43 44
 // ==> Error FS0001: Type mismatch. Expecting a  'a -> 'b -> 'c -> 'd    
 //                   but given a 'a -> 'b -> unit   
-{% endhighlight %}
+```
 
 <a id="FS0001D"></a>
 ### D. Passing too few arguments to a function ###
 
 If you do not pass enough arguments to a function, you will get a partial application. When you later use it, you get an error because it is not a simple type.
 
-{% highlight fsharp %}
+```fsharp
 let reader = new System.IO.StringReader("hello");
 
 let line = reader.ReadLine        //wrong but compiler doesn't complain
 printfn "The line is %s" line     //compiler error here!
 // ==> error FS0001: This expression was expected to have type string    
 //                   but here has type unit -> string    
-{% endhighlight %}
+```
 
 This is particularly common for some .NET library functions that expect a unit parameter, such as `ReadLine` above.
 
 The fix is to pass the correct number of parameters. Check the type of the result value to make sure that it is indeed a simple type.  In the `ReadLine` case, the fix is to pass a `()` argument.
 
-{% highlight fsharp %}
+```fsharp
 let line = reader.ReadLine()      //correct
 printfn "The line is %s" line     //no compiler error 
-{% endhighlight %}
+```
 
 <a id="FS0001E"></a>
 ### E. Straightforward type mismatch ###
 
 The simplest case is that you have the wrong type, or you are using the wrong type in a print format string.
 
-{% highlight fsharp %}
+```fsharp
 printfn "hello %s" 1.0
 // => error FS0001: This expression was expected to have type string    
 //                  but here has type float    
-{% endhighlight %}
+```
 
 <a id="FS0001F"></a>
 ### F. Inconsistent return types in branches or matches ###
 
 A common mistake is that if you have a branch or match expression, then every branch MUST return the same type.  If not, you will get a type error.
 
-{% highlight fsharp %}
+```fsharp
 let f x = 
   if x > 1 then "hello"
   else 42
 // => error FS0001: This expression was expected to have type string    
 //                  but here has type int
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 let g x = 
   match x with
   | 1 -> "hello"
   | _ -> 42
 // error FS0001: This expression was expected to have type
 //               string but here has type int
-{% endhighlight %}
+```
 
 Obviously, the straightforward fix is to make each branch return the same type. 
 
-{% highlight fsharp %}
+```fsharp
 let f x = 
   if x > 1 then "hello"
   else "42"
@@ -391,32 +391,32 @@ let g x =
   match x with
   | 1 -> "hello"
   | _ -> "42"
-{% endhighlight %}
+```
 
 Remember that if an "else" branch is missing, it is assumed to return unit, so the "true" branch must also return unit.
 
-{% highlight fsharp %}
+```fsharp
 let f x = 
   if x > 1 then "hello"
 // error FS0001: This expression was expected to have type
 //               unit but here has type string    
-{% endhighlight %}
+```
 
 If both branches cannot return the same type, you may need to create a new union type that can contain both types.
 
-{% highlight fsharp %}
+```fsharp
 type StringOrInt = | S of string | I of int  // new union type
 let f x = 
   if x > 1 then S "hello"
   else I 42
-{% endhighlight %}
+```
 
 <a id="FS0001G"></a>  
 ### G. Watch out for type inference effects buried in a function ###
 
 A function may cause an unexpected type inference that ripples around your code. For example, in the following, the innocent print format string accidentally causes `doSomething` to expect a string.
 
-{% highlight fsharp %}
+```fsharp
 let doSomething x = 
    // do something
    printfn "x is %s" x
@@ -425,7 +425,7 @@ let doSomething x =
 doSomething 1
 // => error FS0001: This expression was expected to have type string    
 //    but here has type int    
-{% endhighlight %}
+```
 
 The fix is to check the function signatures and drill down until you find the guilty party.  Also, use the most generic types possible, and avoid type annotations if possible.
 
@@ -434,30 +434,30 @@ The fix is to check the function signatures and drill down until you find the gu
 
 If you are new to F#, you might accidentally use a comma instead of spaces to separate function arguments:
 
-{% highlight fsharp %}
+```fsharp
 // define a two parameter function
 let add x y = x + 1
 
 add(x,y)   // FS0001: This expression was expected to have 
            // type int but here has type  'a * 'b   
-{% endhighlight %}
+```
 
 The fix is: don't use a comma!
 
-{% highlight fsharp %}
+```fsharp
 add x y    // OK
-{% endhighlight %}
+```
 
 One area where commas *are* used is when calling .NET library functions. 
 These all take tuples as arguments, so the comma form is correct. In fact, these calls look just the same as they would from C#:  
 
-{% highlight fsharp %}
+```fsharp
 // correct
 System.String.Compare("a","b")
 
 // incorrect
 System.String.Compare "a" "b"
-{% endhighlight %}
+```
 
   
 <a id="FS0001I"></a>  
@@ -465,29 +465,29 @@ System.String.Compare "a" "b"
 
 Tuples with different types cannot be compared. Trying to compare a tuple of type `int * int`, with a tuple of type `int * string` results in an error:
 
-{% highlight fsharp %}
+```fsharp
 let  t1 = (0, 1)
 let  t2 = (0, "hello")
 t1 = t2
 // => error FS0001: Type mismatch. Expecting a int * int    
 //    but given a int * string    
 //    The type 'int' does not match the type 'string'
-{% endhighlight %}
+```
 
 And the length must be the same:
 
-{% highlight fsharp %}
+```fsharp
 let  t1 = (0, 1)
 let  t2 = (0, 1, "hello")
 t1 = t2
 // => error FS0001: Type mismatch. Expecting a int * int    
 //    but given a int * int * string    
 //    The tuples have differing lengths of 2 and 3
-{% endhighlight %}
+```
 
 You can get the same issue when pattern matching tuples during binding:
 
-{% highlight fsharp %}
+```fsharp
 let x,y = 1,2,3
 // => error FS0001: Type mismatch. Expecting a 'a * 'b    
 //                  but given a 'a * 'b * 'c    
@@ -499,7 +499,7 @@ let result = f z
 // => error FS0001: Type mismatch. Expecting a int * int    
 //                  but given a int * string    
 //                  The type 'int' does not match the type 'string'
-{% endhighlight %}
+```
 
 
 
@@ -508,19 +508,19 @@ let result = f z
 
 If you use `!` as a "not" operator, you will get a type error mentioning the word "ref".
 
-{% highlight fsharp %}
+```fsharp
 let y = true
 let z = !y     //wrong
 // => error FS0001: This expression was expected to have 
 //    type 'a ref but here has type bool    
-{% endhighlight %}
+```
 
 The fix is to use the "not" keyword instead.
 
-{% highlight fsharp %}
+```fsharp
 let y = true
 let z = not y   //correct
-{% endhighlight %}
+```
 
 
 <a id="FS0001K"></a>  
@@ -528,35 +528,35 @@ let z = not y   //correct
 
 If you mix up operator precedence, you may get type errors.  Generally, function application is highest precedence compared to other operators, so you get an error in the case below:
 
-{% highlight fsharp %}
+```fsharp
 String.length "hello" + "world"
    // => error FS0001:  The type 'string' does not match the type 'int'
 
 // what is really happening
 (String.length "hello") + "world"  
-{% endhighlight %}
+```
 
 The fix is to use parentheses.
 
-{% highlight fsharp %}
+```fsharp
 String.length ("hello" + "world")  // corrected
-{% endhighlight %}
+```
 
 Conversely, the pipe operator is low precedence compared to other operators.
 
-{% highlight fsharp %}
+```fsharp
 let result = 42 + [1..10] |> List.sum
  // => => error FS0001:  The type ''a list' does not match the type 'int'
 
 // what is really happening
 let result = (42 + [1..10]) |> List.sum  
-{% endhighlight %}
+```
 
 Again, the fix is to use parentheses.
 
-{% highlight fsharp %}
+```fsharp
 let result = 42 + ([1..10] |> List.sum)
-{% endhighlight %}
+```
 
 
 <a id="FS0001L"></a>  
@@ -564,7 +564,7 @@ let result = 42 + ([1..10] |> List.sum)
 
 Here is a simple computation expression:
 
-{% highlight fsharp %}
+```fsharp
 type Wrapper<'a> = Wrapped of 'a
 
 type wrapBuilder() = 
@@ -576,11 +576,11 @@ type wrapBuilder() =
         Wrapped(innerThing) 
         
 let wrap = new wrapBuilder()
-{% endhighlight %}
+```
 
 However, if you try to use it, you get an error.
 
-{% highlight fsharp %}
+```fsharp
 wrap {
     let! x1 = Wrapped(1)   // <== error here
     let! y1 = Wrapped(2)
@@ -589,45 +589,45 @@ wrap {
     }
 // error FS0001: This expression was expected to have type Wrapper<'a>
 //               but here has type 'b * 'c    
-{% endhighlight %}
+```
 
 The reason is that "`Bind`" expects a tuple `(wrapper,func)`, not two parameters.  (Check the signature for bind in the F# documentation).
 
 The fix is to change the bind function to accept a tuple as its (single) parameter.
 
-{% highlight fsharp %}
+```fsharp
 type wrapBuilder() = 
     member this.Bind (wrapper:Wrapper<'a>, func:'a->Wrapper<'b>) = 
         match wrapper with
         | Wrapped(innerThing) -> func innerThing
-{% endhighlight %}
+```
 
 <a id="FS0003"></a>
 ## FS0003: This value is not a function and cannot be applied ##
 
 This error typically occurs when passing too many arguments to a function.
 
-{% highlight fsharp %}
+```fsharp
 let add1 x = x + 1
 let x = add1 2 3
 // ==>   error FS0003: This value is not a function and cannot be applied
-{% endhighlight %}
+```
 
 It can also occur when you do operator overloading, but the operators cannot be used as prefix or infix.
 
-{% highlight fsharp %}
+```fsharp
 let (!!) x y = x + y
 (!!) 1 2              // ok
 1 !! 2                // failed !! cannot be used as an infix operator
 // error FS0003: This value is not a function and cannot be applied
-{% endhighlight %}
+```
 
 <a id="FS0008"></a>
 ## FS0008: This runtime coercion or type test involves an indeterminate type ##
 
 You will often see this when attempting to use "`:?`" operator to match on a type.
 
-{% highlight fsharp %}
+```fsharp
 let detectType v =
     match v with
         | :? int -> printfn "this is an int"
@@ -635,13 +635,13 @@ let detectType v =
 // error FS0008: This runtime coercion or type test from type 'a to int    
 // involves an indeterminate type based on information prior to this program point. 
 // Runtime type tests are not allowed on some types. Further type annotations are needed.
-{% endhighlight %}
+```
 
 The message tells you the problem: "runtime type tests are not allowed on some types".  
 
 The answer is to "box" the value which forces it into a reference type, and then you can type check it:
 
-{% highlight fsharp %}
+```fsharp
 let detectTypeBoxed v =
     match box v with      // used "box v" 
         | :? int -> printfn "this is an int"
@@ -650,20 +650,20 @@ let detectTypeBoxed v =
 //test
 detectTypeBoxed 1
 detectTypeBoxed 3.14
-{% endhighlight %}
+```
 
 <a id="FS0010a"></a>
 ## FS0010: Unexpected identifier in binding ##
 
 Typically caused by breaking the "offside" rule for aligning expressions in a block.
 
-{% highlight fsharp %}
+```fsharp
 //3456789
 let f = 
   let x=1     // offside line is at column 3 
    x+1        // oops! don't start at column 4
               // error FS0010: Unexpected identifier in binding
-{% endhighlight  %}
+```
          
 The fix is to align the code correctly!
 
@@ -674,17 +674,17 @@ See also [FS0588: Block following this 'let' is unfinished](#FS0588) for another
 
 Often occurs if you are missing parentheses from a class constructor:
 
-{% highlight fsharp %}
+```fsharp
 type Something() =
    let field = ()
 
 let x1 = new Something     // Error FS0010 
 let x2 = new Something()   // OK!
-{% endhighlight %}
+```
 
 Can also occur if you forgot to put parentheses around an operator:
 
-{% highlight fsharp %}
+```fsharp
 // define new operator
 let (|+) a = -a
 
@@ -692,23 +692,23 @@ let (|+) a = -a
         // Unexpected infix operator
 
 (|+) 1  // with parentheses -- OK!
-{% endhighlight %}
+```
 
 Can also occur if you are missing one side of an infix operator:
 
-{% highlight fsharp %}
+```fsharp
 || true  // error FS0010: Unexpected symbol '||'
 false || true  // OK
-{% endhighlight %}
+```
 
 Can also occur if you attempt to send a namespace definition to F# interactive. The interactive console does not allow namespaces.
 
-{% highlight fsharp %}
+```fsharp
 namespace Customer  // FS0010: Incomplete structured construct 
 
 // declare a type
 type Person= {First:string; Last:string}
-{% endhighlight %}
+```
 
 <a id="FS0013"></a>
 ## FS0013: The static coercion from type X to Y involves an indeterminate type ##
@@ -727,29 +727,29 @@ This error is commonly found in two situations:
 
 Only the last expression in a block can return a value. All others must return unit. So this typically occurs when you have a function in a place that is not the last function. 
 
-{% highlight fsharp %}
+```fsharp
 let something = 
   2+2               // => FS0020: This expression should have type 'unit'
   "hello"
-{% endhighlight %}
+```
 
 The easy fix is use `ignore`.  But ask yourself why you are using a function and then throwing away the answer -- it might be a bug.
 
-{% highlight fsharp %}
+```fsharp
 let something = 
   2+2 |> ignore     // ok
   "hello"
-{% endhighlight %}
+```
 
 This also occurs if you think you writing C# and you accidentally use semicolons to separate expressions:
 
-{% highlight fsharp %}
+```fsharp
 // wrong
 let result = 2+2; "hello";
 
 // fixed
 let result = 2+2 |> ignore; "hello";
-{% endhighlight %}
+```
 
 ### FS0020 with assignment ###
 
@@ -759,23 +759,23 @@ Another variant of this error occurs when assigning to a property.
 
 With this error, chances are you have confused the assignment operator "`<-`" for mutable values, with the equality comparison operator "`=`".
 
-{% highlight fsharp %}
+```fsharp
 // '=' versus '<-'
 let add() =
     let mutable x = 1
     x = x + 1          // warning FS0020
     printfn "%d" x    
-{% endhighlight %}
+```
 
 The fix is to use the proper assignment operator.
 
-{% highlight fsharp %}
+```fsharp
 // fixed
 let add() =
     let mutable x = 1
     x <- x + 1
     printfn "%d" x
-{% endhighlight %}
+```
 
 <a id="FS0030"></a>	
 ## FS0030: Value restriction ##
@@ -784,33 +784,33 @@ This is related to F#'s automatic generalization to generic types whenever possi
 
 For example, given :
 
-{% highlight fsharp %}
+```fsharp
 let id x = x
 let compose f g x = g (f x)
 let opt = None
-{% endhighlight %}
+```
 
 F#'s type inference will cleverly figure out the generic types.
 
-{% highlight fsharp %}
+```fsharp
 val id : 'a -> 'a
 val compose : ('a -> 'b) -> ('b -> 'c) -> 'a -> 'c
 val opt : 'a option
-{% endhighlight %}
+```
 
 However in some cases, the F# compiler feels that the code is ambiguous, and, even though it looks like it is guessing the type correctly, it needs you to be more specific:
 
-{% highlight fsharp %}
+```fsharp
 let idMap = List.map id             // error FS0030
 let blankConcat = String.concat ""  // error FS0030
-{% endhighlight %}
+```
 
 Almost always this will be caused by trying to define a partially applied function, and almost always, the easiest fix is to explicitly add the missing parameter: 
 
-{% highlight fsharp %}
+```fsharp
 let idMap list = List.map id list             // OK
 let blankConcat list = String.concat "" list  // OK
-{% endhighlight %}
+```
 
 For more details see the MSDN article on ["automatic generalization"](http://msdn.microsoft.com/en-us/library/dd233183%28v=VS.100%29.aspx).
 
@@ -819,12 +819,12 @@ For more details see the MSDN article on ["automatic generalization"](http://msd
 
 F# syntax has been cleaned up over the last few years, so if you are using examples from an older F# book or webpage, you may run into this.  See the MSDN documentation for the correct syntax.
 
-{% highlight fsharp %}
+```fsharp
 let x = 10
 let rnd1 = System.Random x         // Good
 let rnd2 = new System.Random(x)    // Good
 let rnd3 = new System.Random x     // error FS0035
-{% endhighlight %}
+```
 
 <a id="FS0039"></a>	
 ## FS0039: The field, constructor or member X is not defined ##
@@ -844,42 +844,42 @@ The key point is that when a interface member is explicitly implemented, it cann
 
 Here's an example of a class that implements an interface:
 
-{% highlight fsharp %}
+```fsharp
 type MyResource() = 
    interface System.IDisposable with
        member this.Dispose() = printfn "disposed"
-{% endhighlight %}
+```
 
 This doesn't work:
 
-{% highlight fsharp %}
+```fsharp
 let x = new MyResource()
 x.Dispose()  // error FS0039: The field, constructor 
              // or member 'Dispose' is not defined
-{% endhighlight %}
+```
 
 The fix is to cast the object to the interface, as below:
 
-{% highlight fsharp %}
+```fsharp
 // fixed by casting to System.IDisposable 
 (x :> System.IDisposable).Dispose()   // OK
 
 let y =  new MyResource() :> System.IDisposable 
 y.Dispose()   // OK
-{% endhighlight %}
+```
 
 
 ### FS0039 with recursion ###
 
 Here's a standard Fibonacci implementation: 
 
-{% highlight fsharp %}
+```fsharp
 let fib i = 
    match i with
    | 1 -> 1
    | 2 -> 1
    | n -> fib(n-1) + fib(n-2)
-{% endhighlight %}
+```
 
 Unfortunately, this will not compile: 
 
@@ -889,24 +889,24 @@ The reason is that when the compiler sees 'fib' in the body, it doesn't know abo
 
 The fix is to use the "`rec`" keyword.
 
-{% highlight fsharp %}
+```fsharp
 let rec fib i = 
    match i with
    | 1 -> 1
    | 2 -> 1
    | n -> fib(n-1) + fib(n-2)
-{% endhighlight %}
+```
 
 Note that this only applies to "`let`" functions. Member functions do not need this, because the scope rules are slightly different.
 
-{% highlight fsharp %}
+```fsharp
 type FibHelper() =
     member this.fib i = 
        match i with
        | 1 -> 1
        | 2 -> 1
        | n -> fib(n-1) + fib(n-2)
-{% endhighlight %}
+```
 
 ### FS0039 with extension methods ###
 
@@ -914,57 +914,57 @@ If you have defined an extension method, you won't be able to use it unless the 
 
 Here's a simple extension to demonstrate:
 
-{% highlight fsharp %}
+```fsharp
 module IntExtensions = 
     type System.Int32 with
         member this.IsEven = this % 2 = 0
-{% endhighlight  %}
+```
 
 If you try to use it the extension, you get the FS0039 error:
 
-{% highlight fsharp %}
+```fsharp
 let i = 2
 let result = i.IsEven  
     // FS0039: The field, constructor or 
     // member 'IsEven' is not defined
-{% endhighlight  %}
+```
     
 The fix is just to open the `IntExtensions` module.
     
-{% highlight fsharp %}
+```fsharp
 open IntExtensions // bring module into scope
 let i = 2
 let result = i.IsEven  // fixed!
-{% endhighlight  %}
+```
 
 <a id="FS0041"></a>	
 ## FS0041: A unique overload for could not be determined ##
 
 This can be caused when calling a .NET library function that has multiple overloads:
 
-{% highlight fsharp %}
+```fsharp
 let streamReader filename = new System.IO.StreamReader(filename) // FS0041
-{% endhighlight  %}
+```
 
 There a number of ways to fix this. One way is to use an explicit type annotation:
 
-{% highlight fsharp %}
+```fsharp
 let streamReader filename = new System.IO.StreamReader(filename:string) // OK
-{% endhighlight  %}
+```
 
 You can sometimes use a named parameter to avoid the type annotation:
 
-{% highlight fsharp %}
+```fsharp
 let streamReader filename = new System.IO.StreamReader(path=filename) // OK
-{% endhighlight  %}
+```
 
 Or you can try to create intermediate objects that help the type inference, again without needing type annotations:
 
-{% highlight fsharp %}
+```fsharp
 let streamReader filename = 
     let fileInfo = System.IO.FileInfo(filename)
     new System.IO.StreamReader(fileInfo.FullName) // OK
-{% endhighlight  %}
+```
 	
 <a id="FS0049"></a>	
 ## FS0049: Uppercase variable identifiers should not generally be used in patterns ##
@@ -973,33 +973,33 @@ When pattern matching, be aware of a subtle difference between the pure F# union
 
 Pure F# union type:
 
-{% highlight fsharp %}
+```fsharp
 type ColorUnion = Red | Yellow 
 let redUnion = Red  
 
 match redUnion with
 | Red -> printfn "red"     // no problem
 | _ -> printfn "something else" 
-{% endhighlight %}
+```
 
 But with .NET enums you must fully qualify them:
 
-{% highlight fsharp %}
+```fsharp
 type ColorEnum = Green=0 | Blue=1      // enum 
 let blueEnum = ColorEnum.Blue  
 
 match blueEnum with
 | Blue -> printfn "blue"     // warning FS0049
 | _ -> printfn "something else" 
-{% endhighlight %}
+```
 
 The fixed version:
 
-{% highlight fsharp %}
+```fsharp
 match blueEnum with
 | ColorEnum.Blue -> printfn "blue" 
 | _ -> printfn "something else"
-{% endhighlight %}
+```
 
 <a id="FS0072"></a>	
 ## FS0072: Lookup on object of indeterminate type ##
@@ -1008,37 +1008,37 @@ This occurs when "dotting into" an object whose type is unknown.
 
 Consider the following example:
 
-{% highlight fsharp %}
+```fsharp
 let stringLength x = x.Length // Error FS0072
-{% endhighlight  %}
+```
 
 The compiler does not know what type "x" is, and therefore does not know if "`Length`" is a valid method. 
 
 There a number of ways to fix this. The crudest way is to provide an explicit type annotation:
 
-{% highlight fsharp %}
+```fsharp
 let stringLength (x:string) = x.Length  // OK
-{% endhighlight  %}
+```
 
 In some cases though, judicious rearrangement of the code can help. For example, the example below looks like it should work. It's obvious to a human that the `List.map` function is being applied to a list of strings, so why does `x.Length` cause an error?
 
-{% highlight fsharp %}
+```fsharp
 List.map (fun x -> x.Length) ["hello"; "world"] // Error FS0072      
-{% endhighlight  %}
+```
 
 The reason is that the F# compiler is currently a one-pass compiler, and so type information present later in the program cannot be used if it hasn't been parsed yet. 
 
 Yes, you can always explicitly annotate:
 
-{% highlight fsharp %}
+```fsharp
 List.map (fun x:string -> x.Length) ["hello"; "world"] // OK
-{% endhighlight  %}
+```
 
 But another, more elegant way that will often fix the problem is to rearrange things so the known types come first, and the compiler can digest them before it moves to the next clause.
 
-{% highlight fsharp %}
+```fsharp
 ["hello"; "world"] |> List.map (fun x -> x.Length)   // OK
-{% endhighlight  %}
+```
 
 It's good practice to avoid explicit type annotations, so this approach is best, if it is feasible.
 
@@ -1047,14 +1047,14 @@ It's good practice to avoid explicit type annotations, so this approach is best,
 
 Caused by outdenting an expression in a block, and thus breaking the "offside rule".
 
-{% highlight fsharp %}
+```fsharp
 //3456789
 let f = 
   let x=1    // offside line is at column 3 
  x+1         // offside! You are ahead of the ball!
              // error FS0588: Block following this 
              // 'let' is unfinished
-{% endhighlight  %}
+```
 
 The fix is to align the code correctly.
 

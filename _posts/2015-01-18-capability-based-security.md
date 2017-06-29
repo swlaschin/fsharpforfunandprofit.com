@@ -40,21 +40,21 @@ Let's start with a really bad idea. We'll just provide the name of the config fi
 
 Here's how this might be written in C# pseudocode:
 
-{% highlight csharp %}
+```csharp
 interface IConfiguration
 {   
     string GetConfigFilename();
 }
-{% endhighlight csharp %}     
+```     
 
 and the caller code would be 
 
-{% highlight csharp %}
+```csharp
 var filename = config.GetConfigFilename();
 // open file
 // write new config
 // close file
-{% endhighlight csharp %}     
+```     
 
 Obviously, this is not good!  In order for this to work, we have to give the caller the ability to write to any file on the filesystem, and
 then a malicious caller could delete or corrupt all sorts of things. 
@@ -71,18 +71,18 @@ But of course, a malicious caller could still corrupt the config file by writing
 
 Let's lock this down by providing the caller an interface that forces them to treat the config file as a key/value store, like this:
 
-{% highlight csharp %}
+```csharp
 interface IConfiguration
 {   
     void SetConfig(string key, string value);
 }
-{% endhighlight csharp %}     
+```     
 
 The caller code is then something like this:
 
-{% highlight csharp %}
+```csharp
 config.SetConfig("DontShowThisMessageAgain", "True");
-{% endhighlight csharp %}     
+```     
 
 That's much better, but because it is a stringly-typed interface, a malicious caller could still corrupt the configuration by setting the value to a non-boolean which would not parse.
 They could also corrupt all the other configuration keys if they wanted to.
@@ -91,7 +91,7 @@ They could also corrupt all the other configuration keys if they wanted to.
 
 Ok, so rather than having a generic config interface, let's provide an interface that provides specific methods for each configuration setting. 
 
-{% highlight csharp %}
+```csharp
 enum MessageFlag {
    ShowThisMessageAgain,
    DontShowThisMessageAgain
@@ -103,7 +103,7 @@ interface IConfiguration
     void SetConnectionString(ConnectionString value);
     void SetBackgroundColor(Color value);
 }
-{% endhighlight csharp %}     
+```     
 
 Now the caller can't possibly corrupt the config, because each option is statically typed.  
 
@@ -113,12 +113,12 @@ But we still have a problem! What's to stop a malicious caller changing the conn
 
 Ok, so let's define a new interface that contains *only* the methods the caller should have access to, with all the other methods hidden. 
 
-{% highlight csharp %}
+```csharp
 interface IWarningMessageConfiguration
 {   
     void SetMessageFlag(MessageFlag value);
 }
-{% endhighlight csharp %}     
+```     
 
 That's about as locked down as we can get!  The caller can *only* do the thing we allow them to do.
 
@@ -203,24 +203,24 @@ In the car key analogy, this might be like having car keys that self-destruct on
 
 An interface with one method can be better realized as a function. So this interface:
 
-{% highlight csharp %}
+```csharp
 interface IWarningMessageConfiguration
 {   
     void SetMessageFlag(MessageFlag value);
 }
-{% endhighlight csharp %}     
+```     
 
 becomes just this function:
 
-{% highlight csharp %}
+```csharp
 Action<MessageFlag> messageFlagCapability = // get function;
-{% endhighlight csharp %}     
+```     
 
 or in F#:
 
-{% highlight fsharp %}
+```fsharp
 let messageFlagCapability = // get function;
-{% endhighlight fsharp %}     
+```     
 
 In a functional approach to capability-based security, each capability is represented by a function rather than an interface. 
 
@@ -303,14 +303,14 @@ a [so-called Powerbox](http://c2.com/cgi/wiki?PowerBox) plays a similar role of 
 
 Here's the code for a service that provides configuration capabilities:
 
-{% highlight csharp %}
+```csharp
 interface IConfigurationCapabilities
 {   
     Action<MessageFlag> SetMessageFlag();
     Action<ConnectionString> SetConnectionString();
     Action<Color> SetBackgroundColor();
 }
-{% endhighlight csharp %}     
+```     
 
 This code might look very similar to the interface defined earlier, but the difference is that this one will be initialized at startup to return capabilities that are then passed around. 
 
@@ -324,7 +324,7 @@ Here's some sample C# pseudocode to demonstrate:
 * The `ApplicationWindow` creates a checkbox.
 * The event handler for the checkbox calls the capability.
 
-{% highlight csharp %}
+```csharp
 // at startup
 var messageFlagCapability = 
     configurationCapabilities.SetMessageFlag()
@@ -348,7 +348,7 @@ class ApplicationWindow
         messageFlagCapability(sender.IsChecked)
     }
 }
-{% endhighlight csharp %}
+```
 
 ## A complete example in F# ##
 
@@ -373,7 +373,7 @@ We start with the configuration system. Here's an overview:
 * An in-memory store (`ConfigStore`) is created for the purposes of the demo
 * Finally, the `configurationCapabilities` are created using functions that read and write to the `ConfigStore`
 
-{% highlight fsharp %}
+```fsharp
 module Config =
 
     type MessageFlag  = ShowThisMessageAgain | DontShowThisMessageAgain
@@ -405,7 +405,7 @@ module Config =
         GetConnectionString = fun () -> ConfigStore.ConnectionString 
         SetConnectionString = fun connStr -> ConfigStore.ConnectionString <- connStr
         }
-{% endhighlight fsharp %}
+```
 
 ### The annoying popup dialog
 
@@ -420,7 +420,7 @@ This requires in turn that the main form creation function (`createForm`) is als
 These capabilities, and these capabilities *only* are passed in to the form. The capabilities for setting the background color or connection string are *not* passed in,
 and thus not available to be (mis)used.
 
-{% highlight fsharp %}
+```fsharp
 module AnnoyingPopupMessage = 
     open System.Windows.Forms
    
@@ -451,7 +451,7 @@ module AnnoyingPopupMessage =
         form.Controls.Add messageFlag 
         form.Controls.Add okButton 
         form
-{% endhighlight fsharp %}
+```
 
 ### The main application window
 
@@ -477,7 +477,7 @@ In addition, the capability functions are modified:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 module UserInterface = 
     open System.Windows.Forms
     open System.Drawing
@@ -548,14 +548,14 @@ module UserInterface =
         form.Controls.Add resetFlagButton 
 
         form  // return form
-{% endhighlight fsharp %}
+```
 
 ### The startup code
 
 Finally, the top-level module, here called `Startup`, gets some of the capabilities from the Configuration subsystem, and combines them into a tuple that can be passed
 to the main form. The `ConnectionString` capabilities are *not* passed in though, so there is no way the form can accidentally show it to a user or update it.
 
-{% highlight fsharp %}
+```fsharp
 module Startup = 
 
     // set up capabilities
@@ -569,7 +569,7 @@ module Startup =
     // start
     let form = UserInterface.createMainForm formCapabilities 
     form.ShowDialog() |> ignore
-{% endhighlight fsharp %}
+```
 
 <a id="summary"></a>
 

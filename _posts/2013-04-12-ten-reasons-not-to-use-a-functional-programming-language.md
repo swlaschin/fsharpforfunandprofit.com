@@ -38,7 +38,7 @@ But when I [compare code](/posts/fvsc-sum-of-squares/) written in a functional l
 
 I mean, just look at this code written in a familiar language:
 
-{% highlight csharp %}
+```csharp
 public static class SumOfSquaresHelper
 {
    public static int Square(int i)
@@ -56,14 +56,14 @@ public static class SumOfSquaresHelper
       return sum;
    }
 }
-{% endhighlight %}
+```
 
 and compare it with this:
 
-{% highlight fsharp %}
+```fsharp
 let square x = x * x
 let sumOfSquares n = [1..n] |> List.map square |> List.sum
-{% endhighlight %}
+```
 
 That's 17 lines vs. only 2 lines.  [Imagine that difference multiplied over a whole project!](http://fpbridge.co.uk/why-fsharp.html#conciseness)  
 
@@ -75,7 +75,7 @@ And that's another thing. What's up with all these languages that get rid of cur
 
 I'll show you what I mean. Here's a code sample with familiar curly braces.
 
-{% highlight csharp %}
+```csharp
 public class Squarer
 {
     public int Square(int input)
@@ -90,11 +90,11 @@ public class Squarer
         Console.WriteLine("Input={0}. Result={1}", input, result);
     }
 }
-{% endhighlight %}
+```
     
 And here's some similar code, but without curly braces. 
 
-{% highlight fsharp %}
+```fsharp
 type Squarer() =  
 
     let Square input = 
@@ -104,7 +104,7 @@ type Squarer() =
     let PrintSquare input = 
         let result = Square input
         printf "Input=%i. Result=%i" input result
-{% endhighlight fsharp %}
+```
 
 Look at the difference! I don't know about you, but I find the second example a bit disturbing, as if something important is missing. 
 
@@ -118,20 +118,20 @@ Well, as it happens, I *like* to see type declarations. I feel uncomfortable if 
 
 Here's a function signature for some ML-ish code. There are no type declarations needed and all types are inferred automatically.
 
-{% highlight fsharp %}
+```fsharp
 let GroupBy source keySelector = 
     ... 
-{% endhighlight %}
+```
 
 And here's the function signature for similar code in C#, with explicit type declarations.
 
-{% highlight csharp %}
+```csharp
 public IEnumerable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey>(
     IEnumerable<TSource> source,
     Func<TSource, TKey> keySelector
     )
     ...
-{% endhighlight %}
+```
 
 I may be in the minority here, but I like the second version much better. It's important to me to know that the return is of type `IEnumerable<IGrouping<TKey, TSource>>`.
 
@@ -172,14 +172,14 @@ I'd much rather get everything (mostly) working for the happy path, and then fix
 
 I'm very conscientious about [checking for nulls](http://stackoverflow.com/questions/7585493/null-parameter-checking-in-c-sharp) on every method. It gives me great satisfaction to know that my code is completely bulletproof as a result.
 
-{% highlight csharp %}
+```csharp
 void someMethod(SomeClass x)
 {
     if (x == null) { throw new NullArgumentException(); }
 
     x.doSomething();
 }
-{% endhighlight  %}
+```
 
 Haha! Just kidding! Of course I can't be bothered to put null-checking code everywhere. I'd never get any real work done.  
 
@@ -197,9 +197,9 @@ Perhaps the functional programmers are not aware of them?
 
 Here's some more code for calculating the sum of squares. This is *way* too hard to understand because of all the weird symbols in it.
 
-{% highlight text %}
+```text
 ss=: +/ @: *:
-{% endhighlight  %}
+```
 
 Oops, sorry! My mistake. That was [J code](http://en.wikipedia.org/wiki/J_\(programming_language\)).
 

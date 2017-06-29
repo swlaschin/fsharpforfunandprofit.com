@@ -36,28 +36,28 @@ F# does not use commas for separating parameters or list elements, so remember n
 
 *For separating list elements, use semicolons rather than commas.*
 
-{% highlight csharp %}
+```csharp
 // C# example
 var list = new int[] { 1,2,3}
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# example
 let list = [1;2;3] // semicolons
-{% endhighlight %}
+```
 
 *For separating parameters for native F# functions, use white space.*
 
-{% highlight csharp %}
+```csharp
 // C# example 
 int myFunc(int x, int y, int z) { ... function body ...}
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# example 
 let myFunc (x:int) (y:int) (z:int) :int = ... function body ...
 let myFunc x y z = ... function body ...
-{% endhighlight %}
+```
 
 Commas are generally only used for tuples, or for separating parameters when calling .NET library functions. (See [this post](/posts/defining-functions/#tuples) for more on tuples vs multiple parameters)
 
@@ -65,15 +65,15 @@ Commas are generally only used for tuples, or for separating parameters when cal
 
 In F#, definitions of both variables and functions use the form:
 
-{% highlight fsharp %}
+```fsharp
 let someName = // the definition
-{% endhighlight %}
+```
 
 Definitions for all types (classes, structures, interfaces, etc.) use the form:
 
-{% highlight fsharp %}
+```fsharp
 type someName = // the definition
-{% endhighlight %}
+```
 
 The use of the `=` sign is an important difference between F# and C#. Where C# uses curly braces, F# uses the `=` and then the following block of code must be indented.
 
@@ -82,17 +82,17 @@ The use of the `=` sign is an important difference between F# and C#. Where C# u
 In F#, values are immutable by default. If you are doing a direct imperative port, you probably need to make some of the values mutable, using the `mutable` keyword.
 Then to assign to the values, use the `<-` operator, not the equals sign.
 
-{% highlight csharp %}
+```csharp
 // C# example 
 var variableName = 42
 variableName = variableName + 1
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# example 
 let mutable variableName = 42
 variableName <- variableName + 1
-{% endhighlight %}
+```
 
 ### Assignment vs. testing for equality 
 
@@ -100,19 +100,19 @@ In C#, the equals sign is used for assignment, and the double equals `==` is use
 
 However in F#, the equals sign is used for testing equality, and is also used to initially bind values to other values when declared,
 
-{% highlight fsharp %}
+```fsharp
 let mutable variableName = 42     // Bound to 42 on declaration
 variableName <- variableName + 1  // Mutated (reassigned)
 variableName = variableName + 1   // Comparison not assignment! 
-{% endhighlight %}
+```
 
 To test for inequality, use SQL-style `<>` rather than `!=`
 
-{% highlight fsharp %}
+```fsharp
 let variableName = 42             // Bound to 42 on declaration
 variableName <> 43                // Comparison will return true.
 variableName != 43                // Error FS0020.
-{% endhighlight %}
+```
 
 If you accidentally use `!=` you will probably get an [error FS0020](/troubleshooting-fsharp/#FS0020).
 
@@ -122,7 +122,7 @@ With these basic guidelines in place, let's look at some real code examples, and
 
 This first example has some very simple code, which we will port line by line. Here's the C# code.
 
-{% highlight csharp %}
+```csharp
 using System;
 using System.Collections.Generic;
 
@@ -143,7 +143,7 @@ namespace PortingToFsharp
               input, result);
         }
     }
-{% endhighlight %}
+```
     
 ### Converting "using" and "namespace"
 
@@ -160,10 +160,10 @@ Note that the namespace, if used, must come before anything else, such as "open"
 
 To declare a simple class, use:
 
-{% highlight fsharp %}
+```fsharp
 type myClassName() = 
    ... code ...  
-{% endhighlight %}
+```
 
 Note that there are parentheses after the class name. These are required for class definitions.
 
@@ -184,23 +184,23 @@ For function/method signatures:
 
 Here's a C# function signature:
 
-{% highlight csharp %}
+```csharp
 int Square(int input) { ... code ...}
-{% endhighlight %}
+```
 
 and here's the corresponding F# function signature with explicit types:
 
-{% highlight fsharp %}
+```fsharp
 let Square (input:int) :int =  ... code ...
-{% endhighlight %}
+```
 
 However, because F# can normally infer the parameter and return types, you rarely need to specify them explicitly.
 
 Here's a more typical F# signature, with inferred types:
 
-{% highlight fsharp %}
+```fsharp
 let Square input =  ... code ...
-{% endhighlight %}
+```
 
 ### void
 
@@ -208,21 +208,21 @@ The `void` keyword in C# is generally not needed, but if required, would be conv
 
 So the C# code:
 
-{% highlight csharp %}
+```csharp
 void PrintSquare(int input) { ... code ...}
-{% endhighlight %}
+```
 
 could be converted to the F# code:
 
-{% highlight fsharp %}
+```fsharp
 let PrintSquare (input:int) :unit =  ... code ...
-{% endhighlight %}
+```
 
 but again, the specific types are rarely needed, and so the F# version is just:
 
-{% highlight fsharp %}
+```fsharp
 let PrintSquare input =  ... code ...
-{% endhighlight %}
+```
 
 ### Converting function/method bodies
 
@@ -239,41 +239,41 @@ We'll have a quick look at porting each of these in turn, except for control flo
 
 Almost always, you can use `let` on its own, just like `var` in C#:
 
-{% highlight csharp %}
+```csharp
 // C# variable declaration
 var result = input * input;
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# value declaration
 let result = input * input
-{% endhighlight %}
+```
 
 Unlike C#, you must always assign ("bind") something to an F# value as part of its declaration.
 
-{% highlight csharp %}
+```csharp
 // C# example 
 int unassignedVariable; //valid
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# example 
 let unassignedVariable // not valid
-{% endhighlight %}
+```
 
 As noted above, if you need to change the value after its declaration, you must use the "mutable" keyword.
 
 If you need to specify a type for a value, the type name comes after the value or parameter, preceded by a colon.
 
-{% highlight csharp %}
+```csharp
 // C# example 
 int variableName = 42;
-{% endhighlight %}
+```
 
-{% highlight fsharp %}
+```fsharp
 // F# example 
 let variableName:int = 42
-{% endhighlight %}
+```
 
 ### Converting function calls
 
@@ -281,24 +281,24 @@ When calling a native F# function, there is no need for parentheses or commas. I
 
 Here's C# code for defining a function, then calling it:
 
-{% highlight csharp %}
+```csharp
 // define a method/function 
 int Square(int input) { ... code  ...}
 
 // call it
 var result = Square(input);
-{% endhighlight %}
+```
 
 However, because F# can normally infer the parameter and return types, you rarely need to specify them explicitly
 So here's typical F# code for defining a function and then calling it:
 
-{% highlight fsharp %}
+```fsharp
 // define a function 
 let Square input = ... code ...
 
 // call it
 let result = Square input
-{% endhighlight %}
+```
 
 ### Return values
 
@@ -306,21 +306,21 @@ In C#, you use the `return` keyword. But in F#, the last value in the block is a
 
 Here's the C# code returning the `result` variable.
 
-{% highlight csharp %}
+```csharp
 public int Square(int input)
 {
     var result = input * input;
     return result;   //explicit "return" keyword
 }
-{% endhighlight %}
+```
 
 And here's the F# equivalent.
 
-{% highlight fsharp %}
+```fsharp
 let Square input = 
     let result = input * input
     result        // implicit "return" value
-{% endhighlight %}
+```
 
 This is because F# is expression-based. Everything is an expression, and the value of a block expression as a whole is just the value of the last expression in the block. 
 
@@ -335,7 +335,7 @@ To print output in C#, you generally use `Console.WriteLine` or similar. In F#, 
 Putting it all together, here is the complete direct port of example #1 to F#.
 
 The C# code again:
-{% highlight csharp %}
+```csharp
 using System;
 using System.Collections.Generic;
 
@@ -356,11 +356,11 @@ namespace PortingToFsharp
               input, result);
         }
     }
-{% endhighlight %}
+```
 
 And the equivalent F# code:
 
-{% highlight fsharp %}
+```fsharp
 namespace PortingToFsharp
 
 open System
@@ -375,6 +375,6 @@ type Squarer() =
     let PrintSquare input = 
         let result = Square input
         printf "Input=%i. Result=%i" input result
-{% endhighlight %}        
+```        
     
 

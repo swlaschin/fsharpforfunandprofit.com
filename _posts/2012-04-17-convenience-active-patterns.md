@@ -12,7 +12,7 @@ F# has a special type of pattern matching called "active patterns" where the pat
 
 Here is an example of using active patterns to parse a string into an int or bool. 
 
-{% highlight fsharp %}
+```fsharp
 // create an active pattern
 let (|Int|_|) str =
    match System.Int32.TryParse(str) with
@@ -24,7 +24,7 @@ let (|Bool|_|) str =
    match System.Boolean.TryParse(str) with
    | (true,bool) -> Some(bool)
    | _ -> None
-{% endhighlight  %}   
+```   
 
 <div class="alert alert-info">   
 You don't need to worry about the complex syntax used to define the active pattern right now -- this is just an example so that you can see how they are used.
@@ -32,7 +32,7 @@ You don't need to worry about the complex syntax used to define the active patte
 
 Once these patterns have been set up, they can be used as part of a normal "`match..with`" expression.
 
-{% highlight fsharp %}
+```fsharp
 // create a function to call the patterns
 let testParse str = 
     match str with
@@ -44,7 +44,7 @@ let testParse str =
 testParse "12"
 testParse "true"
 testParse "abc"
-{% endhighlight  %}
+```
 
 You can see that from the caller's point of view, the matching with an `Int` or `Bool` is transparent, even though there is parsing going on behind the scenes.
 
@@ -60,7 +60,7 @@ A similar example is to use active patterns with regular expressions in order to
    
 Again, once this pattern has been set up, it can be used transparently as part of a normal match expression.
 
-{% highlight fsharp %}
+```fsharp
 // create a function to call the pattern
 let testRegex str = 
     match str with
@@ -73,11 +73,11 @@ let testRegex str =
 // test
 testRegex "http://google.com/test"
 testRegex "alice@hotmail.com"
-{% endhighlight  %}
+```
 
 And for fun, here's one more: the well-known [FizzBuzz challenge](http://www.codinghorror.com/blog/2007/02/why-cant-programmers-program.html) written using active patterns.
 
-{% highlight fsharp %}
+```fsharp
 // setup the active patterns
 let (|MultOf3|_|) i = if i % 3 = 0 then Some MultOf3 else None
 let (|MultOf5|_|) i = if i % 5 = 0 then Some MultOf5 else None
@@ -92,4 +92,4 @@ let fizzBuzz i =
   
 // test
 [1..20] |> List.iter fizzBuzz 
-{% endhighlight  %}
+```

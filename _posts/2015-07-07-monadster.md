@@ -76,24 +76,24 @@ Before discussing the particulars of assembling the body parts, we should spend 
 
 First, we need a label type. Dr Frankenfunctor was very disciplined in labeling the source of every part used. 
 
-{% highlight fsharp %}
+```fsharp
 type Label = string
-{% endhighlight fsharp %}
+```
 
 The vital force we will model with a simple record type:
 
-{% highlight fsharp %}
+```fsharp
 type VitalForce = {units:int}
-{% endhighlight fsharp %}
+```
 
 Since we will be using vital force frequently, we will create a function that extracts one unit and returns a tuple of the unit and remaining force.
 
-{% highlight fsharp %}
+```fsharp
 let getVitalForce vitalForce = 
    let oneUnit = {units = 1}
    let remaining = {units = vitalForce.units-1}  // decrement
    oneUnit, remaining  // return both
-{% endhighlight fsharp %}
+```
 
 ## The Left Leg
 
@@ -101,26 +101,26 @@ With the common code out of the way, we can return to the substance.
 
 Dr Frankenfunctor's notebooks record that the lower extremities were created first. There was a left leg lying around in the laboratory, and that was the starting point.
 
-{% highlight fsharp %}
+```fsharp
 type DeadLeftLeg = DeadLeftLeg of Label 
-{% endhighlight fsharp %}
+```
 
 From this leg, a live leg could be created with the same label and one unit of vital force.
 
-{% highlight fsharp %}
+```fsharp
 type LiveLeftLeg = LiveLeftLeg of Label * VitalForce
-{% endhighlight fsharp %}
+```
 
 The type signature for the creation function would thus look like this:
 
-{% highlight fsharp %}
+```fsharp
 type MakeLiveLeftLeg = 
     DeadLeftLeg * VitalForce -> LiveLeftLeg * VitalForce 
-{% endhighlight fsharp %}
+```
 
 And the actual implementation like this:
 
-{% highlight fsharp %}
+```fsharp
 let makeLiveLeftLeg (deadLeftLeg,vitalForce) = 
     // get the label from the dead leg using pattern matching
     let (DeadLeftLeg label) = deadLeftLeg
@@ -130,7 +130,7 @@ let makeLiveLeftLeg (deadLeftLeg,vitalForce) =
     let liveLeftLeg = LiveLeftLeg (label,oneUnit)
     // return the leg and the remaining vital force
     liveLeftLeg, remainingVitalForce    
-{% endhighlight fsharp %}
+```
 
 As you can see, this implementation matched the earlier diagram precisely.
 
@@ -144,7 +144,7 @@ The first insight was that, thanks to [currying](/posts/currying/), the function
 
 And the code now looked like this:
 
-{% highlight fsharp %}
+```fsharp
 type MakeLiveLeftLeg = 
     DeadLeftLeg -> VitalForce -> LiveLeftLeg * VitalForce 
 
@@ -153,7 +153,7 @@ let makeLiveLeftLeg deadLeftLeg vitalForce =
     let oneUnit, remainingVitalForce = getVitalForce vitalForce 
     let liveLeftLeg = LiveLeftLeg (label,oneUnit)
     liveLeftLeg, remainingVitalForce    
-{% endhighlight fsharp %}
+```
 
 The second insight was that this *same* code can be interpreted as a function that in turn returns a "becomeAlive" function.
 
@@ -168,7 +168,7 @@ These "become alive" functions can then be treated as "steps in a recipe", assum
 
 The code looks like this now:
 
-{% highlight fsharp %}
+```fsharp
 type MakeLiveLeftLeg = 
     DeadLeftLeg -> (VitalForce -> LiveLeftLeg * VitalForce)
 
@@ -181,7 +181,7 @@ let makeLiveLeftLeg deadLeftLeg =
         liveLeftLeg, remainingVitalForce    
     // return it
     becomeAlive 
-{% endhighlight fsharp %}
+```
 
 It may not be obvious, but this is *exactly the same code* as the previous version, just written slightly differently.
 
@@ -190,25 +190,25 @@ or it can be interpreted as a *one parameter* function that returns *another* on
 
 If this is not clear, consider the much simpler example of a two parameter `add` function:
 
-{% highlight fsharp %}
+```fsharp
 let add x y = 
     x + y
-{% endhighlight fsharp %}
+```
 
 Because F# curries functions by default, that implementation is exactly the same as this one:
  
-{% highlight fsharp %}
+```fsharp
 let add x = 
     fun y -> x + y
-{% endhighlight fsharp %}
+```
 
 Which, if we define an intermediate function, is also exactly the same as this one:
 
-{% highlight fsharp %}
+```fsharp
 let add x = 
     let addX y = x + y
     addX // return the function
-{% endhighlight fsharp %}
+```
 
 ### Creating the Monadster type
 
@@ -219,14 +219,14 @@ All those functions will return a function that has a signature like: `VitalForc
 To make our life easy, let's give that function signature a name, `M`, which stands for "Monadster part generator",
 and give it a generic type parameter `'LiveBodyPart` so that we can use it with many different body parts.
 
-{% highlight fsharp %}
+```fsharp
 type M<'LiveBodyPart> = 
     VitalForce -> 'LiveBodyPart * VitalForce
-{% endhighlight fsharp %}
+```
 
 We can now explicitly annotate the return type of the `makeLiveLeftLeg` function with `:M<LiveLeftLeg>`.
 
-{% highlight fsharp %}
+```fsharp
 let makeLiveLeftLeg deadLeftLeg :M<LiveLeftLeg> = 
     let becomeAlive vitalForce = 
         let (DeadLeftLeg label) = deadLeftLeg
@@ -234,22 +234,22 @@ let makeLiveLeftLeg deadLeftLeg :M<LiveLeftLeg> =
         let liveLeftLeg = LiveLeftLeg (label,oneUnit)
         liveLeftLeg, remainingVitalForce    
     becomeAlive
-{% endhighlight fsharp %}
+```
 
 The rest of the function is unchanged because the `becomeAlive` return value is already compatible with `M<LiveLeftLeg>`.
 
 But I don't like having to explicitly annotate all the time. How about we wrap the function in a single case union -- call it "M" -- to give it its own distinct type? Like this:
 
-{% highlight fsharp %}
+```fsharp
 type M<'LiveBodyPart> = 
     M of (VitalForce -> 'LiveBodyPart * VitalForce)
-{% endhighlight fsharp %}
+```
 
 That way, we can [distinguish between a "Monadster part generator" and an ordinary function returning a tuple](https://stackoverflow.com/questions/2595673/state-monad-why-not-a-tuple).
 
 To use this new definition, we need to tweak the code to wrap the intermediate function in the single case union `M` when we return it, like this:
 
-{% highlight fsharp %}
+```fsharp
 let makeLiveLeftLegM deadLeftLeg  = 
     let becomeAlive vitalForce = 
         let (DeadLeftLeg label) = deadLeftLeg
@@ -258,13 +258,13 @@ let makeLiveLeftLegM deadLeftLeg  =
         liveLeftLeg, remainingVitalForce    
     // changed!        
     M becomeAlive // wrap the function in a single case union
-{% endhighlight fsharp %}
+```
 
 For this last version, the type signature will be correctly inferred without having to specify it explicitly: a function that takes a dead left leg and returns an "M" of a live leg:
 
-{% highlight fsharp %}
+```fsharp
 val makeLiveLeftLegM : DeadLeftLeg -> M<LiveLeftLeg>
-{% endhighlight fsharp %}
+```
 
 Note that I've renamed the function `makeLiveLeftLegM` to make it clear that it returns a `M` of `LiveLeftLeg`.
 
@@ -283,9 +283,9 @@ As a result, you will see lots of "M-making" functions with similar signatures, 
 
 Or in code terms:
 
-{% highlight fsharp %}
+```fsharp
 DeadPart -> M<LivePart>
-{% endhighlight fsharp %}
+```
 
 The challenge now will be how to combine these in an elegant way.
 
@@ -295,10 +295,10 @@ Ok, let's test what we've got so far.
 
 We'll start by creating a dead leg and use `makeLiveLeftLegM` on it to get an `M<LiveLeftLeg>`.
 
-{% highlight fsharp %}
+```fsharp
 let deadLeftLeg = DeadLeftLeg "Boris"
 let leftLegM = makeLiveLeftLegM deadLeftLeg
-{% endhighlight fsharp %}
+```
 
 What is `leftLegM`? It's a recipe for creating a live left leg, given some vital force.
 
@@ -306,31 +306,31 @@ What's useful is that we can create this recipe *up front*, *before* the lightni
 
 Now let's pretend that the storm has arrived, the lightning has struck, and 10 units of vital force are now available:
 
-{% highlight fsharp %}
+```fsharp
 let vf = {units = 10}
-{% endhighlight fsharp %}
+```
 
 Now, inside the `leftLegM` is a function which we can apply to the vital force.
 But first we need to get the function out of the wrapper using pattern matching.
 
-{% highlight fsharp %}
+```fsharp
 let (M innerFn) = leftLegM 
-{% endhighlight fsharp %}
+```
 
 And then we can run the inner function to get the live left leg and the remaining vital force:
 
-{% highlight fsharp %}
+```fsharp
 let liveLeftLeg, remainingAfterLeftLeg = innerFn vf
-{% endhighlight fsharp %}
+```
 
 The results look like this:
 
-{% highlight text %}
+```text
 val liveLeftLeg : LiveLeftLeg = 
    LiveLeftLeg ("Boris",{units = 1;})
 val remainingAfterLeftLeg : VitalForce = 
    {units = 9;}
-{% endhighlight text %}
+```
 
 You can see that a `LiveLeftLeg` was created successfully and that the remaining vital force is reduced to 9 units now.
 
@@ -338,15 +338,15 @@ This pattern matching is awkward, so let's create a helper function that both un
 
 We'll call it `runM` and it looks like this:
 
-{% highlight fsharp %}
+```fsharp
 let runM (M f) vitalForce = f vitalForce 
-{% endhighlight fsharp %}
+```
 
 So the test code above would now be simplified to this:
 
-{% highlight fsharp %}
+```fsharp
 let liveLeftLeg, remainingAfterLeftLeg = runM leftLegM vf  
-{% endhighlight fsharp %}
+```
 
 So now, finally, we have a function that can create a live left leg. 
 
@@ -370,7 +370,7 @@ Now Dr Frankenfunctor, being a doctor, *did* know how to heal a broken arm, but 
 
 In code terms, we have this:
 
-{% highlight fsharp %}
+```fsharp
 type DeadLeftBrokenArm = DeadLeftBrokenArm of Label 
 
 // A live version of the broken arm.
@@ -381,7 +381,7 @@ type LiveLeftArm = LiveLeftArm of Label * VitalForce
 
 // An operation that can turn a broken left arm into a heathly left arm
 type HealBrokenArm = LiveLeftBrokenArm -> LiveLeftArm 
-{% endhighlight fsharp %}
+```
 
 The challenge was therefore this: how can we make a live left arm out the material we have on hand?
 
@@ -412,7 +412,7 @@ Simple, just run it with some vitalForce.  And where are we going to get the vit
 
 So our finished version will look like this:
 
-{% highlight fsharp %}
+```fsharp
 // implementation of HealBrokenArm
 let healBrokenArm (LiveLeftBrokenArm (label,vf)) = LiveLeftArm (label,vf)
 
@@ -433,13 +433,13 @@ let makeHealedLeftArm brokenArmM =
 
     // wrap the inner function and return it
     M healWhileAlive  
-{% endhighlight fsharp %}
+```
 
 If we evaluate this code, we get the signature:
 
-{% highlight fsharp %}
+```fsharp
 val makeHealedLeftArm : M<LiveLeftBrokenArm> -> M<LiveLeftArm>
-{% endhighlight fsharp %}
+```
 
 which is exactly what we want!
 
@@ -450,7 +450,7 @@ Can we make this function a bit more generic?
 
 Yes, it's easy. All we need to is pass in a function ("f" say) that transforms the body part, like this: 
 
-{% highlight fsharp %}
+```fsharp
 let makeGenericTransform f brokenArmM = 
 
     // create a new inner function that takes a vitalForce parameter
@@ -462,15 +462,15 @@ let makeGenericTransform f brokenArmM =
         healedArm, remainingVitalForce
 
     M healWhileAlive  
-{% endhighlight fsharp %}
+```
 
 What's amazing about this is that by parameterizing that one transformation with the `f` parameter, the *whole* function becomes generic!
 
 We haven't made any other changes, but the signature for `makeGenericTransform` no longer refers to arms. It works with anything!
  
-{% highlight fsharp %}
+```fsharp
 val makeGenericTransform : f:('a -> 'b) -> M<'a> -> M<'b>
-{% endhighlight fsharp %}
+```
 
 ### Introducing mapM
 
@@ -479,20 +479,20 @@ I'll call it `mapM`.  It works with *any* body part and *any* transformation.
 
 Here's the implementation, with the internal names fixed up too.
  
-{% highlight fsharp %}
+```fsharp
 let mapM f bodyPartM = 
     let transformWhileAlive vitalForce = 
         let bodyPart,remainingVitalForce = runM bodyPartM vitalForce 
         let updatedBodyPart = f bodyPart
         updatedBodyPart, remainingVitalForce
     M transformWhileAlive 
-{% endhighlight fsharp %}
+```
 
 In particular, it works with the `healBrokenArm` function, so to create a version of "heal" that has been lifted to work with `M`s we can just write this:
 
-{% highlight fsharp %}
+```fsharp
 let healBrokenArmM = mapM healBrokenArm
-{% endhighlight fsharp %}
+```
 
 ![mapM with heal](/assets/img/monadster_map4.png)
 
@@ -505,7 +505,7 @@ One way of thinking about `mapM` is that it is a "function converter". Given any
 Functions similar to `mapM` crop up in many situations. For example, `Option.map` transforms a "normal" function into a function whose inputs and outputs are options.
 Similarly, `List.map` transforms a "normal" function into a function whose inputs and outputs are lists. And there are many other examples.
 
-{% highlight fsharp %}
+```fsharp
 // map works with options
 let healBrokenArmO = Option.map healBrokenArm
 // LiveLeftBrokenArm option -> LiveLeftArm option
@@ -513,7 +513,7 @@ let healBrokenArmO = Option.map healBrokenArm
 // map works with lists
 let healBrokenArmL = List.map healBrokenArm
 // LiveLeftBrokenArm list -> LiveLeftArm list
-{% endhighlight fsharp %}
+```
 
 What might be new to you is that the "wrapper" type `M` contains a *function*, not a simple data structure like Option or List. That might make your head hurt!
 
@@ -521,7 +521,7 @@ In addition, the diagram above implies that `M` could wrap *any* normal type and
 
 Let's try it and see!
 
-{% highlight fsharp %}
+```fsharp
 let isEven x = (x%2 = 0)   // int -> bool
 // map it
 let isEvenM = mapM isEven  // M<int> -> M<bool>
@@ -529,7 +529,7 @@ let isEvenM = mapM isEven  // M<int> -> M<bool>
 let isEmpty x = (String.length x)=0  // string -> bool
 // map it
 let isEmptyM = mapM isEmpty          // M<string> -> M<bool>
-{% endhighlight fsharp %}
+```
 
 So, yes, it works!
 
@@ -539,7 +539,7 @@ Again, let's test what we've got so far.
 
 We'll start by creating a dead broken arm and use `makeLiveLeftBrokenArm` on it to get an `M<BrokenLeftArm>`.
 
-{% highlight fsharp %}
+```fsharp
 let makeLiveLeftBrokenArm deadLeftBrokenArm = 
     let (DeadLeftBrokenArm label) = deadLeftBrokenArm
     let becomeAlive vitalForce = 
@@ -553,13 +553,13 @@ let deadLeftBrokenArm = DeadLeftBrokenArm "Victor"
 
 /// create a M<BrokenLeftArm> from the dead one
 let leftBrokenArmM = makeLiveLeftBrokenArm deadLeftBrokenArm 
-{% endhighlight fsharp %}
+```
 
 Now we can use `mapM` and `healBrokenArm` to convert the `M<BrokenLeftArm>` into a `M<LeftArm>`:
 
-{% highlight fsharp %}
+```fsharp
 let leftArmM = leftBrokenArmM |> mapM healBrokenArm 
-{% endhighlight fsharp %}
+```
 
 What we have now in `leftArmM` is a recipe for creating a unbroken and live left arm. All we need to do is add some vital force.
 
@@ -568,20 +568,20 @@ As before, we can do all these things up front, before the lightning strikes.
 Now when the storm arrives, and the lightning has struck, and vital force is available, we
 can run `leftArmM` with the vital force...
 
-{% highlight fsharp %}
+```fsharp
 let vf = {units = 10}
 
 let liveLeftArm, remainingAfterLeftArm = runM leftArmM vf
-{% endhighlight fsharp %}
+```
 
 ...and we get this result:
 
-{% highlight text %}
+```text
 val liveLeftArm : LiveLeftArm = 
     LiveLeftArm ("Victor",{units = 1;})
 val remainingAfterLeftArm : 
     VitalForce = {units = 9;}
-{% endhighlight text %}
+```
 
 A live left arm, just as we wanted.
 
@@ -592,21 +592,21 @@ On to the right arm next.
 Again, there was a problem.  Dr Frankenfunctor's notebooks record that there was no whole arm available.
 However there *was* a lower arm and an upper arm...   
 
-{% highlight fsharp %}
+```fsharp
 type DeadRightLowerArm = DeadRightLowerArm of Label 
 type DeadRightUpperArm = DeadRightUpperArm of Label 
-{% endhighlight fsharp %}
+```
 
 ...which could be turned into corresponding live ones:
 
-{% highlight fsharp %}
+```fsharp
 type LiveRightLowerArm = LiveRightLowerArm of Label * VitalForce
 type LiveRightUpperArm = LiveRightUpperArm of Label * VitalForce
-{% endhighlight fsharp %}
+```
 
 Dr Frankenfunctor decided to do surgery to join the two arm sections into a whole arm.
 
-{% highlight fsharp %}
+```fsharp
 // define the whole arm
 type LiveRightArm = {
     lowerArm : LiveRightLowerArm
@@ -616,7 +616,7 @@ type LiveRightArm = {
 // surgery to combine the two arm parts
 let armSurgery lowerArm upperArm =
     {lowerArm=lowerArm; upperArm=upperArm}
-{% endhighlight fsharp %}
+```
 
 As with the broken arm, the surgery could only be done with *live* parts. Doing that with dead parts would be yucky and gross.
 
@@ -635,7 +635,7 @@ We can use the same approach as we did before:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 /// convert a M<LiveRightLowerArm> and  M<LiveRightUpperArm> into a M<LiveRightArm>
 let makeArmSurgeryM_v1 lowerArmM upperArmM =
 
@@ -657,7 +657,7 @@ let makeArmSurgeryM_v1 lowerArmM upperArmM =
           
     // wrap the inner function and return it
     M becomeAlive  
-{% endhighlight fsharp %}
+```
 
 One big difference from the broken arm example is that we have *two* parameters, of course.
 When we run the second parameter (to get the `liveUpperArm`), we must be sure to pass in the *remaining vital force* after the first step, not the original one.
@@ -666,9 +666,9 @@ And then, when we return from the inner function, we must be sure to return `rem
 
 If we compile this code, we get:
 
-{% highlight fsharp %}
+```fsharp
 M<LiveRightLowerArm> -> M<LiveRightUpperArm> -> M<LiveRightArm>
-{% endhighlight fsharp %}
+```
 
 which is just the signature we are looking for.
 
@@ -680,7 +680,7 @@ We'll call the more generic function `map2M` -- just like `mapM` but with two pa
 
 Here's the implementation:
 
-{% highlight fsharp %}
+```fsharp
 let map2M f m1 m2 =
     let becomeAlive vitalForce = 
         let v1,remainingVitalForce = runM m1 vitalForce 
@@ -688,13 +688,13 @@ let map2M f m1 m2 =
         let v3 = f v1 v2
         v3, remainingVitalForce2    
     M becomeAlive  
-{% endhighlight fsharp %}
+```
 
 And it has the signature:
 
-{% highlight fsharp %}
+```fsharp
 f:('a -> 'b -> 'c) -> M<'a> -> M<'b> -> M<'c>
-{% endhighlight fsharp %}
+```
 
 Just as with `mapM` we can interpret this function as a "function converter" that converts a "normal" two parameter function into a function in the world of `M`.
 
@@ -707,7 +707,7 @@ Again, let's test what we've got so far.
 
 As always, we need some functions to convert the dead parts into live parts.
 
-{% highlight fsharp %}
+```fsharp
 let makeLiveRightLowerArm (DeadRightLowerArm label) = 
     let becomeAlive vitalForce = 
         let oneUnit, remainingVitalForce = getVitalForce vitalForce 
@@ -721,47 +721,47 @@ let makeLiveRightUpperArm (DeadRightUpperArm label) =
         let liveRightUpperArm = LiveRightUpperArm (label,oneUnit)
         liveRightUpperArm, remainingVitalForce    
     M becomeAlive
-{% endhighlight fsharp %}
+```
     
 *By the way, are you noticing that there is a lot of duplication in these functions? Me too! We will attempt to fix that later.*
     
 Next, we'll create the parts:
 
-{% highlight fsharp %}
+```fsharp
 let deadRightLowerArm = DeadRightLowerArm "Tom"
 let lowerRightArmM = makeLiveRightLowerArm deadRightLowerArm 
 
 let deadRightUpperArm = DeadRightUpperArm "Jerry"
 let upperRightArmM = makeLiveRightUpperArm deadRightUpperArm
-{% endhighlight fsharp %}
+```
 
 And then create the function to make a whole arm:
 
-{% highlight fsharp %}
+```fsharp
 let armSurgeryM  = map2M armSurgery 
 let rightArmM = armSurgeryM lowerRightArmM upperRightArmM 
-{% endhighlight fsharp %}
+```
   
 As always, we can do all these things up front, before the lightning strikes, building a recipe (or *computation* if you like) that will do everything we need when the time comes.
 
 When the vital force is available, we can run `rightArmM` with the vital force...
 
-{% highlight fsharp %}
+```fsharp
 let vf = {units = 10}
 
 let liveRightArm, remainingFromRightArm = runM rightArmM vf  
-{% endhighlight fsharp %}
+```
 
 ...and we get this result:
 
-{% highlight text %}
+```text
 val liveRightArm : LiveRightArm =
     {lowerArm = LiveRightLowerArm ("Tom",{units = 1;});
      upperArm = LiveRightUpperArm ("Jerry",{units = 1;});}
 
 val remainingFromRightArm : VitalForce = 
     {units = 8;}
-{% endhighlight text %}
+```
 
 A live right arm, composed of two subcomponents, just as required.  
 

@@ -19,24 +19,24 @@ Is there a type with size zero? That is, is there a type that has no values at a
 
 What about a type like this:
 
-{% highlight fsharp %}
+```fsharp
 type ThreeState = 
     | Checked
     | Unchecked
     | Unknown
-{% endhighlight fsharp %}
+```
 
 What is its size?  There are three possible values, so the size is three.
 
 What about a type like this:
 
-{% highlight fsharp %}
+```fsharp
 type Direction = 
     | North
     | East
     | South
     | West
-{% endhighlight fsharp %}
+```
 
 Obviously, four.
 
@@ -49,7 +49,7 @@ there are two kinds of algebraic types: "product" types such as [tuples](/posts/
 
 For example, let's say that we have a `Speed` as well as a `Direction`, and we combine them into a record type called `Velocity`:
 
-{% highlight fsharp %}
+```fsharp
 type Speed = 
     | Slow
     | Fast
@@ -58,18 +58,18 @@ type Velocity = {
     direction: Direction
     speed: Speed 
     }
-{% endhighlight fsharp %}
+```
 
 What is the size of `Velocity`?  
 
 Here's every possible value:
 
-{% highlight fsharp %}
+```fsharp
 {direction=North; speed=Slow}; {direction=North; speed=Fast}
 {direction=East;  speed=Slow}; {direction=East;  speed=Fast}
 {direction=South; speed=Slow}; {direction=South; speed=Fast}
 {direction=West;  speed=Slow}; {direction=West;  speed=Fast}
-{% endhighlight fsharp %}
+```
 
 There are eight possible values, one for every possible combination of the two `Speed` values and the four `Direction` values.
 
@@ -79,53 +79,53 @@ We can generalize this into a rule:
 
 That is, given a record type like this:
 
-{% highlight fsharp %}
+```fsharp
 type RecordType = {
     a : TypeA
     b : TypeB }
-{% endhighlight fsharp %}
+```
     
 The size is calculated like this:
     
-{% highlight fsharp %}
+```fsharp
 size(RecordType) = size(TypeA) * size(TypeB)
-{% endhighlight fsharp %}
+```
 
 And similarly for a tuple:
 
-{% highlight fsharp %}
+```fsharp
 type TupleType = TypeA * TypeB    
-{% endhighlight fsharp %}
+```
     
 The size is:
     
-{% highlight fsharp %}
+```fsharp
 size(TupleType) = size(TypeA) * size(TypeB)
-{% endhighlight fsharp %}
+```
 
 ### Sum types
 
 Sum types can be analyzed the same way. Given a type `Movement` defined like this:
 
-{% highlight fsharp %}
+```fsharp
 type Movement = 
     | Moving of Direction
     | NotMoving
-{% endhighlight fsharp %}
+```
 
 We can write out and count all the possibilities:
 
-{% highlight fsharp %}
+```fsharp
 Moving North
 Moving East
 Moving South
 Moving West
 NotMoving
-{% endhighlight fsharp %}
+```
 
 So, five in all. Which just happens to be `size(Direction) + 1`.  Here's another fun one:
 
-{% highlight fsharp %}
+```fsharp
 type ThingsYouCanSay =
     | Yes
     | Stop
@@ -139,18 +139,18 @@ type ThingsICanSay =
 type HelloGoodbye = 
     | YouSay of ThingsYouCanSay 
     | ISay of ThingsICanSay 
-{% endhighlight fsharp %}
+```
 
 Again, we can write out and count all the possibilities:
 
-{% highlight fsharp %}
+```fsharp
 YouSay Yes
 ISay No
 YouSay Stop
 ISay GoGoGo
 YouSay Goodbye
 ISay Hello
-{% endhighlight fsharp %}
+```
 
 There are three possible values in the `YouSay` case, and three possible values in the `ISay` case, making six in all.
 
@@ -160,17 +160,17 @@ Again, we can make a general rule.
 
 That is, given a union type like this:
 
-{% highlight fsharp %}
+```fsharp
 type SumType = 
     | CaseA of TypeA
     | CaseB of TypeB
-{% endhighlight fsharp %}
+```
     
 The size is calculated like this:
     
-{% highlight fsharp %}
+```fsharp
 size(SumType) = size(TypeA) + size(TypeB)
-{% endhighlight fsharp %}
+```
 
 ## Working with generic types
 
@@ -178,11 +178,11 @@ What happens if we throw generic types into the mix?
 
 For example, what is the size of a type like this:
 
-{% highlight fsharp %}
+```fsharp
 type Optional<'a> =   
     | Something of 'a
     | Nothing
-{% endhighlight fsharp %}
+```
 
 Well, the first thing to say is that `Optional<'a>` is not a *type* but a *type constructor*. `Optional<string>` is a type. `Optional<int>` is a type, but `Optional<'a>` isn't.
 
@@ -190,23 +190,23 @@ Nevertheless, we can still calculate its size by noting that `size(Optional<stri
 
 So we can say:
 
-{% highlight fsharp %}
+```fsharp
 size(Optional<'a>) = size('a) + 1
-{% endhighlight fsharp %}
+```
 
 Similarly, for a type with two generics like this:
 
-{% highlight fsharp %}
+```fsharp
 type Either<'a,'b> =   
     | Left of 'a
     | Right of 'b
-{% endhighlight fsharp %}
+```
 
 we can say that its size can be calculated using the size of the generic components (using the "sum rule" above):
 
-{% highlight fsharp %}
+```fsharp
 size(Either<'a,'b>) = size('a) + size('b)
-{% endhighlight fsharp %}
+```
 
 ## Recursive types
 
@@ -214,65 +214,65 @@ What about a recursive type? Let's look at the simplest one, a linked list.
 
 A linked list is either empty, or it has a cell with a tuple: a head and a tail. The head is an `'a` and the tail is another list. Here's the definition:
 
-{% highlight fsharp %}
+```fsharp
 type LinkedList<'a> = 
     | Empty
     | Node of head:'a * tail:LinkedList<'a>
-{% endhighlight fsharp %}
+```
 
 To calculate the size, let's assign some names to the various components:
 
-{% highlight fsharp %}
+```fsharp
 let S = size(LinkedList<'a>)
 let N = size('a)
-{% endhighlight fsharp %}
+```
 
 Now we can write:
 
-{% highlight fsharp %}
+```fsharp
 S = 
     1         // Size of "Empty" case 
     +         // Union type
     N * S     // Size of "Cell" case using tuple size calculation
-{% endhighlight fsharp %}
+```
 
 Let's play with this formula a bit. We start with: 
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + (N * S)
-{% endhighlight fsharp %}
+```
 
 and let's substitute the last S with the formula to get:
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + (N * (1 + (N * S)))
-{% endhighlight fsharp %}
+```
 
 If we clean this up, we get:
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + N + (N^2 * S)
-{% endhighlight fsharp %}
+```
 
 (where `N^2` means "N squared")
 
 Let's substitute the last S with the formula again:
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + N + (N^2 * (1 + (N * S)))
-{% endhighlight fsharp %}
+```
 
 and clean up again:
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + N + N^2 + (N^3 * S)
-{% endhighlight fsharp %}
+```
 
 You can see where this is going! The formula for `S` can be expanded out indefinitely to be:
 
-{% highlight fsharp %}
+```fsharp
 S = 1 + N + N^2 + N^3 + N^4 + N^5 + ...
-{% endhighlight fsharp %}
+```
 
 How can we interpret this?  Well, we can say that a list is a union of the following cases:
 
@@ -295,28 +295,28 @@ Yes, all we need to do is write down every possible implementation and count the
 
 For example, say that we have a function `SuitColor` that maps a card `Suit` to a `Color`, red or black.
 
-{% highlight fsharp %}
+```fsharp
 type Suit = Heart | Spade | Diamond | Club
 type Color = Red | Black
 
 type SuitColor = Suit -> Color
-{% endhighlight fsharp %}
+```
 
 One implementation would be to return red, no matter what suit was provided:
 
-{% highlight fsharp %}
+```fsharp
 (Heart -> Red); (Spade -> Red); (Diamond -> Red); (Club -> Red)
-{% endhighlight fsharp %}
+```
 
 Another implementation would be to return red for all suits except `Club`:
 
-{% highlight fsharp %}
+```fsharp
 (Heart -> Red); (Spade -> Red); (Diamond -> Red); (Club -> Black)
-{% endhighlight fsharp %}
+```
 
 In fact we can write down all 16 possible implementations of this function:
 
-{% highlight fsharp %}
+```fsharp
 (Heart -> Red); (Spade -> Red); (Diamond -> Red); (Club -> Red)
 (Heart -> Red); (Spade -> Red); (Diamond -> Red); (Club -> Black)
 (Heart -> Red); (Spade -> Red); (Diamond -> Black); (Club -> Red)
@@ -336,44 +336,44 @@ In fact we can write down all 16 possible implementations of this function:
 (Heart -> Black); (Spade -> Black); (Diamond -> Red); (Club -> Black)
 (Heart -> Black); (Spade -> Black); (Diamond -> Black); (Club -> Red)
 (Heart -> Black); (Spade -> Black); (Diamond -> Black); (Club -> Black)
-{% endhighlight fsharp %}
+```
 
 Another way to think of it is that we can define a record type where each value represents a particular implementation:
 which color do we return for a `Heart` input, which color do we return for a `Spade` input, and so on.
 
 The type definition for the implementations of `SuitColor` would therefore look like this:
 
-{% highlight fsharp %}
+```fsharp
 type SuitColorImplementation = {
     Heart : Color
     Spade : Color
     Diamond : Color
     Club : Color }
-{% endhighlight fsharp %}
+```
 
 What is the size of this record type?  
 
-{% highlight fsharp %}
+```fsharp
 size(SuitColorImplementation) = size(Color) * size(Color) * size(Color) * size(Color)
-{% endhighlight fsharp %}
+```
 
 There are four `size(Color)` here. In other words, there is one `size(Color)` for every input, so we could write this as:
 
-{% highlight fsharp %}
+```fsharp
 size(SuitColorImplementation) = size(Color) to the power of size(Suit)
-{% endhighlight fsharp %}
+```
 
 In general, then, given a function type: 
 
-{% highlight fsharp %}
+```fsharp
 type Function<'input,'output> = 'input -> 'output
-{% endhighlight fsharp %}
+```
 
 The size of the function is `size(output type)` to the power of `size(input type)`:
 
-{% highlight fsharp %}
+```fsharp
 size(Function) =  size(output) ^ size(input)
-{% endhighlight fsharp %}
+```
 
 Lets codify that into a rule too:
 
@@ -388,20 +388,20 @@ Yes, I think it is. I think that understanding sizes of types like this helps us
 
 Let's say that we have a union type and a record type, both representing a yes/no answer:
 
-{% highlight fsharp %}
+```fsharp
 type YesNoUnion = 
     | Yes
     | No
 
 type YesNoRecord = { 
     isYes: bool }
-{% endhighlight fsharp %}
+```
 
 How can we map between them?
 
 They both have size=2, so we should be able to map each value in one type to the other, and vice versa:
 
-{% highlight fsharp %}
+```fsharp
 let toUnion yesNoRecord =
     if yesNoRecord.isYes then 
         Yes
@@ -412,31 +412,31 @@ let toRecord yesNoUnion =
     match yesNoUnion with
     | Yes -> {isYes = true}
     | No ->  {isYes = false}
-{% endhighlight fsharp %}
+```
 
 This is what you might call a "lossless" conversion. If you round-trip the conversion, you can recover the original value.
 Mathematicians would call this an *isomorphism* (from the Greek "equal shape").
 
 What about another example? Here's a type with three cases, yes, no, and maybe.
 
-{% highlight fsharp %}
+```fsharp
 type YesNoMaybe = 
     | Yes
     | No
     | Maybe
-{% endhighlight fsharp %}
+```
 
 Can we losslessly convert this to this type?
 
-{% highlight fsharp %}
+```fsharp
 type YesNoOption = { maybeIsYes: bool option }    
-{% endhighlight fsharp %}
+```
 
 Well, what is the size of an `option`? One plus the size of the inner type, which in this case is a `bool`. So `size(YesNoOption)` is also three.
 
 Here are the conversion functions:
 
-{% highlight fsharp %}
+```fsharp
 let toYesNoMaybe yesNoOption =
     match yesNoOption.maybeIsYes with
     | None -> Maybe
@@ -447,7 +447,7 @@ let toYesNoOption yesNoMaybe =
     | Yes ->   {maybeIsYes = Some true}
     | No ->    {maybeIsYes = Some false}
     | Maybe -> {maybeIsYes = None}
-{% endhighlight fsharp %}
+```
 
 So we can make a rule:
 
@@ -455,7 +455,7 @@ So we can make a rule:
 
 Let's try it out.  Here's a `Nibble` type and a `TwoNibbles` type:
 
-{% highlight fsharp %}
+```fsharp
 type Nibble = {
     bit1: bool
     bit2: bool
@@ -465,7 +465,7 @@ type Nibble = {
 type TwoNibbles = {
     high: Nibble
     low: Nibble }
-{% endhighlight fsharp %}
+```
 
 Can we convert `TwoNibbles` to a `byte` and back?
 
@@ -498,7 +498,7 @@ say that we want to distinguish between empty inputs, inputs that are too long, 
 
 We can't model the target with an Option any more, so let's design a custom type that contains all seven cases:
 
-{% highlight fsharp %}
+```fsharp
 type StringToDirection_V1 = 
     | North
     | East
@@ -507,11 +507,11 @@ type StringToDirection_V1 =
     | Empty    
     | NotValid
     | TooLong
-{% endhighlight fsharp %}
+```
 
 But this design mixes up successful conversions and failed conversions. Why not separate them?
 
-{% highlight fsharp %}
+```fsharp
 type Direction = 
     | North
     | East
@@ -526,7 +526,7 @@ type ConversionFailure =
 type StringToDirection_V2 = 
     | Success of Direction
     | Failure of ConversionFailure
-{% endhighlight fsharp %}
+```
 
 What is the size of `StringToDirection_V2`?  
 
@@ -545,30 +545,30 @@ Knowing that different types can be losslessly converted allows you to tweak you
 
 For example, this type:
 
-{% highlight fsharp %}
+```fsharp
 type Something_V1 =
     | CaseA1 of TypeX * TypeY
     | CaseA2 of TypeX * TypeZ
-{% endhighlight fsharp %}
+```
 
 can be losslessly converted to this one:
 
-{% highlight fsharp %}
+```fsharp
 type Inner =
     | CaseA1 of TypeY
     | CaseA2 of TypeZ
 
 type Something_V2 = 
     TypeX * Inner 
-{% endhighlight fsharp %}
+```
 
 or this one:
 
-{% highlight fsharp %}
+```fsharp
 type Something_V3 = {
     x: TypeX
     inner: Inner }
-{% endhighlight fsharp %}
+```
 
 Here's a real example:
 
@@ -578,7 +578,7 @@ Here's a real example:
 
 We could model that requirement like this:
 
-{% highlight fsharp %}
+```fsharp
 module Customer_V1 =
 
     type UserInfo = {name:string} //etc
@@ -587,11 +587,11 @@ module Customer_V1 =
     type WebsiteUser = 
         | RegisteredUser of SessionId * UserInfo
         | GuestUser of SessionId 
-{% endhighlight fsharp %}
+```
 
 or alternatively, we can pull the common `SessionId` up to a higher level like this:
 
-{% highlight fsharp %}
+```fsharp
 module Customer_V2 =
 
     type UserInfo = {name:string} //etc
@@ -604,7 +604,7 @@ module Customer_V2 =
     type WebsiteUser = {
         sessionId : SessionId
         info: WebsiteUserInfo }
-{% endhighlight fsharp %}
+```
 
 Which is better? In one sense, they are both the "same", but obviously the best design depends on the usage pattern.
 
@@ -625,23 +625,23 @@ But coming in from the outside world into our domain means going from a "large" 
 
 For example, a domain type might look like this:
 
-{% highlight fsharp %}
+```fsharp
 type DomainCustomer = {
     Name: String50
     Email: EmailAddress
     Age: PositiveIntegerLessThan130 }
-{% endhighlight fsharp %}
+```
 
 The values are constrained: max 50 chars for the name, a validated email, an age which is between 1 and 129.  
 
 On the other hand, the DTO type might look like this:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerDTO = {
     Name: string
     Email: string
     Age: int }
-{% endhighlight fsharp %}
+```
 
 The values are unconstrained: any string for the name, a unvalidated email, an age that can be any of 2^32 different values, including negative ones.
 

@@ -105,7 +105,7 @@ Of course, the "unwrapping" metaphor does not work for every elevated world, but
 
 Here are some examples of defining `bind` for two different types in F#:
 
-{% highlight fsharp %}
+```fsharp
 module Option = 
 
     // The bind function for Options
@@ -123,7 +123,7 @@ module List =
           for y in f x do 
               yield y ]
     // has type : ('a -> 'b list) -> 'a list -> 'b list
-{% endhighlight fsharp %}
+```
 
 Notes: 
 
@@ -138,7 +138,7 @@ Let's see how this works in practice with a simple example.
 
 First let's say we have a function that parses certain `string`s into `int`s. Here's a very simple implementation:
 
-{% highlight fsharp %}
+```fsharp
 let parseInt str = 
     match str with
     | "-1" -> Some -1
@@ -149,13 +149,13 @@ let parseInt str =
     | _ -> None
 
 // signature is string -> int option    
-{% endhighlight fsharp %}
+```
 
 Sometimes it returns a int, sometimes not. So the signature is `string -> int option` -- a cross-world function.
   
 And let's say we have another function that takes an `int` as input and returns a `OrderQty` type:
 
-{% highlight fsharp %}
+```fsharp
 type OrderQty = OrderQty of int
 
 let toOrderQty qty = 
@@ -166,7 +166,7 @@ let toOrderQty qty =
         None
 
 // signature is int -> OrderQty option        
-{% endhighlight fsharp %}
+```
 
 Again, it might not return an `OrderQty` if the input is not positive. The signature is therefore `int -> OrderQty option` -- another cross-world function.
 
@@ -176,12 +176,12 @@ The output of `parseInt` cannot be fed directly into `toOrderQty`, so this is wh
 
 Doing `Option.bind toOrderQty` lifts it to a `int option -> OrderQty option` function and so the output of `parseInt` can be used as input, just as we need.
 
-{% highlight fsharp %}
+```fsharp
 let parseOrderQty str =
     parseInt str
     |> Option.bind toOrderQty
 // signature is string -> OrderQty option
-{% endhighlight fsharp %}
+```
 
 The signature of our new `parseOrderQty` is `string -> OrderQty option`, yet another cross-world function. So if we want to do something with the `OrderQty` that is output
 we may well have to use `bind` again on the next function in the chain.
@@ -193,10 +193,10 @@ typically called `>>=` (for left to right data flow) or `=<<` (for right to left
 
 With this in place you can write an alternative version of `parseOrderQty` like this:
 
-{% highlight fsharp %}
+```fsharp
 let parseOrderQty_alt str =
     str |> parseInt >>= toOrderQty
-{% endhighlight fsharp %}
+```
 
 You can see that `>>=` performs the same kind of role as pipe (`|>`) does, except that it works to pipe "elevated" values into cross-world functions.
 
@@ -204,21 +204,21 @@ You can see that `>>=` performs the same kind of role as pipe (`|>`) does, excep
 
 Bind can be used to chain any number of functions or expressions together, so you often see code looking something like this:
 
-{% highlight fsharp %}
+```fsharp
 expression1 >>= 
 expression2 >>= 
 expression3 >>= 
 expression4 
-{% endhighlight fsharp %}
+```
 
 This is not too different from how an imperative program might look if you replace the `>>=` with a `;`:
 
-{% highlight fsharp %}
+```fsharp
 statement1; 
 statement2;
 statement3;
 statement4;
-{% endhighlight fsharp %}
+```
 
 Because of this, `bind` is sometimes called a "programmable semicolon".
 
@@ -228,36 +228,36 @@ Most functional programming languages have some kind of syntax support for `bind
 
 In F# it is (one component) of computation expressions, so the following explicit chaining of `bind`:
 
-{% highlight fsharp %}
+```fsharp
 initialExpression >>= (fun x ->
 expressionUsingX  >>= (fun y ->
 expressionUsingY  >>= (fun z ->
 x+y+z )))             // return
-{% endhighlight fsharp %}
+```
 
 becomes implicit, using `let!` syntax:
 
-{% highlight fsharp %}
+```fsharp
 elevated {
     let! x = initialExpression 
     let! y = expressionUsingX x
     let! z = expressionUsingY y
     return x+y+z }
-{% endhighlight fsharp %}
+```
 
 In Haskell, the equivalent is the "do notation":
 
-{% highlight fsharp %}
+```fsharp
 do
     x <- initialExpression 
     y <- expressionUsingX x
     z <- expressionUsingY y
     return x+y+z
-{% endhighlight fsharp %}
+```
 
 And in Scala, the equivalent is the "for comprehension":
 
-{% highlight fsharp %}
+```fsharp
 for {
     x <- initialExpression 
     y <- expressionUsingX(x)
@@ -265,7 +265,7 @@ for {
 } yield {    
     x+y+z
 }     
-{% endhighlight fsharp %}
+```
 
 It's important to emphasize that you do not *have* to use the special syntax when using bind/return. You can always use `bind` or `>>=` in the same way as any other function.
 
@@ -283,7 +283,7 @@ Here's how bind can be used to emulate `map`, for example:
 
 Similarly, `bind` can emulate `apply`. Here is how `map` and `apply` can be defined using `bind` and `return` for Options in F#:
 
-{% highlight fsharp %}
+```fsharp
 // map defined in terms of bind and return (Some)
 let map f = 
     Option.bind (f >> Some) 
@@ -293,7 +293,7 @@ let apply fOpt xOpt =
     fOpt |> Option.bind (fun f -> 
         let map = Option.bind (f >> Some)
         map xOpt)
-{% endhighlight fsharp %}
+```
 
 At this point, people often ask "why should I use `apply` instead of `bind` when `bind` is more powerful?"
 
@@ -350,19 +350,19 @@ In the normal world, function composition is associative.
 For example, we could pipe a value into a function `f` and then take that result and pipe it into another function `g`.
 Alternatively, we can compose `f` and `g` first into a single function and then pipe `a` into it.
 
-{% highlight fsharp %}
+```fsharp
 let groupFromTheLeft = (a |> f) |> g
 let groupFromTheRight = a |> (f >> g)
-{% endhighlight fsharp %}
+```
 
 In the normal world, we expect both of these alternatives to give the same answer.
 
 The third monad law says that, after using `bind` and `return`, the grouping doesn't matter either. The two examples below correspond to the examples above:
 
-{% highlight fsharp %}
+```fsharp
 let groupFromTheLeft = (a >>= f) >>= g
 let groupFromTheRight = a >>= (fun x -> f x >>= g)
-{% endhighlight fsharp %}
+```
 
 And again, we expect both of these to give the same answer.
 

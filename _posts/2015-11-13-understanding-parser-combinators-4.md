@@ -20,12 +20,12 @@ In this series, we are looking at how applicative parsers and parser combinators
 
 First, before we do anything else, we need to load the parser library script that we developed over the last few posts, and then open the `ParserLibrary` namespace:
 
-{% highlight fsharp %}
+```fsharp
 #load "ParserLibrary.fsx"
 
 open System
 open ParserLibrary
-{% endhighlight fsharp %}
+```
 
 You can download `ParserLibrary.fsx` [from here](https://gist.github.com/swlaschin/485f418fede6b6a36d89#file-parserlibrary-fsx).
 
@@ -49,7 +49,7 @@ The JSON spec is available at [json.org](http://www.json.org/). I'll paraphase i
   
 In F#, this definition can be modelled naturally as:
 
-{% highlight fsharp %}
+```fsharp
 type JValue = 
     | JString of string
     | JNumber of float
@@ -57,7 +57,7 @@ type JValue =
     | JNull
     | JObject of Map<string, Json>
     | JArray  of JValue list
-{% endhighlight fsharp %}
+```
 
 So the goal of our JSON parser is:
 
@@ -76,35 +76,35 @@ Parsing the `null` literal is trivial. The logic will be:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 let jNull = 
     pstring "null" 
     |>> (fun _ -> JNull)  // map to JNull
     <?> "null"            // give it a label
-{% endhighlight fsharp %}
+```
 
 Note that we don't actually care about the value returned by the parser because we know in advance that it is going to be "null"!
 
 This is a common situation, so let's write a little utility function, `>>%` to make this look nicer:
 
-{% highlight fsharp %}
+```fsharp
 // applies the parser p, ignores the result, and returns x.
 let (>>%) p x =
     p |>> (fun _ -> x)
-{% endhighlight fsharp %}
+```
 
 Now we can rewrite `jNull` as follows:
 
-{% highlight fsharp %}
+```fsharp
 let jNull = 
     pstring "null" 
     >>% JNull   // using new utility combinator
     <?> "null"  
-{% endhighlight fsharp %}
+```
 
 Let's test:
 
-{% highlight fsharp %}
+```fsharp
 run jNull "null"   
 // Success: JNull
 
@@ -112,7 +112,7 @@ run jNull "nulp" |> printResult
 // Line:0 Col:3 Error parsing null
 // nulp
 //    ^Unexpected 'p'
-{% endhighlight fsharp %}
+```
 
 That looks good. Let's try another one!
 
@@ -126,7 +126,7 @@ The bool parser will be similar to null:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 let jBool =   
     let jtrue = 
         pstring "true" 
@@ -138,11 +138,11 @@ let jBool =
     // choose between true and false
     jtrue <|> jfalse
     <?> "bool"           // give it a label
-{% endhighlight fsharp %}
+```
 
 And here are some tests:
 
-{% highlight fsharp %}
+```fsharp
 run jBool "true"   
 // Success: JBool true
 
@@ -153,7 +153,7 @@ run jBool "truX" |> printResult
 // Line:0 Col:0 Error parsing bool
 // truX
 // ^Unexpected 't'
-{% endhighlight fsharp %}
+```
 
 Note that the error is misleading due to the backtracking issue discussed in the previous post. Since "true" failed,
 it is trying to parse "false" now, and "t" is an unexpected character.
@@ -172,22 +172,22 @@ To build a parser from a diagram like this, we work from the bottom up, building
 
 Let's start with "any unicode character other than quote and backslash". We have a simple condition to test, so we can just use the `satisfy` function:
 
-{% highlight fsharp %}
+```fsharp
 let jUnescapedChar = 
     let label = "char"
     satisfy (fun ch -> ch <> '\\' && ch <> '\"') label 
-{% endhighlight fsharp %}
+```
 
 We can test it immediately:
 
-{% highlight fsharp %}
+```fsharp
 run jUnescapedChar "a"   // Success 'a'
 
 run jUnescapedChar "\\" |> printResult
 // Line:0 Col:0 Error parsing char
 // \
 // ^Unexpected '\'
-{% endhighlight fsharp %}
+```
 
 Ok, good. 
 
@@ -205,7 +205,7 @@ The logic will be:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 /// Parse an escaped char
 let jEscapedChar = 
     [ 
@@ -225,11 +225,11 @@ let jEscapedChar =
     // and combine them into one
     |> choice
     <?> "escaped char" // set label
-{% endhighlight fsharp %}
+```
 
 And again, let's test it immediately:
 
-{% highlight fsharp %}
+```fsharp
 run jEscapedChar "\\\\" // Success '\'
 run jEscapedChar "\\t"  // Success '\009'
 
@@ -237,7 +237,7 @@ run jEscapedChar "a" |> printResult
 // Line:0 Col:0 Error parsing escaped char
 // a
 // ^Unexpected 'a'
-{% endhighlight fsharp %}
+```
 
 It works nicely!
 
@@ -254,7 +254,7 @@ The logic will be:
 
 Here's the code:
   
-{% highlight fsharp %}
+```fsharp
 /// Parse a unicode char
 let jUnicodeChar = 
     
@@ -272,13 +272,13 @@ let jUnicodeChar =
     // set up the main parser
     backslash  >>. uChar >>. hexdigit .>>. hexdigit .>>. hexdigit .>>. hexdigit
     |>> convertToChar 
-{% endhighlight fsharp %}
+```
 
 And let's test with a smiley face -- `\u263A`.
 
-{% highlight fsharp %}
+```fsharp
 run jUnicodeChar "\\u263A"  
-{% endhighlight fsharp %}
+```
 
 ### The complete `String` parser
 
@@ -288,35 +288,35 @@ Putting it all together now:
 * Define a `jchar` as a choice between `jUnescapedChar`, `jEscapedChar`, and `jUnicodeChar`.
 * The whole parser is then zero or many `jchar` between two quotes.
 
-{% highlight fsharp %}
+```fsharp
 let quotedString = 
     let quote = pchar '\"' <?> "quote"
     let jchar = jUnescapedChar <|> jEscapedChar <|> jUnicodeChar 
 
     // set up the main parser
     quote >>. manyChars jchar .>> quote 
-{% endhighlight fsharp %}
+```
 
 One more thing, which is to wrap the quoted string in a `JString` case and give it a label:
 
-{% highlight fsharp %}
+```fsharp
 /// Parse a JString
 let jString = 
     // wrap the string in a JString
     quotedString
     |>> JString           // convert to JString
     <?> "quoted string"   // add label
-{% endhighlight fsharp %}
+```
 
 Let's test the complete `jString` function:
 
-{% highlight fsharp %}
+```fsharp
 run jString "\"\""    // Success ""
 run jString "\"a\""   // Success "a"
 run jString "\"ab\""  // Success "ab"
 run jString "\"ab\\tde\""      // Success "ab\tde"
 run jString "\"ab\\u263Ade\""  // Success "ab?de"
-{% endhighlight fsharp %}
+```
 
 ## 4. Parsing `Number`
 
@@ -327,7 +327,7 @@ The "railway diagram" for Number parsing is:
 Again, we'll work bottom up. Let's start with the most primitive components, the single chars and digits:
 
 
-{% highlight fsharp %}
+```fsharp
 let optSign = opt (pchar '-')
 
 let zero = pstring "0"
@@ -343,43 +343,43 @@ let point = pchar '.'
 let e = pchar 'e' <|> pchar 'E'
 
 let optPlusMinus = opt (pchar '-' <|> pchar '+')
-{% endhighlight fsharp %}
+```
 
 Now let's build the "integer" part of the number. This is either:
 
 * The digit zero, or,
 * A `nonZeroInt`, which is a `digitOneNine` followed by zero or more normal digits.
 
-{% highlight fsharp %}
+```fsharp
 let nonZeroInt = 
     digitOneNine .>>. manyChars digit 
     |>> fun (first,rest) -> string first + rest
 
 let intPart = zero <|> nonZeroInt
-{% endhighlight fsharp %}
+```
 
 Note that, for the `nonZeroInt` parser, we have to combine the output of `digitOneNine` (a char) with `manyChars digit` (a string)
 so a simple map function is needed.
 
 The optional fractional part is a decimal point followed by one or more digits:
 
-{% highlight fsharp %}
+```fsharp
 let fractionPart = point >>. manyChars1 digit
-{% endhighlight fsharp %}
+```
 
 And the exponent part is an `e` followed by an optional sign, followed by one or more digits:
 
-{% highlight fsharp %}
+```fsharp
 let exponentPart = e >>. optPlusMinus .>>. manyChars1 digit
-{% endhighlight fsharp %}
+```
 
 With these components, we can assemble the whole number:
 
-{% highlight fsharp %}
+```fsharp
 optSign .>>. intPart .>>. opt fractionPart .>>. opt exponentPart
 |>> convertToJNumber
 <?> "number"   // add label
-{% endhighlight fsharp %}
+```
 
 We haven't defined `convertToJNumber` yet though. This function will take the four-tuple output by the parser and convert it
 into a float.
@@ -392,13 +392,13 @@ an option to a string using a passed in function, but if the option is `None` re
 
 I'm going to call it `|>?` but it doesn't really matter because it is only used locally within the `jNumber` parser.
 
-{% highlight fsharp %}
+```fsharp
 // utility function to convert an optional value to a string, or "" if missing
 let ( |>? ) opt f = 
     match opt with
     | None -> ""
     | Some x -> f x
-{% endhighlight fsharp %}
+```
 
 Now we can create `convertToJNumber`:
 
@@ -406,7 +406,7 @@ Now we can create `convertToJNumber`:
 * The fractional part is converted to a string, prefixed with a decimal point.
 * The exponent part is converted to a string, with the sign of the exponent also being converted to a string.
 
-{% highlight fsharp %}
+```fsharp
 let convertToJNumber (((optSign,intPart),fractionPart),expPart) = 
     // convert to strings and let .NET parse them! - crude but ok for now.
 
@@ -428,13 +428,13 @@ let convertToJNumber (((optSign,intPart),fractionPart),expPart) =
     (signStr + intPart + fractionPartStr + expPartStr)
     |> float
     |> JNumber
-{% endhighlight fsharp %}
+```
 
 It's pretty crude, and converting things to strings can be slow, so feel free to write a better version.
 
 With that, we have everything we need for the complete `jNumber` function:
 
-{% highlight fsharp %}
+```fsharp
 /// Parse a JNumber
 let jNumber = 
 
@@ -497,24 +497,24 @@ let jNumber =
     optSign .>>. intPart .>>. opt fractionPart .>>. opt exponentPart
     |>> convertToJNumber
     <?> "number"   // add label
-{% endhighlight fsharp %}
+```
 
 It's a bit long-winded, but each component follows the spec, so I think it is still quite readable.
 
 Let's start testing it:
 
-{% highlight fsharp %}
+```fsharp
 run jNumber "123"     // JNumber 123.0
 run jNumber "-123"    // JNumber -123.0
 run jNumber "123.4"   // JNumber 123.4
-{% endhighlight fsharp %}
+```
 
 And what about some failing cases?
 
-{% highlight fsharp %}
+```fsharp
 run jNumber "-123."   // JNumber -123.0 -- should fail!
 run jNumber "00.1"    // JNumber 0      -- should fail!
-{% endhighlight fsharp %}
+```
 
 Hmm. Something went wrong! These cases should fail, surely?
 
@@ -526,13 +526,13 @@ leaving the rest of the input (`0.4`) to be matched by the next parser. Again, n
 
 To fix this properly is out of scope, so let's just add some whitespace to the parser to force it to terminate.
 
-{% highlight fsharp %}
+```fsharp
 let jNumber_ = jNumber .>> spaces1
-{% endhighlight fsharp %}
+```
 
 Now let's test again:
 
-{% highlight fsharp %}
+```fsharp
 run jNumber_ "123"     // JNumber 123.0
 run jNumber_ "-123"    // JNumber -123.0
 
@@ -540,31 +540,31 @@ run jNumber_ "-123." |> printResult
 // Line:0 Col:4 Error parsing number andThen many1 whitespace
 // -123.
 //     ^Unexpected '.'
-{% endhighlight fsharp %}
+```
 
 and we find the error is being detected properly now.
 
 Let's test the fractional part:
 
-{% highlight fsharp %}
+```fsharp
 run jNumber_ "123.4"   // JNumber 123.4
 
 run jNumber_ "00.4" |> printResult
 // Line:0 Col:1 Error parsing number andThen many1 whitespace
 // 00.4
 //  ^Unexpected '0'
-{% endhighlight fsharp %}
+```
 
 and the exponent part now:
 
-{% highlight fsharp %}
+```fsharp
 // exponent only
 run jNumber_ "123e4"     // JNumber 1230000.0
 
 // fraction and exponent 
 run jNumber_ "123.4e5"   // JNumber 12340000.0
 run jNumber_ "123.4e-5"  // JNumber 0.001234
-{% endhighlight fsharp %}
+```
 
 It's all looking good so far. Onwards and upwards!
 
@@ -576,18 +576,18 @@ Next up is the `Array` case.  Again, we can use the railway diagram to guide the
 
 We will start with the primitives again. Note that we are adding optional whitespace after each token:
 
-{% highlight fsharp %}
+```fsharp
 let jArray = 
 
     let left = pchar '[' .>> spaces
     let right = pchar ']' .>> spaces
     let comma = pchar ',' .>> spaces
     let value = jValue .>> spaces    
-{% endhighlight fsharp %}
+```
 
 And then we create a list of values separated by a comma, with the whole list between the left and right brackets.
 
-{% highlight fsharp %}
+```fsharp
 let jArray = 
     ...
 
@@ -598,16 +598,16 @@ let jArray =
     between left values right 
     |>> JArray
     <?> "array"
-{% endhighlight fsharp %}
+```
 
 Hold on -- what is this `jValue`?  
 
-{% highlight fsharp %}
+```fsharp
 let jArray = 
     ...
     let value = jValue .>> spaces    // <=== what is "jValue"?
     ...
-{% endhighlight fsharp %}
+```
 
 Well, the spec says that an `Array` can contain a list of values, so we'll assume that we have a `jValue` parser that can parse them.
 
@@ -634,7 +634,7 @@ Now when the client fixes up the reference, the real parser will forward the inp
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 let createParserForwardedToRef<'a>() =
 
     let dummyParser= 
@@ -651,19 +651,19 @@ let createParserForwardedToRef<'a>() =
     let wrapperParser = {parseFn=innerFn; label="unknown"}
 
     wrapperParser, parserRef
-{% endhighlight fsharp %}
+```
 
 With this in place, we can create a placeholder for a parser of type `JValue`:
 
-{% highlight fsharp %}
+```fsharp
 let jValue,jValueRef = createParserForwardedToRef<JValue>()
-{% endhighlight fsharp %}
+```
 
 ### Finishing up the `Array` parser
 
 Going back to the `Array` parser, we can now compile it successfully, using the `jValue` placeholder:
 
-{% highlight fsharp %}
+```fsharp
 let jArray = 
 
     // set up the "primitive" parsers        
@@ -679,25 +679,25 @@ let jArray =
     between left values right 
     |>> JArray
     <?> "array"
-{% endhighlight fsharp %}
+```
 
 If we try to test it now, we get an exception because we haven't fixed up the reference:
 
-{% highlight fsharp %}
+```fsharp
 run jArray "[ 1, 2 ]"
 
 // System.Exception: unfixed forwarded parser
-{% endhighlight fsharp %}
+```
 
 So for now, let's fix up the reference to use one of the parsers that we have already created, such as `jNumber`:
 
-{% highlight fsharp %}
+```fsharp
 jValueRef := jNumber  
-{% endhighlight fsharp %}
+```
 
 Now we *can* successfully test the `jArray` function, as long as we are careful to only use numbers in our array!
 
-{% highlight fsharp %}
+```fsharp
 run jArray "[ 1, 2 ]"
 // Success (JArray [JNumber 1.0; JNumber 2.0],
 
@@ -705,7 +705,7 @@ run jArray "[ 1, 2, ]" |> printResult
 // Line:0 Col:6 Error parsing array
 // [ 1, 2, ]
 //       ^Unexpected ','
-{% endhighlight fsharp %}
+```
 
 ## 6. Parsing `Object`
 
@@ -717,7 +717,7 @@ First, the railway diagram:
 
 Using this, we can create the parser directly, so I'll present it here without comment:
 
-{% highlight fsharp %}
+```fsharp
 let jObject = 
 
     // set up the "primitive" parsers        
@@ -737,11 +737,11 @@ let jObject =
     |>> Map.ofList  // convert the list of keyValues into a Map
     |>> JObject     // wrap in JObject     
     <?> "object"    // add label
-{% endhighlight fsharp %}
+```
 
 A bit of testing to make sure it works (but remember, only numbers are supported as values for now).
 
-{% highlight fsharp %}
+```fsharp
 run jObject """{ "a":1, "b"  :  2 }"""
 // JObject (map [("a", JNumber 1.0); ("b", JNumber 2.0)]),
 
@@ -749,13 +749,13 @@ run jObject """{ "a":1, "b"  :  2, }""" |> printResult
 // Line:0 Col:18 Error parsing object
 // { "a":1, "b"  :  2, }
 //                   ^Unexpected ','
-{% endhighlight fsharp %}
+```
 
 ## 7. Putting it all together
 
 Finally, we can combine all six of the parsers using the `choice` combinator, and we can assign this to the `JValue` parser reference that we created earlier:
 
-{% highlight fsharp %}
+```fsharp
 jValueRef := choice 
     [
     jNull 
@@ -765,7 +765,7 @@ jValueRef := choice
     jArray
     jObject
     ]
-{% endhighlight fsharp %}
+```
 
 And now we are ready to rock and roll!
 
@@ -773,7 +773,7 @@ And now we are ready to rock and roll!
 
 Here's an example of a JSON string that we can attempt to parse:
 
-{% highlight fsharp %}
+```fsharp
 let example1 = """{
     "name" : "Scott",
     "isMale" : true,
@@ -781,11 +781,11 @@ let example1 = """{
     "favouriteColors" : ["blue", "green"]
 }"""
 run jValue example1
-{% endhighlight fsharp %}
+```
 
 And here is the result:
 
-{% highlight text %}
+```text
 JObject
     (map
         [("bday", JObject(map
@@ -796,13 +796,13 @@ JObject
         ("isMale", JBool true); 
         ("name", JString "Scott")
         ])
-{% endhighlight text %}
+```
 
 ### Testing the complete parser: example 2
 
 Here's one from [the example page on json.org](http://json.org/example.html):
 
-{% highlight fsharp %}
+```fsharp
 let example2= """{"widget": {
     "debug": "on",
     "window": {
@@ -831,11 +831,11 @@ let example2= """{"widget": {
 }}  """
 
 run jValue example2
-{% endhighlight fsharp %}
+```
 
 And here is the result:
 
-{% highlight text %}
+```text
 JObject(map
     [("widget",JObject(map
             [("debug", JString "on");
@@ -858,7 +858,7 @@ JObject(map
                     ("name", JString "main_window");
                     ("title", JString "Sample Konfabulator Widget");
                     ("width", JNumber 500.0)]))]))]),
-{% endhighlight text%}
+```
 
 ## Complete listing of the JSON parser 
 
@@ -866,7 +866,7 @@ Here's the complete listing for the JSON parser -- it's about 250 lines of usefu
 
 *The source code displayed below is also available at [this gist](https://gist.github.com/swlaschin/149deab2d457d8c1be37#file-jsonparser-fsx).*
 
-{% highlight fsharp %}
+```fsharp
 #load "ParserLibrary.fsx"
 
 open System
@@ -1149,7 +1149,7 @@ jValueRef := choice
     jArray
     jObject
     ]
-{% endhighlight fsharp %}
+```
 
 ## Summary
 

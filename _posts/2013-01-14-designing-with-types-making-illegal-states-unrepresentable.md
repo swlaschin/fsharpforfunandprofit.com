@@ -12,14 +12,14 @@ In this post, we look at a key benefit of F#, which using the type system to "ma
 
 Let's look at our `Contact` type. Thanks to the previous refactoring, it is quite simple:
 
-{% highlight fsharp %}
+```fsharp
 type Contact = 
     {
     Name: Name;
     EmailContactInfo: EmailContactInfo;
     PostalContactInfo: PostalContactInfo;
     }
-{% endhighlight fsharp %}     
+```     
 
 Now let's say that we have the following simple business rule: *"A contact must have an email or a postal address"*. Does our type conform to this rule?
 
@@ -27,14 +27,14 @@ The answer is no. The business rule implies that a contact might have an email a
 
 The answer seems obvious -- make the addresses optional, like this:
 
-{% highlight fsharp %}
+```fsharp
 type Contact = 
     {
     Name: PersonalName;
     EmailContactInfo: EmailContactInfo option;
     PostalContactInfo: PostalContactInfo option;
     }
-{% endhighlight fsharp %}     
+```     
 
 But now we have gone too far the other way. In this design, it would be possible for a contact to have neither type of address at all. But the business rule says that at least one piece of information *must* be present.
 
@@ -50,7 +50,7 @@ If we think about the business rule carefully, we realize that there are three p
 
 Once it is put like this, the solution becomes obvious -- use a union type with a case for each possibility.
 
-{% highlight fsharp %}
+```fsharp
 type ContactInfo = 
     | EmailOnly of EmailContactInfo
     | PostOnly of PostalContactInfo
@@ -61,7 +61,7 @@ type Contact =
     Name: Name;
     ContactInfo: ContactInfo;
     }
-{% endhighlight fsharp %}     
+```     
 
 This design meets the requirements perfectly. All three cases are explictly represented, and the fourth possible case (with no email or postal address at all) is not allowed.
 
@@ -71,7 +71,7 @@ Note that for the "email and post" case, I just used a tuple type for now. It's 
 
 Now let's see how we might use this in practice. We'll start by creating a new contact:
 
-{% highlight fsharp %}
+```fsharp
 let contactFromEmail name emailStr = 
     let emailOpt = EmailAddress.create emailStr
     // handle cases when email is valid or invalid
@@ -85,7 +85,7 @@ let contactFromEmail name emailStr =
 
 let name = {FirstName = "A"; MiddleInitial=None; LastName="Smith"}
 let contactOpt = contactFromEmail name "abc@example.com"
-{% endhighlight fsharp %}     
+```     
 
 In this code, we have created a simple helper function `contactFromEmail` to create a new contact by passing in a name and email.
 However, the email might not be valid, so the function has to handle both cases, which it doesn't by returning a `Contact option`, not a `Contact`
@@ -100,7 +100,7 @@ Now if we need to add a postal address to an existing `ContactInfo`, we have no 
 
 So here's a helper method that updates the postal address. You can see how it explicitly handles each case.
 
-{% highlight fsharp %}
+```fsharp
 let updatePostalAddress contact newPostalAddress = 
     let {Name=name; ContactInfo=contactInfo} = contact
     let newContactInfo =
@@ -113,11 +113,11 @@ let updatePostalAddress contact newPostalAddress =
             EmailAndPost (email,newPostalAddress) 
     // make a new contact
     {Name=name; ContactInfo=newContactInfo}
-{% endhighlight fsharp %}     
+```     
 
 And here is the code in use:
 
-{% highlight fsharp %}
+```fsharp
 let contact = contactOpt.Value   // see warning about option.Value below
 let newPostalAddress = 
     let state = StateCode.create "CA"
@@ -134,7 +134,7 @@ let newPostalAddress =
         IsAddressValid=false
     }
 let newContact = updatePostalAddress contact newPostalAddress
-{% endhighlight fsharp %}     
+```     
 
 *WARNING: I am using `option.Value` to extract the contents of an option in this code. 
 This is ok when playing around interactively but is extremely bad practice in production code! You should always use matching to handle both cases of an option.*
@@ -147,12 +147,12 @@ First, the business logic *is* complicated. There is no easy way to avoid it. If
 
 Second, if the logic is represented by types, it is automatically self documenting. You can look at the union cases below and immediate see what the business rule is. You do not have to spend any time trying to analyze any other code.
 
-{% highlight fsharp %}
+```fsharp
 type ContactInfo = 
     | EmailOnly of EmailContactInfo
     | PostOnly of PostalContactInfo
     | EmailAndPost of EmailContactInfo * PostalContactInfo
-{% endhighlight fsharp %}     
+```     
 
 Finally, if the logic is represented by a type, any changes to the business rules will immediately create breaking changes, which is a generally a good thing. 
 

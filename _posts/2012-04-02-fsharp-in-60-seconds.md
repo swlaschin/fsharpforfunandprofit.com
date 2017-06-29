@@ -33,7 +33,7 @@ and send it to the interactive window. See the ["installing and using F#"](/inst
 the interpreter that you are done entering and ready to evaluate.
 
 
-{% highlight fsharp %}
+```fsharp
 // single line comments use a double slash
 (* multi line comments use (* . . . *) pair
 
@@ -151,6 +151,6 @@ printfn "twoTuple=%A,\nPerson=%A,\nTemp=%A,\nEmployee=%A"
 // into a string, similar to String.Format.
 
 
-{% endhighlight %}
+```
 
 And with that, let's start by comparing some simple F# code with the equivalent C# code.

@@ -41,7 +41,7 @@ How does this guide the implementation?
 
 Here's the implementation of the builder class:
 
-{% highlight fsharp %}
+```fsharp
 type StringIntBuilder() =
 
     member this.Bind(m, f) = 
@@ -54,11 +54,11 @@ type StringIntBuilder() =
         sprintf "%i" x
 
 let stringint = new StringIntBuilder()
-{% endhighlight fsharp %}
+```
 
 Now we can try using it:
 
-{% highlight fsharp %}
+```fsharp
 let good = 
     stringint {
         let! i = "42"
@@ -66,11 +66,11 @@ let good =
         return i+j
         }
 printfn "good=%s" good
-{% endhighlight fsharp %}
+```
 
 And what happens if one of the strings is invalid?
 
-{% highlight fsharp %}
+```fsharp
 let bad = 
     stringint {
         let! i = "42"
@@ -78,7 +78,7 @@ let bad =
         return i+j
         }
 printfn "bad=%s" bad
-{% endhighlight fsharp %}
+```
 
 That looks really good -- we can treat strings as ints inside our workflow!
 
@@ -86,27 +86,27 @@ But hold on, there is a problem.
 
 Let's say we give the workflow an input, unwrap it (with `let!`) and then immediately rewrap it (with `return`) without doing anything else. What should happen?
 
-{% highlight fsharp %}
+```fsharp
 let g1 = "99"
 let g2 = stringint {
             let! i = g1
             return i
             }
 printfn "g1=%s g2=%s" g1 g2
-{% endhighlight fsharp %}
+```
 
 No problem. The input `g1` and the output `g2` are the same value, as we would expect.
 
 But what about the error case?
 
-{% highlight fsharp %}
+```fsharp
 let b1 = "xxx"
 let b2 = stringint {
             let! i = b1
             return i
             }
 printfn "b1=%s b2=%s" b1 b2
-{% endhighlight fsharp %}
+```
 
 In this case we have got some unexpected behavior. The input `b1` and the output `b2` are *not* the same value. We have introduced an inconsistency.
 
@@ -117,7 +117,7 @@ Would this be a problem in practice? I don't know. But I would avoid it and use 
 
 Here's a question? What is the difference between these two code fragments, and should they behave differently?
 
-{% highlight fsharp %}
+```fsharp
 // fragment before refactoring
 myworkflow {
     let wrapped = // some wrapped value
@@ -130,7 +130,7 @@ myworkflow {
     let wrapped = // some wrapped value
     return! wrapped
     } 
-{% endhighlight fsharp %}
+```
 
 The answer is no, they should not behave differently. The only difference is that in the second example, the `unwrapped` value has been refactored away and the `wrapped` value is returned directly.
 
@@ -142,7 +142,7 @@ This rule and the next are about not losing information as you wrap and unwrap t
 
 In code, this would be expressed as something like this:
 
-{% highlight fsharp %}
+```fsharp
 myworkflow {
     let originalUnwrapped = something
     
@@ -155,7 +155,7 @@ myworkflow {
     // assert they are the same
     assertEqual newUnwrapped originalUnwrapped 
     } 
-{% endhighlight fsharp %}
+```
 
 **Rule 2: If you start with a wrapped value, and then you unwrap it (using `bind`), then wrap it (using `return`), you should always get back the original wrapped value.**
 
@@ -163,7 +163,7 @@ This is the rule that the `stringInt` workflow broke above. As with rule 1, this
 
 In code, this would be expressed as something like this:
 
-{% highlight fsharp %}
+```fsharp
 myworkflow {
     let originalWrapped = something
 
@@ -179,7 +179,7 @@ myworkflow {
     // assert they are the same
     assertEqual newWrapped originalWrapped
     }
-{% endhighlight fsharp %}
+```
 
 **Rule 3: If you create a child workflow, it must produce the same result as if you had "inlined" the logic in the main workflow.**
 
@@ -189,7 +189,7 @@ In general, you will get this for free if you follow some guidelines (which will
 
 In code, this would be expressed as something like this:
 
-{% highlight fsharp %}
+```fsharp
 // inlined
 let result1 = myworkflow { 
     let! x = originalWrapped
@@ -208,7 +208,7 @@ let result2 = myworkflow {
 
 // rule
 assertEqual result1 result2
-{% endhighlight fsharp %}
+```
 
 
 ## Lists as wrapper types
@@ -221,46 +221,46 @@ As we have seen, the `bind` function "unwraps" the type, and applies the continu
 
 In other words, we should be able to write a `bind` that takes a list and a continuation function, where the continuation function processes one element at a time, like this:
 
-{% highlight fsharp %}
+```fsharp
 bind( [1;2;3], fun elem -> // expression using a single element )
-{% endhighlight fsharp %}
+```
 
 And with this concept, we should be able to chain some binds together like this:
 
-{% highlight fsharp %}
+```fsharp
 let add = 
     bind( [1;2;3], fun elem1 -> 
     bind( [10;11;12], fun elem2 -> 
         elem1 + elem2
     ))
-{% endhighlight fsharp %}
+```
 
 But we've missed something important.  The continuation function passed into `bind` is required to have a certain signature. It takes an unwrapped type, but it produces a *wrapped* type.
 
 In other words, the continuation function must *always create a new list* as its result.
 
-{% highlight fsharp %}
+```fsharp
 bind( [1;2;3], fun elem -> // expression using a single element, returning a list )
-{% endhighlight fsharp %}
+```
 
 And the chained example would have to be written like this, with the `elem1 + elem2` result turned into a list:
 
-{% highlight fsharp %}
+```fsharp
 let add = 
     bind( [1;2;3], fun elem1 -> 
     bind( [10;11;12], fun elem2 -> 
         [elem1 + elem2] // a list!
     ))
-{% endhighlight fsharp %}
+```
 
 So the logic for our bind method now looks like this:
 
-{% highlight fsharp %}
+```fsharp
 let bind(list,f) =
     // 1) for each element in list, apply f
     // 2) f will return a list (as required by its signature)
     // 3) the result is a list of lists
-{% endhighlight fsharp %}
+```
 
 We have another issue now. `Bind` itself must produce a wrapped type, which means that the "list of lists" is no good. We need to turn them back into a simple "one-level" list.
 
@@ -268,7 +268,7 @@ But that is easy enough -- there is a list module function that does just that, 
 
 So putting it together, we have this:
 
-{% highlight fsharp %}
+```fsharp
 let bind(list,f) =
     list 
     |> List.map f 
@@ -280,14 +280,14 @@ let added =
 //       elem1 + elem2    // error. 
         [elem1 + elem2]   // correctly returns a list.
     ))
-{% endhighlight fsharp %}
+```
 
 Now that we understand how the `bind` works on its own, we can create a "list workflow".
 
 * `Bind` applies the continuation function to each element of the passed in list, and then flattens the resulting list of lists into a one-level list. `List.collect` is a library function that does exactly that.
 * `Return` converts from unwrapped to wrapped. In this case, that just means wrapping a single element in a list.
 
-{% highlight fsharp %}
+```fsharp
 type ListWorkflowBuilder() =
 
     member this.Bind(list, f) = 
@@ -297,11 +297,11 @@ type ListWorkflowBuilder() =
         [x]
 
 let listWorkflow = new ListWorkflowBuilder()
-{% endhighlight fsharp %}
+```
 
 Here is the workflow in use:
 
-{% highlight fsharp %}
+```fsharp
 let added = 
     listWorkflow {
         let! i = [1;2;3]
@@ -317,14 +317,14 @@ let multiplied =
         return i*j
         }
 printfn "multiplied=%A" multiplied 
-{% endhighlight fsharp %}
+```
 
 And the results show that every element in the first collection has been combined with every element in the second collection:
 
-{% highlight fsharp %}
+```fsharp
 val added : int list = [11; 12; 13; 12; 13; 14; 13; 14; 15]
 val multiplied : int list = [10; 11; 12; 20; 22; 24; 30; 33; 36]
-{% endhighlight fsharp %}
+```
 
 That's quite amazing really.  We have completely hidden the list enumeration logic, leaving just the workflow itself.
 
@@ -334,19 +334,19 @@ If we treat lists and sequences as a special case, we can add some nice syntacti
 
 What we can do is replace the `let!` with a `for..in..do` expression:
 
-{% highlight fsharp %}
+```fsharp
 // let version
 let! i = [1;2;3] in [some expression]
 
 // for..in..do version
 for i in [1;2;3] do [some expression]
-{% endhighlight fsharp %}
+```
 
 Both variants mean exactly the same thing, they just look different.
 
 To enable the F# compiler to do this, we need to add a `For` method to our builder class. It generally has exactly the same implementation as the normal `Bind` method, but is required to accept a sequence type.
 
-{% highlight fsharp %}
+```fsharp
 type ListWorkflowBuilder() =
 
     member this.Bind(list, f) = 
@@ -359,11 +359,11 @@ type ListWorkflowBuilder() =
         this.Bind(list, f)
 
 let listWorkflow = new ListWorkflowBuilder()
-{% endhighlight fsharp %}
+```
 
 And here is how it is used:
 
-{% highlight fsharp %}
+```fsharp
 let multiplied = 
     listWorkflow {
         for i in [1;2;3] do
@@ -371,7 +371,7 @@ let multiplied =
         return i*j
         }
 printfn "multiplied=%A" multiplied 
-{% endhighlight fsharp %}
+```
 
 ### LINQ and the "list workflow"
 
@@ -401,7 +401,7 @@ But if a "wrapper type" is just a function that maps one type to another type, s
 
 Going back to some real code then, we can define the "identity workflow" as the simplest possible implementation of a workflow builder.
 
-{% highlight fsharp %}
+```fsharp
 type IdentityBuilder() =
     member this.Bind(m, f) = f m
     member this.Return(x) = x
@@ -414,7 +414,7 @@ let result = identity {
     let! y = 2
     return x + y
     } 
-{% endhighlight fsharp %}
+```
 
 With this in place, you can see that the logging example discussed earlier is just the identity workflow with some logging added in.
     

@@ -26,13 +26,13 @@ Each of these is addressed below.
 In C# and Java, it is has become good practice to create immutable classes whenever possible. In F#, you get this for free.
 
 Here is an immutable type in F#:
-{% highlight fsharp %}
+```fsharp
 type PersonalName = {FirstName:string; LastName:string}
-{% endhighlight  %}
+```
 
 And here is how the same type is typically coded in C#:
 
-{% highlight csharp %}
+```csharp
 class ImmutablePersonalName
 {
     public ImmutablePersonalName(string firstName, string lastName)
@@ -44,7 +44,7 @@ class ImmutablePersonalName
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
 }
-{% endhighlight %}
+```
 
 That's 10 lines to do the same thing as 1 line of F#.
 
@@ -54,7 +54,7 @@ In F#, you don't have to override `ToString()` for most types -- you get pretty 
 
 You have probably already seen this when running the earlier examples. Here is another simple example:
 
-{% highlight fsharp %}
+```fsharp
 type USAddress = 
    {Street:string; City:string; State:string; Zip:string}
 type UKAddress = 
@@ -72,17 +72,17 @@ let bob = {
 
 printfn "Alice is %A" alice
 printfn "Bob is %A" bob
-{% endhighlight %}
+```
 
 The output is:
 
-{% highlight fsharp %}
+```fsharp
 Alice is {Name = "Alice";
  Address = US {Street = "123 Main";
                City = "LA";
                State = "CA";
                Zip = "91201";};}
-{% endhighlight %}
+```
 
 ## Most F# types have built-in structural equality
 
@@ -90,7 +90,7 @@ In C#, you often have to implement the `IEquatable` interface so that you can te
 
 In F#, you get this for free with most F# types. For example, using the `PersonalName` type from above, we can compare two names straight away.
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = {FirstName:string; LastName:string}
 let alice1 = {FirstName="Alice"; LastName="Adams"}
 let alice2 = {FirstName="Alice"; LastName="Adams"}
@@ -99,7 +99,7 @@ let bob1 = {FirstName="Bob"; LastName="Bishop"}
 //test
 printfn "alice1=alice2 is %A" (alice1=alice2)
 printfn "alice1=bob1 is %A" (alice1=bob1)
-{% endhighlight %}
+```
 
 
 ## Most F# types are automatically comparable
@@ -108,33 +108,33 @@ In C#, you often have to implement the `IComparable` interface so that you can s
 
 Again, in F#, you get this for free with most F# types. For example, here is a simple definition of a deck of cards.
 
-{% highlight fsharp %}
+```fsharp
 
 type Suit = Club | Diamond | Spade | Heart
 type Rank = Two | Three | Four | Five | Six | Seven | Eight 
             | Nine | Ten | Jack | Queen | King | Ace
-{% endhighlight %}
+```
 
 			
 We can write a function to test the comparison logic:
 
-{% highlight fsharp %}
+```fsharp
 let compareCard card1 card2 = 
     if card1 < card2 
     then printfn "%A is greater than %A" card2 card1 
     else printfn "%A is greater than %A" card1 card2 
-{% endhighlight %}
+```
 
 And let's see how it works:
 
-{% highlight fsharp %}
+```fsharp
 let aceHearts = Heart, Ace
 let twoHearts = Heart, Two
 let aceSpades = Spade, Ace
 
 compareCard aceHearts twoHearts 
 compareCard twoHearts aceSpades
-{% endhighlight %}
+```
 
 Note that the Ace of Hearts is automatically greater than the Two of Hearts, because the "Ace" rank value comes after the "Two" rank value.
 
@@ -142,18 +142,18 @@ But also note that the Two of Hearts is automatically greater than the Ace of Sp
 
 Here's an example of a hand of cards:
 
-{% highlight fsharp %}
+```fsharp
 let hand = [ Club,Ace; Heart,Three; Heart,Ace; 
              Spade,Jack; Diamond,Two; Diamond,Ace ]
 
 //instant sorting!
 List.sort hand |> printfn "sorted hand is (low to high) %A"
-{% endhighlight %}
+```
 
 And as a side benefit, you get min and max for free too!
 
-{% highlight fsharp %}
+```fsharp
 List.max hand |> printfn "high card is %A"
 List.min hand |> printfn "low card is %A"
-{% endhighlight %}
+```
 

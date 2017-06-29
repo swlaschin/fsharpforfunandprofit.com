@@ -16,7 +16,7 @@ Defining an interface is similar to defining an abstract class. So similar, in f
 
 Here's an interface definition:
 
-{% highlight fsharp %}
+```fsharp
 type MyInterface =
    // abstract method
    abstract member Add: int -> int -> int
@@ -26,11 +26,11 @@ type MyInterface =
 
    // abstract read/write property
    abstract member Area : float with get,set
-{% endhighlight %}
+```
 
 And here's the definition for the equivalent abstract base class:
 
-{% highlight fsharp %}
+```fsharp
 [<AbstractClass>]
 type AbstractBaseClass() =
    // abstract method
@@ -41,7 +41,7 @@ type AbstractBaseClass() =
 
    // abstract read/write property
    abstract member Area : float with get,set
-{% endhighlight %}
+```
 
 So what's the difference? As usual, all abstract members are defined by signatures only. The only difference seems to be the lack of the `[<AbstractClass>]` attribute.
 
@@ -49,9 +49,9 @@ But in the earlier discussion on abstract methods, we stressed that the `[<Abstr
 
 The answer is trivial, but subtle. *The interface has no constructor*. That is, it does not have any parentheses after the interface name:
 
-{% highlight fsharp %}
+```fsharp
 type MyInterface =   // <- no parens!
-{% endhighlight %}
+```
 
 That's it.  Removing the parens will convert a class definition into an interface!
 
@@ -70,7 +70,7 @@ C# has support for both explicit and implicit interface implementations, but alm
 
 So, how do you implement an interface in F#?  You cannot just "inherit" from it, as you would an abstract base class.  You have to provide an explicit implementation for each interface member using the syntax `interface XXX with`, as shown below:
 
-{% highlight fsharp %}
+```fsharp
 type IAddingService =
     abstract member Add: int -> int -> int
 
@@ -83,7 +83,7 @@ type MyAddingService() =
     interface System.IDisposable with 
         member this.Dispose() = 
             printfn "disposed"
-{% endhighlight %}
+```
 
 The above code shows how the class `MyAddingService` explicitly implements the `IAddingService` and the `IDisposable` interfaces. After the required `interface XXX with` section, the members are implemented in the normal way.
 
@@ -93,39 +93,39 @@ The above code shows how the class `MyAddingService` explicitly implements the `
 
 So now let's try to use the adding service interface:
 
-{% highlight fsharp %}
+```fsharp
 let mas = new MyAddingService()
 mas.Add 1 2    // error 
-{% endhighlight %}
+```
 
 Immediately, we run into an error. It appears that the instance does not implement the `Add` method at all. Of course, what this really means is that we must cast it to the interface first using the `:>` operator:
 
-{% highlight fsharp %}
+```fsharp
 // cast to the interface
 let mas = new MyAddingService()
 let adder = mas :> IAddingService
 adder.Add 1 2  // ok
-{% endhighlight %}
+```
 
 This might seem incredibly awkward, but in practice it is not a problem as in most cases the casting is done implicitly for you. 
 
 For example, you will typically be passing an instance to a function that specifies an interface parameter. In this case, the casting is done automatically:
 
-{% highlight fsharp %}
+```fsharp
 // function that requires an interface
 let testAddingService (adder:IAddingService) = 
     printfn "1+2=%i" <| adder.Add 1 2  // ok
 
 let mas = new MyAddingService()
 testAddingService mas // cast automatically
-{% endhighlight %}
+```
 
 And in the special case of `IDisposable`, the `use` keyword will also automatically cast the instance as needed:
 
-{% highlight fsharp %}
+```fsharp
 let testDispose = 
     use mas = new MyAddingService()
     printfn "testing"
     // Dispose() is called here
-{% endhighlight %}
+```
 

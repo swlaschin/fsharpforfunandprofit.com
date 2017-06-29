@@ -83,26 +83,26 @@ Let's start with a very crude model of a file system:
 
 Here's how I might model that:
 
-{% highlight fsharp %}
+```fsharp
 type FileSystemItem =
     | File of File
     | Directory of Directory
 and File = {name:string; fileSize:int}
 and Directory = {name:string; dirSize:int; subitems:FileSystemItem list}
-{% endhighlight fsharp %}
+```
 
 I admit it's a pretty bad model, but it's just good enough for this example!
 
 Ok, here are some sample files and directories:
 
-{% highlight fsharp %}
+```fsharp
 let readme = File {name="readme.txt"; fileSize=1}
 let config = File {name="config.xml"; fileSize=2}
 let build  = File {name="build.bat"; fileSize=3}
 let src = Directory {name="src"; dirSize=10; subitems=[readme; config; build]}
 let bin = Directory {name="bin"; dirSize=10; subitems=[]}
 let root = Directory {name="root"; dirSize=5; subitems=[src; bin]}
-{% endhighlight fsharp %}
+```
 
 Time to create the catamorphism!
 
@@ -111,17 +111,17 @@ Let's start by looking at the signatures to figure out what we need.
 The `File` constructor takes a `File` and returns a `FileSystemItem`. Using the guidelines above, the handler for the `File` case
 needs to have the signature `File -> 'r`.
 
-{% highlight fsharp %}
+```fsharp
 // case constructor
 File  : File -> FileSystemItem
 
 // function parameter to handle File case 
 fFile : File -> 'r
-{% endhighlight fsharp %}
+```
 
 That's simple enough. Let's put together an initial skeleton of `cataFS`, as I'll call it:
 
-{% highlight fsharp %}
+```fsharp
 let rec cataFS fFile fDir item :'r = 
     let recurse = cataFS fFile fDir 
     match item with
@@ -129,7 +129,7 @@ let rec cataFS fFile fDir item :'r =
         fFile file
     | Directory dir -> 
         // to do
-{% endhighlight fsharp %}
+```
 
 The `Directory` case is more complicated.  If we naively applied the guidelines above, the handler for the `Directory` case
 would have the signature `Directory -> 'r`, but that would be incorrect, because the `Directory` record itself contains a 
@@ -139,7 +139,7 @@ One way is to "explode" the `Directory` record into a tuple of `(string,int,File
  
 In other words, we have this sequence of transformations:
  
-{% highlight fsharp %}
+```fsharp
 // case constructor (Directory as record)
 Directory : Directory -> FileSystemItem
 
@@ -149,7 +149,7 @@ Directory : (string, int, FileSystemItem list) -> FileSystemItem
 
 // function parameter to handle Directory case 
 fDir :      (string, int, 'r list)             -> 'r
-{% endhighlight fsharp %}
+```
 
 Another issue is that the data associated with the Directory case is a *list* of `FileSystemItem`s.  How can we convert that into a list of `'r`s?
 
@@ -158,7 +158,7 @@ so we can just use `List.map` passing in `recurse` as the mapping function, and 
 
 Putting it all together, we get this implementation:
 
-{% highlight fsharp %}
+```fsharp
 let rec cataFS fFile fDir item :'r = 
     let recurse = cataFS fFile fDir 
     match item with
@@ -167,11 +167,11 @@ let rec cataFS fFile fDir item :'r =
     | Directory dir -> 
         let listOfRs = dir.subitems |> List.map recurse 
         fDir (dir.name,dir.dirSize,listOfRs) 
-{% endhighlight fsharp %}
+```
 
 and if we look at the type signature, we can see that it is just what we want:
 
-{% highlight fsharp %}
+```fsharp
 val cataFS :
     fFile : (File -> 'r) ->
     fDir  : (string * int * 'r list -> 'r) -> 
@@ -179,7 +179,7 @@ val cataFS :
     FileSystemItem -> 
     // return value
     'r
-{% endhighlight fsharp %}
+```
 
 So we're done. It's a bit complicated to set up, but once built, we have a nice reusable function that can be the basis for many others.
 
@@ -189,22 +189,22 @@ Alrighty then, let's use it in practice.
   
 To start with, we can easily define a `totalSize` function that returns the total size of an item and all its subitems:
 
-{% highlight fsharp %}
+```fsharp
 let totalSize fileSystemItem =
     let fFile (file:File) = 
         file.fileSize
     let fDir (name,size,subsizes) = 
         (List.sum subsizes) + size
     cataFS fFile fDir fileSystemItem
-{% endhighlight fsharp %}
+```
 
 And here are the results:
 
-{% highlight fsharp %}
+```fsharp
 readme |> totalSize  // 1
 src |> totalSize     // 16 = 10 + (1 + 2 + 3)
 root |> totalSize    // 31 = 5 + 16 + 10
-{% endhighlight fsharp %}
+```
   
 ### File system domain: `largestFile` example
   
@@ -218,24 +218,24 @@ So let's make `'r` a `File option` instead.
   
 The function for the `File` case should return `Some file` then:
   
-{% highlight fsharp %}
+```fsharp
 let fFile (file:File) = 
     Some file
-{% endhighlight fsharp %}
+```
 
 The function for the `Directory` case needs more thought:
 
 * If list of subfiles is empty, then return `None`
 * If list of subfiles is non-empty, then return the largest one
 
-{% highlight fsharp %}
+```fsharp
 let fDir (name,size,subfiles) = 
     match subfiles with
     | [] -> 
         None  // empty directory
     | subfiles -> 
         // return largest one
-{% endhighlight fsharp %}
+```
   
 But remember that `'r` is not a `File` but a `File option`. So that means that `subfiles` is not a list of files, but a list of `File option`.
 
@@ -248,7 +248,7 @@ Let's write a helper function to provide the size of a `File option`, using this
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 // helper to provide a default if missing
 let ifNone deflt opt =
     defaultArg opt deflt 
@@ -258,11 +258,11 @@ let fileSize fileOpt =
     fileOpt 
     |> Option.map (fun file -> file.fileSize)
     |> ifNone 0
-{% endhighlight fsharp %}
+```
 
 Putting it all together then, we have our `largestFile` function:
   
-{% highlight fsharp %}
+```fsharp
 let largestFile fileSystemItem =
 
     // helper to provide a default if missing
@@ -291,11 +291,11 @@ let largestFile fileSystemItem =
 
     // call the catamorphism
     cataFS fFile fDir fileSystemItem
-{% endhighlight fsharp %}
+```
   
 If we test it, we get the results we expect:
 
-{% highlight fsharp %}
+```fsharp
 readme |> largestFile  
 // Some {name = "readme.txt"; fileSize = 1}
 
@@ -307,7 +307,7 @@ bin |> largestFile
 
 root |> largestFile    
 // Some {name = "build.bat"; fileSize = 3}
-{% endhighlight fsharp %}
+```
 
 Again, a little bit tricky to set up, but no more than if we had to write it from scratch without using a catamorphism at all.
 
@@ -324,7 +324,7 @@ Let's work with a slightly more complicated domain. This time, imagine that we m
 
 Here's the domain modelled as types:
   
-{% highlight fsharp %}
+```fsharp
 type Product =
     | Bought of BoughtProduct 
     | Made of MadeProduct 
@@ -339,13 +339,13 @@ and MadeProduct = {
 and Component = {
     qty : int
     product : Product }
-{% endhighlight fsharp %}
+```
 
 Note that the types are mutally recursive. `Product` references `MadeProduct` which references `Component` which in turn references `Product` again.
 
 Here are some example products:
 
-{% highlight fsharp %}
+```fsharp
 let label = 
     Bought {name="label"; weight=1; vendor=Some "ACME"}
 let bottle = 
@@ -366,26 +366,26 @@ let twoPack =
     [
     {qty=2; product=shampoo}
     ]}
-{% endhighlight fsharp %}
+```
 
 Now to design the catamorphism, we need to do is replace the `Product` type with `'r` in all the constructors.
 
 Just as with the previous example, the `Bought` case is easy:
 
-{% highlight fsharp %}
+```fsharp
 // case constructor
 Bought  : BoughtProduct -> Product
 
 // function parameter to handle Bought case 
 fBought : BoughtProduct -> 'r
-{% endhighlight fsharp %}
+```
 
 The `Made` case is trickier. We need to expand the `MadeProduct` into a tuple. But that tuple contains a `Component`, so we need to expand that as well.
 Finally we get to the inner `Product`, and we can then mechanically replace that with `'r`. 
 
 Here's the sequence of transformations:
 
-{% highlight fsharp %}
+```fsharp
 // case constructor
 Made  : MadeProduct -> Product
 
@@ -398,33 +398,33 @@ Made  : (string,int,(int,Product) list) -> Product
 
 // function parameter to handle Made case 
 fMade : (string,int,(int,'r) list)      -> 'r
-{% endhighlight fsharp %}
+```
 
 When implementing the `cataProduct` function we need to the same kind of mapping as before, turning a list of `Component` into a list of `(int,'r)`.
 
 We'll need a helper for that:
 
-{% highlight fsharp %}
+```fsharp
 // Converts a Component into a (int * 'r) tuple
 let convertComponentToTuple comp =
     (comp.qty,recurse comp.product)
-{% endhighlight fsharp %}
+```
 
 You can see that this uses the `recurse` function to turn the inner product (`comp.product`) into an `'r` and then make a tuple `int * 'r`.
 
 With `convertComponentToTuple` available, we can convert all the components to tuples using `List.map`:
 
-{% highlight fsharp %}
+```fsharp
 let componentTuples = 
     made.components 
     |> List.map convertComponentToTuple 
-{% endhighlight fsharp %}
+```
 
 `componentTuples` is a list of `(int * 'r)`, which is just what we need for the `fMade` function.
 
 The complete implementation of `cataProduct` looks like this:
 
-{% highlight fsharp %}
+```fsharp
 let rec cataProduct fBought fMade product :'r = 
     let recurse = cataProduct fBought fMade 
 
@@ -440,13 +440,13 @@ let rec cataProduct fBought fMade product :'r =
             made.components 
             |> List.map convertComponentToTuple 
         fMade (made.name,made.weight,componentTuples) 
-{% endhighlight fsharp %}
+```
 
 ### Product domain: `productWeight` example
 
 We can now use `cataProduct` to calculate the weight, say.
 
-{% highlight fsharp %}
+```fsharp
 let productWeight product =
 
     // handle Bought case
@@ -467,15 +467,15 @@ let productWeight product =
 
     // call the catamorphism
     cataProduct fBought fMade product
-{% endhighlight fsharp %}
+```
 
 Let's test it interactively to make sure it works:
 
-{% highlight fsharp %}
+```fsharp
 label |> productWeight    // 1
 shampoo |> productWeight  // 17 = 10 + (2x1 + 1x2 + 1x3)
 twoPack |> productWeight  // 39 = 5  + (2x17)
-{% endhighlight fsharp %}
+```
     
 That's as we expect.
 
@@ -494,16 +494,16 @@ You might think that it's just a score of some kind, but we also need to know th
 
 So let's make `'r` a `VendorScore option`, where we are going to create a little type `VendorScore`, rather than using a tuple.
 
-{% highlight fsharp %}
+```fsharp
 type VendorScore = {vendor:string; score:int}
-{% endhighlight fsharp %}
+```
 
 We'll also define some helpers to get data from a `VendorScore` easily:
 
-{% highlight fsharp %}
+```fsharp
 let vendor vs = vs.vendor
 let score vs = vs.score
-{% endhighlight fsharp %}
+```
 
 Now, you can't determine the most used vendor over until you have results from the entire tree, so both the `Bought` case and the
 `Made` case need to return a list which can added to as we recurse up the tree.
@@ -516,7 +516,7 @@ The logic for the `Bought` case is then:
 * If the vendor is present, return a `VendorScore` with score = 1, but as a one-element list rather than as a single item.
 * If the vendor is missing, return an empty list.
   
-{% highlight fsharp %}
+```fsharp
 let fBought (bought:BoughtProduct) = 
     // set score = 1 if there is a vendor
     bought.vendor
@@ -524,7 +524,7 @@ let fBought (bought:BoughtProduct) =
     // => a VendorScore option
     |> Option.toList
     // => a VendorScore list
-{% endhighlight fsharp %}
+```
 
 The function for the `Made` case is more complicated.
 
@@ -544,7 +544,7 @@ At this point the `cata` function will return a `VendorScore list`. To get the h
 
 Here's the complete `mostUsedVendor` function:
 
-{% highlight fsharp %}
+```fsharp
 let mostUsedVendor product =
 
     let fBought (bought:BoughtProduct) = 
@@ -577,11 +577,11 @@ let mostUsedVendor product =
     |> List.sortByDescending score  // find highest score
     // return first, or None if list is empty
     |> List.tryHead
-{% endhighlight fsharp %}
+```
 
 Now let's test it:
 
-{% highlight fsharp %}
+```fsharp
 label |> mostUsedVendor    
 // Some {vendor = "ACME"; score = 1}
 
@@ -593,7 +593,7 @@ shampoo |> mostUsedVendor
 
 twoPack |> mostUsedVendor  
 // Some {vendor = "ACME"; score = 2}
-{% endhighlight fsharp %}
+```
 
   
 This isn't the only possible implementation of `fMade`, of course. I could have used `List.fold` and done the whole thing in one pass,

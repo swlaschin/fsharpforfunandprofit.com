@@ -39,7 +39,7 @@ We'll start with an obvious approach. We'll add the identity and role to each da
 The following method assumes that there is a `CustomerIdBelongsToPrincipal` function that checks whether the customer id being accessed is owned by the principal requesting access.
 Then, if the `customerId` does belong to the principal, or the principal has the role of "CustomerAgent", the access is granted.
 
-{% highlight csharp %}
+```csharp
 public class CustomerDatabase
 {
     public CustomerData GetCustomer(CustomerId id, IPrincipal principal)
@@ -55,14 +55,14 @@ public class CustomerDatabase
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 *Note that I have deliberately added the `IPrincipal` to the method signature -- we are not allowing any "magic" where the principal is fetched from a global context.
 As with the use of any global, having implicit access hides the dependencies and makes it hard to test in isolation.*
 
 Here's the F# equivalent, using a [Success/Failure return value](/rop/) rather than throwing exceptions:
 
-{% highlight fsharp %}
+```fsharp
 let getCustomer id principal = 
     if customerIdBelongsToPrincipal id principal ||
        principal.IsInRole("CustomerAgent") 
@@ -71,7 +71,7 @@ let getCustomer id principal =
         Success "CustomerData"
     else
         Failure AuthorizationFailed
-{% endhighlight fsharp %}
+```
 
 This "inline" authorization approach is all too common, but unfortunately it has many problems.
 
@@ -80,7 +80,7 @@ This "inline" authorization approach is all too common, but unfortunately it has
 
 Let's compare this with a capability-based approach. Instead of directly getting a customer, we first obtain the *capability* of doing it.
 
-{% highlight csharp %}
+```csharp
 class CustomerDatabase
 {
     // "real" code is hidden from public view
@@ -104,7 +104,7 @@ class CustomerDatabase
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 As you can see, if the authorization succeeds, a reference to the `GetCustomer` method is returned to the caller.
 
@@ -114,7 +114,7 @@ customer id! That's not very safe, is it?
 What we need to is "bake in" the customer id to the capability, so that it can't be misused.  The return value will now be a `Func<CustomerData>`, with the customer id not available
 to be passed in any more.
 
-{% highlight csharp %}
+```csharp
 class CustomerDatabase
 {
     // "real" code is hidden from public view
@@ -138,12 +138,12 @@ class CustomerDatabase
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 With this separation of concerns in place, we can now handle failure nicely, by returning an *optional* value which is present if we get the capability, or absent if not.  That is,
 we know whether we have the capability *at the time of trying to obtain it*, not later on when we try to use it.
 
-{% highlight csharp %}
+```csharp
 class CustomerDatabase
 {
     // "real" code is hidden from public view
@@ -168,7 +168,7 @@ class CustomerDatabase
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 This assumes that we're using some sort of `Option` type in C# rather than just returning null!
 
@@ -177,7 +177,7 @@ Finally, we can put the authorization logic into its own class (say `CustomerDat
 We'll have to find some way of keeping the "real" database functions private to all other callers though.
 For now, I'll just assume the database code is in a different assembly, and mark the code `internal`.
 
-{% highlight csharp %}
+```csharp
 // not accessible to the business layer
 internal class CustomerDatabase
 {
@@ -208,11 +208,11 @@ public class CustomerDatabaseCapabilityProvider
         }
     }
 }
-{% endhighlight csharp %}
+```
 
 And here's the F# version of the same code:
 
-{% highlight fsharp %}
+```fsharp
 /// not accessible to the business layer
 module internal CustomerDatabase = 
     let getCustomer (id:CustomerId) :CustomerData = 
@@ -228,7 +228,7 @@ module CustomerDatabaseCapabilityProvider =
             Some ( fun () -> CustomerDatabase.getCustomer id )
         else
             None
-{% endhighlight fsharp %}
+```
 
 Here's a diagram that represents this design:
 
@@ -256,7 +256,7 @@ Transforming functions to new functions! This is something we can easily do.
 So, let's write a transformer that, given *any* function of type `CustomerId -> 'a`, we return a function with the customer id baked in (`unit -> 'a`),
 but only if the authorization requirements are met.
 
-{% highlight fsharp %}
+```fsharp
 module CustomerCapabilityFilter =         
  
     // Get the capability to use any function that has a CustomerId parameter
@@ -268,7 +268,7 @@ module CustomerCapabilityFilter =
             Some (fun () -> f id)
         else
             None
-{% endhighlight fsharp %}
+```
 
 The type signature for the `onlyForSameIdOrAgents` function is `(CustomerId -> 'a) -> (unit -> 'a) option`. It accepts any `CustomerId` based function
 and returns, maybe, the same function *with the customer id already applied* if the authorization succeeds.  If the authorization does not succeed, `None` is returned instead.
@@ -277,17 +277,17 @@ You can see that this function will work generically with *any* function that ha
 
 So for example, given:
 
-{% highlight fsharp %}
+```fsharp
 module internal CustomerDatabase = 
     let getCustomer (id:CustomerId) = 
         // get customer data 
     let updateCustomer (id:CustomerId) (data:CustomerData) = 
         // update customer data 
-{% endhighlight fsharp %}
+```
 
 We can create restricted versions now, for example at the top level bootstrapper or controller:
 
-{% highlight fsharp %}
+```fsharp
 let principal = // from context
 let id = // from context
 
@@ -297,17 +297,17 @@ let getCustomerOnlyForSameIdOrAgents =
 
 let updateCustomerOnlyForSameIdOrAgents = 
     onlyForSameIdOrAgents id principal CustomerDatabase.updateCustomer
-{% endhighlight fsharp %}
+```
     
 The types of `getCustomerOnlyForSameIdOrAgents` and `updateCustomerOnlyForSameIdOrAgents` are similar to the original functions in the database module,
 but with `CustomerId` replaced with `unit`:
 
-{% highlight text %}
+```text
 val getCustomerOnlyForSameIdOrAgents : 
       (unit -> CustomerData) option
 val updateCustomerOnlyForSameIdOrAgents : 
       (unit -> CustomerData -> unit) option 
-{% endhighlight text %}
+```
 
 *The `updateCustomerOnlyForSameIdOrAgents` has a extra `CustomerData` parameter, so the extra unit where the `CustomerId` used to be is a bit ugly.
 If this is too annoying, you could easily create other versions of the function which handle this more elegantly. I'll leave that as an exercise for the reader!*
@@ -315,11 +315,11 @@ If this is too annoying, you could easily create other versions of the function 
 So now we have an option value that might or might not contain the capability we wanted. If it does, we can create a child component and pass in the capability.
 If it does not, we can return some sort of error, or hide a element from a view, depending on the type of application.
 
-{% highlight fsharp %}
+```fsharp
 match getCustomerOnlyForSameIdOrAgents with
 | Some cap -> // create child component and pass in the capability
 | None ->     // return error saying that you don't have the capability to get the data
-{% endhighlight fsharp %}
+```
 
 Here's a diagram that represents this design:
 
@@ -331,7 +331,7 @@ Because capabilities are functions, we can easily create new capabilities by cha
 
 For example, we could create a separate filter function for each business rule, like this:
 
-{% highlight fsharp %}
+```fsharp
 module CustomerCapabilityFilter =         
 
     let onlyForSameId (id:CustomerId) (principal:IPrincipal) (f:CustomerId -> 'a) = 
@@ -345,7 +345,7 @@ module CustomerCapabilityFilter =
             Some (fun () -> f id)
         else
             None
-{% endhighlight fsharp %}
+```
 
 For the first business rule, `onlyForSameId`, we return a capability with the customer id baked in, as before.
 
@@ -357,54 +357,54 @@ It's a bit of a hack but it will do for now.
 
 We can also write a generic combinator that returns the first valid capability from a list.
 
-{% highlight fsharp %}
+```fsharp
 // given a list of capability options, 
 // return the first good one, if any
 let first capabilityList = 
     capabilityList |> List.tryPick id
-{% endhighlight fsharp %}
+```
 
 It's a trivial implementation really -- this is the kind of helper function that is just to help the code be a little more self-documenting.
 
 With this in place, we can apply the rules separately, take the two filters and combine them into one.
 
-{% highlight fsharp %}
+```fsharp
 let getCustomerOnlyForSameIdOrAgents = 
     let f = CustomerDatabase.getCustomer
     let cap1 = onlyForSameId id principal f
     let cap2 = onlyForAgents id principal f 
     first [cap1; cap2]
 // val getCustomerOnlyForSameIdOrAgents : (CustomerId -> CustomerData) option
-{% endhighlight fsharp %}
+```
 
 Or let's say we have some sort of restriction; the operation can only be performed during business hours, say.
 
-{% highlight fsharp %}
+```fsharp
 let onlyIfDuringBusinessHours (time:DateTime) f = 
     if time.Hour >= 8 && time.Hour <= 17 then
         Some f
     else
         None
-{% endhighlight fsharp %}
+```
 
 We can write another combinator that restricts the original capability. This is just a version of "bind".
 
-{% highlight fsharp %}
+```fsharp
 // given a capability option, restrict it
 let restrict filter originalCap = 
     originalCap
     |> Option.bind filter 
-{% endhighlight fsharp %}
+```
 
 With this in place, we can restrict the "agentsOnly" capability to business hours:
 
-{% highlight fsharp %}
+```fsharp
 let getCustomerOnlyForAgentsInBusinessHours = 
     let f = CustomerDatabase.getCustomer
     let cap1 = onlyForAgents id principal f 
     let restriction f = onlyIfDuringBusinessHours (DateTime.Now) f
     cap1 |> restrict restriction 
-{% endhighlight fsharp %}
+```
 
 So now we have created a new capability, "Customer agents can only access customer data during business hours", which tightens the data access logic a bit more.
 
@@ -413,7 +413,7 @@ We can combine this with the previous `onlyForSameId` filter to build a compound
 * if you have the same customer id (at any time of day)
 * if you are a customer agent (only during business hours)
 
-{% highlight fsharp %}
+```fsharp
 let getCustomerOnlyForSameId = 
     let f = CustomerDatabase.getCustomer
     onlyForSameId id principal f
@@ -422,7 +422,7 @@ let getCustomerOnlyForSameId_OrForAgentsInBusinessHours =
     let cap1 = getCustomerOnlyForSameId
     let cap2 = getCustomerOnlyForAgentsInBusinessHours 
     first [cap1; cap2]
-{% endhighlight fsharp %}
+```
 
 As you can see, this approach is a useful way to build complex capabilities from simpler ones.
 
@@ -439,7 +439,7 @@ And so on.
 
 Here are implementations of the first three of them:
 
-{% highlight fsharp %}
+```fsharp
 /// Uses of the capability will be audited
 let auditable capabilityName f = 
     fun x -> 
@@ -470,81 +470,81 @@ let revokable f =
     let revoker() = 
         allow := false
     capability, revoker
-{% endhighlight fsharp %}
+```
 
 Let's say that we have an `updatePassword` function, such as this:
 
-{% highlight fsharp %}
+```fsharp
 module internal CustomerDatabase = 
     let updatePassword (id,password) = 
         Success "OK"
-{% endhighlight fsharp %}
+```
 
 We can then create a auditable version of `updatePassword`:
 
-{% highlight fsharp %}
+```fsharp
 let updatePasswordWithAudit x = 
     auditable "updatePassword" CustomerDatabase.updatePassword x
-{% endhighlight fsharp %}
+```
 
 And then test it:
 
-{% highlight fsharp %}
+```fsharp
 updatePasswordWithAudit (1,"password") 
 updatePasswordWithAudit (1,"new password") 
-{% endhighlight fsharp %}
+```
 
 The results are:
 
-{% highlight text %}
+```text
 AUDIT: calling updatePassword with (1, "password")
 AUDIT: calling updatePassword with (1, "new password")
-{% endhighlight text %}
+```
 
 Or, we could create a one-time only version:
 
-{% highlight fsharp %}
+```fsharp
 let updatePasswordOnce = 
     onlyOnce CustomerDatabase.updatePassword 
-{% endhighlight fsharp %}
+```
 
 And then test it:
 
-{% highlight fsharp %}
+```fsharp
 updatePasswordOnce (1,"password") |> printfn "Result 1st time: %A"
 updatePasswordOnce (1,"password") |> printfn "Result 2nd time: %A"
-{% endhighlight fsharp %}
+```
 
 The results are:
 
-{% highlight text %}
+```text
 Result 1st time: Success "OK"
 Result 2nd time: Failure OnlyAllowedOnce
-{% endhighlight text %}
+```
 
 Finally, we can create a revokable function:
 
-{% highlight fsharp %}
+```fsharp
 let revokableUpdatePassword, revoker = 
     revokable CustomerDatabase.updatePassword 
-{% endhighlight fsharp %}
+```
 
 And then test it:
 
-{% highlight fsharp %}
+```fsharp
 revokableUpdatePassword (1,"password") |> printfn "Result 1st time before revoking: %A"
 revokableUpdatePassword (1,"password") |> printfn "Result 2nd time before revoking: %A"
 revoker()
 revokableUpdatePassword (1,"password") |> printfn "Result 3nd time after revoking: %A"
-{% endhighlight fsharp %}
+```
 
 With the following results:
 
-{% highlight text %}
+```text
 Result 1st time before revoking: Success "OK"
 Result 2nd time before revoking: Success "OK"
 Result 3nd time after revoking: Failure Revoked
-{% endhighlight text %}
+```
 
 The code for all these F# examples is available as a [gist here](https://gist.github.com/swlaschin/909c5b24bf921e5baa8c#file-capabilitybasedsecurity_dbexample-fsx).
 
@@ -567,7 +567,7 @@ Which options are shown depend on which capabilities you have. These in turn are
         
 We'll start with the core domain types that are shared across the application:
 
-{% highlight fsharp %}
+```fsharp
 module Domain = 
     open Rop
 
@@ -582,7 +582,7 @@ module Domain =
         | CustomerIdNotFound of CustomerId
         | OnlyAllowedOnce
         | CapabilityRevoked
-{% endhighlight fsharp %}
+```
 
 The `FailureCase` type documents all possible things that can go wrong at the top-level of the application. See the ["Railway Oriented Programming" talk](/rop/) for more discussion on this.
 
@@ -591,16 +591,16 @@ The `FailureCase` type documents all possible things that can go wrong at the to
 Next, we document all the capabilities that are available in the application. 
 To add clarity to the code, each capability is given a name (i.e. a type alias).
 
-{% highlight fsharp %}
+```fsharp
 type GetCustomerCap = unit -> SuccessFailure<CustomerData,FailureCase>                
-{% endhighlight fsharp %}
+```
 
 Finally, the `CapabilityProvider` is a record of functions, each of which accepts a customer id and principal, and returns an optional capability of the specified type.
 This record is created in the top level model and then passed around to the child components.
 
 Here's the complete code for this module:
 
-{% highlight fsharp %}
+```fsharp
 module Capabilities = 
     open Rop
     open Domain
@@ -618,7 +618,7 @@ module Capabilities =
         /// given a customerId and IPrincipal, attempt to get the UpdatePassword capability
         updatePassword : CustomerId -> IPrincipal -> UpdatePasswordCap option 
         }
-{% endhighlight fsharp %}
+```
 
 This module references a `SuccessFailure` result type similar to the one [discussed here](/rop/), but which I won't show.
 
@@ -626,7 +626,7 @@ This module references a `SuccessFailure` result type similar to the one [discus
 
 Next, we'll roll our own little authentication system. Note that when the user "Zelda" is authenticated, the role is set to "CustomerAgent".
 
-{% highlight fsharp %}
+```fsharp
 module Authentication = 
     open Rop
     open Domain 
@@ -659,7 +659,7 @@ module Authentication =
         |> customerIdForName 
         |> Rop.map (fun principalId -> principalId = customerId)
         |> Rop.orElse false
-{% endhighlight fsharp %}
+```
 
 The `customerIdForName` function attempts to find the customer id associated with a particular name,
 while the `customerIdOwnedByPrincipal` compares this id with another one.
@@ -668,7 +668,7 @@ while the `customerIdOwnedByPrincipal` compares this id with another one.
 
 Here are the functions related to authorization, very similar to what was discussed above.
 
-{% highlight fsharp %}
+```fsharp
 module Authorization = 
     open Rop
     open Domain 
@@ -728,13 +728,13 @@ module Authorization =
         let revoker() = 
             allow := false
         capability, revoker
-{% endhighlight fsharp %}
+```
 
 ### Implementing the database 
 
 The functions related to database access are similar to those in the earlier examples, only this time we have implemented a crude in-memory database (just a `Dictionary`).
 
-{% highlight fsharp %}
+```fsharp
 module CustomerDatabase = 
     open Rop
     open System.Collections.Generic
@@ -753,13 +753,13 @@ module CustomerDatabase =
 
     let updatePassword (id:CustomerId,password:Password) = 
         Success ()   // dummy implementation
-{% endhighlight fsharp %}
+```
 
 ### Implementing the business services
 
 Next we have the "business services" (for lack of better word) where all the work gets done.
 
-{% highlight fsharp %}
+```fsharp
 module BusinessServices =
     open Rop
     open Domain
@@ -786,7 +786,7 @@ module BusinessServices =
         | Success _ -> printfn "Password updated" 
         | Failure err -> printfn ".. %A" err
     
-{% endhighlight fsharp %}
+```
 
 Note that each of these functions is passed in only the capability needed to do its job. This code knows nothing about databases, or anything else. 
 
@@ -825,7 +825,7 @@ If the customer selection is successful (`customerIdForName customerName` worked
 
 Finally the `mainUiLoop` function loops around until the state is set to `Exit`.
 
-{% highlight fsharp %}
+```fsharp
 module UserInterface =
     open Rop
     open Domain
@@ -943,7 +943,7 @@ module UserInterface =
 
     let start capabilityProvider  = 
         mainUiLoop capabilityProvider LoggedOut
-{% endhighlight fsharp %}
+```
 
 ### Implementing the top-level module
 
@@ -953,7 +953,7 @@ This module fetches all the capabilities, adds restrictions as explained previou
 
 The `capabilities` record is then passed into the user interface when the app is started.
 
-{% highlight fsharp %}
+```fsharp
 module Application=
     open Rop
     open Domain
@@ -1007,7 +1007,7 @@ module Application=
     let start() = 
         // pass capabilities to UI
         UserInterface.start capabilities 
-{% endhighlight fsharp %}
+```
  
 The complete code for this example is available as a [gist here](https://gist.github.com/swlaschin/909c5b24bf921e5baa8c#file-capabilitybasedsecurity_consoleexample-fsx).
 
@@ -1022,10 +1022,10 @@ Again, there is nothing particularly clever about using functions like this, but
 
 Here's a typical use of a authorization flag:
 
-{% highlight fsharp %}
+```fsharp
 if user.CanUpdate() then
    doTheAction()
-{% endhighlight fsharp %}
+```
 
 Recall the quote from the previous post: "Capabilities should 'fail safe'. If a capability cannot be obtained, or doesn't work, we must not allow any progress
 on paths that assumed that it was successful."
@@ -1033,25 +1033,25 @@ on paths that assumed that it was successful."
 The problem with testing a flag like this is that **it's easy to forget, and the compiler won't complain if you do**.
 And then you have a possible security breach, as in the following code. 
 
-{% highlight fsharp %}
+```fsharp
 if user.CanUpdate() then
     // ignore
     
 // now do the action anyway!
 doTheAction()
-{% endhighlight fsharp %}
+```
 
 Not only that, but by "inlining" the test like this, we're mixing security concerns into our main code, as pointed out earlier.
 
 In contrast, a simple capability approach looks like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateCapability = // attempt to get the capability
 
 match updateCapability with
 | Some update -> update()  // call the function
 | None -> ()               // can't call the function
-{% endhighlight fsharp %}
+```
 
 In this example, it is **not possible to accidentally use the capability** if you are not allowed to, as you literally don't have a function to call!
 And this has to be handled at compile-time, not at runtime.

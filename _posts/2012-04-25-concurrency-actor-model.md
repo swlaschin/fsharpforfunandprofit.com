@@ -38,7 +38,7 @@ But these are minor issues, and can be worked around. In a future series, I will
 
 Let's see a simple agent implementation in F#:
 
-{% highlight fsharp %}
+```fsharp
 
 let printerAgent = MailboxProcessor.Start(fun inbox-> 
 
@@ -59,19 +59,19 @@ let printerAgent = MailboxProcessor.Start(fun inbox->
     messageLoop() 
     )
 
-{% endhighlight  %}
+```
 
 The `MailboxProcessor.Start` function takes a simple function parameter. That function loops forever, reading messages from the queue (or "inbox") and processing them.
 
 
 Here's the example in use:
 
-{% highlight fsharp %}
+```fsharp
 // test it
 printerAgent.Post "hello" 
 printerAgent.Post "hello again" 
 printerAgent.Post "hello a third time" 
-{% endhighlight  %}
+```
 
 In the rest of this post we'll look at two slightly more useful examples:
 
@@ -96,7 +96,7 @@ Using locks or mutexes is a common solution for these requirements, so let's wri
 
 First let's write a static `LockedCounter` class that protects the state with locks.  
 
-{% highlight fsharp %}
+```fsharp
 open System
 open System.Threading
 open System.Diagnostics
@@ -144,7 +144,7 @@ type LockedCounter () =
             updateState i 
             )
         // release lock
-{% endhighlight  %}
+```
 
 Some notes on this code:
 
@@ -155,15 +155,15 @@ Some notes on this code:
 
 Let's test it in isolation:
 
-{% highlight fsharp %}
+```fsharp
 // test in isolation
 LockedCounter.Add 4
 LockedCounter.Add 5
-{% endhighlight  %}
+```
 
 Next, we'll create a task that will try to access the counter:
 
-{% highlight fsharp %}
+```fsharp
 let makeCountingTask addFunction taskId  = async {
     let name = sprintf "Task%i" taskId
     for i in [1..3] do 
@@ -173,20 +173,20 @@ let makeCountingTask addFunction taskId  = async {
 // test in isolation
 let task = makeCountingTask LockedCounter.Add 1
 Async.RunSynchronously task
-{% endhighlight  %}
+```
 
 In this case, when there is no contention at all, the wait times are all 0.
 
 But what happens when we create 10 child tasks that all try to access the counter at once:
 
-{% highlight fsharp %}
+```fsharp
 let lockedExample5 = 
     [1..10]
         |> List.map (fun i -> makeCountingTask LockedCounter.Add i)
         |> Async.Parallel
         |> Async.RunSynchronously
         |> ignore
-{% endhighlight  %}
+```
 
 Oh dear! Most tasks are now waiting quite a while. If two tasks want to update the state at the same time, one must wait for the other's work to complete before it can do its own work, which affects performance. 
 
@@ -196,7 +196,7 @@ And if we add more and more tasks, the contention will increase, and the tasks w
 
 Let's see how a message queue might help us. Here's the message based version:
         
-{% highlight fsharp %}
+```fsharp
 type MessageBasedCounter () = 
 
     static let updateState (count,sum) msg = 
@@ -234,7 +234,7 @@ type MessageBasedCounter () =
 
     // public interface to hide the implementation
     static member Add i = agent.Post i
-{% endhighlight  %}
+```
 
 Some notes on this code:
 
@@ -246,29 +246,29 @@ The code only has to focus on the business logic, and is consequently much easie
 
 Let's test it in isolation:
 
-{% highlight fsharp %}
+```fsharp
 // test in isolation
 MessageBasedCounter.Add 4
 MessageBasedCounter.Add 5
-{% endhighlight  %}        
+```        
 
 Next, we'll reuse a task we defined earlier, but calling `MessageBasedCounter.Add` instead:
 
-{% highlight fsharp %}
+```fsharp
 let task = makeCountingTask MessageBasedCounter.Add 1
 Async.RunSynchronously task
-{% endhighlight  %}
+```
 
 Finally let's create 5 child tasks that try to access the counter at once.
 
-{% highlight fsharp %}
+```fsharp
 let messageExample5 = 
     [1..5]
         |> List.map (fun i -> makeCountingTask MessageBasedCounter.Add i)
         |> Async.Parallel
         |> Async.RunSynchronously
         |> ignore
-{% endhighlight  %}
+```
 
 We can't measure the waiting time for the clients, because there is none!
 
@@ -292,7 +292,7 @@ In order to make the corruption very obvious and repeatable, let's first create 
 and pauses for a millisecond between each character. During that millisecond, another thread could be writing as well, causing an undesirable
 interleaving of messages.
 
-{% highlight fsharp %}
+```fsharp
 let slowConsoleWrite msg = 
     msg |> String.iter (fun ch->
         System.Threading.Thread.Sleep(1)
@@ -301,11 +301,11 @@ let slowConsoleWrite msg =
 
 // test in isolation
 slowConsoleWrite "abc"
-{% endhighlight  %}
+```
 
 Next, we will create a simple task that loops a few times, writing its name each time to the logger:
 
-{% highlight fsharp %}
+```fsharp
 let makeTask logger taskId = async {
     let name = sprintf "Task%i" taskId
     for i in [1..3] do 
@@ -316,12 +316,12 @@ let makeTask logger taskId = async {
 // test in isolation
 let task = makeTask slowConsoleWrite 1
 Async.RunSynchronously task
-{% endhighlight  %}
+```
 
 
 Next, we write a logging class that encapsulates access to the slow console. It has no locking or serialization, and is basically not thread-safe:
 
-{% highlight fsharp %}
+```fsharp
 type UnserializedLogger() = 
     // interface
     member this.Log msg = slowConsoleWrite msg
@@ -329,11 +329,11 @@ type UnserializedLogger() =
 // test in isolation
 let unserializedLogger = UnserializedLogger()
 unserializedLogger.Log "hello"
-{% endhighlight  %}
+```
 
 Now let's combine all these into a real example. We will create five child tasks and run them in parallel, all trying to write to the slow console.
 
-{% highlight fsharp %}
+```fsharp
 let unserializedExample = 
     let logger = new UnserializedLogger()
     [1..5]
@@ -341,7 +341,7 @@ let unserializedExample =
         |> Async.Parallel
         |> Async.RunSynchronously
         |> ignore
-{% endhighlight  %}
+```
 
 Ouch! The output is very garbled!
 
@@ -351,7 +351,7 @@ So what happens when we replace `UnserializedLogger` with a `SerializedLogger` c
 
 The agent inside `SerializedLogger` simply reads a message from its input queue and writes it to the slow console.  Again there is no code dealing with concurrency and no locks are used.
 
-{% highlight fsharp %}
+```fsharp
 type SerializedLogger() = 
 
     // create the mailbox processor
@@ -380,11 +380,11 @@ type SerializedLogger() =
 // test in isolation
 let serializedLogger = SerializedLogger()
 serializedLogger.Log "hello"
-{% endhighlight  %}
+```
 
 So now we can repeat the earlier unserialized example but using the `SerializedLogger` instead. Again, we create five child tasks and run them in parallel:
 
-{% highlight fsharp %}
+```fsharp
 let serializedExample = 
     let logger = new SerializedLogger()
     [1..5]
@@ -392,7 +392,7 @@ let serializedExample =
         |> Async.Parallel
         |> Async.RunSynchronously
         |> ignore
-{% endhighlight  %}		
+```		
 
 What a difference! This time the output is perfect.  
 

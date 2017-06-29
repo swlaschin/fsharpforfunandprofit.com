@@ -66,9 +66,9 @@ In my designs, every use-case is a function, with one input and one output.
 
 For this example then, we need to model the public interface to the Calculator as a function. Here's the signature:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput -> CalculatorOutput
-{% endhighlight fsharp %}
+```
 
 That was easy!  The first question then is: are there any other use-cases that we need to model?
 I think for now, no. We'll just start with a single case that handles all the inputs.
@@ -106,9 +106,9 @@ In this case, I think not. In a cheap pocket calculator, any errors are shown ri
 
 So here's the new version of the function:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
-{% endhighlight fsharp %}
+```
 
 `CalculatorInput` now means the keystrokes or whatever, and `CalculatorState` is the state.
 
@@ -126,12 +126,12 @@ although, at implementation time, they will of course be added to the functions 
 
 Now let's look at the `CalculatorState`. All I can think of that we need right now is something to hold the information to display.
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 and CalculatorState = {
     display: CalculatorDisplay
     }
-{% endhighlight fsharp %}
+```
 
 I've defined a type `CalculatorDisplay`, firstly as documentation to make it clear what the field value is used for,
 and secondly, so I can postpone deciding what the display actually is!
@@ -140,25 +140,25 @@ So what should the type of the display be? A float? A string? A list of characte
 
 Well, I'm going to go for `string`, because, as I said above, we might need to display errors. 
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 and CalculatorState = {
     display: CalculatorDisplay
     }
 and CalculatorDisplay = string
-{% endhighlight fsharp %}
+```
 
 Notice that I am using `and` to connect the type definitions together. Why?
 
 Well, F# compiles from top to bottom, so you must define a type before it is used. The following code will not compile:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 type CalculatorState = {
     display: CalculatorDisplay
     }
 type CalculatorDisplay = string
-{% endhighlight fsharp %}
+```
 
 I could fix this by changing the order of the declarations,
 but since I am in "sketch" mode, and I don't want to reorder things all the time,
@@ -171,7 +171,7 @@ The reason is that `and` can [hide cycles between types](/posts/cyclic-dependenc
 
 For the `CalculatorInput` type, I'll just list all the buttons on the calculator!
 
-{% highlight fsharp %}
+```fsharp
 // as above
 and CalculatorInput = 
     | Zero | One | Two | Three | Four 
@@ -179,7 +179,7 @@ and CalculatorInput =
     | DecimalSeparator
     | Add | Subtract | Multiply | Divide
     | Equals | Clear
-{% endhighlight fsharp %}
+```
 
 Some people might say: why not use a `char` as the input? But as I explained above, in my domain I only want to deal with ideal data.
 By using a limited set of choices like this, I never have to deal with unexpected input.
@@ -197,25 +197,25 @@ Let's start with how the digits are handled.
 
 When a digit key is pressed, we want to append the digit to the current display. Let's define a function type that represents that:
 
-{% highlight fsharp %}
+```fsharp
 type UpdateDisplayFromDigit = CalculatorDigit * CalculatorDisplay -> CalculatorDisplay
-{% endhighlight fsharp %}
+```
 
 The `CalculatorDisplay` type is the one we defined earlier, but what is this new `CalculatorDigit` type?
 
 Well obviously we need some type to represent all the possible digits that can be used as input.
 Other inputs, such as `Add` and `Clear`, would not be valid for this function.
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorDigit = 
     | Zero | One | Two | Three | Four 
     | Five | Six | Seven | Eight | Nine
     | DecimalSeparator
-{% endhighlight fsharp %}
+```
 
 So the next question is, how do we get a value of this type? Do we need a function that maps a `CalculatorInput` to a `CalculatorDigit` type, like this?
 
-{% highlight fsharp %}
+```fsharp
 let convertInputToDigit (input:CalculatorInput) =
     match input with
         | Zero -> CalculatorDigit.Zero
@@ -223,19 +223,19 @@ let convertInputToDigit (input:CalculatorInput) =
         | etc
         | Add -> ???
         | Clear -> ???
-{% endhighlight fsharp %}
+```
 
 In many situations, this might be necessary, but in this case it seems like overkill.
 And also, how would this function deal with non-digits such as `Add` and `Clear`?
 
 So let's just redefine the `CalculatorInput` type to use the new type directly:
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorInput = 
     | Digit of CalculatorDigit
     | Add | Subtract | Multiply | Divide
     | Equals | Clear
-{% endhighlight fsharp %}
+```
 
 While we're at it, let's classify the other buttons as well.
 
@@ -244,7 +244,7 @@ and as for `Equals | Clear`, I'll just call them "actions" for lack of better wo
 
 Here's the complete refactored design with new types `CalculatorDigit`, `CalculatorMathOp` and `CalculatorAction`:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 and CalculatorState = {
     display: CalculatorDisplay
@@ -264,7 +264,7 @@ and CalculatorAction =
     | Equals | Clear
 
 type UpdateDisplayFromDigit = CalculatorDigit * CalculatorDisplay -> CalculatorDisplay    
-{% endhighlight fsharp %}
+```
 
 This is not the only approach. I could have easily left `Equals` and `Clear` as separate choices.
 
@@ -289,9 +289,9 @@ These are all binary operations, taking two numbers and spitting out a new resul
 
 A function type to represent this would look like this:
 
-{% highlight fsharp %}
+```fsharp
 type DoMathOperation = CalculatorMathOp * Number * Number -> Number
-{% endhighlight fsharp %}
+```
 
 If there were unary operations as well, such as `1/x`, we would need a different type for those, but we don't, so we can keep things simple.
 
@@ -299,10 +299,10 @@ Next decision: what numeric type should we use? Should we make it generic?
 
 Again, let's just keep it simple and use `float`. But we'll keep the `Number` alias around to decouple the representation a bit. Here's the updated code:
 
-{% highlight fsharp %}
+```fsharp
 type DoMathOperation = CalculatorMathOp * Number * Number -> Number
 and Number = float
-{% endhighlight fsharp %}
+```
 
 
 Now let's ponder `DoMathOperation`, just as we did for `UpdateDisplayFromDigit` above. 
@@ -320,7 +320,7 @@ Let's create a new type that represents a result of a math operation, and make t
 
 The new type, `MathOperationResult` will have two choices (discriminated union) between `Success` and `Failure`.
 
-{% highlight fsharp %}
+```fsharp
 type DoMathOperation = CalculatorMathOp * Number * Number -> MathOperationResult 
 and Number = float
 and MathOperationResult = 
@@ -328,7 +328,7 @@ and MathOperationResult =
     | Failure of MathOperationError
 and MathOperationError = 
     | DivideByZero
-{% endhighlight fsharp %}
+```
 
 We could have also used the built-in generic `Choice` type, or even a full ["railway oriented programming"](/rop/) approach, but since this is a sketch of the design,
 I want the design to stand alone, without a lot of dependencies, so I'll just define the specific type right here.
@@ -345,21 +345,21 @@ One approach would be to store a `Number` in the state along with the string dis
 
 I'm going to take a simpler approach, and just get the number from the display directly. In other words, we need a function that looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type GetDisplayNumber = CalculatorDisplay -> Number
-{% endhighlight fsharp %}
+```
 
 Thinking about it though, the function could fail, because the display string could be "error" or something. So let's return an option instead.
  
-{% highlight fsharp %}
+```fsharp
 type GetDisplayNumber = CalculatorDisplay -> Number option
-{% endhighlight fsharp %}
+```
 
 Similarly, when we *do* have a successful result, we will want to display it, so we need a function that works in the other direction:
 
-{% highlight fsharp %}
+```fsharp
 type SetDisplayNumber = Number -> CalculatorDisplay 
-{% endhighlight fsharp %}
+```
 
 This function can never error (I hope), so we don't need the `option`.
 
@@ -378,34 +378,34 @@ Where will we keep track of this? In the `CalculatorState` of course!
 
 Here's our first attempt to add the new fields:
 
-{% highlight fsharp %}
+```fsharp
 and CalculatorState = {
     display: CalculatorDisplay
     pendingOp: CalculatorMathOp 
     pendingNumber: Number
     }
-{% endhighlight fsharp %}
+```
 
 But sometimes there isn't a pending operation, so we have to make it optional:
 
-{% highlight fsharp %}
+```fsharp
 and CalculatorState = {
     display: CalculatorDisplay
     pendingOp: CalculatorMathOp option
     pendingNumber: Number option
     }
-{% endhighlight fsharp %}
+```
 
 But this is wrong too!  Can we have a `pendingOp` without a `pendingNumber`, or vice versa? No. They live and die together.
 
 This implies that the state should contain a pair, and the whole pair is optional, like this:
 
-{% highlight fsharp %}
+```fsharp
 and CalculatorState = {
     display: CalculatorDisplay
     pendingOp: (CalculatorMathOp * Number) option
     }
-{% endhighlight fsharp %}
+```
 
 But now we are still missing a piece. If the operation is added to the state as pending,
 when does the operation actually get *run* and the result displayed?
@@ -420,9 +420,9 @@ Well, it obviously just resets the state so that the display is empty and any pe
 
 I'm going to call this function `InitState` rather than "clear", and here is its signature:
 
-{% highlight fsharp %}
+```fsharp
 type InitState = unit -> CalculatorState 
-{% endhighlight fsharp %}
+```
 
 ## Defining the services
 
@@ -435,7 +435,7 @@ This is where all these types come in handy. We can define a set of "services" t
 
 Here's what I mean:
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorServices = {
     updateDisplayFromDigit: UpdateDisplayFromDigit 
     doMathOperation: DoMathOperation 
@@ -443,7 +443,7 @@ type CalculatorServices = {
     setDisplayNumber: SetDisplayNumber 
     initState: InitState 
     }
-{% endhighlight fsharp %}
+```
 
 We've created a set of services that can be injected into an implementation of the `Calculate` function.
 With these in place, we can code the `Calculate` function immediately and deal with the implementation of the services later. 
@@ -463,7 +463,7 @@ creating a bunch of interfaces for services and then injecting them into the cor
 So let's review -- with the addition of the services, our initial design is complete.
 Here is all the code so far:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 and CalculatorState = {
     display: CalculatorDisplay
@@ -508,7 +508,7 @@ type CalculatorServices = {
     setDisplayNumber: SetDisplayNumber 
     initState: InitState 
     }
-{% endhighlight fsharp %}
+```
 
 
 ## Summary

@@ -12,7 +12,7 @@ We briefly noted earlier that when pattern matching there is a requirement to ma
 
 Let's compare some C# to F# again. Here's some C# code that uses a switch statement to handle different types of state.
 
-{% highlight csharp %}
+```csharp
 enum State { New, Draft, Published, Inactive, Discontinued }
 void HandleState(State state)
 {
@@ -28,13 +28,13 @@ void HandleState(State state)
             break;
     }
 }
-{% endhighlight %}
+```
 
 This code will compile, but there is an obvious bug! The compiler couldn't see it -- can you? If you can, and you fixed it, would it stay fixed if I added another `State` to the list?
 
 Here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type State = New | Draft | Published | Inactive | Discontinued
 let handleState state = 
    match state with
@@ -42,7 +42,7 @@ let handleState state =
    | Draft -> () // code for Draft
    | New -> () // code for New
    | Discontinued -> () // code for Discontinued
-{% endhighlight %}
+```
    
 Now try running this code. What does the compiler tell you?
 
@@ -58,12 +58,12 @@ Now let's look at some real examples of how exhaustive matching can help you wri
 
 We'll start with an extremely common scenario where the caller should always check for an invalid case, namely testing for nulls. A typical C# program is littered with code like this:
 
-{% highlight csharp %}
+```csharp
 if (myObject != null)
 {
   // do something
 }
-{% endhighlight %}
+```
 
 Unfortunately, this test is not required by the compiler. All it takes is for one piece of code to forget to do this, and the program can crash.
 Over the years, a huge amount of programming effort has been devoted to handling nulls -- the invention of nulls has even been called a [billion dollar mistake](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare)! 
@@ -82,7 +82,7 @@ The `Some` choice wraps a valid value, and `None` represents a missing value.
 
 Here's an example where `Some` is returned if a file exists, but a missing file returns `None`.
 
-{% highlight fsharp %}
+```fsharp
 let getFileInfo filePath =
    let fi = new System.IO.FileInfo(filePath)
    if fi.Exists then Some(fi) else None
@@ -92,11 +92,11 @@ let badFileName = "bad.txt"
 
 let goodFileInfo = getFileInfo goodFileName // Some(fileinfo)
 let badFileInfo = getFileInfo badFileName   // None
-{% endhighlight %}
+```
 
 If we want to do anything with these values, we must always handle both possible cases.
 
-{% highlight fsharp %}
+```fsharp
 match goodFileInfo with
   | Some fileInfo -> 
       printfn "the file %s exists" fileInfo.FullName
@@ -108,7 +108,7 @@ match badFileInfo with
       printfn "the file %s exists" fileInfo.FullName
   | None -> 
       printfn "the file doesn't exist" 
-{% endhighlight %}
+```
 	  
 We have no choice about this. Not handling a case is a compile-time error, not a run-time error.
 By avoiding nulls and by using `Option` types in this way, F# completely eliminates a large class of null reference exceptions.
@@ -120,7 +120,7 @@ By avoiding nulls and by using `Option` types in this way, F# completely elimina
 
 Here's some C# code that creates a list by averaging pairs of numbers from an input list:
 
-{% highlight csharp %}
+```csharp
 public IList<float> MovingAverages(IList<int> list)
 {
     var averages = new List<float>();
@@ -131,13 +131,13 @@ public IList<float> MovingAverages(IList<int> list)
     }
     return averages;
 }
-{% endhighlight  %}
+```
 
 It compiles correctly, but it actually has a couple of issues. Can you find them quickly? If you're lucky, your unit tests will find them for you, assuming you have thought of all the edge cases.
 
 Now let's try the same thing in F#:
 
-{% highlight fsharp %}
+```fsharp
 let rec movingAverages list = 
     match list with
     // if input is empty, return an empty list
@@ -147,14 +147,14 @@ let rec movingAverages list =
         let avg = (x+y)/2.0 
         //build the result by recursing the rest of the list
         avg :: movingAverages (y::rest)
-{% endhighlight  %}
+```
 
 This code also has a bug. But unlike C#, this code will not even compile until I fix it.  The compiler will tell me that I haven't handled the case when I have a single item in my list.
 Not only has it found a bug, it has revealed a gap in the requirements: what should happen when there is only one item?
 
 Here's the fixed up version:
 
-{% highlight fsharp %}
+```fsharp
 let rec movingAverages list = 
     match list with
     // if input is empty, return an empty list
@@ -171,7 +171,7 @@ let rec movingAverages list =
 movingAverages [1.0]
 movingAverages [1.0; 2.0]
 movingAverages [1.0; 2.0; 3.0]
-{% endhighlight  %}
+```
 
 As an additional benefit, the F# code is also much more self-documenting. It explicitly describes the consequences of each case.
 In the C# code, it is not at all obvious what happens if a list is empty or only has one item.  You would have to read the code carefully to find out.
@@ -188,7 +188,7 @@ In a procedural or OO language, propagating and handling exceptions across layer
 
 In the functional world, a common technique is to create a new structure to hold both the good and bad possibilities, rather than throwing an exception if the file is missing.
 
-{% highlight fsharp %}
+```fsharp
 // define a "union" of two different alternatives
 type Result<'a, 'b> = 
     | Success of 'a  // 'a means generic type. The actual type
@@ -214,13 +214,13 @@ let performActionOnFile action filePath =
       | :? System.Security.SecurityException as ex 
           -> Failure (UnauthorizedAccess (filePath,ex))  
       // other exceptions are unhandled
-{% endhighlight %}
+```
       
 The code demonstrates how `performActionOnFile` returns a `Result` object which has two alternatives: `Success` and `Failure`.  The `Failure` alternative in turn has two alternatives as well: `FileNotFound` and `UnauthorizedAccess`.
 
 Now the intermediate layers can call each other, passing around the result type without worrying what its structure is, as long as they don't access it:
 
-{% highlight fsharp %}
+```fsharp
 // a function in the middle layer
 let middleLayerDo action filePath = 
     let fileResult = performActionOnFile action filePath
@@ -232,7 +232,7 @@ let topLayerDo action filePath =
     let fileResult = middleLayerDo action filePath
     // do some stuff
     fileResult //return
-{% endhighlight %}
+```
 	
 Because of type inference, the middle and top layers do not need to specify the exact types returned. If the lower layer changes the type definition at all, the intermediate layers will not be affected.
 
@@ -240,7 +240,7 @@ Obviously at some point, a client of the top layer does want to access the resul
 
 Here is an example of a client function that accesses the top layer:
 
-{% highlight fsharp %}
+```fsharp
 /// get the first line of the file
 let printFirstLineOfFile filePath = 
     let fileResult = topLayerDo (fun fs->fs.ReadLine()) filePath
@@ -255,14 +255,14 @@ let printFirstLineOfFile filePath =
            printfn "File not found: %s" file
        | UnauthorizedAccess (file,_) -> 
            printfn "You do not have access to the file: %s" file
-{% endhighlight %}
+```
 
 		   
 You can see that this code must explicitly handle the `Success` and `Failure` cases, and then for the failure case, it explicitly handles the different reasons. If you want to see what happens if it does not handle one of the cases, try commenting out the line that handles `UnauthorizedAccess` and see what the compiler says.
 
 Now it is not required that you always handle all possible cases explicitly. In the example below, the function uses the underscore wildcard to treat all the failure reasons as one. This can considered bad practice if we want to get the benefits of the strictness, but at least it is clearly done.
 
-{% highlight fsharp %}
+```fsharp
 /// get the length of the text in the file
 let printLengthOfFile filePath = 
    let fileResult = 
@@ -274,13 +274,13 @@ let printLengthOfFile filePath =
       printfn "length is: %i" result       
    | Failure _ -> 
       printfn "An error happened but I don't want to be specific"
-{% endhighlight %}
+```
 
 Now let's see all this code work in practice with some interactive tests. 
 
 First set up a good file and a bad file.
 
-{% highlight fsharp %}
+```fsharp
 /// write some text to a file
 let writeSomeText filePath someText = 
     use writer = new System.IO.StreamWriter(filePath:string)
@@ -291,17 +291,17 @@ let goodFileName = "good.txt"
 let badFileName = "bad.txt"
 
 writeSomeText goodFileName "hello"
-{% endhighlight %}
+```
 
 And now test interactively:
 
-{% highlight fsharp %}
+```fsharp
 printFirstLineOfFile goodFileName 
 printLengthOfFile goodFileName 
 
 printFirstLineOfFile badFileName 
 printLengthOfFile badFileName 
-{% endhighlight %}
+```
 
 I think you can see that this approach is very attractive:
 
@@ -318,19 +318,19 @@ Finally, exhaustive pattern matching is a valuable tool for ensuring that code s
 
 Let's say that the requirements change and we need to handle a third type of error: "Indeterminate". To implement this new requirement, change the first `Result` type as follows, and re-evaluate all the code. What happens?
 
-{% highlight fsharp %}
+```fsharp
 type Result<'a, 'b> = 
     | Success of 'a 
     | Failure of 'b
     | Indeterminate
-{% endhighlight %}
+```
 
 Or sometimes a requirements change will remove a possible choice. To emulate this, change the first `Result` type to eliminate all but one of the choices. 
 
-{% highlight fsharp %}
+```fsharp
 type Result<'a> = 
     | Success of 'a 
-{% endhighlight %}
+```
 
 Now re-evaluate the rest of the code. What happens now?
 

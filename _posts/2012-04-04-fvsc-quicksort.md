@@ -29,7 +29,7 @@ Note that this is a simplified algorithm and is not optimized (and it does not s
 
 Here is the code in F#:
 
-{% highlight fsharp %}
+```fsharp
 let rec quicksort list =
    match list with
    | [] ->                            // If the list is empty
@@ -48,7 +48,7 @@ let rec quicksort list =
 
 //test
 printfn "%A" (quicksort [1;5;23;18;9;1;3])
-{% endhighlight %}
+```
 
 Again note that this is not an optimized implementation, but is designed to mirror the algorithm closely.
 
@@ -58,11 +58,11 @@ Let's go through this code:
 * The whole function is recursive -- this is signaled to the compiler using the `rec` keyword in "`let rec quicksort list =`".
 * The `match..with` is sort of like a switch/case statement. Each branch to test is signaled with a vertical bar, like so:
 
-{% highlight fsharp %}
+```fsharp
 match x with
 | caseA -> something
 | caseB -> somethingElse
-{% endhighlight %}
+```
 * The "`match`" with `[]` matches an empty list, and returns an empty list. 
 * The "`match`" with `firstElem::otherElements` does two things. 
   * First, it only matches a non-empty list. 
@@ -76,7 +76,7 @@ match x with
 
 For comparison here is an old-style C# implementation (without using LINQ).
 
-{% highlight csharp %}
+```csharp
 public class QuickSortHelper
 {
    public static List<T> QuickSort<T>(List<T> values) 
@@ -114,7 +114,7 @@ public class QuickSortHelper
       return result;
    }
 }
-{% endhighlight %}
+```
 
 Comparing the two sets of code, again we can see that the F# code is much more compact, with less noise and no need for type declarations. 
 
@@ -125,7 +125,7 @@ Furthermore, the F# code reads almost exactly like the actual algorithm, unlike 
 
 Here's a more modern "functional-style" implementation using LINQ and an extension method:
 
-{% highlight csharp %}
+```csharp
 public static class QuickSortExtension
 {
     /// <summary>
@@ -158,7 +158,7 @@ public static class QuickSortExtension
             .Concat(largerElements);
     }
 }
-{% endhighlight %}
+```
 
 This is much cleaner, and reads almost the same as the F# version.  But unfortunately there is no way of avoiding the extra noise in the function signature.
 
@@ -170,25 +170,25 @@ Indeed, when coding these samples, the old-style C# code was incorrect initially
 
 But even the functional C# version has drawbacks compared to the F# version. For example, because F# uses pattern matching, it is not possible to branch to the "non-empty list" case with an empty list. On the other hand, in the C# code, if we forgot the test:
 
-{% highlight csharp %}
+```csharp
 if (values == null || !values.Any()) ...
-{% endhighlight %}
+```
 
 then the extraction of the first element:
 
-{% highlight csharp %}
+```csharp
 var firstElement = values.First();
-{% endhighlight %}
+```
 
 would fail with an exception. The compiler cannot enforce this for you.  In your own code, how often have you used `FirstOrDefault` rather than `First` because you are writing "defensive" code. Here is an example of a code pattern that is very common in C# but is rare in F#:
 
-{% highlight csharp %}
+```csharp
 var item = values.FirstOrDefault();  // instead of .First()
 if (item != null) 
 { 
    // do something if item is valid 
 }
-{% endhighlight %}
+```
 
 The one-step "pattern match and branch" in F# allows you to avoid this in many cases.
 
@@ -198,7 +198,7 @@ The example implementation in F# above is actually pretty verbose by F# standard
 
 For fun, here is what a more typically concise version would look like:
 
-{% highlight fsharp %}
+```fsharp
 let rec quicksort2 = function
    | [] -> []                         
    | first::rest -> 
@@ -207,6 +207,6 @@ let rec quicksort2 = function
         
 // test code        
 printfn "%A" (quicksort2 [1;5;23;18;9;1;3])
-{% endhighlight %}
+```
 
 Not bad for 4 lines of code, and when you get used to the syntax, still quite readable.

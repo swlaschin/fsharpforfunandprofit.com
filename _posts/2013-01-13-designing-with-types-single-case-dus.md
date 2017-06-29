@@ -10,13 +10,13 @@ categories: [Types, DDD]
 
 At the end of the previous post, we had values for email addresses, zip codes, etc., defined like this:
 
-{% highlight fsharp %}
+```fsharp
 
 EmailAddress: string;
 State: string;
 Zip: string;
 
-{% endhighlight  %}
+```
 
 These are all defined as simple strings.  But really, are they just strings?  Is an email address interchangable with a zip code or a state abbreviation?
 
@@ -33,19 +33,19 @@ The simplest way to create a separate type is to wrap the underlying string type
 
 We can do it using single case union types, like so:
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 type ZipCode = ZipCode of string
 type StateCode = StateCode of string
-{% endhighlight  %}
+```
 
 or alternatively, we could use record types with one field, like this:
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = { EmailAddress: string }
 type ZipCode = { ZipCode: string }
 type StateCode = { StateCode: string}
-{% endhighlight  %}
+```
 
 Both approaches can be used to create wrapper types around a string or other primitive type, so which way is better?
 
@@ -53,7 +53,7 @@ The answer is generally the single case discriminated union.  It is much easier 
 
 Here's some examples of how an `EmailAddress` type might be constructed and deconstructed:
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 
 // using the constructor as a function
@@ -71,13 +71,13 @@ let addresses =
 let addresses' = 
     addresses
     |> List.map (fun (EmailAddress e) -> e)
-{% endhighlight  %}
+```
 
 You can't do this as easily using record types.
 
 So, let's refactor the code again to use these union types.  It now looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = 
     {
     FirstName: string;
@@ -117,7 +117,7 @@ type Contact =
     EmailContactInfo: EmailContactInfo;
     PostalContactInfo: PostalContactInfo;
     }
-{% endhighlight  %}
+```
 
 Another nice thing about the union type is that the implementation can be encapsulated with module signatures, as we'll discuss below.
 
@@ -125,27 +125,27 @@ Another nice thing about the union type is that the implementation can be encaps
 
 In the examples above we used the same name for the case as we did for the type:
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 type ZipCode = ZipCode of string
 type StateCode = StateCode of string
-{% endhighlight  %}
+```
 
 This might seem confusing initially, but really they are in different scopes, so there is no naming collision. One is a type, and one is a constructor function with the same name.
 
 So if you see a function signature like this:
 
-{% highlight fsharp %}
+```fsharp
 val f: string -> EmailAddress
-{% endhighlight  %}
+```
 
 this refers to things in the world of types, so `EmailAddress` refers to the type.
 
 On the other hand, if you see some code like this:
 
-{% highlight fsharp %}
+```fsharp
 let x = EmailAddress y
-{% endhighlight  %}
+```
 
 this refers to things in the world of values, so `EmailAddress` refers to the constructor function.
 
@@ -157,7 +157,7 @@ This implies that we will need to do validation at some point, and what better p
 
 Here's how we might extend the above module with some constructor functions:
 
-{% highlight fsharp %}
+```fsharp
 
 ... types as above ...
 
@@ -172,17 +172,17 @@ let CreateStateCode (s:string) =
     if stateCodes |> List.exists ((=) s')
         then Some (StateCode s')
         else None
-{% endhighlight  %}
+```
 
 We can test the constructors now:
 
-{% highlight fsharp %}
+```fsharp
 CreateStateCode "CA"
 CreateStateCode "XX"
 
 CreateEmailAddress "a@example.com"
 CreateEmailAddress "example.com"
-{% endhighlight  %}
+```
 
 ## Handling invalid input in a constructor ###
 
@@ -198,11 +198,11 @@ Next, you could return an option type, with `None` meaning that the input wasn't
 This is generally the easiest approach. It has the advantage that the caller has to explicitly handle the case when the value is not valid. 
 
 For example, the caller's code for the example above might look like:
-{% highlight fsharp %}
+```fsharp
 match (CreateEmailAddress "a@example.com") with
 | Some email -> ... do something with email
 | None -> ... ignore?
-{% endhighlight fsharp %}
+```
 
 The disadvantage is that with complex validations, it might not be obvious what went wrong. Was the email too long, or missing a '@' sign, or an invalid domain? We can't tell.
 
@@ -210,7 +210,7 @@ If you do need more detail, you might want to return a type which contains a mor
 
 The following example uses a `CreationResult` type to indicate the error in the failure case.
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 type CreationResult<'T> = Success of 'T | Error of string            
 
@@ -221,51 +221,51 @@ let CreateEmailAddress2 (s:string) =
 
 // test
 CreateEmailAddress2 "example.com"
-{% endhighlight fsharp %}
+```
 
 Finally, the most general approach uses continuations. That is, you pass in two functions, one for the success case (that takes the newly constructed email as parameter), and another for the failure case (that takes the error string as parameter).
 
-{% highlight fsharp %}
+```fsharp
 type EmailAddress = EmailAddress of string
 
 let CreateEmailAddressWithContinuations success failure (s:string) = 
     if System.Text.RegularExpressions.Regex.IsMatch(s,@"^\S+@\S+\.\S+$") 
         then success (EmailAddress s)
         else failure "Email address must contain an @ sign"
-{% endhighlight fsharp %}
+```
 
 The success function takes the email as a parameter and the error function takes a string. Both functions must return the same type, but the type is up to you. 
 
 Here is a simple example -- both functions do a printf, and return nothing (i.e. unit).
 
-{% highlight fsharp %}
+```fsharp
 let success (EmailAddress s) = printfn "success creating email %s" s        
 let failure  msg = printfn "error creating email: %s" msg
 CreateEmailAddressWithContinuations success failure "example.com"
 CreateEmailAddressWithContinuations success failure "x@example.com"
-{% endhighlight fsharp %}
+```
 
 With continuations, you can easily reproduce any of the other approaches. Here's the way to create options, for example. In this case both functions return an `EmailAddress option`.
 
-{% highlight fsharp %}
+```fsharp
 let success e = Some e
 let failure _  = None
 CreateEmailAddressWithContinuations success failure "example.com"
 CreateEmailAddressWithContinuations success failure "x@example.com"
-{% endhighlight fsharp %}
+```
 
 And here is the way to throw exceptions in the error case:
 
-{% highlight fsharp %}
+```fsharp
 let success e = e
 let failure _  = failwith "bad email address"
 CreateEmailAddressWithContinuations success failure "example.com"
 CreateEmailAddressWithContinuations success failure "x@example.com"
-{% endhighlight fsharp %}
+```
 
 This code seems quite cumbersome, but in practice you would probably create a local partially applied function that you use instead of the long-winded one.
 
-{% highlight fsharp %}
+```fsharp
 // setup a partially applied function
 let success e = Some e
 let failure _  = None
@@ -274,7 +274,7 @@ let createEmail = CreateEmailAddressWithContinuations success failure
 // use the partially applied function
 createEmail "x@example.com"
 createEmail "example.com"
-{% endhighlight fsharp %}
+```
 
 ## Creating modules for wrapper types ###
 
@@ -282,7 +282,7 @@ These simple wrapper types are starting to get more complicated now that we are 
 
 So it is probably a good idea to create a module for each wrapper type, and put the type and its associated functions there.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type T = EmailAddress of string
@@ -295,11 +295,11 @@ module EmailAddress =
     
     // unwrap
     let value (EmailAddress e) = e
-{% endhighlight fsharp %}
+```
 
 The users of the type would then use the module functions to create and unwrap the type. For example:
 
-{% highlight fsharp %}
+```fsharp
 
 // create email addresses
 let address1 = EmailAddress.create "x@example.com"
@@ -309,7 +309,7 @@ let address2 = EmailAddress.create "example.com"
 match address1 with
 | Some e -> EmailAddress.value e |> printfn "the value is %s"
 | None -> ()
-{% endhighlight fsharp %}
+```
 
 ## Forcing use of the constructor ###
 
@@ -320,7 +320,7 @@ a "private" type, and provide "wrap" and "unwrap" functions so that the clients 
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 
 module EmailAddress = 
 
@@ -335,7 +335,7 @@ module EmailAddress =
     
     // unwrap
     let value (EmailAddress e) = e
-{% endhighlight fsharp %}
+```
 
 Of course the type is not really private in this case, but you are encouraging the callers to always use the "published" functions.
 
@@ -343,7 +343,7 @@ If you really want to encapsulate the internals of the type and force callers to
 
 Here's a signature file for the email address example:
 
-{% highlight fsharp %}
+```fsharp
 // FILE: EmailAddress.fsi
 
 module EmailAddress  
@@ -356,13 +356,13 @@ val create : string -> T option
     
 // unwrap
 val value : T -> string
-{% endhighlight fsharp %}
+```
 
 (Note that module signatures only work in compiled projects, not in interactive scripts, so to test this, you will need to create three files in an F# project, with the filenames as shown here.)
 
 Here's the implementation file:
 
-{% highlight fsharp %}
+```fsharp
 // FILE: EmailAddress.fs
 
 module EmailAddress  
@@ -379,11 +379,11 @@ let create (s:string) =
 // unwrap
 let value (EmailAddress e) = e
 
-{% endhighlight fsharp %}
+```
 
 And here's a client:
 
-{% highlight fsharp %}
+```fsharp
 // FILE: EmailAddressClient.fs
 
 module EmailAddressClient
@@ -397,7 +397,7 @@ let address2 = EmailAddress.create "example.com"
 // code that uses the internals of the type fails to compile
 let address3 = T.EmailAddress "bad email"
 
-{% endhighlight fsharp %}
+```
 
 The type `EmailAddress.T` exported by the module signature is opaque, so clients cannot access the internals. 
 
@@ -417,23 +417,23 @@ As part of the construction, it is critical that the caller uses the provided co
 
 For example, here is some code that shows the UI doing its own validation:
 
-{% highlight fsharp %}
+```fsharp
 let processFormSubmit () = 
     let s = uiTextBox.Text
     if (s.Length < 50) 
         then // set email on domain object
         else // show validation error message        
-{% endhighlight fsharp %}
+```
 
 A better way is to let the constructor do it, as shown earlier.
 
-{% highlight fsharp %}
+```fsharp
 let processFormSubmit () = 
     let emailOpt = uiTextBox.Text |> EmailAddress.create 
     match emailOpt with
     | Some email -> // set email on domain object
     | None -> // show validation error message
-{% endhighlight fsharp %}
+```
 
 ## When to "unwrap" single case unions ###
 
@@ -443,19 +443,19 @@ One tip to avoid explicit unwrapping is to use the continuation approach again, 
 
 That is, rather than calling the "unwrap" function explicitly:
 
-{% highlight fsharp %}
+```fsharp
 address |> EmailAddress.value |> printfn "the value is %s" 
-{% endhighlight fsharp %}
+```
 
 You would pass in a function which gets applied to the inner value, like this:
 
-{% highlight fsharp %}
+```fsharp
 address |> EmailAddress.apply (printfn "the value is %s")
-{% endhighlight fsharp %}
+```
 
 Putting this together, we now have the complete `EmailAddress` module.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type _T = EmailAddress of string
@@ -478,7 +478,7 @@ module EmailAddress =
     // unwrap directly
     let value e = apply id e
 
-{% endhighlight fsharp %}       
+```       
 
 The `create` and `value` functions are not strictly necessary, but are added for the convenience of callers.
 
@@ -486,7 +486,7 @@ The `create` and `value` functions are not strictly necessary, but are added for
 
 Let's refactor the `Contact` code now, with the new wrapper types and modules added.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type T = EmailAddress of string
@@ -590,7 +590,7 @@ type Contact =
     PostalContactInfo: PostalContactInfo;
     }
 
-{% endhighlight fsharp %}       
+```       
 
 By the way, notice that we now have quite a lot of duplicate code in the three wrapper type modules. What would be a good way of getting rid of it, or at least making it cleaner?
 

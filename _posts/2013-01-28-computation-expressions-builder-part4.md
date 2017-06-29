@@ -25,7 +25,7 @@ Say that you have a union type. You might consider overloading `Return` or `Yiel
 
 For example, here's a very simple example where `Return` has two overloads:
 
-{% highlight fsharp %}
+```fsharp
 type SuccessOrError = 
 | Success of int
 | Error of string
@@ -50,11 +50,11 @@ type SuccessOrErrorBuilder() =
 // make an instance of the workflow                
 let successOrError = new SuccessOrErrorBuilder()
 
-{% endhighlight fsharp %}
+```
 
 And here it is in use:
 
-{% highlight fsharp %}
+```fsharp
 successOrError { 
     return 42
     } |> printfn "Result for success: %A" 
@@ -64,7 +64,7 @@ successOrError {
     return "error for step 1"
     } |> printfn "Result for error: %A" 
 //Result for error: Error "error for step 1"    
-{% endhighlight fsharp %}
+```
 
 What's wrong with this, you might think?
 
@@ -72,17 +72,17 @@ Well, first, if we go back to the [discussion on wrapper types](/posts/computati
 
 What that means in this case is that the union type should be resigned to look like this:  
 
-{% highlight fsharp %}
+```fsharp
 type SuccessOrError<'a,'b> = 
 | Success of 'a
 | Error of 'b
-{% endhighlight fsharp %}
+```
 
 But as a consequence of the generics, the `Return` method can't be overloaded any more!
 
 Second, it's probably not a good idea to expose the internals of the type inside the expression like this anyway. The concept of "success" and "failure" cases is useful, but a better way would be to hide the "failure" case and handle it automatically inside `Bind`, like this:
 
-{% highlight fsharp %}
+```fsharp
 type SuccessOrError<'a,'b> = 
 | Success of 'a
 | Error of 'b
@@ -103,11 +103,11 @@ type SuccessOrErrorBuilder() =
 
 // make an instance of the workflow                
 let successOrError = new SuccessOrErrorBuilder()
-{% endhighlight fsharp %}
+```
 
 In this approach, `Return` is only used for success, and the failure cases are hidden.
 
-{% highlight fsharp %}
+```fsharp
 successOrError { 
     return 42
     } |> printfn "Result for success: %A" 
@@ -116,7 +116,7 @@ successOrError {
     let! x = Success 1
     return x/0
     } |> printfn "Result for error: %A" 
-{% endhighlight fsharp %}
+```
 
 We'll see more of this technique in an upcoming post.
 
@@ -132,7 +132,7 @@ But what if we change our requirements, and say that:
 
 A first attempt using combine might look this:
 
-{% highlight fsharp %}
+```fsharp
 member this.Combine (a,b) = 
     match a,b with
     | Some a', Some b' ->
@@ -147,51 +147,51 @@ member this.Combine (a,b) =
     | None, None ->
         printfn "combining None with None"
         None
-{% endhighlight fsharp %}
+```
 
 In the `Combine` method, we unwrap the value from the passed-in option and combine them into a list wrapped in a `Some` (e.g. `Some [a';b']`).
 
 For two yields it works as expected:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     } |> printfn "Result for yield then yield: %A" 
    
 // Result for yield then yield: Some [1; 2]
-{% endhighlight fsharp %}
+```
 
 And for a yielding a `None`, it also works as expected:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield! None
     } |> printfn "Result for yield then None: %A" 
 
 // Result for yield then None: Some [1]
-{% endhighlight fsharp %}
+```
 
 But what happens if there are *three* values to combine? Like this:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     yield 3
     } |> printfn "Result for yield x 3: %A" 
-{% endhighlight fsharp %}
+```
 
 If we try this, we get a compiler error:
 
-{% highlight text %}
+```text
 error FS0001: Type mismatch. Expecting a
     int option    
 but given a
     'a list option    
 The type 'int' does not match the type ''a list'        
-{% endhighlight text %}
+```
         
 What is the problem?  
 
@@ -201,7 +201,7 @@ But, here's where we might want use our overloading trick. We can create *two* d
 
 So here are the two methods, with different parameter types:
 
-{% highlight fsharp %}
+```fsharp
 /// combine with a list option
 member this.Combine (a, listOption) = 
     match a,listOption with
@@ -233,11 +233,11 @@ member this.Combine (a,b) =
     | None, None ->
         printfn "combining None with None"
         None
-{% endhighlight fsharp %}
+```
 
 Now if we try combining three results, as before, we get what we expect.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
@@ -245,22 +245,22 @@ trace {
     } |> printfn "Result for yield x 3: %A" 
 
 // Result for yield x 3: Some [1; 2; 3]    
-{% endhighlight fsharp %}
+```
 
 Unfortunately, this trick has broken some previous code! If you try yielding a `None` now, you will get a compiler error.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield! None
     } |> printfn "Result for yield then None: %A" 
-{% endhighlight fsharp %}
+```
 
 The error is:
 
-{% highlight text %}
+```text
 error FS0041: A unique overload for method 'Combine' could not be determined based on type information prior to this program point. A type annotation may be needed. 
-{% endhighlight text %}
+```
 
 But hold on, before you get too annoyed, try thinking like the compiler.  If you were the compiler, and you were given a `None`, which method would *you* call?
 
@@ -268,13 +268,13 @@ There is no correct answer, because a `None` could be passed as the second param
 
 As the compiler reminds us, a type annotation will help, so let's give it one. We'll force the None to be an `int option`.
         
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     let x:int option = None
     yield! x
     } |> printfn "Result for yield then None: %A" 
-{% endhighlight fsharp %}        
+```        
         
 This is ugly, of course, but in practice might not happen very often.  
 
@@ -284,7 +284,7 @@ That is, if we *do* want to allow multiple `yield`s, then we should use `'a list
 
 Here's the code for our third version:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     member this.Bind(m, f) = 
         match m with 
@@ -327,11 +327,11 @@ type TraceBuilder() =
 
 // make an instance of the workflow                
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 And now the examples work as expected without any special tricks:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
@@ -353,7 +353,7 @@ trace {
     } |> printfn "Result for yield then None: %A" 
 
 // Result for yield then None: Some [1]
-{% endhighlight fsharp %}
+```
 
 Not only is the code cleaner, but as in the `Return` example, we have made our code more generic as well, having gone from a specific type (`int option`) to a more generic type (`'a option`).
 
@@ -367,7 +367,7 @@ One legitimate case where overloading might be needed is the `For` method.  Some
 
 Here's an example of our list builder that has been extended to support sequences as well as lists:
 
-{% highlight fsharp %}
+```fsharp
 type ListBuilder() =
     member this.Bind(m, f) = 
         m |> List.collect f
@@ -387,11 +387,11 @@ type ListBuilder() =
 
 // make an instance of the workflow                
 let listbuilder = new ListBuilder()
-{% endhighlight fsharp %}
+```
 
 And here is it in use:
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     let list = [1..10]
     for i in list do yield i
@@ -401,7 +401,7 @@ listbuilder {
     let s = seq {1..10}
     for i in s do yield i
     } |> printfn "Result for seq : %A" 
-{% endhighlight fsharp %}
+```
 
 If you comment out the second `For` method, you will see the "sequence` example will indeed fail to compile. So the overload is needed.
 

@@ -81,7 +81,7 @@ Finally, the associated module `Turtle` (that contains the functions) is going h
 * `RequireQualifiedAccess` means the module name *must* be used when accessing the functions (just like `List` module)
 * `ModuleSuffix` is needed so the that module can have the same name as the state type. This would not be required for generic types (e.g if we had `Turtle<'a>` instead).
 
-{% highlight fsharp %}
+```fsharp
 module AdtTurtle = 
 
     /// A private structure representing the turtle 
@@ -100,17 +100,17 @@ module AdtTurtle =
     [<RequireQualifiedAccess>]
     [<CompilationRepresentation (CompilationRepresentationFlags.ModuleSuffix)>]
     module Turtle =
-{% endhighlight fsharp %}
+```
 
 An alternative way to avoid collisions is to have the state type have a different case, or a different name with a lowercase alias, like this: 
 
-{% highlight fsharp %}
+```fsharp
 type TurtleState = { ... }
 type turtle = TurtleState 
 
 module Turtle =
     let something (t:turtle) = t
-{% endhighlight fsharp %}
+```
 
 No matter how the naming is done, we will need a way to construct a new `Turtle`.
 
@@ -118,7 +118,7 @@ If there are no parameters to the constructor, and the state is immutable, then 
 
 Otherwise we can define a function called `make` (or `create` or similar):
 
-{% highlight fsharp %}
+```fsharp
 [<RequireQualifiedAccess>]
 [<CompilationRepresentation (CompilationRepresentationFlags.ModuleSuffix)>]
 module Turtle =
@@ -130,7 +130,7 @@ module Turtle =
         color = initialColor
         penState = initialPenState
     }                
-{% endhighlight fsharp %}
+```
 
 The rest of the turtle module functions are unchanged from their implementation in [way 2](/posts/13-ways-of-looking-at-a-turtle/#way2).
 
@@ -140,7 +140,7 @@ Let's look the client now.
 
 First, let's check that the state really is private. If we try to create a state explicitly, as shown below, we get a compiler error:
 
-{% highlight fsharp %}
+```fsharp
 let initialTurtle = {
     position = initialPosition
     angle = 0.0<Degrees>
@@ -150,21 +150,21 @@ let initialTurtle = {
 // Compiler error FS1093: 
 //    The union cases or fields of the type 'Turtle'
 //    are not accessible from this code location
-{% endhighlight fsharp %}
+```
 
 If we use the constructor and then try to directly access a field directly (such as `position`), we again get a compiler error:
 
-{% highlight fsharp %}
+```fsharp
 let turtle = Turtle.make(Red)
 printfn "%A" turtle.position
 // Compiler error FS1093: 
 //    The union cases or fields of the type 'Turtle'
 //    are not accessible from this code location
-{% endhighlight fsharp %}
+```
 
 But if we stick to the functions in the `Turtle` module, we can safely create a state value and then call functions on it, just as we did before:
 
-{% highlight fsharp %}
+```fsharp
 // versions with log baked in (via partial application)
 let move = Turtle.move log
 let turn = Turtle.turn log
@@ -178,7 +178,7 @@ let drawTriangle() =
     |> turn 120.0<Degrees>
     |> move 100.0 
     |> turn 120.0<Degrees>
-{% endhighlight fsharp %}
+```
 
 ### Advantages and disadvantages of ADTs
 
@@ -220,7 +220,7 @@ I have [a whole series of posts devoted to it](/posts/capability-based-security/
 
 The first thing is to define the record of functions that will be returned after each call:
 
-{% highlight fsharp %}
+```fsharp
 type MoveResponse = 
     | MoveOk 
     | HitABarrier
@@ -242,7 +242,7 @@ and MoveFn =      Distance -> (MoveResponse * TurtleFunctions)
 and TurnFn =      Angle    -> TurtleFunctions
 and PenUpDownFn = unit     -> TurtleFunctions
 and SetColorFn =  unit     -> (SetColorResponse * TurtleFunctions)
-{% endhighlight fsharp %}
+```
 
 Let's look at these declarations in detail.
 
@@ -262,17 +262,17 @@ Finally, note the difference between the signature of `MoveFn` in this design an
 
 Earlier version:
 
-{% highlight fsharp %}
+```fsharp
 val move : 
     Log -> Distance -> TurtleState -> (MoveResponse * TurtleState)
-{% endhighlight fsharp %}
+```
 
 New version:
 
-{% highlight fsharp %}
+```fsharp
 val move : 
     Distance -> (MoveResponse * TurtleFunctions)
-{% endhighlight fsharp %}
+```
 
 On the input side, the `Log` and `TurtleState` parameters are gone, and on the output side, the `TurtleState` has been replaced with `TurtleFunctions`.
 
@@ -282,7 +282,7 @@ This means that somehow, the output of every API function must be changed to be 
    
 In order to decide whether we can indeed move, or use a particular color, we first need to augment the `TurtleState` type to track these factors:
     
-{% highlight fsharp %}
+```fsharp
 type Log = string -> unit
 
 type private TurtleState = {
@@ -295,7 +295,7 @@ type private TurtleState = {
     availableInk: Set<PenColor>   // new!
     logger : Log                  // new!
 }
-{% endhighlight fsharp %}
+```
 
 This has been enhanced with
 
@@ -307,7 +307,7 @@ The `TurtleState` is getting a bit ugly now, but that's alright, because it's pr
 
 With this augmented state available, we can change `move`. First we'll make it private, and second we'll set the `canMove` flag (using `moveResult <> HitABarrier`) before returning a new state:
   
-{% highlight fsharp %}
+```fsharp
 /// Function is private! Only accessible to the client via the TurtleFunctions record
 let private move log distance state =
 
@@ -327,13 +327,13 @@ let private move log distance state =
          canMove = (moveResult <> HitABarrier)   // NEW! 
         }
     (moveResult,newState) 
-{% endhighlight fsharp %}
+```
 
 We need some way of changing `canMove` back to true! So let's assume that if you turn, you can move again. 
 
 Let's add that logic to the `turn` function then:
 
-{% highlight fsharp %}
+```fsharp
 let private turn log angle state =
     log (sprintf "Turn %0.1f" angle)
     // calculate new angle
@@ -342,13 +342,13 @@ let private turn log angle state =
     let canMove = true
     // update the state
     {state with angle = newAngle; canMove = canMove} 
-{% endhighlight fsharp %}
+```
 
 The `penUp` and `penDown` functions are unchanged, other than being made private.  
 
 And for the last operation, `setColor`, we'll remove the ink from the availability set as soon as it is used just once!
 
-{% highlight fsharp %}
+```fsharp
 let private setColor log color state =
     let colorResult = 
         if color = Red then OutOfInk else ColorOk
@@ -360,13 +360,13 @@ let private setColor log color state =
     // return the new state and the SetColor result
     let newState = {state with color = color; availableInk = newAvailableInk}
     (colorResult,newState) 
-{% endhighlight fsharp %}
+```
  
 Finally we need a function that can create a `TurtleFunctions` record from the `TurtleState`. I'll call it `createTurtleFunctions`.
 
 Here's the complete code, and I'll discuss it in detail below:
   
-{% highlight fsharp %}
+```fsharp
 /// Create the TurtleFunctions structure associated with a TurtleState
 let rec private createTurtleFunctions state =
     let ctf = createTurtleFunctions  // alias
@@ -428,7 +428,7 @@ let rec private createTurtleFunctions state =
     setBlue  = setBlue  
     setRed   = setRed   
     }
-{% endhighlight fsharp %}
+```
   
 Let's look at how this works.
 
@@ -436,18 +436,18 @@ First, note that this function needs the `rec` keyword attached, as it refers to
 
 Next, new versions of each of the API functions are created. For example, a new `turn` function is defined like this:
 
-{% highlight fsharp %}
+```fsharp
 let turn angle = 
     let newState = turn state.logger angle state
     ctf newState
-{% endhighlight fsharp %}
+```
   
 This calls the original `turn` function with the logger and state, and then uses the recursive call (`ctf`) to convert the new state into the record of functions.
 
 For an optional function like `move`, it is a bit more complicated. An inner function `f` is defined, using the orginal `move`, and then either `f` is returned as `Some`,
 or `None` is returned, depending on whether the `state.canMove` flag is set:
 
-{% highlight fsharp %}
+```fsharp
 // create the move function,
 // if the turtle can't move, return None
 let move = 
@@ -462,11 +462,11 @@ let move =
         Some f
     else
         None
-{% endhighlight fsharp %}
+```
 
 Similarly, for `setColor`, an inner function `f` is defined and then returned or not depending on whether the color parameter is in the `state.availableInk` collection:
 
-{% highlight fsharp %}
+```fsharp
 let setColor color = 
     // the inner function
     let f() = 
@@ -479,11 +479,11 @@ let setColor color =
         Some f
     else
         None
-{% endhighlight fsharp %}
+```
 
 Finally, all these functions are added to the record:
 
-{% highlight fsharp %}
+```fsharp
 // return the structure
 {
 move     = move
@@ -494,13 +494,13 @@ setBlack = setBlack
 setBlue  = setBlue  
 setRed   = setRed   
 }
-{% endhighlight fsharp %}
+```
 
 And that's how you build a `TurtleFunctions` record!
   
 We need one more thing: a constructor to create some initial value of the `TurtleFunctions`, since we no longer have direct access to the API. This is now the ONLY public function available to the client!
   
-{% highlight fsharp %}
+```fsharp
 /// Return the initial turtle.
 /// This is the ONLY public function!
 let make(initialColor, log) = 
@@ -514,7 +514,7 @@ let make(initialColor, log) =
         logger = log
     }                
     createTurtleFunctions state
-{% endhighlight fsharp %} 
+``` 
 
 This function bakes in the `log` function, creates a new state, and then calls `createTurtleFunctions` to return a `TurtleFunction` record for the client to use.
 
@@ -525,7 +525,7 @@ and so at that point the `move` function should no longer be available.
 
 First, we create the `TurtleFunctions` record with `Turtle.make`. Then we can't just move immediately, we have to test to see if the `move` function is available first:
 
-{% highlight fsharp %}
+```fsharp
 let testBoundary() =
     let turtleFns = Turtle.make(Red,log)
     match turtleFns.move with
@@ -533,7 +533,7 @@ let testBoundary() =
         log "Error: Can't do move 1"
     | Some moveFn -> 
         ...    
-{% endhighlight fsharp %}
+```
 
 In the last case, the `moveFn` is available, so we can call it with a distance of 60. 
 
@@ -541,7 +541,7 @@ The output of the function is a pair: a `MoveResponse` type and a new `TurtleFun
 
 We'll ignore the `MoveResponse` and check the `TurtleFunctions` record again to see if we can do the next move:
 
-{% highlight fsharp %}
+```fsharp
 let testBoundary() =
     let turtleFns = Turtle.make(Red,log)
     match turtleFns.move with
@@ -554,11 +554,11 @@ let testBoundary() =
             log "Error: Can't do move 2"
         | Some moveFn -> 
             ...
-{% endhighlight fsharp %}
+```
 
 And finally, one more time:
 
-{% highlight fsharp %}
+```fsharp
 let testBoundary() =
     let turtleFns = Turtle.make(Red,log)
     match turtleFns.move with
@@ -576,43 +576,43 @@ let testBoundary() =
                 log "Error: Can't do move 3"
             | Some moveFn -> 
                 log "Success"
-{% endhighlight fsharp %}
+```
 
 If we run this, we get the output:
 
-{% highlight text %}
+```text
 Move 60.0
 ...Draw line from (0.0,0.0) to (60.0,0.0) using Red
 Move 60.0
 ...Draw line from (60.0,0.0) to (100.0,0.0) using Red
 Error: Can't do move 3
-{% endhighlight text %}
+```
 
 Which shows that indeed, the concept is working!
 
 That nested option matching is really ugly, so let's whip up a quick `maybe` workflow to make it look nicer:
 
-{% highlight fsharp %}
+```fsharp
 type MaybeBuilder() =         
     member this.Return(x) = Some x
     member this.Bind(x,f) = Option.bind f x
     member this.Zero() = Some()
 let maybe = MaybeBuilder()
-{% endhighlight fsharp %}
+```
 
 And a logging function that we can use inside the workflow:
 
-{% highlight fsharp %}
+```fsharp
 /// A function that logs and returns Some(),
 /// for use in the "maybe" workflow
 let logO message =
     printfn "%s" message
     Some ()
-{% endhighlight fsharp %}
+```
 
 Now we can try setting some colors using the `maybe` workflow:
 
-{% highlight fsharp %}
+```fsharp
 let testInk() =
     maybe {
     // create a turtle
@@ -645,17 +645,17 @@ let testInk() =
             logO "Success: Can still use Blue ink"
 
     } |> ignore
-{% endhighlight fsharp %}
+```
 
 The output of this is:
 
-{% highlight text %}
+```text
 SetColor Red
 Move 60.0
 ...Draw line from (0.0,0.0) to (60.0,0.0) using Red
 Error: Can no longer use Red ink
 Success: Can still use Blue ink
-{% endhighlight text %}
+```
 
 Actually, using a `maybe` workflow is not a very good idea, because the first failure exits the workflow!
 You'd want to come up with something a bit better for real code, but I hope that you get the idea.

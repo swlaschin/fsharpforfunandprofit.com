@@ -17,13 +17,13 @@ In this post, we'll look at whether we can extend that concept to an even more f
 
 Let's look a simple `PersonalName` type.
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = 
     {
     FirstName: string;
     LastName: string;
     }
-{% endhighlight fsharp %}
+```
 
 The type says that the first name is a `string`. But really, is that all it is?  Are there any other constraints that we might need to add to it?
 
@@ -53,7 +53,7 @@ It is important that all these applications and services have the *same* idea of
 
 For example, have you ever written code that checks the length of a string before writing it to a database? 
 
-{% highlight csharp %}
+```csharp
 void SaveToDatabase(PersonalName personalName)
 { 
    var first = personalName.First;
@@ -65,7 +65,7 @@ void SaveToDatabase(PersonalName personalName)
    
    //save to database
 }
-{% endhighlight csharp %}
+```
 
 If the string *is* too long at this point, what should you do? Silently truncate it? Throw an exception?
 
@@ -81,7 +81,7 @@ The answer, of course, is to create wrapper types which have the constraints bui
 
 So let's knock up a quick prototype using the single case union technique we used [before](/posts/designing-with-types-single-case-dus/).
 
-{% highlight fsharp %}
+```fsharp
 module String100 = 
     type T = String100 of string
     let create (s:string) = 
@@ -108,20 +108,20 @@ module String2 =
         else None
     let apply f (String2 s) = f s
     let value s = apply id s
-{% endhighlight fsharp %}
+```
 
 Note that we immediately have to deal with the case when the validation fails by using an option type as the result.  It makes creation more painful, but we can't avoid it if we want the benefits later.
 
 For example, here is a good string and a bad string of length 2.
 
-{% highlight fsharp %}
+```fsharp
 let s2good = String2.create "CA"
 let s2bad = String2.create "California"
 
 match s2bad with
 | Some s2 -> // update domain object
 | None -> // handle error
-{% endhighlight fsharp %}
+```
 
 In order to use the `String2` value we are forced to check whether it is `Some` or `None` at the time of creation.
 
@@ -131,7 +131,7 @@ One problem is that we have a lot of duplicated code. In practice a typical doma
 
 Another more serious problem is that comparisons become harder. A `String50` is a different type from a `String100` so that they cannot be compared directly. 
 
-{% highlight fsharp %}
+```fsharp
 let s50 = String50.create "John"
 let s100 = String100.create "Smith"
 
@@ -139,7 +139,7 @@ let s50' = s50.Value
 let s100' = s100.Value
 
 let areEqual = (s50' = s100')  // compiler error
-{% endhighlight fsharp %}
+```
 
 This kind of thing will make working with dictionaries and lists harder.
 
@@ -147,7 +147,7 @@ This kind of thing will make working with dictionaries and lists harder.
 
 At this point we can exploit F#'s support for interfaces, and create a common interface that all wrapped strings have to support, and also some standard functions:
 
-{% highlight fsharp %}
+```fsharp
 module WrappedString = 
 
     /// An interface that all wrapped strings support
@@ -182,13 +182,13 @@ module WrappedString =
     /// Comparison
     let compareTo left right = 
         (value left).CompareTo (value right)
-{% endhighlight fsharp %}
+```
 
 The key function is `create`, which takes a constructor function and creates new values using it only when the validation passes.
 
 With this in place it is a lot easier to define new types:
 
-{% highlight fsharp %}
+```fsharp
 module WrappedString = 
 
     // ... code from above ...
@@ -224,7 +224,7 @@ module WrappedString =
 
     /// Converts a wrapped string to a string of length 50
     let convertTo50 s = apply string50 s
-{% endhighlight fsharp %}
+```
 
 For each type of string now, we just have to:
 
@@ -238,27 +238,27 @@ The type is a simple wrapped type as we have seen before.
 
 The implementation of the `Value` method of the IWrappedString could have been written using multiple lines, like this:
 
-{% highlight fsharp %}
+```fsharp
 member this.Value = 
     let (String100 s) = this 
     s
-{% endhighlight fsharp %}
+```
 
 But I chose to use a one liner shortcut:
 
-{% highlight fsharp %}
+```fsharp
 member this.Value = let (String100 s) = this in s
-{% endhighlight fsharp %}
+```
 
 The constructor function is also very simple. The canonicalize function is `singleLineTrimmed`, the validator function checks the length, and the constructor is the `String100` function (the function associated with the single case, not to be confused with the type of the same name). 
 
-{% highlight fsharp %}
+```fsharp
 let string100 = create singleLineTrimmed (lengthValidator 100) String100
-{% endhighlight fsharp %}
+```
 
 If you want to have other types with different constraints, you can easily add them. For example you might want to have a `Text1000` type that supports multiple lines and embedded tabs and is not trimmed.
 
-{% highlight fsharp %}
+```fsharp
 module WrappedString = 
 
     // ... code from above ...
@@ -270,13 +270,13 @@ module WrappedString =
 
     /// A constructor for multiline strings of length 1000
     let text1000 = create id (lengthValidator 1000) Text1000 
-{% endhighlight fsharp %}
+```
 
 ### Playing with the WrappedString module 
 
 We can now play with the module interactively to see how it works:
 
-{% highlight fsharp %}
+```fsharp
 let s50 = WrappedString.string50 "abc" |> Option.get
 printfn "s50 is %A" s50
 let bad = WrappedString.string50 null
@@ -292,13 +292,13 @@ printfn "s50 is equal to s100 using Object.Equals? %b" (s50.Equals s100)
 
 // direct equality does not compile
 printfn "s50 is equal to s100? %b" (s50 = s100) // compiler error
-{% endhighlight fsharp %}
+```
 
 When we need to interact with types such as maps that use raw strings, it is easy to compose new helper functions.
 
 For example, here are some helpers to work with maps:
 
-{% highlight fsharp %}
+```fsharp
 module WrappedString = 
 
     // ... code from above ...
@@ -312,11 +312,11 @@ module WrappedString =
 
     let mapTryFind k map =  
         Map.tryFind (value k) map    
-{% endhighlight fsharp %}
+```
 
 And here is how these helpers might be used in practice:
 
-{% highlight fsharp %}
+```fsharp
 let abc = WrappedString.string50 "abc" |> Option.get
 let def = WrappedString.string100 "def" |> Option.get
 let map = 
@@ -328,7 +328,7 @@ printfn "Found abc in map? %A" (WrappedString.mapTryFind abc map)
 
 let xyz = WrappedString.string100 "xyz" |> Option.get
 printfn "Found xyz in map? %A" (WrappedString.mapTryFind xyz map)
-{% endhighlight fsharp %}
+```
 
 So overall, this "WrappedString" module allows us to create nicely typed strings without interfering too much. Now let's use it in a real situation.
 
@@ -336,7 +336,7 @@ So overall, this "WrappedString" module allows us to create nicely typed strings
 
 Now we have our types, we can change the definition of the `PersonalName` type to use them.
 
-{% highlight fsharp %}
+```fsharp
 module PersonalName = 
     open WrappedString
 
@@ -356,7 +356,7 @@ module PersonalName =
                 }
         | _ -> 
             None
-{% endhighlight fsharp %}
+```
 
 We have created a module for the type and added a creation function that converts a pair of strings into a `PersonalName`. 
 
@@ -366,9 +366,9 @@ In this case we use the simple approach of creating an option type with None to 
 
 Here it is in use:
 
-{% highlight fsharp %}
+```fsharp
 let name = PersonalName.create "John" "Smith"
-{% endhighlight fsharp %}
+```
 
 We can also provide additional helper functions in the module. 
 
@@ -383,7 +383,7 @@ Again, more decisions to make.
 
 Here's code that demonstrates all three options.
 
-{% highlight fsharp %}
+```fsharp
 module PersonalName = 
 
     // ... code from above ...
@@ -415,7 +415,7 @@ module PersonalName =
         |> string100    // wrap
         |> Option.get   // this will always be ok
 
-{% endhighlight fsharp %}
+```
 
 Which particular approach you take to implementing `fullName` is up to you.  But it demonstrates a key point about this style of type-oriented design: these decisions have to be taken *up front*, when creating the code.  You cannot postpone them till later.
 
@@ -425,7 +425,7 @@ This can be very annoying at times, but overall I think it is a good thing.
 
 We can use this WrappedString module to reimplement the `EmailAddress` and `ZipCode` types.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type T = EmailAddress of string with 
@@ -456,7 +456,7 @@ module ZipCode =
 
     /// Converts any wrapped string to a ZipCode
     let convert s = WrappedString.apply create s
-{% endhighlight fsharp %}
+```
 
 ## Other uses of wrapped strings
 

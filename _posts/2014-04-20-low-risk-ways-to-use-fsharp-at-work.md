@@ -93,11 +93,11 @@ To use the F# interactive window in Visual Studio:
 
 For example:
 
-{% highlight fsharp %}
+```fsharp
 let x = 1
 let y = 2
 x + y;;
-{% endhighlight fsharp %}
+```
 
 Personally, I prefer to create a script file (`File > New > File` then pick "F# script") and type code there, because you get auto-complete and intellisense.
 
@@ -152,17 +152,17 @@ All these questions can be found in the MSDN documentation, of course, but can a
 
 I want to use 24 hour clock in a custom format. I know that it's "h", but is it upper or lowercase "h"?
 
-{% highlight fsharp %}
+```fsharp
 open System
 DateTime.Now.ToString("yyyy-MM-dd hh:mm")  // "2014-04-18 01:08"
 DateTime.Now.ToString("yyyy-MM-dd HH:mm")  // "2014-04-18 13:09"
-{% endhighlight fsharp %}
+```
 
 ### How does XML serialization handle local DateTimes vs. UTC DateTimes?
 
 How exactly, does XML serialization work with dates? Let's find out!
 
-{% highlight fsharp %}
+```fsharp
 // TIP: sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -186,16 +186,16 @@ let d = {
     }
 
 testSerialization d
-{% endhighlight fsharp %}
+```
 
 The output is:
 
-{% highlight text %}
+```text
 <DateSerTest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Local>2014-07-04T00:00:00+01:00</Local>
   <Utc>2014-07-04T00:00:00Z</Utc>
 </DateSerTest>
-{% endhighlight text %}
+```
 
 So I can see it uses "Z" for UTC times.
 
@@ -203,11 +203,11 @@ So I can see it uses "Z" for UTC times.
 
 This can be answered with a simple snippet:
 
-{% highlight fsharp %}
+```fsharp
 Environment.GetEnvironmentVariable "ProgramFiles" = 
     Environment.GetEnvironmentVariable "PROGRAMFILES"
 // answer => true 
-{% endhighlight fsharp %}
+```
 
 The answer is therefore "not case-sensitive".
 
@@ -221,7 +221,7 @@ You are not restricted to playing with the .NET libraries, of course. Sometimes 
 
 To do this, just reference the DLL and then open the namespace as shown below.
 
-{% highlight fsharp %}
+```fsharp
 
 // set the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
@@ -234,7 +234,7 @@ open MyApp
 
 // do something
 MyApp.DoSomething()
-{% endhighlight fsharp %}
+```
 
 WARNING: in older versions of F#, opening a reference to your DLL will lock it so that you can't compile it! In which case, before recompiling, be sure to reset the interactive session to release the lock.
 In newer versions of F#, [the DLL is shadow-copied](https://visualfsharp.codeplex.com/SourceControl/changeset/4c10b32c4f417701f4e6c3284b0a8dadab5a9b98), and there is no lock.
@@ -254,7 +254,7 @@ via `nuget install Microsoft.AspNet.WebApi.OwinSelfHost -o Packages -ExcludeVers
 
 Once these libraries are in place, you can use the code below as a skeleton for a simple WebAPI app.
 
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -389,11 +389,11 @@ do
     // for standalone scripts, pause so that you can test via your browser as well
     Console.ReadLine() |> ignore
 
-{% endhighlight fsharp %}
+```
 
 Here's the output:
 
-{% highlight text %}
+```text
 StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: System.Net.Http.StreamContent, Headers:
 {
   Date: Fri, 18 Apr 2014 22:29:04 GMT
@@ -423,7 +423,7 @@ StatusCode: 200, ReasonPhrase: 'OK', Version: 1.1, Content: System.Net.Http.Stre
   Content-Type: application/json; charset=utf-8
 }
 "id is 42"
-{% endhighlight text %}
+```
 
 This example is just to demonstrate that you can use the OWIN and WebApi libraries "out-of-the-box".
 
@@ -440,7 +440,7 @@ Another use for F# interactive is to play with UI's while they are running -- li
 
 Here's an example of developing a WinForms screen interactively.
 
-{% highlight fsharp %}
+```fsharp
 open System.Windows.Forms 
 open System.Drawing
 
@@ -449,7 +449,7 @@ form.TopMost <- true
 form.Click.Add (fun _ -> 
     form.Text <- sprintf "form clicked at %i" DateTime.Now.Ticks)
 form.Show()
-{% endhighlight fsharp %}
+```
 
 Here's the window:
 
@@ -461,7 +461,7 @@ And here's the window after clicking, with the title bar changed:
 
 Now let's add a FlowLayoutPanel and a button.
 
-{% highlight fsharp %}
+```fsharp
 let panel = new FlowLayoutPanel()
 form.Controls.Add(panel)
 panel.Dock = DockStyle.Fill 
@@ -471,7 +471,7 @@ let greenButton = new Button()
 greenButton.Text <- "Make the background color green" 
 greenButton.Click.Add (fun _-> form.BackColor <- Color.LightGreen)
 panel.Controls.Add(greenButton) 
-{% endhighlight fsharp %}
+```
 
 Here's the window now:
 
@@ -479,9 +479,9 @@ Here's the window now:
 
 But the button is too small -- we need to set `AutoSize` to be true.
 
-{% highlight fsharp %}
+```fsharp
 greenButton.AutoSize <- true
-{% endhighlight fsharp %}
+```
 
 That's better!
 
@@ -489,29 +489,29 @@ That's better!
 
 Let's add a yellow button too:
 
-{% highlight fsharp %}
+```fsharp
 let yellowButton = new Button()
 yellowButton.Text <- "Make me yellow" 
 yellowButton.AutoSize <- true
 yellowButton.Click.Add (fun _-> form.BackColor <- Color.Yellow)
 panel.Controls.Add(yellowButton) 
-{% endhighlight fsharp %}
+```
 
 ![](/assets/img/fsharp-interactive-ui5.png)
 
 But the button is cut off, so let's change the flow direction:
 
-{% highlight fsharp %}
+```fsharp
 panel.FlowDirection <- FlowDirection.TopDown
-{% endhighlight fsharp %}
+```
 
 ![](/assets/img/fsharp-interactive-ui6.png)
 
 But now the yellow button is not the same width as the green button, which we can fix with `Dock`:
 
-{% highlight fsharp %}
+```fsharp
 yellowButton.Dock <- DockStyle.Fill
-{% endhighlight fsharp %}
+```
 
 ![](/assets/img/fsharp-interactive-ui7.png)
 

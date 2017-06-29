@@ -25,15 +25,15 @@ Let's introduce some terminology:
  
 Here's how the definition would look in F#
 
-{% highlight fsharp %}
+```fsharp
 let add1 x = x + 1
-{% endhighlight %}
+```
 
 If you type that into the F# interactive window (don't forget the double semicolons) you will see the result (the "signature" of the function): 
 
-{% highlight fsharp %}
+```fsharp
 val add1 : int -> int
-{% endhighlight  %}
+```
 
 Let's look at that output in detail:
 
@@ -57,7 +57,7 @@ These properties provide some very powerful benefits, and so functional programm
 In imperative programming, we think that functions "do" something or "calculate" something. A mathematical function does not do any calculation -- it is purely a mapping from input to output. In fact, another way to think of defining a function is simply as the set of all the mappings. For example, in a very crude way we could define the "`add1`" 
 function (in C#) as 
 
-{% highlight csharp %}
+```csharp
 int add1(int input)
 { 
    switch (input)
@@ -69,7 +69,7 @@ int add1(int input)
    etc ad infinitum
    }
 }
-{% endhighlight  %}
+```
 
 Obviously, we can't have a case for every possible integer, but the principle is the same. You can see that absolutely no calculation is being done at all, just a lookup.
 

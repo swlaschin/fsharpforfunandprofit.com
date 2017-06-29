@@ -70,7 +70,7 @@ In this way, neither the client nor the command handler needs to track state.  O
 
 We will start by defining the types relating to our event sourcing system. First, the types related to commands:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleId = System.Guid
 
 /// A desired action on a turtle
@@ -86,7 +86,7 @@ type TurtleCommand = {
     turtleId : TurtleId
     action : TurtleCommandAction 
     }
-{% endhighlight fsharp %}
+```
 
 Note that the command is addressed to a particular turtle using a `TurtleId`.
 
@@ -95,7 +95,7 @@ Next, we will define two kinds of events that can be generated from a command:
 * A `StateChangedEvent` which represents what changed in the state
 * A `MovedEvent` which represents the start and end positions of a turtle movement.
 
-{% highlight fsharp %}
+```fsharp
 /// An event representing a state change that happened
 type StateChangedEvent = 
     | Moved of Distance 
@@ -116,7 +116,7 @@ type MovedEvent = {
 type TurtleEvent = 
     | StateChangedEvent of StateChangedEvent
     | MovedEvent of MovedEvent
-{% endhighlight fsharp %}
+```
 
 It is an important part of event sourcing that all events are labeled in the past tense: `Moved` and `Turned` rather than `Move` and `Turn`. The event are facts -- they have happened in the past.
 
@@ -132,7 +132,7 @@ We will need:
 
 Here's `applyEvent`. You can see that it is very similar to the `applyCommand` function that we saw in the [previous batch-processing example](/posts/13-ways-of-looking-at-a-turtle/#way9).
 
-{% highlight fsharp %}
+```fsharp
 /// Apply an event to the current state and return the new state of the turtle
 let applyEvent log oldState event =
     match event with
@@ -146,7 +146,7 @@ let applyEvent log oldState event =
         Turtle.penDown log oldState 
     | ColorChanged color ->
         Turtle.setColor log color oldState 
-{% endhighlight fsharp %}
+```
 
 The `eventsFromCommand` function contains the key logic for validating the command and creating events. 
 
@@ -154,7 +154,7 @@ The `eventsFromCommand` function contains the key logic for validating the comma
 * The `StateChangedEvent` is created from the `TurtleCommand` in a direct one-to-one map of the cases.
 * The `MovedEvent` is only created from the `TurtleCommand` if the turtle has changed position.
 
-{% highlight fsharp %}
+```fsharp
 // Determine what events to generate, based on the command and the state.
 let eventsFromCommand log command stateBeforeCommand =
 
@@ -198,12 +198,12 @@ let eventsFromCommand log command stateBeforeCommand =
     else
         // if the turtle has not moved, return just the stateChangedEvent 
         [ StateChangedEvent stateChangedEvent]    
-{% endhighlight fsharp %}
+```
 
 Finally, the `commandHandler` is the public interface. It is passed in some dependencies as parameters:  a logging function, a function to retrieve the historical events
 from the event store, and a function to save the newly generated events into the event store.
 
-{% highlight fsharp %}
+```fsharp
 /// The type representing a function that gets the StateChangedEvents for a turtle id
 /// The oldest events are first
 type GetStateChangedEventsForId =
@@ -236,7 +236,7 @@ let commandHandler
     
     // store the events in the event store
     events |> List.iter (saveEvent command.turtleId)
-{% endhighlight fsharp %}
+```
 
 ### Calling the command handler
 
@@ -244,7 +244,7 @@ Now we are ready to send events to the command handler.
 
 First we need some helper functions that create commands:
 
-{% highlight fsharp %}
+```fsharp
 // Command versions of standard actions   
 let turtleId = System.Guid.NewGuid()
 let move dist = {turtleId=turtleId; action=Move dist} 
@@ -252,11 +252,11 @@ let turn angle = {turtleId=turtleId; action=Turn angle}
 let penDown = {turtleId=turtleId; action=PenDown} 
 let penUp = {turtleId=turtleId; action=PenUp} 
 let setColor color = {turtleId=turtleId; action=SetColor color} 
-{% endhighlight fsharp %}
+```
 
 And then we can draw a figure by sending the various commands to the command handler:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     let handler = makeCommandHandler()
     handler (move 100.0)
@@ -265,7 +265,7 @@ let drawTriangle() =
     handler (turn 120.0<Degrees>)
     handler (move 100.0)
     handler (turn 120.0<Degrees>)
-{% endhighlight fsharp %}
+```
 
 NOTE: I have not shown how to create the command handler or event store, see the code for full details.
 
@@ -322,7 +322,7 @@ The new stuff comes in creating the processors.
 However, before we can create a processor, we need some helper functions that can filter the event store feed to only include turtle specific events,
 and of those only `StateChangedEvent`s or `MovedEvent`s.
 
-{% highlight fsharp %}
+```fsharp
 // filter to choose only TurtleEvents
 let turtleFilter ev = 
     match box ev with
@@ -338,14 +338,14 @@ let moveFilter = function
 let stateChangedEventFilter = function 
     | StateChangedEvent ev -> Some ev
     | _ -> None
-{% endhighlight fsharp %}
+```
 
 Now let's create a processor that listens for movement events and moves a physical turtle when the virtual turtle is moved. 
 
 We will make the input to the processor be an `IObservable` -- an event stream -- so that it is not coupled to any specific source such as the `EventStore`.
 We will connect the `EventStore` "save" event to this processor when the application is configured.
 
-{% highlight fsharp %}
+```fsharp
 /// Physically move the turtle
 let physicalTurtleProcessor (eventStream:IObservable<Guid*obj>) =
 
@@ -366,13 +366,13 @@ let physicalTurtleProcessor (eventStream:IObservable<Guid*obj>) =
     |> Observable.choose moveFilter
     // handle these
     |> Observable.subscribe subscriberFn
-{% endhighlight fsharp %}
+```
 
 In this case we are just printing the movement -- I'll leave the building of an [actual Lego Mindstorms turtle](https://www.youtube.com/watch?v=pcJHLClDKVw) as an exercise for the reader!
 
 Let's also create a processor that draws lines on a graphics display:
 
-{% highlight fsharp %}
+```fsharp
 /// Draw lines on a graphics device
 let graphicsProcessor (eventStream:IObservable<Guid*obj>) =
 
@@ -393,11 +393,11 @@ let graphicsProcessor (eventStream:IObservable<Guid*obj>) =
     |> Observable.choose moveFilter
     // handle these
     |> Observable.subscribe subscriberFn 
-{% endhighlight fsharp %}
+```
        
 And finally, let's create a processor that accumulates the total distance moved so that we can keep track of how much ink has been used, say. 
 
-{% highlight fsharp %}
+```fsharp
 /// Listen for "moved" events and aggregate them to keep
 /// track of the total ink used
 let inkUsedProcessor (eventStream:IObservable<Guid*obj>) =
@@ -424,7 +424,7 @@ let inkUsedProcessor (eventStream:IObservable<Guid*obj>) =
     |> Observable.scan accumulate 0.0
     // handle these
     |> Observable.subscribe subscriberFn 
-{% endhighlight fsharp %}
+```
 
 This processor uses `Observable.scan` to accumulate the events into a single value -- the total distance travelled.
 
@@ -434,7 +434,7 @@ Let's try these out!
 
 For example, here is `drawTriangle`: 
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     // clear older events
     eventStore.Clear turtleId   
@@ -454,13 +454,13 @@ let drawTriangle() =
     handler (turn 120.0<Degrees>)
     handler (move 100.0)
     handler (turn 120.0<Degrees>)
-{% endhighlight fsharp %}
+```
 
 Note that `eventStore.SaveEvent` is cast into an `IObservable<Guid*obj>` (that is, an event stream) before being passed to the processors as a parameter.
 
 `drawTriangle` generates this output:
 
-{% highlight text %}
+```text
 [ink used]: 100.00
 [turtle  ]: Moved from (0.00,0.00) to (100.00,0.00) with line of color Black
 [graphics]: Draw line from (0.00,0.00) to (100.00,0.00) with color Black
@@ -473,7 +473,7 @@ Note that `eventStore.SaveEvent` is cast into an `IObservable<Guid*obj>` (that i
 [turtle  ]: Moved from (50.00,86.60) to (0.00,0.00) with line of color Black
 [graphics]: Draw line from (50.00,86.60) to (0.00,0.00) with color Black
 [ink used]: 300.00
-{% endhighlight text %}
+```
 
 You can see that all the processors are handling events successfully.
 
@@ -488,7 +488,7 @@ Here's the new `inkUsedProcessor` code, with the following changes:
 * The `accumulate` function now emits a pair.
 * There is a new filter `changedDistanceOnly`.
 
-{% highlight fsharp %}
+```fsharp
 /// Listen for "moved" events and aggregate them to keep
 /// track of the total distance moved
 /// NEW! No duplicate events! 
@@ -527,11 +527,11 @@ let inkUsedProcessor (eventStream:IObservable<Guid*obj>) =
     |> Observable.choose changedDistanceOnly
     // handle these
     |> Observable.subscribe subscriberFn 
-{% endhighlight fsharp %}
+```
 
 With these changes, the output of `drawTriangle` looks like this:
 
-{% highlight text %}
+```text
 [ink used]: 100.00
 [turtle  ]: Moved from (0.00,0.00) to (100.00,0.00) with line of color Black
 [graphics]: Draw line from (0.00,0.00) to (100.00,0.00) with color Black
@@ -541,7 +541,7 @@ With these changes, the output of `drawTriangle` looks like this:
 [ink used]: 300.00
 [turtle  ]: Moved from (50.00,86.60) to (0.00,0.00) with line of color Black
 [graphics]: Draw line from (50.00,86.60) to (0.00,0.00) with color Black
-{% endhighlight text %}
+```
 
 and there are no longer any duplicate messages from the `inkUsedProcessor`.
 
@@ -575,7 +575,7 @@ Or let's say that there is only a limited amount of colored ink. In this case, t
 
 So let's update the turtle functions with these cases. First the new response types for `move` and `setColor`:
 
-{% highlight fsharp %}
+```fsharp
 type MoveResponse = 
     | MoveOk 
     | HitABarrier
@@ -583,12 +583,12 @@ type MoveResponse =
 type SetColorResponse = 
     | ColorOk
     | OutOfInk
-{% endhighlight fsharp %}
+```
 
 We will need a bounds checker to see if the turtle is in the arena.
 Say that if the position tries to go outside the square (0,0,100,100), the response is `HitABarrier`:
 
-{% highlight fsharp %}
+```fsharp
 // if the position is outside the square (0,0,100,100) 
 // then constrain the position and return HitABarrier
 let checkPosition position =
@@ -604,11 +604,11 @@ let checkPosition position =
         HitABarrier,newPos
     else
         MoveOk,position
-{% endhighlight fsharp %}
+```
 
 And finally, the `move` function needs an extra line to check the new position:
 
-{% highlight fsharp %}
+```fsharp
 let move log distance state =
     let newPosition = ...
     
@@ -616,11 +616,11 @@ let move log distance state =
     let moveResult, newPosition = checkPosition newPosition 
     
     ...
-{% endhighlight fsharp %}
+```
 
 Here's the complete `move` function:
 
-{% highlight fsharp %}
+```fsharp
 let move log distance state =
     log (sprintf "Move %0.1f" distance)
     // calculate new position 
@@ -633,11 +633,11 @@ let move log distance state =
     // return the new state and the Move result
     let newState = {state with position = newPosition}
     (moveResult,newState) 
-{% endhighlight fsharp %}
+```
 
 We will make similar changes for the `setColor` function too, returning `OutOfInk` if we attempt to set the color to `Red`.
 
-{% highlight fsharp %}
+```fsharp
 let setColor log color state =
     let colorResult = 
         if color = Red then OutOfInk else ColorOk
@@ -645,7 +645,7 @@ let setColor log color state =
     // return the new state and the SetColor result
     let newState = {state with color = color}
     (colorResult,newState) 
-{% endhighlight fsharp %}
+```
 
 With the new versions of the turtle functions available, we have to create implementations that can respond to the error cases. That will be done in the next two examples.
         
@@ -664,7 +664,7 @@ Before we do that though, let's look at what effect the change to `move` will ha
 
 If we write the code using `do!` as we did before, we get a nasty compiler error:
 
-{% highlight fsharp %}
+```fsharp
 let drawShape() = 
     // define a set of instructions 
     let t = turtle {
@@ -677,13 +677,13 @@ let drawShape() =
         do! move 60.0 
         } 
     // etc                
-{% endhighlight fsharp %}
+```
 
 Instead, we need to use `let!` and assign the response to something.
 
 In the following code, we assign the response to a value and then ignore it!  
 
-{% highlight fsharp %}
+```fsharp
 let drawShapeWithoutResponding() = 
     // define a set of instructions 
     let t = turtle {
@@ -695,18 +695,18 @@ let drawShapeWithoutResponding() =
 
     // finally, run the monad using the initial state
     runT t initialTurtleState 
-{% endhighlight fsharp %}
+```
 
 The code does compile and work, but if we run it the output shows that, by the third call, we are banging our turtle against the wall (at 100,0) and not moving anywhere.
 
-{% highlight text %}
+```text
 Move 60.0
 ...Draw line from (0.0,0.0) to (60.0,0.0) using Black
 Move 60.0
 ...Draw line from (60.0,0.0) to (100.0,0.0) using Black
 Move 60.0
 ...Draw line from (100.0,0.0) to (100.0,0.0) using Black
-{% endhighlight text %}
+```
 
 ### Making decisions based on a response
 
@@ -717,7 +717,7 @@ state input that we don't have.  So instead let's return a `turtle` workflow tha
 
 So here is the code:
 
-{% highlight fsharp %}
+```fsharp
 let handleMoveResponse moveResponse = turtle {
     match moveResponse with
     | Turtle.MoveOk -> 
@@ -727,13 +727,13 @@ let handleMoveResponse moveResponse = turtle {
         printfn "Oops -- hit a barrier -- turning"
         do! turn 90.0<Degrees>
     }
-{% endhighlight fsharp %}
+```
 
 The type signature looks like this:
 
-{% highlight fsharp %}
+```fsharp
 val handleMoveResponse : MoveResponse -> TurtleStateComputation<unit>
-{% endhighlight fsharp %}
+```
 
 which means that it is a monadic (or "diagonal") function -- one that starts in the normal world and ends in the `TurtleStateComputation` world.
 
@@ -741,7 +741,7 @@ These are exactly the functions that we can use "bind" with, or within computati
 
 Now we can add this `handleMoveResponse` step after `move` in the turtle workflow:
 
-{% highlight fsharp %}
+```fsharp
 let drawShape() = 
     // define a set of instructions 
     let t = turtle {
@@ -757,11 +757,11 @@ let drawShape() =
 
     // finally, run the monad using the initial state
     runT t initialTurtleState 
-{% endhighlight fsharp %}
+```
 
 And the result of running it is:
 
-{% highlight text %}
+```text
 Move 60.0
 ...Draw line from (0.0,0.0) to (60.0,0.0) using Black
 Move 60.0
@@ -770,7 +770,7 @@ Oops -- hit a barrier -- turning
 Turn 90.0
 Move 60.0
 ...Draw line from (100.0,0.0) to (100.0,60.0) using Black
-{% endhighlight text %}
+```
 
 You can see that the move response worked. When the turtle hit the edge at (100,0) it turned 90 degrees and the next move succeeded (from (100,0) to (100,60)).
 
@@ -814,7 +814,7 @@ So how can we model this design in code?
 For a first attempt, let's model the chain as a sequence of request/response pairs. We send a command to the turtle and it responds appropriately with
 a `MoveResponse` or whatever, like this:
 
-{% highlight fsharp %}
+```fsharp
 // we send this to the turtle...
 type TurtleCommand = 
     | Move of Distance 
@@ -830,7 +830,7 @@ type TurtleResponse =
     | PenWentUp
     | PenWentDown
     | ColorSet of SetColorResponse
-{% endhighlight fsharp %}
+```
 
 The problem is that we cannot be sure that the response correctly matches the command.  For example, if I send a `Move` command, I expect to get a `MoveResponse`, and never
 a `SetColorResponse`. But this implementation doesn't enforce that!
@@ -840,11 +840,11 @@ We want to [make illegal states unrepresentable](/posts/designing-with-types-mak
 The trick is to combine the request and response in *pairs*. That is, for a `Move` command, there is an associated function which is given a `MoveResponse` as input, and similarly for each other combination.
 Commands that have no response can be considered as returning `unit` for now.
 
-{% highlight fsharp %}
+```fsharp
 Move command => pair of (Move command parameters), (function MoveResponse -> something)
 Turn command => pair of (Turn command parameters), (function unit -> something)
 etc
-{% endhighlight fsharp %}
+```
 
 The way this works is that:
 
@@ -862,7 +862,7 @@ So we can model the whole chain of pairs as a recursive structure:
 
 Or in code:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleProgram = 
     //         (input params)  (response)
     | Move     of Distance   * (MoveResponse -> TurtleProgram)
@@ -870,7 +870,7 @@ type TurtleProgram =
     | PenUp    of (* none *)   (unit -> TurtleProgram)
     | PenDown  of (* none *)   (unit -> TurtleProgram)
     | SetColor of PenColor   * (SetColorResponse -> TurtleProgram)
-{% endhighlight fsharp %}
+```
 
 I've renamed the type from `TurtleCommand` to `TurtleProgram` because it is no longer just a command, but is now a complete chain of commands and associated response handlers.
 
@@ -878,7 +878,7 @@ There's a problem though! Every step needs yet another `TurtleProgram` to follow
 
 To solve this issue, we will add a special `Stop` case to the program type:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleProgram = 
     //         (input params)  (response)
     | Stop
@@ -887,7 +887,7 @@ type TurtleProgram =
     | PenUp    of (* none *)   (unit -> TurtleProgram)
     | PenDown  of (* none *)   (unit -> TurtleProgram)
     | SetColor of PenColor   * (SetColorResponse -> TurtleProgram)
-{% endhighlight fsharp %}
+```
 
 Note that there is no mention of `TurtleState` in this structure. How the turtle state is managed is internal to the interpreter, and is not part of the "instruction set", as it were.
 
@@ -897,7 +897,7 @@ Note that there is no mention of `TurtleState` in this structure. How the turtle
 
 Let's create a little program using this model. Here's our old friend `drawTriangle`:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle = 
     Move (100.0, fun response -> 
     Turn (120.0<Degrees>, fun () -> 
@@ -906,7 +906,7 @@ let drawTriangle =
     Move (100.0, fun response -> 
     Turn (120.0<Degrees>, fun () -> 
     Stop))))))
-{% endhighlight fsharp %}
+```
 
 This program is a data structure containing only client commands and responses -- there are no actual turtle functions in it anywhere!
 And yes, it is really ugly right now, but we will fix that shortly.
@@ -922,7 +922,7 @@ Well, just as described above:
 * Get the next step in the program by passing the `MoveResult` to the associated function
 * Finally call the interpreter again (recursively) with the new program and new turtle state.
 
-{% highlight fsharp %}
+```fsharp
 let rec interpretAsTurtle state program =
     ...
     match program  with
@@ -931,13 +931,13 @@ let rec interpretAsTurtle state program =
         let nextProgram = next result  // compute the next step
         interpretAsTurtle newState nextProgram 
     ...        
-{% endhighlight fsharp %}
+```
 
 You can see that the updated turtle state is passed as a parameter to the next recursive call, and so no mutable field is needed.
 
 Here's the full code for `interpretAsTurtle`:
 
-{% highlight fsharp %}
+```fsharp
 let rec interpretAsTurtle state program =
     let log = printfn "%s"
 
@@ -964,20 +964,20 @@ let rec interpretAsTurtle state program =
         let result,newState = Turtle.setColor log color state 
         let nextProgram = next result
         interpretAsTurtle newState nextProgram 
-{% endhighlight fsharp %}
+```
 
 Let's run it:
 
-{% highlight fsharp %}
+```fsharp
 let program = drawTriangle
 let interpret = interpretAsTurtle   // choose an interpreter 
 let initialState = Turtle.initialTurtleState
 interpret initialState program |> ignore
-{% endhighlight fsharp %}
+```
 
 and the output is exactly what we have seen before:
 
-{% highlight text %}
+```text
 Move 100.0
 ...Draw line from (0.0,0.0) to (100.0,0.0) using Black
 Turn 120.0
@@ -987,14 +987,14 @@ Turn 120.0
 Move 100.0
 ...Draw line from (50.0,86.6) to (0.0,0.0) using Black
 Turn 120.0
-{% endhighlight text %}
+```
 
 But unlike all the previous approaches we can take *exactly the same program* and interpret it in a new way.
 We don't need to set up any kind of dependency injection, we just need to use a different interpreter.
 
 So let's create another interpreter that aggregates the distance travelled, without caring about the turtle state:
 
-{% highlight fsharp %}
+```fsharp
 let rec interpretAsDistance distanceSoFar program =
     let recurse = interpretAsDistance 
     let log = printfn "%s"
@@ -1024,24 +1024,24 @@ let rec interpretAsDistance distanceSoFar program =
         let result = Turtle.ColorOk   // hard-code result
         let nextProgram = next result
         recurse distanceSoFar nextProgram 
-{% endhighlight fsharp %}
+```
 
 In this case, I've aliased `interpretAsDistance` as `recurse` locally to make it obvious what kind of recursion is happening.
 
 Let's run the same program with this new interpreter:
 
-{% highlight fsharp %}
+```fsharp
 let program = drawTriangle           // same program  
 let interpret = interpretAsDistance  // choose an interpreter 
 let initialState = 0.0
 interpret initialState program |> printfn "Total distance moved is %0.1f"
-{% endhighlight fsharp %}
+```
 
 and the output is again exactly what we expect:
 
-{% highlight text %}
+```text
 Total distance moved is 300.0
-{% endhighlight text %}
+```
 
 ### Creating a "turtle program" workflow
 
@@ -1052,7 +1052,7 @@ Well, in order to create a computation expression, we need `return` and `bind` f
 
 No problem! Let's make `TurtleProgram` generic then:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleProgram<'a> = 
     | Stop     of 'a
     | Move     of Distance * (MoveResponse -> TurtleProgram<'a>)
@@ -1060,18 +1060,18 @@ type TurtleProgram<'a> =
     | PenUp    of            (unit -> TurtleProgram<'a>)
     | PenDown  of            (unit -> TurtleProgram<'a>)
     | SetColor of PenColor * (SetColorResponse -> TurtleProgram<'a>)
-{% endhighlight fsharp %}
+```
 
 Note that the `Stop` case has a value of type `'a` associated with it now.  This is needed so that we can implement `return` properly:
 
-{% highlight fsharp %}
+```fsharp
 let returnT x = 
     Stop x  
-{% endhighlight fsharp %}
+```
 
 The `bind` function is more complicated to implement. Don't worry about how it works right now -- the important thing is that the types match up and it compiles!
 
-{% highlight fsharp %}
+```fsharp
 let rec bindT f inst  = 
     match inst with
     | Stop x -> 
@@ -1090,11 +1090,11 @@ let rec bindT f inst  =
         PenDown(next >> bindT f)
     | SetColor(color,next) -> 
         SetColor(color,next >> bindT f)
-{% endhighlight fsharp %}
+```
 
 With `bind` and `return` in place, we can create a computation expression:
 
-{% highlight fsharp %}
+```fsharp
 // define a computation expression builder
 type TurtleProgramBuilder() =
     member this.Return(x) = returnT x
@@ -1103,11 +1103,11 @@ type TurtleProgramBuilder() =
 
 // create an instance of the computation expression builder
 let turtleProgram = TurtleProgramBuilder()
-{% endhighlight fsharp %}
+```
 
 We can now create a workflow that handles `MoveResponse`s just as in the monadic control flow example (way 12) earlier.
 
-{% highlight fsharp %}
+```fsharp
 // helper functions
 let stop = fun x -> Stop x
 let move dist  = Move (dist, stop)
@@ -1134,28 +1134,28 @@ let drawTwoLines log = turtleProgram {
     let! response = move 60.0
     do! handleMoveResponse log response 
     }
-{% endhighlight fsharp %}
+```
 
 Let's interpret this using the real turtle functions (assuming that the `interpretAsTurtle` function has been modified to handle the new generic structure):
     
-{% highlight fsharp %}
+```fsharp
 let log = printfn "%s"
 let program = drawTwoLines log 
 let interpret = interpretAsTurtle 
 let initialState = Turtle.initialTurtleState
 interpret initialState program |> ignore
-{% endhighlight fsharp %}
+```
 
 The output shows that the `MoveResponse` is indeed being handled correctly when the barrier is encountered:
 
-{% highlight text %}
+```text
 Move 60.0
 ...Draw line from (0.0,0.0) to (60.0,0.0) using Black
 Move 60.0
 ...Draw line from (60.0,0.0) to (100.0,0.0) using Black
 Oops -- hit a barrier -- turning
 Turn 90.0
-{% endhighlight text %}
+```
 
 ### Refactoring the `TurtleProgram` type into two parts
 
@@ -1168,7 +1168,7 @@ you have to write, but not much.
 
 The trick is to separate the api cases and "stop"/"keep going" logic into two separate types, like this: 
 
-{% highlight fsharp %}
+```fsharp
 /// Create a type to represent each instruction
 type TurtleInstruction<'next> = 
     | Move     of Distance * (MoveResponse -> 'next)
@@ -1181,13 +1181,13 @@ type TurtleInstruction<'next> =
 type TurtleProgram<'a> = 
     | Stop of 'a
     | KeepGoing of TurtleInstruction<TurtleProgram<'a>>
-{% endhighlight fsharp %}
+```
 
 Note that I've also changed the responses for `Turn`, `PenUp` and `PenDown` to be single values rather than a unit function. `Move` and `SetColor` remain as functions though.
 
 In this new "free monad" approach, the only custom code we need to write is a simple `map` function for the api type, in this case `TurtleInstruction`:
 
-{% highlight fsharp %}
+```fsharp
 let mapInstr f inst  = 
     match inst with
     | Move(dist,next) ->      Move(dist,next >> f) 
@@ -1195,7 +1195,7 @@ let mapInstr f inst  =
     | PenUp(next) ->          PenUp(f next)
     | PenDown(next) ->        PenDown(f next)
     | SetColor(color,next) -> SetColor(color,next >> f)
-{% endhighlight fsharp %}
+```
 
 The rest of the code (`return`, `bind`, and the computation expression) is
 [always implemented exactly the same way](https://github.com/swlaschin/13-ways-of-looking-at-a-turtle/blob/4a8cdf3bda9fc9db030842e99f78487aea928e57/13-Interpreter-v2.fsx#L67), regardless of the particular api.
@@ -1203,7 +1203,7 @@ That is, more boilerplate is needed but less thinking is required!
 
 The interpreters need to change in order to handle the new cases. Here's a snippet of the new version of `interpretAsTurtle`:
 
-{% highlight fsharp %}
+```fsharp
 let rec interpretAsTurtle log state program =
     let recurse = interpretAsTurtle log 
     
@@ -1218,12 +1218,12 @@ let rec interpretAsTurtle log state program =
         let newState = Turtle.turn log angle state 
         let nextProgram = next        // use next program directly
         recurse newState nextProgram 
-{% endhighlight fsharp %}
+```
 
 And we also need to adjust the helper functions when creating a workflow. You can see below that we now have slightly
 more complicated code like `KeepGoing (Move (dist, Stop))` instead of the simpler code in the original interpreter.
 
-{% highlight fsharp %}
+```fsharp
 // helper functions
 let stop = Stop()
 let move dist  = KeepGoing (Move (dist, Stop))    // "Stop" is a function
@@ -1242,7 +1242,7 @@ let drawTwoLines log = turtleProgram {
     let! response = move 60.0
     do! handleMoveResponse log response 
     }
-{% endhighlight fsharp %}
+```
 
 But with those changes, we are done, and the code works just as before.
 

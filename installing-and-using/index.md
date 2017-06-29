@@ -147,7 +147,7 @@ This is very convenient when you want to quickly create some code without compil
 
 To see how you can do this yourself, here is a little example script that downloads a web page to a local file. First create an FSX script file -- call it "`ShellScriptExample.fsx`" -- and paste in the following code. 
 
-{% highlight fsharp %}
+```fsharp
 // ================================
 // Description: 
 //    downloads the given url and stores it as a file with a timestamp
@@ -179,7 +179,7 @@ match fsi.CommandLineArgs with
         downloadUriToFile url targetfile
     | _ ->
         printfn "USAGE: [url] [targetfile]"
-{% endhighlight %}
+```
 
 Don't worry about how the code works right now. It's pretty crude anyway, and a better example would add error handling, and so on.
 

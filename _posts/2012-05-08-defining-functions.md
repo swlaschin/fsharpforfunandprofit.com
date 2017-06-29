@@ -11,9 +11,9 @@ categories: [Functions, Combinators]
 
 We have seen how to create typical functions using the "let" syntax, below:
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y
-{% endhighlight  %}
+```
 
 In this section, we'll look at some other ways of creating functions, and tips for defining functions.
 
@@ -21,9 +21,9 @@ In this section, we'll look at some other ways of creating functions, and tips f
 
 If you are familiar with lambdas in other languages, this will not be new to you. An anonymous function (or "lambda expression") is defined using the form:
 
-{% highlight fsharp %}
+```fsharp
 fun parameter1 parameter2 etc -> expression
-{% endhighlight  %}
+```
 
 If you are used to lambdas in C# there are a couple of differences:
 
@@ -32,54 +32,54 @@ If you are used to lambdas in C# there are a couple of differences:
 
 Here is a lambda that defines addition:
 
-{% highlight fsharp %}
+```fsharp
 let add = fun x y -> x + y
-{% endhighlight  %}
+```
 
 This is exactly the same as a more conventional function definition:
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y
-{% endhighlight  %}
+```
 
 Lambdas are often used when you have a short expression and you don't want to define a function just for that expression. This is particularly common with list operations, as we have seen already.
 
-{% highlight fsharp %}
+```fsharp
 // with separately defined function
 let add1 i = i + 1
 [1..10] |> List.map add1
 
 // inlined without separately defined function
 [1..10] |> List.map (fun i -> i + 1)
-{% endhighlight  %}
+```
 
 Note that you must use parentheses around the lambda.
 
 Lambdas are also used when you want to make it clear that you are returning a function from another function. For example, the "`adderGenerator`" function that we talked about earlier could be rewritten with a lambda.
 
-{% highlight fsharp %}
+```fsharp
 // original definition
 let adderGenerator x = (+) x
 
 // definition using lambda
 let adderGenerator x = fun y -> x + y
-{% endhighlight  %}
+```
 
 The lambda version is slightly longer, but makes it clear that an intermediate function is being returned.
 
 You can nest lambdas as well. Here is yet another definition of `adderGenerator`, this time using lambdas only. 
 
-{% highlight fsharp %}
+```fsharp
 let adderGenerator = fun x -> (fun y -> x + y)
-{% endhighlight  %}
+```
 
 Can you see that all three of the following definitions are the same thing?
 
-{% highlight fsharp %}
+```fsharp
 let adderGenerator1 x y = x + y 
 let adderGenerator2 x   = fun y -> x + y
 let adderGenerator3     = fun x -> (fun y -> x + y)
-{% endhighlight  %}
+```
 
 If you can't see it, then do reread the [post on currying](/posts/currying/). This is important stuff to understand!
 
@@ -89,7 +89,7 @@ When defining a function, you can pass an explicit parameter, as we have seen, b
 
 The following example demonstrates how to use patterns in a function definition:
 
-{% highlight fsharp %}
+```fsharp
 type Name = {first:string; last:string} // define a new type
 let bob = {first="bob"; last="smith"}   // define a value 
 
@@ -105,14 +105,14 @@ let f2 {first=f; last=l} =          // direct pattern matching
 // test
 f1 bob
 f2 bob
-{% endhighlight  %}
+```
 
 This kind of matching can only occur when the matching is always possible. For example, you cannot match on union types or lists this way, because some cases might not be matched.
 
-{% highlight fsharp %}
+```fsharp
 let f3 (x::xs) =            // use pattern matching on a list
    printfn "first element is=%A" x
-{% endhighlight  %}
+```
 
 You will get a warning about incomplete pattern matches.
 
@@ -124,7 +124,7 @@ If you come from a C-like language, a tuple used as a single function parameter 
 
 Here is an example of the confusion:
 
-{% highlight fsharp %}
+```fsharp
 // a function that takes two distinct parameters
 let addTwoParams x y = x + y
 
@@ -136,7 +136,7 @@ let addTuple aTuple =
 // another function that takes a single tuple parameter 
 // but looks like it takes two ints
 let addConfusingTuple (x,y) = x + y
-{% endhighlight  %}
+```
 
 * The first definition, "`addTwoParams`", takes two parameters, separated with spaces.
 * The second definition, "`addTuple`", takes a single parameter. It then binds "x" and "y" to the inside of the tuple and does the addition.
@@ -144,21 +144,21 @@ let addConfusingTuple (x,y) = x + y
 
 Let's look at the signatures (it is always a good idea to look at the signatures if you are unsure)
 
-{% highlight fsharp %}
+```fsharp
 val addTwoParams : int -> int -> int        // two params
 val addTuple : int * int -> int             // tuple->int
 val addConfusingTuple : int * int -> int    // tuple->int
-{% endhighlight  %}
+```
 
 Now let's use them:
 
-{% highlight fsharp %}
+```fsharp
 //test
 addTwoParams 1 2      // ok - uses spaces to separate args
 addTwoParams (1,2)    // error trying to pass a single tuple 
 //   => error FS0001: This expression was expected to have type
 //                    int but here has type 'a * 'b
-{% endhighlight  %}
+```
 
 Here we can see an error occur in the second case above. 
 
@@ -167,7 +167,7 @@ Then it complains that the first parameter of `addTwoParams` is an `int`, and we
 
 To make a tuple, use a comma!  Here's how to do it correctly:
 
-{% highlight fsharp %}
+```fsharp
 addTuple (1,2)           // ok
 addConfusingTuple (1,2)  // ok
 
@@ -178,15 +178,15 @@ let y = 1,2              // it's the comma you need,
                          // not the parentheses!      
 addTuple y               // ok
 addConfusingTuple y      // ok
-{% endhighlight  %}
+```
 
 Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an obscure error.
 
-{% highlight fsharp %}
+```fsharp
 addConfusingTuple 1 2    // error trying to pass two args 
 // => error FS0003: This value is not a function and 
 //                  cannot be applied
-{% endhighlight  %}
+```
 
 In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then "`addConfusingTuple 1`" would be a partial application that returns another intermediate function. Trying to apply that intermediate function with "2" gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
 
@@ -194,13 +194,13 @@ In this case, the compiler thinks that, since you are passing two arguments, `ad
 
 The discussion of the issues with tuples above shows that there's another way to define functions with more than one parameter: rather than passing them in separately, all the parameters can be combined into a single composite data structure. In the example below, the function takes a single parameter, which is a tuple containing three items. 
 
-{% highlight fsharp %}
+```fsharp
 let f (x,y,z) = x + y * z
 // type is int * int * int -> int
 
 // test
 f (1,2,3)
-{% endhighlight  %}
+```
 
 Note that the function signature is different from a true three parameter function. There is only one arrow, so only one parameter, and the stars indicate that this is a tuple of `(int*int*int)`. 
 
@@ -215,28 +215,28 @@ One area where commas are seen a lot is when calling .NET library functions!
 
 These all take tuple-like arguments, and so these calls look just the same as they would from C#:  
 
-{% highlight fsharp %}
+```fsharp
 // correct
 System.String.Compare("a","b")
 
 // incorrect
 System.String.Compare "a" "b"
-{% endhighlight %}
+```
 
 The reason is that .NET library functions are not curried and cannot be partially applied. *All* the parameters must *always* be passed in, and using a tuple-like approach is the obvious way to do this.
 
 But do note that although these calls look like tuples, they are actually a special case. Real tuples cannot be used, so the following code is invalid:
 
-{% highlight fsharp %}
+```fsharp
 let tuple = ("a","b")
 System.String.Compare tuple   // error  
 
 System.String.Compare "a","b" // error  
-{% endhighlight %}
+```
 
 If you do want to partially apply .NET library functions, it is normally trivial to write wrapper functions for them, as we have [seen earlier](/posts/partial-application/), and as shown below:
 
-{% highlight fsharp %}
+```fsharp
 // create a wrapper function
 let strCompare x y = System.String.Compare(x,y)
 
@@ -246,7 +246,7 @@ let strCompareWithB = strCompare "B"
 // use it with a higher order function
 ["A";"B";"C"]
 |> List.map strCompareWithB 
-{% endhighlight %}
+```
 
 
 ## Guidelines for separate vs. grouped parameters ##
@@ -264,7 +264,7 @@ In other words, when designing a function, ask yourself "could I provide this pa
 
 Let's look at some examples:
 
-{% highlight fsharp %}
+```fsharp
 // Pass in two numbers for addition. 
 // The numbers are independent, so use two parameters
 let add x y = x + y
@@ -283,7 +283,7 @@ let setCustomerName first last = // not recommended
 // authorizing credentials as well.
 // The name and credentials are independent, keep them separate
 let setCustomerName myCredentials aName = //good
-{% endhighlight  %}
+```
 
 Finally, do be sure to order the parameters appropriately to assist with partial application (see the guidelines in the earlier [post](/posts/partial-application/)). For example, in the last function above, why did I put the `myCredentials` parameter ahead of the `aName` parameter?
 
@@ -291,31 +291,31 @@ Finally, do be sure to order the parameters appropriately to assist with partial
 
 Sometimes we may want functions that don't take any parameters at all. For example, we may want a "hello world" function that we can call repeatedly. As we saw in a previous section, the naive definition will not work.
 
-{% highlight fsharp %}
+```fsharp
 let sayHello = printfn "Hello World!"     // not what we want
-{% endhighlight  %}
+```
 
 The fix is to add a unit parameter to the function, or use a lambda. 
 
-{% highlight fsharp %}
+```fsharp
 let sayHello() = printfn "Hello World!"           // good
 let sayHello = fun () -> printfn "Hello World!"   // good
-{% endhighlight  %}
+```
 
 And then the function must always be called with a unit argument:
 
-{% highlight fsharp %}
+```fsharp
 // call it
 sayHello()
-{% endhighlight  %}
+```
 
 This is particularly common with the .NET libraries. Some examples are:
 
-{% highlight fsharp %}
+```fsharp
 Console.ReadLine()
 System.Environment.GetCommandLineArgs()
 System.IO.Directory.GetCurrentDirectory()
-{% endhighlight  %}
+```
 
 Do remember to call them with the unit parameter!
 
@@ -323,39 +323,39 @@ Do remember to call them with the unit parameter!
 
 You can define functions named using one or more of the operator symbols (see the [F# documentation](http://msdn.microsoft.com/en-us/library/dd233204) for the exact list of symbols that you can use):
 
-{% highlight fsharp %}
+```fsharp
 // define
 let (.*%) x y = x + y + 1
-{% endhighlight  %}
+```
 
 You must use parentheses around the symbols when defining them. 
 
 Note that for custom operators that begin with `*`, a space is required; otherwise the `(*` is interpreted as the start of a comment: 
 
-{% highlight fsharp %}
+```fsharp
 let ( *+* ) x y = x + y + 1
-{% endhighlight  %}
+```
 
 Once defined, the new function can be used in the normal way, again with parens around the symbols:
 
-{% highlight fsharp %}
+```fsharp
 let result = (.*%) 2 3
-{% endhighlight  %}
+```
 
 If the function has exactly two parameters, you can use it as an infix operator without parentheses.
 
-{% highlight fsharp %}
+```fsharp
 let result = 2 .*% 3
-{% endhighlight  %}
+```
 
 You can also define prefix operators that start with `!` or `~` (with some restrictions -- see the [F# documentation on operator overloading](http://msdn.microsoft.com/en-us/library/dd233204#prefix))
 
-{% highlight fsharp %}
+```fsharp
 let (~%%) (s:string) = s.ToCharArray()
 
 //use
 let result = %% "hello"
-{% endhighlight  %}
+```
 
 In F# it is quite common to create your own operators, and many libraries will export operators with names such as `>=>` and `<*>`.
 
@@ -365,7 +365,7 @@ We have already seen many examples of leaving off the last parameter of function
 
 Here are some examples:
 
-{% highlight fsharp %}
+```fsharp
 let add x y = x + y   // explicit
 let add x = (+) x     // point free
 
@@ -374,7 +374,7 @@ let add1Times2 = (+) 1 >> (*) 2   // point free
 
 let sum list = List.reduce (fun sum e -> sum+e) list // explicit
 let sum = List.reduce (+)                            // point free
-{% endhighlight  %}
+```
 
 There are pros and cons to this style. 
 
@@ -394,12 +394,12 @@ In practice, this means that a combinator function is limited to combining its p
 
 We have already seen some combinators already: the "pipe" operator and the "compose" operator.  If you look at their definitions, it is clear that all they do is reorder the parameters in various ways
 
-{% highlight fsharp %}
+```fsharp
 let (|>) x f = f x             // forward pipe
 let (<|) f x = f x             // reverse pipe
 let (>>) f g x = g (f x)       // forward composition
 let (<<) g f x = g (f x)       // reverse composition
-{% endhighlight  %}
+```
 
 On the other hand, a function like "printf", although primitive, is not a combinator, because it has a dependency on the outside world (I/O).
 
@@ -409,7 +409,7 @@ Combinators are the basis of a whole branch of logic (naturally called "combinat
 
 To read more about combinators and combinatory logic, I recommend the book "To Mock a Mockingbird" by Raymond Smullyan.  In it, he describes many other combinators and whimsically gives them names of birds.  Here are some examples of some standard combinators and their bird names:
 
-{% highlight fsharp %}
+```fsharp
 let I x = x                // identity function, or the Idiot bird
 let K x y = x              // the Kestrel
 let M x = x >> x           // the Mockingbird
@@ -418,7 +418,7 @@ let Q x y z = y (x z)      // the Queer bird (also familiar!)
 let S x y z = x z (y z)    // The Starling
 // and the infamous...
 let rec Y f x = f (Y f) x  // Y-combinator, or Sage bird
-{% endhighlight  %}
+```
 
 The letter names are quite standard, so if you refer to "the K combinator", everyone will be familiar with that terminology.
 
@@ -440,13 +440,13 @@ In F#, combinator libraries are available for parsing (the FParsec library), HTM
 
 Often, a function will need to refer to itself in its body.  The classic example is the Fibonacci function:
 
-{% highlight fsharp %}
+```fsharp
 let fib i = 
    match i with
    | 1 -> 1
    | 2 -> 1
    | n -> fib(n-1) + fib(n-2)
-{% endhighlight  %}
+```
 
 Unfortunately, this will not compile: 
 
@@ -454,12 +454,12 @@ Unfortunately, this will not compile:
 
 You have to tell the compiler that this is a recursive function using the rec keyword.
 
-{% highlight fsharp %}
+```fsharp
 let rec fib i = 
    match i with
    | 1 -> 1
    | 2 -> 1
    | n -> fib(n-1) + fib(n-2)
-{% endhighlight  %}
+```
 
 Recursive functions and data structures are extremely common in functional programming, and I hope to devote a whole later series to this topic.

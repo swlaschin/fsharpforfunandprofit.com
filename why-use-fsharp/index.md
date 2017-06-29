@@ -27,7 +27,7 @@ And, compared with C#, it generally takes <a href="/posts/fvsc-download/">fewer 
 
     <div class="span4" style="float:left;">
 
-{% highlight fsharp %}
+```fsharp
 // one-liners
 [1..100] |> List.sum |> printfn "sum=%d"
 
@@ -46,7 +46,7 @@ type Employee =
 // type inference
 let jdoe = {First="John";Last="Doe"}
 let worker = Worker jdoe
-{% endhighlight %}
+```
 
 	</div>
     
@@ -67,7 +67,7 @@ And because functions are first class objects, it is very easy to create powerfu
 	</div>
     
     <div class="span4" style="float:left;">
-{% highlight fsharp %}
+```fsharp
 // automatic equality and comparison
 type Person = {First:string; Last:string}
 let person1 = {First="john"; Last="Doe"}
@@ -80,7 +80,7 @@ use reader = new StreamReader(..)
 // easy composition of functions
 let add2times3 = (+) 2 >> (*) 3
 let result = add2times3 5
-{% endhighlight %}
+```
 
 	</div>
 
@@ -103,7 +103,7 @@ In addition, you can often encode business logic using the <a href="/posts/corre
 	</div>
 
     <div class="span4" style="float:left;">
-{% highlight fsharp %}
+```fsharp
 // strict type checking
 printfn "print string %s" 123 //compile error
 
@@ -121,7 +121,7 @@ emptyShoppingCart.remove   // compile error!
 
 // units of measure
 let distance = 10<m> + 10<ft> // error!
-{% endhighlight %}
+```
 
 	</div>
 </div>
@@ -140,7 +140,7 @@ And of course, because data structures are immutable by default, sharing state a
 	</div>
 
     <div class="span4" style="float:left;">
-{% highlight fsharp %}
+```fsharp
 // easy async logic with "async" keyword
 let! result = async {something}
 
@@ -153,7 +153,7 @@ MailboxProcessor.Start(fun inbox-> async{
 	let! msg = inbox.Receive()
 	printfn "message is: %s" msg
 	})
-{% endhighlight %}
+```
 
 	</div>
 </div>	
@@ -175,7 +175,7 @@ Finally, it is well integrated with Visual Studio, which means you get a great I
 	</div>
 
     <div class="span4" style="float:left;">
-{% highlight fsharp %}
+```fsharp
 // impure code when needed
 let mutable counter = 0
 
@@ -198,7 +198,7 @@ let form = new Form(Width= 400, Height = 300,
 form.TopMost <- true
 form.Click.Add (fun args-> printfn "clicked!")
 form.Show()
-{% endhighlight %}
+```
 
 	</div>
 	

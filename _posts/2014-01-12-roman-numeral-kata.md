@@ -174,7 +174,7 @@ To demonstrate what I mean, let's compare the test suite developed in the video 
 
 The test suite developed in the video checks only the obvious inputs, plus the case 3497 "for good measure". Here's the Ruby code ported to F#:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``For certain inputs, expect certain outputs``() = 
     let testpairs = [ 
@@ -192,7 +192,7 @@ let ``For certain inputs, expect certain outputs``() =
     for (arabic,expectedRoman) in testpairs do
        let roman = arabicToRoman arabic
        Assert.AreEqual(expectedRoman, roman)
-{% endhighlight fsharp %}
+```
 
 With this set of inputs, how confident are we that the code meets the requirements?  
 
@@ -207,13 +207,13 @@ True, the test with 3497 implicitly checks the ordering requirement ("M" before 
 
 Now compare that test with this one:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``For all valid inputs, there must be a max of four "I"s in a row``() = 
     for i in [1..4000] do
        let roman = arabicToRoman i
        roman |> assertMaxRepetition "I" 4
-{% endhighlight fsharp %}
+```
 
 This test checks the requirement that you can only have four repetitions of "I".  
 
@@ -245,7 +245,7 @@ To switch to property-based testing for the requirement above, I would refactor 
 
 Here's the refactored code:
 
-{% highlight fsharp %}
+```fsharp
 // Define a property that should be true for all inputs
 let ``has max rep of four Is`` arabic = 
    let roman = arabicToRoman arabic
@@ -265,12 +265,12 @@ let prop i = isInRange i ==> ``has max rep of four Is`` i
 // check all inputs for this property
 Check.Quick prop
        
-{% endhighlight fsharp %}
+```
 
 
 Or for example, let's say that I want to test the substitution rule for 40 => "XL".
 
-{% highlight fsharp %}
+```fsharp
 // Define a property that should be true for all inputs
 let ``if arabic has 4 tens then roman has one XL otherwise none`` arabic = 
    let roman = arabicToRoman arabic
@@ -290,7 +290,7 @@ let ``For all valid inputs, check the XL substitution``() =
 let isInRange i = (i >= 1) && (i <= 4000)
 let prop i = isInRange i ==> ``if arabic has 4 tens then roman has one XL otherwise none`` i
 Check.Quick prop
-{% endhighlight fsharp %}
+```
 
 I'm not going to go into property-based testing any more here, but I think you can see the benefits over hand-crafted cases with magic inputs.
 
@@ -319,18 +319,18 @@ So, what is the simplest implementation I can think of that would work?
 
 How about just converting our arabic number to tally marks?  1 becomes "I", 2 becomes "II", and so on.
 
-{% highlight fsharp %}
+```fsharp
 let arabicToRoman arabic = 
    String.replicate arabic "I"
-{% endhighlight fsharp %}
+```
 
 Here it is in action:
 
-{% highlight fsharp %}
+```fsharp
 arabicToRoman 1    // "I"
 arabicToRoman 5    // "IIIII"
 arabicToRoman 10   // "IIIIIIIIII" 
-{% endhighlight fsharp %}
+```
 
 This code actually meets the first and second requirements already, and for all inputs!
 
@@ -340,7 +340,7 @@ This is where insight into the domain comes in. If we understand that the tally 
 
 So let's convert all runs of five tally marks into a "V".
  
-{% highlight fsharp %}
+```fsharp
 let arabicToRoman arabic = 
    (String.replicate arabic "I")
     .Replace("IIIII","V")
@@ -350,11 +350,11 @@ arabicToRoman 1    // "I"
 arabicToRoman 5    // "V"
 arabicToRoman 6    // "VI"
 arabicToRoman 10   // "VV" 
-{% endhighlight fsharp %}
+```
 
 But now we can have runs of "V"s. Two "V"s need to be collapsed into an "X".
 
-{% highlight fsharp %}
+```fsharp
 let arabicToRoman arabic = 
    (String.replicate arabic "I")
     .Replace("IIIII","V")
@@ -367,11 +367,11 @@ arabicToRoman 6    // "VI"
 arabicToRoman 10   // "X" 
 arabicToRoman 12   // "XII" 
 arabicToRoman 16   // "XVI" 
-{% endhighlight fsharp %}
+```
 
 I think you get the idea. We can go on adding abbreviations... 
 
-{% highlight fsharp %}
+```fsharp
 let arabicToRoman arabic = 
    (String.replicate arabic "I")
     .Replace("IIIII","V")
@@ -389,13 +389,13 @@ arabicToRoman 10   // "X"
 arabicToRoman 12   // "XII" 
 arabicToRoman 16   // "XVI" 
 arabicToRoman 3497 // "MMMCCCCLXXXXVII" 
-{% endhighlight fsharp %}
+```
 
 And now we're done. We've met the first three requirements.
 
 If we want to add the optional abbreviations for the fours and nines, we can do that at the end, after all the tally marks have been accumulated.
 
-{% highlight fsharp %}
+```fsharp
 let arabicToRoman arabic = 
    (String.replicate arabic "I")
     .Replace("IIIII","V")
@@ -424,7 +424,7 @@ arabicToRoman 16   // "XVI"
 arabicToRoman 40   // "XL" 
 arabicToRoman 946  // "CMXLVI" 
 arabicToRoman 3497 // "MMMCDXCVII"
-{% endhighlight fsharp %}
+```
 
 Here is what I like about this approach:
 
@@ -467,7 +467,7 @@ This leads directly to an algorithm based on converting the beads on the abacus 
 
 Here's an implementation that is a direct translation of that algorithm:
 
-{% highlight fsharp %}
+```fsharp
 let biQuinaryDigits place (unit,five) arabic =
     let digit =  arabic % (10*place) / place
     match digit with
@@ -490,12 +490,12 @@ let arabicToRoman arabic =
     let thousands = biQuinaryDigits 1000 ("M","?") arabic
     thousands + hundreds + tens + units
 
-{% endhighlight fsharp %}
+```
 
 Note that the above code does not produce the abbreviations for the four and nine cases.
 We can easily modify it to do this though. We just need to pass in the symbol for ten, and tweak the mapping for the 4 and 9 case, as follows:
 
-{% highlight fsharp %}
+```fsharp
 let biQuinaryDigits place (unit,five,ten) arabic =
   let digit =  arabic % (10*place) / place
   match digit with
@@ -517,7 +517,7 @@ let arabicToRoman arabic =
   let hundreds = biQuinaryDigits 100 ("C","D","M") arabic
   let thousands = biQuinaryDigits 1000 ("M","?","?") arabic
   thousands + hundreds + tens + units
-{% endhighlight fsharp %}
+```
 
 Again, both these implementations are very straightforward and easy to verify. There are no subtle edge cases lurking in the code.
 

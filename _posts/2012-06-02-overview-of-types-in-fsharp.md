@@ -85,7 +85,7 @@ The sum or "union" types, in particular, are very valuable, and once you get use
 
 Every type definition is similar, even though the specific details may vary.  All type definitions start with a "`type`" keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition. For example, here are some type definitions for a variety of types:
 
-{% highlight fsharp %}
+```fsharp
 type A = int * int
 type B = {FirstName:string; LastName:string}
 type C = Circle of int | Rectangle of int * int
@@ -95,13 +95,13 @@ type E<'a> = Choice1 of 'a | Choice2 of 'a * 'a
 type MyClass(initX:int) =
    let x = initX
    member this.Method() = printf "x=%i" x
-{% endhighlight %}
+```
 
 As we said in a [previous post](/posts/function-signatures/), there is a special syntax for defining new types that is different from the normal expression syntax. So do be aware of this difference. 
 
 Types can *only* be declared in namespaces or modules. But that doesn't mean you always have to create them at the top level -- you can create types in nested modules if you need to hide them.
 
-{% highlight fsharp %}
+```fsharp
 
 module sub = 
     // type declared in a module
@@ -116,21 +116,21 @@ module sub =
 
 //outside access not allowed
 let b = sub.helper.B ["a";"b"]
-{% endhighlight %}
+```
 
 Types *cannot* be declared inside functions.
 
-{% highlight fsharp %}
+```fsharp
 let f x = 
     type A = int * int  //unexpected keyword "type"
     x * x
-{% endhighlight %}
+```
 
 ## Constructing and deconstructing types 
 
 After a type is defined, instances of the type are created using a "constructor" expression that often looks quite similar to the type definition itself.
 
-{% highlight fsharp %}
+```fsharp
 let a = (1,1)
 let b = { FirstName="Bob"; LastName="Smith" } 
 let c = Circle 99
@@ -139,12 +139,12 @@ let d = Month
 let e = Choice1 "a"
 let myVal = MyClass 99
 myVal.Method()
-{% endhighlight %}
+```
 
 
 What is interesting is that the *same* "constructor" syntax is also used to "deconstruct" the type when doing pattern matching:
 
-{% highlight fsharp %}
+```fsharp
 let a = (1,1)                                  // "construct"
 let (a1,a2) = a                                // "deconstruct"
 
@@ -160,7 +160,7 @@ let c' = Rectangle (2,1)                       // "construct"
 match c' with                                   
 | Circle c1 -> printf "circle of radius %i" c1 // "deconstruct"
 | Rectangle (c2,c3) -> printf "%i %i" c2 c3    // "deconstruct"
-{% endhighlight %}
+```
 
 As you read through this series, pay attention to how the constructors are used in both ways.
 

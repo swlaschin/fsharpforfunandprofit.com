@@ -114,7 +114,7 @@ In the first approach, types are defined *inside* the module along with their re
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 namespace Example
 
 // declare a module 
@@ -129,13 +129,13 @@ module Person =
     // method that works on the type
     let fullName {First=first; Last=last} = 
         first + " " + last
-{% endhighlight fsharp %}
+```
 
 So the functions are accessed with names like `Person.create` and `Person.fullName` while the type itself is accessed with the name `Person.T`. 
 
 In the second approach, types are declared in the same file, but outside any module:
 
-{% highlight fsharp %}
+```fsharp
 namespace Example
 
 // declare the type outside the module
@@ -151,13 +151,13 @@ module Person =
     // method that works on the type
     let fullName {First=first; Last=last} = 
         first + " " + last
-{% endhighlight fsharp %}
+```
 
 In this case, the functions are accessed with the same names (`Person.create` and `Person.fullName`) while the type itself is accessed with the name such as `PersonType`. 
 
 And finally, here's the third approach. The type is declared in a special "types-only" module (typically in a different file):
 
-{% highlight fsharp %}
+```fsharp
 // =========================
 // File: DomainTypes.fs
 // =========================
@@ -173,14 +173,14 @@ module DomainTypes =
     
     type ThirdDomainType = ...
     
-{% endhighlight fsharp %}
+```
 
 In this particular case, the `AutoOpen` attribute has been used to make the types in this module automatically visible to all the other modules in the project -- making them "global".
 
 And then a different module contains all the functions that work on, say, the `Person` type.
 
 
-{% highlight fsharp %}
+```fsharp
 // =========================
 // File: Person.fs
 // =========================
@@ -196,23 +196,23 @@ module Person =
     // method that works on the type
     let fullName {First=first; Last=last} = 
         first + " " + last
-{% endhighlight fsharp %}
+```
       
 Note that in this example, both the type and the module are called `Person`. This is not normally a problem in practice, as the compiler can normally figure out what you want.
 
 So, if you write this:
 
-{% highlight fsharp %}
+```fsharp
 let f (p:Person) = p.First
-{% endhighlight fsharp %}
+```
 
 Then the compiler will understand that you are referring to the `Person` type. 
 
 On the other hand, if you write this:
 
-{% highlight fsharp %}
+```fsharp
 let g () = Person.create "Alice" "Smith"
-{% endhighlight fsharp %}
+```
 
 Then the compiler will understand that you are referring to the `Person` module. 
 
@@ -249,11 +249,11 @@ In reality, even for large projects, not having folders is not as much of a prob
 
 If you are coming from an OO design, you might run into mutual dependencies between types, such as this example, which won't compile:
 
-{% highlight fsharp %}
+```fsharp
 type Location = {name: string; workers: Employee list}
 
 type Employee = {name: string; worksAt: Location}
-{% endhighlight fsharp %}
+```
 
 How can you fix this to make the F# compiler happy?  
 
@@ -269,7 +269,7 @@ Be aware that this is still a skeleton. Some of the modules are missing, and som
 
 This kind of organization would be overkill for a small project, but there will be lots more code to come!
 
-{% highlight fsharp %}
+```fsharp
 /// ===========================================
 /// Common types and functions shared across multiple projects
 /// ===========================================
@@ -427,7 +427,7 @@ module UseCases =
         >> bind CustomerRepository.updateDatebaseStep
         >> Logger.log
 
-{% endhighlight fsharp %}
+```
 
 
 ## Summary

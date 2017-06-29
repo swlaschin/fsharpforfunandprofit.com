@@ -87,13 +87,13 @@ Let's start off by looking at the following code.
 
 The question I would ask you is simple: What is the value of `y`?
 
-{% highlight csharp %}
+```csharp
 var x = 2;
 DoSomething(x);
 
 // What value is y? 
 var y = x - 1;
-{% endhighlight csharp %}
+```
 
 (scroll down for answer)
 
@@ -112,13 +112,13 @@ Trick question!  This code is actually JavaScript!
 
 Here's the whole thing:
 
-{% highlight csharp %}
+```csharp
 function DoSomething (foo) { x = false}
 
 var x = 2;
 DoSomething(x);
 var y = x - 1;
-{% endhighlight csharp %}
+```
 
 Yes, it's horrible! `DoSomething` accesses `x` directly rather than through the parameter, and then turns it into a boolean of all things!
 Then, subtracting 1 from `x` casts it from `false` to `0`, so that `y` is `-1`.
@@ -155,14 +155,14 @@ In this next example, we're going to create two instances of the same `Customer`
 
 The question is: Are they equal?
 
-{% highlight csharp %}
+```csharp
 // create two customers
 var cust1 = new Customer(99, "J Smith");
 var cust2 = new Customer(99, "J Smith");
 
 // true or false?
 cust1.Equals(cust2);
-{% endhighlight csharp %}
+```
 
 (scroll down for answer)
 
@@ -171,10 +171,10 @@ cust1.Equals(cust2);
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-{% highlight csharp %}
+```csharp
 // true or false?
 cust1.Equals(cust2);
-{% endhighlight csharp %}
+```
 
 Who knows? It depends on how the `Customer` class has been implemented. This code is *not* predictable.
 
@@ -207,14 +207,14 @@ In this next example, I've got two objects containing exactly the same data, but
 
 The question again is: Are they equal?
 
-{% highlight csharp %}
+```csharp
 // create a customer and an order
 var cust = new Customer(99, "J Smith");
 var order = new Order(99, "J Smith");
 
 // true or false?
 cust.Equals(order);
-{% endhighlight csharp %}
+```
 
 (scroll down for answer)
 
@@ -223,10 +223,10 @@ cust.Equals(order);
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-{% highlight csharp %}
+```csharp
 // true or false?
 cust.Equals(order);
-{% endhighlight csharp %}
+```
 
 Who cares! This is almost certainly a bug! Why are you even comparing two different classes like this in the first place?
 
@@ -255,13 +255,13 @@ But what is the cost of this feature? You get the ability to compare subclasses,
 
 In this snippet, we're just going to create a `Customer` instance. That's all. Can't get much more basic than that.
 
-{% highlight csharp %}
+```csharp
 // create a customer
 var cust = new Customer();
 
 // what is the expected output?
 Console.WriteLine(cust.Address.Country);
-{% endhighlight csharp %}
+```
 
 Now the question is: what is the expected output of `WriteLine`?
 
@@ -273,10 +273,10 @@ Now the question is: what is the expected output of `WriteLine`?
 
 
 
-{% highlight csharp %}
+```csharp
 // what is the expected output?
 Console.WriteLine(cust.Address.Country);
-{% endhighlight csharp %}
+```
 
 Who knows?  
 
@@ -310,7 +310,7 @@ In this next example, we're going to:
 
 What could possibly go wrong?
 
-{% highlight csharp %}
+```csharp
 // create a customer
 var cust = new Customer(99, "J Smith");
 
@@ -323,7 +323,7 @@ ProcessCustomer(cust);
 
 // Does the set contain the customer? true or false?
 processedCustomers.Contains(cust);
-{% endhighlight csharp %}
+```
 
 So, does the set still contain the customer at the end of this code?
 
@@ -334,10 +334,10 @@ So, does the set still contain the customer at the end of this code?
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-{% highlight csharp %}
+```csharp
 // Does the set contain the customer?
 processedCustomers.Contains(cust);
-{% endhighlight csharp %}
+```
 
 Maybe. Maybe not.  
 
@@ -358,7 +358,7 @@ Better to just make the entire `Customer` class immutable instead!
 
 Now if the `Customer` class was immutable, and `ProcessCustomer` wanted to make changes, it would have to return a *new version* of the customer, and the code would look like this:
 
-{% highlight csharp %}
+```csharp
 // create a customer
 var cust = new ImmutableCustomer(99, "J Smith");
 
@@ -371,13 +371,13 @@ var changedCustomer = ProcessCustomer(cust);
 
 // true or false?
 processedCustomers.Contains(cust);
-{% endhighlight csharp %}
+```
 
 Notice that the `ProcessCustomer` line has changed to:
 
-{% highlight csharp %}
+```csharp
 var changedCustomer = ProcessCustomer(cust);
-{% endhighlight csharp %}
+```
 
 It's clear that `ProcessCustomer` has changed something just by looking at this code.
 If `ProcessCustomer` *hadn't* changed anything, it wouldn't have needed to return an object at all.
@@ -413,7 +413,7 @@ Almost done now -- just one more!
 
 In this final example, we'll try to fetch a customer from a `CustomerRepository`.
 
-{% highlight csharp %}
+```csharp
 // create a repository
 var repo = new CustomerRepository();
 
@@ -422,7 +422,7 @@ var customer = repo.GetById(42);
 
 // what is the expected output?
 Console.WriteLine(customer.Id);
-{% endhighlight csharp %}
+```
 
 The question is: after we do `customer = repo.GetById(42)`, what is the value of `customer.Id`?
 
@@ -433,12 +433,12 @@ The question is: after we do `customer = repo.GetById(42)`, what is the value of
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 
-{% highlight csharp %}
+```csharp
 var customer = repo.GetById(42);
 
 // what is the expected output?
 Console.WriteLine(customer.Id);
-{% endhighlight csharp %}
+```
 
 It all depends, of course. 
 
@@ -456,25 +456,25 @@ But now imagine that your language did not allow `null` and did not allow except
 
 The answer is, you would be forced to return a special class that might contain *either* a customer *or* an error, like this:
 
-{% highlight csharp %}
+```csharp
 // create a repository
 var repo = new CustomerRepository();
 
 // find a customer by id and
 // return a CustomerOrError result
 var customerOrError = repo.GetById(42);
-{% endhighlight csharp %}
+```
 
 The code that processed this "customerOrError" result would then have to test what kind of result it was, and handle each case separately, like this:
 
-{% highlight csharp %}
+```csharp
 // handle both cases
 if (customerOrError.IsCustomer)
     Console.WriteLine(customerOrError.Customer.Id);
 
 if (customerOrError.IsError)
     Console.WriteLine(customerOrError.ErrorMessage);
-{% endhighlight csharp %}
+```
     
 This is exactly the approach taken by most functional languages. It does help if the language provides conveniences to make this technique easier, such as sum types,
 but even without that, this approach is still the only way to go if you want to make it obvious what your code is doing. (You can read more about this technique [here](/rop/).)

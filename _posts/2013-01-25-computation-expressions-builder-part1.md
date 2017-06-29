@@ -52,14 +52,14 @@ The MSDN documentation uses this more precise approach. It uses "pattern" and "e
 Here are some examples of using patterns and expressions in a `maybe` computation expression,
 where `Option` is the wrapped type, and the right hand side expressions are `options`: 
 
-{% highlight fsharp %}
+```fsharp
 // let! pattern = expr in cexpr
 maybe {
     let! x,y = Some(1,2) 
     let! head::tail = Some( [1;2;3] )
     // etc
     }
-{% endhighlight fsharp %}
+```
 
 Having said this, I will continue to use the oversimplified examples, so as not to add extra complication to an already complicated topic!
 
@@ -73,28 +73,28 @@ On the other hand, you do *not* need to implement every single method if you don
 
 To see what happens if you have not implemented a method, let's try to use the `for..in..do` syntax in our `maybe` workflow like this:
 
-{% highlight fsharp %}
+```fsharp
 maybe { for i in [1;2;3] do i }
-{% endhighlight fsharp %}
+```
 
 We will get the compiler error:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'For' method
-{% endhighlight text %}
+```
 
 Sometimes you get will errors that might be cryptic unless you know what is going on behind the scenes. 
 For example, if you forget to put `return` in your workflow, like this:
 
-{% highlight fsharp %}
+```fsharp
 maybe { 1 }
-{% endhighlight fsharp %}
+```
 
 You will get the compiler error:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'Zero' method
-{% endhighlight text %}
+```
 
 You might be asking: what is the `Zero` method? And why do I need it?  The answer to that is coming right up.
 
@@ -106,18 +106,18 @@ The difference is easy to remember when you realize that the operations *without
 
 So for example, using the `maybe` workflow, where `Option` is the wrapped type, we can compare the different syntaxes:
 
-{% highlight fsharp %}
+```fsharp
 let x = 1           // 1 is an "unwrapped" type
 let! x = (Some 1)   // Some 1 is a "wrapped" type
 return 1            // 1 is an "unwrapped" type
 return! (Some 1)    // Some 1 is a "wrapped" type
 yield 1             // 1 is an "unwrapped" type
 yield! (Some 1)     // Some 1 is a "wrapped" type
-{% endhighlight fsharp %}
+```
 
 The "!" versions are particularly important for composition, because the wrapped type can be the result of *another* computation expression of the same type.
 
-{% highlight fsharp %}
+```fsharp
 let! x = maybe {...)       // "maybe" returns a "wrapped" type
 
 // bind another workflow of the same type using let!
@@ -130,7 +130,7 @@ let processUri uri = async {
     let! links = extractLinks html
     ... etc ...
     }
-{% endhighlight fsharp %}
+```
 
 ## Diving in - creating a minimal implementation of a workflow
 
@@ -138,7 +138,7 @@ Let's start! We'll begin by creating a minimal version of the "maybe" workflow (
 
 Here's the code for the first version of the `trace` workflow:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     member this.Bind(m, f) = 
         match m with 
@@ -158,13 +158,13 @@ type TraceBuilder() =
 
 // make an instance of the workflow 
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 Nothing new here, I hope. We have already seen all these methods before.
 
 Now let's run some sample code through it:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     return 1
     } |> printfn "Result 1: %A" 
@@ -184,7 +184,7 @@ trace {
     let! y = Some 1
     return x + y
     } |> printfn "Result 4: %A" 
-{% endhighlight fsharp %}
+```
 
 Everything should work as expected, in particular, you should be able to see that the use of `None` in the 4th example caused the next two lines (`let! y = ... return x+y`) to be skipped and the result of the whole expression was `None`.
 
@@ -198,14 +198,14 @@ Inside a computation expression, `do!` is very similar. Just as `let!` passes a 
 
 Here is a simple demonstration using the `trace` workflow:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     do! Some (printfn "...expression that returns unit")
     do! Some (printfn "...another expression that returns unit")
     let! x = Some (1)
     return x
     } |> printfn "Result from do: %A" 
-{% endhighlight fsharp %}
+```
 
 Here is the output:
 
@@ -225,42 +225,42 @@ You can verify for yourself that a `unit option` is being passed to `Bind` as a 
 
 What is the smallest computation expression you can get away with? Let's try nothing at all:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     } |> printfn "Result for empty: %A" 
-{% endhighlight fsharp %}
+```
 
 We get an error immediately:
 
-{% highlight text %}
+```text
 This value is not a function and cannot be applied
-{% endhighlight text %}
+```
 
 Fair enough. If you think about it, it doesn't make sense to have nothing at all in a computation expression. After all, it's purpose is to chain expressions together.
 
 Next, what about a simple expression with no `let!` or `return`?
  
-{% highlight fsharp %}
+```fsharp
 trace { 
     printfn "hello world"
     } |> printfn "Result for simple expression: %A" 
-{% endhighlight fsharp %}
+```
 
 Now we get a different error:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'Zero' method
-{% endhighlight text %}
+```
 
 So why is the `Zero` method needed now but we haven't needed it before? The answer is that in this particular case we haven't returned anything explicitly, yet the computation expression as a whole *must* return a wrapped value. So what value should it return?
 
 In fact, this situation will occur any time the return value of the computation expression has not been explicitly given. The same thing happens if you have an `if..then` expression without an else clause. 
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     if false then return 1
     } |> printfn "Result for if without else: %A" 
-{% endhighlight fsharp %}
+```
 
 In normal F# code, an "if..then" without an "else" would result in a unit value, but in a computation expression, the particular return value must be a member of the wrapped type, and the compiler does not know what value this is.
 
@@ -282,7 +282,7 @@ The `Zero` value also has an important role to play when combining wrapped types
 
 So now let's extend our testbed class with a `Zero` method that returns `None`, and try again.
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
     member this.Zero() = 
@@ -300,7 +300,7 @@ trace {
 trace { 
     if false then return 1
     } |> printfn "Result for if without else: %A" 
-{% endhighlight fsharp %}
+```
 
 The test code makes it clear that `Zero` is being called behind the scenes. And `None` is the return value for the expression as whole. *Note: `None` may print out as `<null>`. You can ignore this.*
 
@@ -308,10 +308,10 @@ The test code makes it clear that `Zero` is being called behind the scenes. And 
 
 Remember, you *not required* to have a `Zero`, but only if it makes sense in the context of the workflow. For example `seq` does not allow zero, but `async` does:
 
-{% highlight fsharp %}
+```fsharp
 let s = seq {printfn "zero" }    // Error
 let a = async {printfn "zero" }  // OK
-{% endhighlight fsharp %}
+```
 
 
 ## Introducing "Yield"
@@ -320,23 +320,23 @@ In C#, there is a "yield" statement that, within an iterator, is used to return 
 
 And looking at the docs, there is a "yield" available in F# computation expressions as well. What does it do? Let's try it and see.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     } |> printfn "Result for yield: %A" 
-{% endhighlight fsharp %}
+```
 
 And we get the error:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'Yield' method
-{% endhighlight text %}
+```
 
 No surprise there. So what should the implementation of "yield" method look like?  The MSDN documentation says that it has the signature `'T -> M<'T>`, which is exactly the same as the signature for the `Return` method. It must take an unwrapped value and wrap it.
 
 So let's implement it the same way as `Return` and retry the test expression.
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
 
@@ -351,7 +351,7 @@ let trace = new TraceBuilder()
 trace { 
     yield 1
     } |> printfn "Result for yield: %A" 
-{% endhighlight fsharp %}
+```
 
 This works now, and it seems that it can be used as an exact substitute for `return`. 
 
@@ -359,7 +359,7 @@ There is a also a `YieldFrom` method that parallels the `ReturnFrom` method. And
 
 So let's add that to our list of builder methods as well:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
 
@@ -374,17 +374,17 @@ let trace = new TraceBuilder()
 trace { 
     yield! Some 1
     } |> printfn "Result for yield!: %A" 
-{% endhighlight fsharp %}
+```
 
 At this point you might be wondering: if `return` and `yield` are basically the same thing, why are there two different keywords?  The answer is mainly so that you can enforce appropriate syntax by implementing one but not the other.  For example, the `seq` expression *does* allow `yield` but *doesn't* allow `return`, while the `async` does allow `return`, but does not allow `yield`, as you can see from the snippets below.  
 
-{% highlight fsharp %}
+```fsharp
 let s = seq {yield 1}    // OK
 let s = seq {return 1}   // error
 
 let a = async {return 1} // OK
 let a = async {yield 1}  // error
-{% endhighlight fsharp %}
+```
 
 In fact, you could create slightly different behavior for `return` vs. `yield`, so that, for example, using `return` stops the rest of the computation expression from being evaluated, while `yield` doesn't.
 
@@ -398,7 +398,7 @@ We talked about the `for..in..do` syntax in the last post. So now let's revisit 
 * The `Yield` method can be implemented in the same way as `Return`.
 * The `For` method can be implemented the same as `Bind`.
 
-{% highlight fsharp %}
+```fsharp
 type ListBuilder() =
     member this.Bind(m, f) = 
         m |> List.collect f
@@ -421,27 +421,27 @@ type ListBuilder() =
 
 // make an instance of the workflow                
 let listbuilder = new ListBuilder()
-{% endhighlight fsharp %}
+```
 
 And here is the code using `let!`:
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     let! x = [1..3]
     let! y = [10;20;30]
     return x + y
     } |> printfn "Result: %A" 
-{% endhighlight fsharp %}
+```
 
 And here is the equivalent code using `for`:    
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     for x in [1..3] do
     for y in [10;20;30] do
     return x + y
     } |> printfn "Result: %A" 
-{% endhighlight fsharp %}
+```
 
 You can see that both approaches give the same result.
 

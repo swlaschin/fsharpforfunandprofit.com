@@ -57,7 +57,7 @@ We'll start with the simplest kind of dependency -- what I will call a "method d
 
 Here is an example.
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependencyExample = 
 
     type Customer(name, observer:CustomerObserver) = 
@@ -76,7 +76,7 @@ module MethodDependencyExample =
     let observer = new CustomerObserver()
     let customer = Customer("Alice",observer)
     customer.Name <- "Bob"
-{% endhighlight fsharp %}
+```
 
 The `Customer` class has a property/field of type `CustomerObserver`, but the `CustomerObserver` class has a method which takes a `Customer` as a parameter, causing a mutual dependency.
 
@@ -88,13 +88,13 @@ The `and` keyword is designed for just this situation -- it allows you to have t
 
 To use it, just replace the second `type` keyword with `and`. Note that using `and type`, as shown below, is incorrect. Just the single `and` is all you need.
 
-{% highlight fsharp %}
+```fsharp
 type Something 
 and type SomethingElse  // wrong
 
 type Something 
 and SomethingElse       // correct
-{% endhighlight fsharp %}
+```
 
 But `and` has a number of problems, and using it is generally discouraged except as a last resort.
 
@@ -102,12 +102,12 @@ First, it only works for types declared in the same module. You can't use it acr
 
 Second, it should really only be used for tiny types. If you have 500 lines of code between the `type` and the `and`, then you are doing something very wrong.
 
-{% highlight fsharp %}
+```fsharp
 type Something
    // 500 lines of code
 and SomethingElse
    // 500 more lines of code
-{% endhighlight fsharp %}
+```
 
 The code snippet shown above is an example of how *not* to do it.
 
@@ -123,7 +123,7 @@ So why don't we create a `INameObserver<'T>` interface instead, with the same `O
 
 Here's what I mean:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_ParameterizedInterface = 
 
     type INameObserver<'T> = 
@@ -146,7 +146,7 @@ module MethodDependency_ParameterizedInterface =
     let observer = new CustomerObserver()
     let customer = Customer("Alice", observer)
     customer.Name <- "Bob"
-{% endhighlight fsharp %}
+```
 
 In this revised version, the dependency has been broken! No `and` is needed at all.  In fact, you could even put the types in different projects or assemblies now!
 
@@ -156,7 +156,7 @@ But we don't have to stop there.  Now that we have an interface, do we really ne
 
 Here is the same code again, but this time the `CustomerObserver` class has been eliminated completely and the `INameObserver` created directly.
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_ParameterizedInterface = 
 
     // code as above
@@ -169,11 +169,11 @@ module MethodDependency_ParameterizedInterface =
         }
     let customer2 = Customer("Alice", observer2)
     customer2.Name <- "Bob"
-{% endhighlight fsharp %}
+```
 
 This technique will obviously work for more complex interfaces as well, such as that shown below, where there are two methods:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_ParameterizedInterface2 = 
 
     type ICustomerObserver<'T> = 
@@ -208,13 +208,13 @@ module MethodDependency_ParameterizedInterface2 =
     let customer2 = Customer("Alice", "x@example.com",observer2)
     customer2.Name <- "Bob"
     customer2.Email <- "y@example.com"
-{% endhighlight fsharp %}
+```
 
 ### Using functions instead of parameterization
 
 In many cases, we can go even further and eliminate the interface class as well. Why not just pass in a simple function that is called when the name changes, like this:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_ParameterizedClasses_HOF  = 
 
     type Customer(name, observer) = 
@@ -232,14 +232,14 @@ module MethodDependency_ParameterizedClasses_HOF  =
         printfn "Customer name changed to '%s' " c.Name
     let customer = Customer("Alice", observer)
     customer.Name <- "Bob"
-{% endhighlight fsharp %}
+```
 
 I think you'll agree that this snippet is "lower ceremony" than either of the previous versions.  The observer is now defined inline as needed, very simply:
 
-{% highlight fsharp %}
+```fsharp
 let observer(c:Customer) = 
     printfn "Customer name changed to '%s' " c.Name
-{% endhighlight fsharp %}
+```
 
 True, it only works when the interface being replaced is simple, but even so, this approach can be used more often than you might think.
 
@@ -250,7 +250,7 @@ As I mentioned above, a more "functional design" would be to separate the types 
 
 Here is a first pass:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependencyExample_SeparateTypes = 
 
     module DomainTypes = 
@@ -279,7 +279,7 @@ module MethodDependencyExample_SeparateTypes =
         let observer = Observer.printNameChanged 
         let customer = {name="Alice"; observer=observer}
         Customer.changeName customer "Bob"
-{% endhighlight fsharp %}
+```
 
 In the example above, we now have *three* modules: one for the types, and one each for the functions. Obviously, in a real application, there will be a lot more Customer related functions in the `Customer` module than just this one!
 
@@ -287,7 +287,7 @@ In this code, though, we still have the mutual dependency between `Customer` and
 
 Yes, of course. We can use the same trick as in the previous approach, eliminating the observer type and embedding a function directly in the `Customer` data structure, like this:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_SeparateTypes2 = 
 
     module DomainTypes = 
@@ -313,7 +313,7 @@ module MethodDependency_SeparateTypes2 =
         let observer = Observer.printNameChanged 
         let customer = {name="Alice"; observer=observer}
         Customer.changeName customer "Bob"
-{% endhighlight fsharp %}
+```
 
 ### Making types dumber
 
@@ -321,16 +321,16 @@ The `Customer` type still has some behavior embedded in it. In many cases, there
 
 So let's remove the `observer` from the customer type, and pass it as an extra parameter to the `changeName` function, like this:
 
-{% highlight fsharp %}
+```fsharp
 let changeName observer customer newName = 
     let newCustomer = {customer with name=newName}
     observer newCustomer    // call the observer with the new customer
     newCustomer             // return the new customer
-{% endhighlight fsharp %}
+```
 
 Here's the complete code:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_SeparateTypes3 = 
 
     module DomainTypes = 
@@ -356,13 +356,13 @@ module MethodDependency_SeparateTypes3 =
         let observer = Observer.printNameChanged 
         let customer = {name="Alice"}
         Customer.changeName observer customer "Bob"
-{% endhighlight fsharp %}
+```
 
 You might be thinking that I have made things more complicated now -- I have to specify the `observer` function everywhere I call `changeName` in my code. Surely this is worse than before? At least in the OO version, the observer was part of the customer object and I didn't have to keep passing it in.
 
 Ah, but, you're forgetting the magic of [partial application](/posts/partial-application/)!  You can set up a function with the observer "baked in", and then use *that* function everywhere, without needing to pass in an observer every time you use it. Clever!
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_SeparateTypes3 = 
 
     // code as above
@@ -378,18 +378,18 @@ module MethodDependency_SeparateTypes3 =
         // then call changeName without needing an observer
         let customer = {name="Alice"}
         changeName customer "Bob"
-{% endhighlight fsharp %}
+```
 
 ### But wait... there's more!
 
 Let's look at the `changeName` function again:
 
-{% highlight fsharp %}
+```fsharp
 let changeName observer customer newName = 
     let newCustomer = {customer with name=newName}
     observer newCustomer    // call the observer with the new customer
     newCustomer             // return the new customer
-{% endhighlight fsharp %}
+```
 
 It has the following steps:
 
@@ -399,21 +399,21 @@ It has the following steps:
 
 This is completely generic logic -- it has nothing to do with customers at all. So we can rewrite it as a completely generic library function. Our new function will allow *any* observer function to "hook into" into the result of *any* other function, so let's call it `hook` for now. 
 
-{% highlight fsharp %}
+```fsharp
 let hook2 observer f param1 param2 = 
     let y = f param1 param2 // do something to make a result value
     observer y              // call the observer with the result value
     y                       // return the result value
-{% endhighlight fsharp %}
+```
 
 Actually, I called it `hook2` because the function `f` being "hooked into" has two parameters. I could make another version for functions that have one parameter, like this:
 
-{% highlight fsharp %}
+```fsharp
 let hook observer f param1 = 
     let y = f param1 // do something to make a result value 
     observer y       // call the observer with the result value
     y                // return the result value
-{% endhighlight fsharp %}
+```
 
 If you have read the [railway oriented programming post](/posts/recipe-part2/), you might notice that this is quite similar to what I called a "dead-end" function.  I won't go into more details here, but this is indeed a common pattern.
 
@@ -424,21 +424,21 @@ Ok, back to the code -- how do we use this generic `hook` function?
 
 So, again, we create a partially applied `changeName` function, but this time we create it by passing the observer and the hooked function to `hook2`, like this:
 
-{% highlight fsharp %}
+```fsharp
 let observer = Observer.printNameChanged 
 let changeName = hook2 observer Customer.changeName 
-{% endhighlight fsharp %}
+```
 
 Note that the resulting `changeName` has *exactly the same signature* as the original `Customer.changeName` function, so it can be used interchangably with it anywhere.
 
-{% highlight fsharp %}
+```fsharp
 let customer = {name="Alice"}
 changeName customer "Bob"
-{% endhighlight fsharp %}
+```
 
 Here's the complete code:
 
-{% highlight fsharp %}
+```fsharp
 module MethodDependency_SeparateTypes_WithHookFunction = 
 
     [<AutoOpen>]
@@ -479,7 +479,7 @@ module MethodDependency_SeparateTypes_WithHookFunction =
         // then call changeName without needing an observer
         let customer = {name="Alice"}
         changeName customer "Bob"
-{% endhighlight fsharp %}
+```
 
 Creating a `hook` function like this might seem to add extra complication initially, but it has eliminated yet more code from the main application, and once you have built up a library of functions like this, you will find uses for them everywhere.
 
@@ -499,7 +499,7 @@ Voila -- mutual dependency!
 
 Here is the example in code:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample = 
 
     type Employee(name, location:Location) = 
@@ -509,13 +509,13 @@ module StructuralDependencyExample =
     and Location(name, employees: Employee list) = 
         member this.Name = name
         member this.Employees  = employees 
-{% endhighlight fsharp %}
+```
 
 Before we get on to refactoring, let's consider how awkward this design is. How can we initialize an `Employee` value without having a `Location` value, and vice versa.
 
 Here's one attempt. We create a location with an empty list of employees, and then create other employees using that location:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample = 
 
     // code as above
@@ -528,7 +528,7 @@ module StructuralDependencyExample =
         location.Employees  // empty!
         |> List.iter (fun employee -> 
             printfn "employee %s works at %s" employee.Name employee.Location.Name) 
-{% endhighlight fsharp %}
+```
 
 But this code doesn't work as we want. We have to set the list of employees for `location` as empty because we can't forward reference the `alice` and `bob` values..
 
@@ -536,19 +536,19 @@ F# will sometimes allow you to use the `and` keyword in these situation too, for
 
 Let's try it. We will give `location` a list of `alice` and `bob` even though they are not declared yet. 
 
-{% highlight fsharp %}
+```fsharp
 module UncompilableTest = 
     let rec location = new Location("NY",[alice;bob])       
     and alice = new Employee("Alice",location  )       
     and bob = new Employee("Bob",location )      
-{% endhighlight fsharp %}
+```
 
 But no, the compiler is not happy about the infinite recursion that we have created.  In some cases, `and` does indeed work for `let` definitions, but this is not one of them! 
 And anyway, just as for types, having to use `and` for "let" definitions is a clue that you might need to refactor.
 
 So, really, the only sensible solution is to use mutable structures, and to fix up the location object *after* the individual employees have been created, like this:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_Mutable = 
 
     type Employee(name, location:Location) = 
@@ -573,7 +573,7 @@ module StructuralDependencyExample_Mutable =
         location.Employees  
         |> List.iter (fun employee -> 
             printfn "employee %s works at %s" employee.Name employee.Location.Name) 
-{% endhighlight fsharp %}
+```
 
 So, a lot of trouble just to create some values. This is another reason why mutual dependencies are a bad idea!
 
@@ -581,7 +581,7 @@ So, a lot of trouble just to create some values. This is another reason why mutu
 
 To break the dependency, we can use the parameterization trick again. We can just create a parameterized vesion of `Employee`.
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_ParameterizedClasses = 
 
     type ParameterizedEmployee<'Location>(name, location:'Location) = 
@@ -606,19 +606,19 @@ module StructuralDependencyExample_ParameterizedClasses =
         location.Employees  // non-empty!
         |> List.iter (fun employee -> 
             printfn "employee %s works at %s" employee.Name employee.Location.Name) 
-{% endhighlight fsharp %}
+```
 
 Note that we create a type alias for `Employee`, like this:
 
-{% highlight fsharp %}
+```fsharp
 type Employee = ParameterizedEmployee<Location> 
-{% endhighlight fsharp %}
+```
 
 One nice thing about creating an alias like that is that the original code for creating employees will continue to work unchanged.
 
-{% highlight fsharp %}
+```fsharp
 let alice = new Employee("Alice",location)       
-{% endhighlight fsharp %}
+```
 
 ### Parameterizing with behavior dependencies
 
@@ -626,7 +626,7 @@ The code above assumes that the particular class being parameterized over is not
 
 For example, let's say that the `Employee` class expects a `Name` property, and the `Location` class expects an `Age` property, like this:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependency_WithAge = 
 
     type Employee(name, age:float, location:Location) = 
@@ -654,13 +654,13 @@ module StructuralDependency_WithAge =
         let bob = new Employee("Bob",30.0,location)      
         location.SetEmployees [alice;bob]
         printfn "Average age is %g" location.AverageAge 
-{% endhighlight fsharp %}
+```
 
 How can we possibly parameterize this?
 
 Well, let's try using the same approach as before:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyWithAge_ParameterizedError = 
 
     type ParameterizedEmployee<'Location>(name, age:float, location:'Location) = 
@@ -677,7 +677,7 @@ module StructuralDependencyWithAge_ParameterizedError =
             employees <- es
         member this.AverageAge = 
             employees |> List.averageBy (fun e -> e.Age)
-{% endhighlight fsharp %}
+```
 
 The `Location` is happy with `ParameterizedEmployee.Age`, but `location.Name` fails to compile. obviously, because the type parameter is too generic.
 
@@ -685,7 +685,7 @@ One way would be to fix this by creating interfaces such as `ILocation` and `IEm
 
 But another way is to let the Location parameter be generic and pass in an *additional function* that knows how to handle it. In this case a `getLocationName` function.
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyWithAge_ParameterizedCorrect = 
 
     type ParameterizedEmployee<'Location>(name, age:float, location:'Location, getLocationName) = 
@@ -704,13 +704,13 @@ module StructuralDependencyWithAge_ParameterizedCorrect =
             employees |> List.averageBy (fun e -> e.Age)
 
 
-{% endhighlight fsharp %}
+```
 
 One way of thinking about this is that we are providing the behavior externally, rather than as part of the type.
 
 To use this then, we need to pass in a function along with the type parameter. This would be annoying to do all the time, so naturally we will wrap it in a function, like this:
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyWithAge_ParameterizedCorrect = 
 
     // same code as above
@@ -719,11 +719,11 @@ module StructuralDependencyWithAge_ParameterizedCorrect =
     let Employee(name, age, location) = 
         let getLocationName (l:Location) = l.Name
         new ParameterizedEmployee<Location>(name, age, location, getLocationName)
-{% endhighlight fsharp %}
+```
 
 With this in place, the original test code continues to work, almost unchanged (we have to change `new Employee` to just `Employee`).
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyWithAge_ParameterizedCorrect = 
 
     // same code as above
@@ -737,7 +737,7 @@ module StructuralDependencyWithAge_ParameterizedCorrect =
         location.Employees  // non-empty!
         |> List.iter (fun employee -> 
             printfn "employee %s works at %s" employee.Name employee.LocationName) 
-{% endhighlight fsharp %}
+```
 
 ## The functional approach: separating types from functions again
 
@@ -745,7 +745,7 @@ Now let's apply the functional design approach to this problem, just as we did b
 
 Again, we'll separate the types themselves from the functions that act on those types. 
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_SeparateTypes = 
 
     module DomainTypes = 
@@ -779,12 +779,12 @@ module StructuralDependencyExample_SeparateTypes =
         Location.Employees location
         |> List.iter (fun e -> 
             printfn "employee %s works at %s" (Employee.Name e) (Employee.LocationName e) ) 
-{% endhighlight fsharp %}
+```
 
 Before we go any further, let's remove some unneeded code.  One nice thing about using a record type is that you don't need to define "getters", so the only functions you need in the modules
 are functions that manipulate the data, such as `AverageAge`.
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_SeparateTypes2 = 
 
     module DomainTypes = 
@@ -801,7 +801,7 @@ module StructuralDependencyExample_SeparateTypes2 =
 
         let AverageAge location =
             location.employees |> List.averageBy (fun e -> e.age)
-{% endhighlight fsharp %}
+```
 
 ### Parameterizing again
 
@@ -814,7 +814,7 @@ For example, if the things are products, then a place full of products might be 
 
 Here are these concepts expressed in code:
 
-{% highlight fsharp %}
+```fsharp
 module LocationOfThings =
 
     type Location<'Thing> = {name:string; mutable things: 'Thing list}
@@ -827,14 +827,14 @@ module LocationOfThings =
 
     type Book = {title:string; author:string}
     type Library = Location<Book>
-{% endhighlight fsharp %}
+```
 
 Of course, these locations are not exactly the same, but there might be something in common that you can extract into a generic design, especially as there is no behavior requirement attached to
 the things they contain.
 
 So, using the "location of things" design, here is our dependency rewritten to use parameterized types.
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_SeparateTypes_Parameterized = 
 
     module DomainTypes = 
@@ -862,7 +862,7 @@ module StructuralDependencyExample_SeparateTypes_Parameterized =
         let averageAge = 
             employees 
             |> List.averageBy (fun e -> e.age) 
-{% endhighlight fsharp %}
+```
 
 In this revised design you will see that the `AverageAge` function has been completely removed from the `Location` module. There is really no need for it, because we can do these
 kinds of calculations quite well "inline" without needing the overhead of special functions.
@@ -872,12 +872,12 @@ After all, the functionality is much more related to how employees work than how
 
 Here's what I mean:
 
-{% highlight fsharp %}
+```fsharp
 module Employee = 
 
     let AverageAgeAtLocation location = 
         location.things |> List.averageBy (fun e -> e.age) 
-{% endhighlight fsharp %}
+```
 
 This is one advantage of modules over classes; you can mix and match functions with different types, as long as they are all related to the underlying use cases.
 
@@ -894,7 +894,7 @@ The current relationships are held in a single master list, and so when changes 
 
 Here is a very crude example, using a simple list of `Relationship`s. 
 
-{% highlight fsharp %}
+```fsharp
 module StructuralDependencyExample_Normalized = 
 
     module DomainTypes = 
@@ -929,7 +929,7 @@ module StructuralDependencyExample_Normalized =
         relations 
         |> List.iter (fun (loc,empl) -> 
             printfn "employee %s works at %s" (empl.name) (loc.name) ) 
-{% endhighlight fsharp %}
+```
 
 Or course, a more efficient design would use dictionaries/maps, or special in-memory structures designed for this kind of thing.
 
@@ -944,7 +944,7 @@ We'll consider a UI control hierarchy, where every control belongs to a top-leve
 
 Here's a first pass at an implementation:
 
-{% highlight fsharp %}
+```fsharp
 module InheritanceDependencyExample = 
 
     type Control(name, form:Form) = 
@@ -959,7 +959,7 @@ module InheritanceDependencyExample =
     // test
     let form = new Form("form")       // NullReferenceException!
     let button = new Control("button",form)
-{% endhighlight fsharp %}
+```
 
 The thing to note here is that the Form passes itself in as the `form` value for the Control constructor.
 
@@ -972,7 +972,7 @@ and the `Form` class itself, which doesn't.
 
 Here's some sample code:
 
-{% highlight fsharp %}
+```fsharp
 module InheritanceDependencyExample2 = 
 
     [<AbstractClass>]
@@ -994,13 +994,13 @@ module InheritanceDependencyExample2 =
     // test
     let form = new Form("form")       
     let button = new Button("button",form)
-{% endhighlight fsharp %}
+```
 
 ### Our old friend parameterization again
 
 To remove the circular dependency, we can parameterize the classes in the usual way, as shown below.
 
-{% highlight fsharp %}
+```fsharp
 module InheritanceDependencyExample_ParameterizedClasses = 
 
     [<AbstractClass>]
@@ -1023,7 +1023,7 @@ module InheritanceDependencyExample_ParameterizedClasses =
     // test
     let form = new Form("form")       
     let button = new Button("button",form)
-{% endhighlight fsharp %}
+```
 
 ### A functional version
 

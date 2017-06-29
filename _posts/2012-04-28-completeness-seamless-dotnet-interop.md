@@ -27,7 +27,7 @@ In addition to the tight integration though, there are a number of nice features
 
 The `TryParse` and `TryGetValue` functions for values and dictionaries are frequently used to avoid extra exception handling. But the C# syntax is a bit clunky. Using them from F# is more elegant because F# will automatically convert the function into a tuple where the first element is the function return value and the second is the "out" parameter. 
 
-{% highlight fsharp %}
+```fsharp
 //using an Int32
 let (i1success,i1) = System.Int32.TryParse("123");
 if i1success then printfn "parsed as %i" i1 else printfn "parse failed"
@@ -44,25 +44,25 @@ let dict = new System.Collections.Generic.Dictionary<string,string>();
 dict.Add("a","hello")
 let (e1success,e1) = dict.TryGetValue("a");
 let (e2success,e2) = dict.TryGetValue("b");
-{% endhighlight  %}
+```
 
 ## Named arguments to help type inference
 
 In C# (and .NET in general), you can have overloaded methods with many different parameters. F# can have trouble with this. For example, here is an attempt to create a `StreamReader`:
 
-{% highlight fsharp %}
+```fsharp
 let createReader fileName = new System.IO.StreamReader(fileName)
 // error FS0041: A unique overload for method 'StreamReader' 
 //               could not be determined
-{% endhighlight  %}
+```
 
 The problem is that F# does not know if the argument is supposed to be a string or a stream. You could explicitly specify the type of the argument, but that is not the F# way! 
 
 Instead, a nice workaround is enabled by the fact that in F#, when calling methods in .NET libraries, you can specify named arguments.
 
-{% highlight fsharp %}
+```fsharp
 let createReader2 fileName = new System.IO.StreamReader(path=fileName)
-{% endhighlight  %}
+```
 
 In many cases, such as the one above, just using the argument name is enough to resolve the type issue. And using explicit argument names can often help to make the code more legible anyway.
 
@@ -74,17 +74,17 @@ A common case is that a .NET library class has a number of mutually exclusive `i
 
 For example, here's the code to test for various `isXXX` methods for `System.Char`.
 
-{% highlight fsharp %}
+```fsharp
 let (|Digit|Letter|Whitespace|Other|) ch = 
    if System.Char.IsDigit(ch) then Digit
    else if System.Char.IsLetter(ch) then Letter
    else if System.Char.IsWhiteSpace(ch) then Whitespace
    else Other
-{% endhighlight  %}
+```
 
 Once the choices are defined, the normal code can be straightforward: 
 
-{% highlight fsharp %}
+```fsharp
 let printChar ch = 
   match ch with
   | Digit -> printfn "%c is a Digit" ch
@@ -94,13 +94,13 @@ let printChar ch =
 
 // print a list
 ['a';'b';'1';' ';'-';'c'] |> List.iter printChar
-{% endhighlight  %}
+```
 
 Another common case is when you have to parse text or error codes to determine the type of an exception or result. Here's an example that uses an active pattern to parse the error number associated with `SqlExceptions`, making them more palatable. 
 
 First, set up the active pattern matching on the error number:
 
-{% highlight fsharp %}
+```fsharp
 open System.Data.SqlClient
 
 let (|ConstraintException|ForeignKeyException|Other|) (ex:SqlException) = 
@@ -108,11 +108,11 @@ let (|ConstraintException|ForeignKeyException|Other|) (ex:SqlException) =
    else if ex.Number = 2627 then ConstraintException 
    else if ex.Number = 547 then ForeignKeyException 
    else Other 
-{% endhighlight  %}
+```
 
 Now we can use these patterns when processing SQL commands:
 
-{% highlight fsharp %}
+```fsharp
 let executeNonQuery (sqlCommmand:SqlCommand) = 
     try
        let result = sqlCommmand.ExecuteNonQuery()
@@ -124,7 +124,7 @@ let executeNonQuery (sqlCommmand:SqlCommand) =
         | ForeignKeyException  -> // handle FK error
         | _ -> reraise()          // don't handle any other cases
     // all non SqlExceptions are thrown normally
-{% endhighlight %}
+```
 
 ## Creating objects directly from an interface ##
 
@@ -132,7 +132,7 @@ F# has another useful feature called "object expressions". This is the ability t
 
 In the example below, we create some objects that implement `IDisposable` using a `makeResource` helper function.
 
-{% highlight fsharp %}
+```fsharp
 // create a new object that implements IDisposable
 let makeResource name = 
    { new System.IDisposable 
@@ -148,7 +148,7 @@ let useAndDisposeResources =
     use r2 = makeResource "second resource"
     printfn "using second resource" 
     printfn "done." 
-{% endhighlight  %}
+```
 
 The example also demonstrates how the "`use`" keyword automatically disposes a resource when it goes out of scope. Here is the output:
 
@@ -171,26 +171,26 @@ The ability to create instances of an interface on the fly means that it is easy
 
 For example, say that you have a preexisting API which uses the `IAnimal` interface, as shown below.
 
-{% highlight fsharp %}
+```fsharp
 type IAnimal = 
    abstract member MakeNoise : unit -> string
 
 let showTheNoiseAnAnimalMakes (animal:IAnimal) = 
    animal.MakeNoise() |> printfn "Making noise %s" 
-{% endhighlight  %}
+```
 
 But we want to have all the benefits of pattern matching, etc, so we have created pure F# types for cats and dogs instead of classes. 
 
-{% highlight fsharp %}
+```fsharp
 type Cat = Felix | Socks
 type Dog = Butch | Lassie 
-{% endhighlight  %}
+```
 
 But using this pure F# approach means that that we cannot pass the cats and dogs to the `showTheNoiseAnAnimalMakes` function directly.
 
 However, we don't have to create new sets of concrete classes just to implement `IAnimal`. Instead, we can dynamically create the `IAnimal` interface by extending the pure F# types.
 
-{% highlight fsharp %}
+```fsharp
 // now mixin the interface with the F# types
 type Cat with
    member this.AsAnimal = 
@@ -201,17 +201,17 @@ type Dog with
    member this.AsAnimal = 
         { new IAnimal 
           with member a.MakeNoise() = "Woof" }
-{% endhighlight  %}
+```
 
 Here is some test code:
 
-{% highlight fsharp %}
+```fsharp
 let dog = Lassie
 showTheNoiseAnAnimalMakes (dog.AsAnimal)
 
 let cat = Felix
 showTheNoiseAnAnimalMakes (cat.AsAnimal)
-{% endhighlight  %}
+```
 
 This approach gives us the best of both worlds. Pure F# types internally, but the ability to convert them into interfaces as needed to interface with libraries.
 
@@ -221,7 +221,7 @@ F# gets the benefit of the .NET reflection system, which means that you can do a
 
 For example, here is a way to print out the fields in a record type, and the choices in a union type.
 
-{% highlight fsharp %}
+```fsharp
 open System.Reflection
 open Microsoft.FSharp.Reflection
 
@@ -240,4 +240,4 @@ type Choices = | A of int | B of string
 let choices = 
     FSharpType.GetUnionCases(typeof<Choices>)
     |> Array.map (fun choiceInfo -> choiceInfo.Name)
-{% endhighlight  %}
+```

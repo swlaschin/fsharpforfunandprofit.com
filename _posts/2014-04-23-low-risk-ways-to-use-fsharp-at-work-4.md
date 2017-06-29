@@ -113,7 +113,7 @@ You can use F# interactive to do many of the same things -- you get queries, aut
 
 For example, here's one that counts customers with a certain email domain.
 
-{% highlight fsharp %}
+```fsharp
 [<Literal>]
 let connectionString = "Data Source=localhost; Initial Catalog=SqlInFsharp; Integrated Security=True;"
 
@@ -127,29 +127,29 @@ query {
     select c
     count
     }
-{% endhighlight fsharp %}
+```
 
 If you want to see what SQL code is generated, you can turn logging on, of course:
 
-{% highlight fsharp %}
+```fsharp
 // optional, turn logging on
 db.DataContext.Log <- Console.Out
-{% endhighlight fsharp %}
+```
 
 The logged output for this query is:
 
-{% highlight text %}
+```text
 SELECT COUNT(*) AS [value]
 FROM [dbo].[Customer] AS [t0]
 WHERE [t0].[Email] LIKE @p0
 -- @p0: Input VarChar (Size = 8000; Prec = 0; Scale = 0) [%gmail.com]
-{% endhighlight text %}
+```
 
 You can also do more complicated things, such as using subqueries. Here's an example from [MSDN](http://msdn.microsoft.com/en-us/library/hh225374.aspx):
 
 Note that, as befitting a functional approach, queries are nice and composable.
 
-{% highlight fsharp %}
+```fsharp
 // Find students who have signed up at least one course.
 query {
     for student in db.Student do
@@ -157,12 +157,12 @@ query {
                    exists (courseSelection.StudentID = student.StudentID) })
     select student
 }
-{% endhighlight fsharp %}
+```
 
 And if the SQL engine doesn't support certain functions such as regexes, and assuming the size of the data is not too large,
 you can just stream the data out and do the processing in F#.
 
-{% highlight fsharp %}
+```fsharp
 // find the most popular domain for people born in each decade
 let getDomain email =
     Regex.Match(email,".*@(.*)").Groups.[1].Value
@@ -185,7 +185,7 @@ db.Customer
 |> Seq.sortBy fst
 |> Seq.map (fun (decade, group) -> (decade,topDomain group))
 |> Seq.iter (printfn "%A")
-{% endhighlight fsharp %}
+```
 
 As you can see from the code above, the nice thing about doing the processing in F# is that you can define helper functions separately and connect them together easily.
 
@@ -199,7 +199,7 @@ Now let's look at how we can use the type provider to make creating unit tests f
 First, I create a helper module (which I'll call `DbLib`) to set up the connection and to provide shared utility functions such as `resetDatabase`,
 which will be called before each test.
 
-{% highlight fsharp %}
+```fsharp
 module DbLib
 
 [<Literal>]
@@ -230,7 +230,7 @@ let resetDatabase() =
     use db = Sql.GetDataContext()
     removeExistingData db
     insertReferenceData db
-{% endhighlight fsharp %}
+```
 
 Now I can write a unit test, using NUnit say, just like any other unit test.
 
@@ -239,7 +239,7 @@ the passed in customer id is null or not.
 
 Here's what a test looks like:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``When upsert customer called with null id, expect customer created with new id``() = 
     DbLib.resetDatabase() 
@@ -254,13 +254,13 @@ let ``When upsert customer called with null id, expect customer created with new
     // check one customer exists
     let customerCount = db.Customer |> Seq.length
     Assert.AreEqual(1,customerCount)
-{% endhighlight fsharp %}
+```
 
 Note that, because the setup is expensive, I do multiple asserts in the test. This could be refactored if you find this too ugly!
 
 Here's one that tests that updates work:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``When upsert customer called with existing id, expect customer updated``() = 
     DbLib.resetDatabase() 
@@ -282,11 +282,11 @@ let ``When upsert customer called with existing id, expect customer updated``() 
     // check customer columns are updated
     let customer = db.Customer |> Seq.head
     Assert.AreEqual("Bob",customer.Name)
-{% endhighlight fsharp %}
+```
 
 And one more, that checks for exceptions:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``When upsert customer called with blank name, expect validation error``() = 
     DbLib.resetDatabase() 
@@ -300,7 +300,7 @@ let ``When upsert customer called with blank name, expect validation error``() =
     | :? System.Data.SqlClient.SqlException as ex ->
         Assert.That(ex.Message,Is.StringContaining("@Name"))
         Assert.That(ex.Message,Is.StringContaining("blank"))
-{% endhighlight fsharp %}
+```
 
 As you can see, the whole process is very straightforward. 
 
@@ -317,7 +317,7 @@ records in the database.
 
 Let's say we have a `CustomerImport` table, defined as below. (We'll use this table in the next section on ETL)
 
-{% highlight text %}
+```text
 CREATE TABLE dbo.CustomerImport (
 	CustomerId int NOT NULL IDENTITY(1,1)
 	,FirstName varchar(50) NOT NULL 
@@ -327,11 +327,11 @@ CREATE TABLE dbo.CustomerImport (
 
 	CONSTRAINT PK_CustomerImport PRIMARY KEY CLUSTERED (CustomerId)
 	)
-{% endhighlight text %}
+```
     
 Using the same code as before, we can then generate random instances of `CustomerImport`.    
 
-{% highlight fsharp %}
+```fsharp
 [<Literal>]
 let connectionString = "Data Source=localhost; Initial Catalog=SqlInFsharp; Integrated Security=True;"
 
@@ -356,7 +356,7 @@ let generateEmail() =
     let domainGen = FsCheck.Gen.elements ["gmail.com"; "example.com"; "outlook.com"]
     let makeEmail u d = sprintf "%s@%s" u d 
     FsCheck.Gen.map2 makeEmail userGen domainGen 
-{% endhighlight fsharp %}
+```
 
 So far so good.  
 
@@ -364,7 +364,7 @@ Now we get to the `age` column, which is nullable. This means we can't generate 
 we have to generate random `Nullable<int>`s. This is where type checking is really useful -- the compiler has forced us to take that into account.
 So to make sure we cover all the bases, we'll generate a null value one time out of twenty.
     
-{% highlight fsharp %}  
+```fsharp  
 // Generate a random nullable age.
 // Note that because age is nullable, 
 // the compiler forces us to take that into account
@@ -380,11 +380,11 @@ let generateAge() =
         (19,nonNullAgeGenerator) 
         (1,nullAgeGenerator)
         ]
-{% endhighlight fsharp %}
+```
 
 Putting it altogether...
 
-{% highlight fsharp %}
+```fsharp
 // a function to create a customer
 let createCustomerImport first last email age =
     let c = new Sql.ServiceTypes.CustomerImport()
@@ -401,13 +401,13 @@ let generateCustomerImport =
     <*> generateLastName() 
     <*> generateEmail() 
     <*> generateAge() 
-{% endhighlight fsharp %}
+```
 
 Once we have a random generator, we can fetch as many records as we like, and insert them using the type provider.
 
 In the code below, we'll generate 10,000 records, hitting the database in batches of 1,000 records.
 
-{% highlight fsharp %}
+```fsharp
 let insertAll() =
     use db = Sql.GetDataContext()
 
@@ -428,15 +428,15 @@ let insertAll() =
     // insert the records
     generator |> List.iteri insertOne
     db.DataContext.SubmitChanges() // commit any remaining
-{% endhighlight fsharp %}
+```
 
 Finally, let's do it and time it.
 
-{% highlight fsharp %}
+```fsharp
 #time
 insertAll() 
 #time
-{% endhighlight fsharp %}
+```
 
 It's not as fast as using BCP, but it is plenty adequate for testing. For example, it only takes a few seconds to create the 10,000 records above.
 
@@ -458,18 +458,18 @@ But for some situations, such as one off imports, and where the volumes are not 
 
 Say that we are importing data into a master table that looks like this:
 
-{% highlight text %}
+```text
 CREATE TABLE dbo.Customer (
 	CustomerId int NOT NULL IDENTITY(1,1)
 	,Name varchar(50) NOT NULL 
 	,Email varchar(50) NOT NULL 
 	,Birthdate datetime NULL 
 	)
-{% endhighlight text %}
+```
 
 But the system we're importing from has a different format, like this:
 
-{% highlight text %}
+```text
 CREATE TABLE dbo.CustomerImport (
 	CustomerId int NOT NULL IDENTITY(1,1)
 	,FirstName varchar(50) NOT NULL 
@@ -477,7 +477,7 @@ CREATE TABLE dbo.CustomerImport (
 	,EmailAddress varchar(50) NOT NULL 
 	,Age int NULL 
 	)
-{% endhighlight text %}
+```
 
 As part of this import then, we're going to have to:
 
@@ -490,7 +490,7 @@ The first step is to define a function that maps source records to target record
 
 Here's some code for this:
 
-{% highlight fsharp %}
+```fsharp
 [<Literal>]
 let sourceConnectionString = 
     "Data Source=localhost; Initial Catalog=SqlInFsharp; Integrated Security=True;"
@@ -517,11 +517,11 @@ let makeTargetCustomer (sourceCustomer:SourceSql.ServiceTypes.CustomerImport) =
     targetCustomer.Email <- sourceCustomer.EmailAddress
     targetCustomer.Birthdate <- makeBirthdate sourceCustomer.Age
     targetCustomer // return it
-{% endhighlight fsharp %}
+```
 
 With this transform in place, the rest of the code is easy, we just just read from the source and write to the target.
 
-{% highlight fsharp %}
+```fsharp
 let transferAll() =
     use sourceDb = SourceSql.GetDataContext()
     use targetDb = TargetSql.GetDataContext()
@@ -542,18 +542,18 @@ let transferAll() =
     
     targetDb.DataContext.SubmitChanges() // commit any remaining
     printfn "Done"
-{% endhighlight fsharp %}
+```
 
 Because these are sequence operations, only one record at a time is in memory (excepting the LINQ submit buffer), so even large data sets can
 be processed.
 
 To see it in use, first insert a number of records using the dummy data script just discussed, and then run the transfer as follows:
 
-{% highlight fsharp %}
+```fsharp
 #time
 transferAll() 
 #time
-{% endhighlight fsharp %}
+```
 
 Again, it only takes a few seconds to transfer 10,000 records.
 
@@ -586,7 +586,7 @@ For example, in the script below:
 * A `JobInfo` consists of a name plus a list of `Step`s.
 * An agent script is generated from a `JobInfo` plus a set of global properties associated with an environment, such as the databases, shared folder locations, etc.
 
-{% highlight fsharp %}
+```fsharp
 let thisDir = __SOURCE_DIRECTORY__
 System.IO.Directory.SetCurrentDirectory (thisDir)
 
@@ -669,7 +669,7 @@ module DevEnvironment =
         MySqlAgentJob.generate globals    
 
 DevEnvironment.generateJob()
-{% endhighlight fsharp %}
+```
 
 I can't share the actual F# code, but I think you get the idea. It's quite simple to create.
 
@@ -683,7 +683,7 @@ willing to accept it as input.
 On the other hand, it would be risky to maintain scripts like. Editing the SQL code directly could be risky.
 Better to use type-checked (and more concise) F# code than untyped T-SQL!
 
-{% highlight sql %}
+```sql
 USE [msdb]
 GO
 
@@ -848,7 +848,7 @@ QuitWithRollback:
     IF (@@TRANCOUNT > 0) ROLLBACK TRANSACTION
 EndSave:
 GO
-{% endhighlight sql %}
+```
 
 
  

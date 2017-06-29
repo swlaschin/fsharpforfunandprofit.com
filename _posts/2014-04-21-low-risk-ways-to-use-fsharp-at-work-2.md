@@ -143,7 +143,7 @@ without having TeamCity installed.
 
 Here's an example of a very simple FAKE script, taken from [a more detailed example on the FAKE site](http://fsharp.github.io/FAKE/gettingstarted.html).
 
-{% highlight fsharp %}
+```fsharp
 // Include Fake lib
 // Assumes NuGet has been used to fetch the FAKE libraries
 #r "packages/FAKE/tools/FakeLib.dll"
@@ -167,7 +167,7 @@ Target "Default" (fun _ ->
 
 // start build
 RunTargetOrDefault "Default"
-{% endhighlight fsharp %}
+```
 
 The syntax takes a little getting used to, but that effort is well spent.
 
@@ -186,7 +186,7 @@ Some further reading on FAKE:
 This script checks that a website is responding with a 200.
 This might be useful as the basis for a post-deployment smoke test, for example.
 
-{% highlight fsharp %}
+```fsharp
 // Requires FSharp.Data under script directory 
 //    nuget install FSharp.Data -o Packages -ExcludeVersion  
 #r @"Packages\FSharp.Data\lib\net40\FSharp.Data.dll"
@@ -218,14 +218,14 @@ let bad = "http://example.bad", []
 
 [google;bad]
 |> List.iter checkServer 
-{% endhighlight fsharp %}
+```
 
 The result is:
 
-{% highlight text %}
+```text
 Response for http://google.com is 200
 Error for http://example.bad. Message=No response
-{% endhighlight text %}
+```
 
 Note that I'm using the Http utilities code in `Fsharp.Data`, which provides a nice wrapper around `HttpClient`.
 [More on HttpUtilities here](http://fsharp.github.io/FSharp.Data/library/Http.html).
@@ -242,7 +242,7 @@ and convert it to a CSV file for later analysis.
 Note that the RSS parsing code is just one line of code! Most of the code is concerned with writing the CSV.
 Yes, I could have used a CSV library (there are lots on NuGet) but I thought I'd leave it as is to show you how simple it is.
  
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -281,7 +281,7 @@ do
     |> Seq.map (extractFields >> listToCsv)
     |> Seq.iter writer.WriteLine
     // writer will be closed automatically at the end of this scope
-{% endhighlight fsharp %} 
+``` 
     
 Note that the type provider generates intellisense (shown below) to show you the available properties based on the actual contents of the feed. That's very cool.
 
@@ -289,13 +289,13 @@ Note that the type provider generates intellisense (shown below) to show you the
 
 The result is something like this:
 
-{% highlight text %}
+```text
 "Optimising F# answer for Euler #4","DropTheTable","18/04/2014"
 "How to execute a function, that creates a lot of objects, in parallel?","Lawrence Woodman","01/04/2014"
 "How to invoke a user defined function using R Type Provider","Dave","19/04/2014"
 "Two types that use themselves","trn","19/04/2014"
 "How does function [x] -> ... work","egerhard","19/04/2014"
-{% endhighlight text %}
+```
 
 For more on the XML type provider, [see the FSharp.Data pages](http://fsharp.github.io/FSharp.Data/library/XmlProvider.html).
     
@@ -311,7 +311,7 @@ Luckily there is an F# type provider for WMI that makes using it easy.
 In this example, we'll get the system time and also check some stats for a process.
 This could be useful during and after a load test, for example. 
 
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -344,11 +344,11 @@ printfn "ThreadCount=%O" explorerProc.ThreadCount
 printfn "HandleCount=%O" explorerProc.HandleCount
 printfn "WorkingSetPeak=%O" explorerProc.WorkingSetPeak
 printfn "PageFileBytesPeak=%O" explorerProc.PageFileBytesPeak
-{% endhighlight fsharp %}
+```
 
 The output is something like this:
 
-{% highlight text %}
+```text
 Time=2014-4-20 14:2:35
 Timezone=GMT Standard Time
 ElapsedTime=2761906
@@ -356,7 +356,7 @@ ThreadCount=67
 HandleCount=3700
 WorkingSetPeak=168607744
 PageFileBytesPeak=312565760
-{% endhighlight text %}
+```
 
 Again, using a type provider means that you get intellisense (shown below). Very useful for the hundreds of WMI options.
 
@@ -376,19 +376,19 @@ For simple scripting, [Fog](http://dmohl.github.io/Fog/) is a nice wrapper for A
 
 So for example, to upload a blob, the code is as simple as this:
 
-{% highlight fsharp %}
+```fsharp
 UploadBlob "testcontainer" "testblob" "This is a test" |> ignore
-{% endhighlight fsharp %}
+```
 
 or to add and receive messages:
 
-{% highlight fsharp %}
+```fsharp
 AddMessage "testqueue" "This is a test message" |> ignore
 
 let result = GetMessages "testqueue" 20 5
 for m in result do
     DeleteMessage "testqueue" m
-{% endhighlight fsharp %}
+```
 
 What's especially nice about using F# for this is that you can do it in micro scripts -- you don't need any heavy tooling.
 

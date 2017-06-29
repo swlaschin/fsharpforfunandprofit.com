@@ -26,15 +26,15 @@ If we turn for guidance to the [official MSDN documention](http://msdn.microsoft
 
 For example, it says that when you see the following code within a computation expression:
 
-{% highlight fsharp %}
+```fsharp
 {| let! pattern = expr in cexpr |}
-{% endhighlight %}
+```
 
 it is simply syntactic sugar for this method call:
 
-{% highlight fsharp %}
+```fsharp
 builder.Bind(expr, (fun pattern -> {| cexpr |}))
-{% endhighlight %}
+```
 
 But... what does this mean exactly?
 
@@ -46,7 +46,7 @@ Before going into the mechanics of computation expressions, let's look at a few 
 
 Let's start with a simple one.  Let's say we have some code, and we want to log each step. So we define a little logging function, and call it after every value is created, like so:
 
-{% highlight fsharp %}
+```fsharp
 let log p = printfn "expression is %A" p
 
 let loggedWorkflow = 
@@ -58,15 +58,15 @@ let loggedWorkflow =
     log z
     //return
     z
-{% endhighlight fsharp %}
+```
 
 If you run this, you will see the output:
 
-{% highlight text %}
+```text
 expression is 42
 expression is 43
 expression is 85
-{% endhighlight  %}
+```
 
 Simple enough.  
 
@@ -76,7 +76,7 @@ Funny you should ask... A computation expression can do that. Here's one that do
 
 First we define a new type called `LoggingBuilder`:
 
-{% highlight fsharp %}
+```fsharp
 type LoggingBuilder() =
     let log p = printfn "expression is %A" p
 
@@ -86,19 +86,19 @@ type LoggingBuilder() =
 
     member this.Return(x) = 
         x
-{% endhighlight fsharp %}
+```
 
 *Don't worry about what the mysterious `Bind` and `Return` are for yet -- they will be explained soon.*
 
 Next we create an instance of the type, `logger` in this case.
 
-{% highlight fsharp %}
+```fsharp
 let logger = new LoggingBuilder()
-{% endhighlight fsharp %}
+```
 
 So with this `logger` value, we can rewrite the original logging example like this:
 
-{% highlight fsharp %}
+```fsharp
 let loggedWorkflow = 
     logger
         {
@@ -107,7 +107,7 @@ let loggedWorkflow =
         let! z = x + y
         return z
         }
-{% endhighlight fsharp %}
+```
 
 If you run this, you get exactly the same output, but you can see that the use of the `logger{...}` workflow has allowed us to hide the repetitive code.
 
@@ -124,18 +124,18 @@ Then we can chain the divisions together, and after each division we need to tes
 
 Here's the helper function first, and then the main workflow:
 
-{% highlight fsharp %}
+```fsharp
 let divideBy bottom top =
     if bottom = 0
     then None
     else Some(top/bottom)
-{% endhighlight fsharp %}
+```
 
 Note that I have put the divisor first in the parameter list. This is so we can write an expression like `12 |> divideBy 3`, which makes chaining easier.
 
 Let's put it to use. Here is a workflow that attempts to divide a starting number three times:
 
-{% highlight fsharp %}
+```fsharp
 let divideByWorkflow init x y z = 
     let a = init |> divideBy x
     match a with
@@ -151,14 +151,14 @@ let divideByWorkflow init x y z =
             | Some c' ->    // keep going
                 //return 
                 Some c'
-{% endhighlight fsharp %}
+```
 
 And here it is in use:
 
-{% highlight fsharp %}
+```fsharp
 let good = divideByWorkflow 12 3 2 1
 let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 The `bad` workflow fails on the third step and returns `None` for the whole thing.  
 
@@ -169,7 +169,7 @@ Anyway, this continual testing and branching is really ugly! Does turning it int
 
 Once more we define a new type (`MaybeBuilder`) and make an instance of the type (`maybe`).
 
-{% highlight fsharp %}
+```fsharp
 type MaybeBuilder() =
 
     member this.Bind(x, f) = 
@@ -181,13 +181,13 @@ type MaybeBuilder() =
         Some x
    
 let maybe = new MaybeBuilder()
-{% endhighlight fsharp %}
+```
 
 I have called this one `MaybeBuilder` rather than `divideByBuilder` because the issue of dealing with option types this way, using a computation expression, is quite common, and `maybe` is the standard name for this thing.
 
 So now that we have defined the `maybe` workflow, let's rewrite the original code to use it.
 
-{% highlight fsharp %}
+```fsharp
 let divideByWorkflow init x y z = 
     maybe 
         {
@@ -196,16 +196,16 @@ let divideByWorkflow init x y z =
         let! c = b |> divideBy z
         return c
         }    
-{% endhighlight fsharp %}
+```
 
 Much, much nicer. The `maybe` expression has completely hidden the branching logic!
 
 And if we test it we get the same result as before:
 
-{% highlight fsharp %}
+```fsharp
 let good = divideByWorkflow 12 3 2 1
 let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 
 ### Chains of "or else" tests
@@ -216,7 +216,7 @@ But sometimes it is the other way around. Sometimes the flow of control depends 
 
 Let's look at a simple example. Say that we have three dictionaries and we want to find the value corresponding to a key. Each lookup might succeed or fail, so we need to chain the lookups in a series.
 
-{% highlight fsharp %}
+```fsharp
 let map1 = [ ("1","One"); ("2","Two") ] |> Map.ofList
 let map2 = [ ("A","Alice"); ("B","Bob") ] |> Map.ofList
 let map3 = [ ("CA","California"); ("NY","New York") ] |> Map.ofList
@@ -231,23 +231,23 @@ let multiLookup key =
             match map3.TryFind key with
             | Some result3 -> Some result3  // success
             | None -> None // failure
-{% endhighlight fsharp %}
+```
 
 Because everything is an expression in F# we can't do an early return, we have to cascade all the tests in a single expression.
                 
 Here's how this might be used:
 
-{% highlight fsharp %}
+```fsharp
 multiLookup "A" |> printfn "Result for A is %A" 
 multiLookup "CA" |> printfn "Result for CA is %A" 
 multiLookup "X" |> printfn "Result for X is %A" 
-{% endhighlight fsharp %}
+```
 
 It works fine, but can it be simplified? 
 
 Yes indeed. Here is an "or else" builder that allows us to simplify these kinds of lookups:
 
-{% highlight fsharp %}
+```fsharp
 type OrElseBuilder() =
     member this.ReturnFrom(x) = x
     member this.Combine (a,b) = 
@@ -257,11 +257,11 @@ type OrElseBuilder() =
     member this.Delay(f) = f()
 
 let orElse = new OrElseBuilder()
-{% endhighlight fsharp %}
+```
 
 Here's how the lookup code could be altered to use it:
 
-{% highlight fsharp %}
+```fsharp
 let map1 = [ ("1","One"); ("2","Two") ] |> Map.ofList
 let map2 = [ ("A","Alice"); ("B","Bob") ] |> Map.ofList
 let map3 = [ ("CA","California"); ("NY","New York") ] |> Map.ofList
@@ -271,15 +271,15 @@ let multiLookup key = orElse {
     return! map2.TryFind key
     return! map3.TryFind key
     }
-{% endhighlight fsharp %}
+```
 
 Again we can confirm that the code works as expected.
 
-{% highlight fsharp %}
+```fsharp
 multiLookup "A" |> printfn "Result for A is %A" 
 multiLookup "CA" |> printfn "Result for CA is %A" 
 multiLookup "X" |> printfn "Result for X is %A" 
-{% endhighlight fsharp %}
+```
 
 ### Asynchronous calls with callbacks
 
@@ -287,7 +287,7 @@ Finally, let's look at callbacks.  The standard approach for doing asynchronous 
 
 Here is an example of how a web page might be downloaded using this technique:
 
-{% highlight fsharp %}
+```fsharp
 open System.Net
 let req1 = HttpWebRequest.Create("http://fsharp.org")
 let req2 = HttpWebRequest.Create("http://google.com")
@@ -308,7 +308,7 @@ req1.BeginGetResponse((fun r1 ->
             ),null) |> ignore
         ),null) |> ignore
     ),null) |> ignore
-{% endhighlight fsharp %}
+```
 
 Lots of calls to `BeginGetResponse` and `EndGetResponse`, and the use of nested lambdas, makes this quite complicated to understand. The important code (in this case, just print statements) is obscured by the callback logic.
 
@@ -316,7 +316,7 @@ In fact, managing this cascading approach is always a problem in code that requi
 
 Of course, we would never write that kind of code in F#, because F# has the `async` computation expression built in, which both simplifies the logic and flattens the code.
 
-{% highlight fsharp %}
+```fsharp
 open System.Net
 let req1 = HttpWebRequest.Create("http://fsharp.org")
 let req2 = HttpWebRequest.Create("http://google.com")
@@ -333,7 +333,7 @@ async {
     printfn "Downloaded %O" resp3.ResponseUri
 
     } |> Async.RunSynchronously
-{% endhighlight fsharp %}
+```
 
 We'll see exactly how the `async` workflow is implemented later in this series.
 
@@ -358,7 +358,7 @@ And as to the difference between a "computation expression" and a "workflow", I 
 
 In other words, in the following code, I would say that `maybe` is the workflow we are using, and the particular chunk of code `{ let! a = .... return c }` is the computation expression.
 
-{% highlight fsharp %}
+```fsharp
 maybe 
     {
     let! a = x |> divideBy y 
@@ -366,7 +366,7 @@ maybe
     let! c = b |> divideBy z
     return c
     }    
-{% endhighlight fsharp %}
+```
 
 You probably want to start creating your own computation expressions now, but first we need to take a short detour into continuations. That's up next.
 

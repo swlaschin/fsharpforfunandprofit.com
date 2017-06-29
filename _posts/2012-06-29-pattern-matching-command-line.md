@@ -61,7 +61,7 @@ So we'll start by first creating the internal model of the parameters, and then 
 
 Here's a first stab at the model:
 
-{% highlight fsharp %}
+```fsharp
 // constants used later
 let OrderByName = "N"
 let OrderBySize = "S"
@@ -72,7 +72,7 @@ type CommandLineOptions = {
     subdirectories: bool;
     orderby: string; 
     }
-{% endhighlight %}
+```
 
 Ok, that looks alright. Now let's parse the arguments.
 
@@ -82,7 +82,7 @@ The parsing logic is very similar to the `loopAndSum` example in the previous po
 * Each time through the loop, we parse one argument.
 * The options parsed so far are passed into each loop as a parameter (the "accumulator" pattern).
 
-{% highlight fsharp %}
+```fsharp
 let rec parseCommandLine args optionsSoFar = 
     match args with 
     // empty list means we're done.
@@ -120,7 +120,7 @@ let rec parseCommandLine args optionsSoFar =
     | x::xs -> 
         eprintfn "Option '%s' is unrecognized" x
         parseCommandLine xs optionsSoFar 
-{% endhighlight %}
+```
 
 This code is straightforward, I hope. 
 
@@ -136,13 +136,13 @@ There are two special cases:
 
 So now let's test this:
 
-{% highlight fsharp %}
+```fsharp
 parseCommandLine ["/v"; "/s"] 
-{% endhighlight %}
+```
             
 Oops! That didn't work -- we need to pass in an initial `optionsSoFar` argument! Lets try again:
 
-{% highlight fsharp %}
+```fsharp
 // define the defaults to pass in
 let defaultOptions = {
     verbose = false;
@@ -154,16 +154,16 @@ let defaultOptions = {
 parseCommandLine ["/v"] defaultOptions
 parseCommandLine ["/v"; "/s"] defaultOptions
 parseCommandLine ["/o"; "S"] defaultOptions
-{% endhighlight %}
+```
 
 Check that the output is what you would expect.
 
 And we should also check the error cases:
 
-{% highlight fsharp %}
+```fsharp
 parseCommandLine ["/v"; "xyz"] defaultOptions
 parseCommandLine ["/o"; "xyz"] defaultOptions
-{% endhighlight %}
+```
 
 You should see the error messages in these cases now.
 
@@ -179,7 +179,7 @@ Normally, this second one is the "public" one and the recursive one is hidden, s
 * Rename `parseCommandLine` to `parseCommandLineRec`. There are other naming conventions you could use as well, such as `parseCommandLine'` with a tick mark, or `innerParseCommandLine`.
 * Create a new `parseCommandLine` that calls `parseCommandLineRec` with the defaults
 
-{% highlight fsharp %}
+```fsharp
 // create the "helper" recursive function
 let rec parseCommandLineRec args optionsSoFar = 
 	// implementation as above
@@ -195,11 +195,11 @@ let parseCommandLine args =
 
     // call the recursive one with the initial options
     parseCommandLineRec args defaultOptions 
-{% endhighlight %}
+```
 
 In this case the helper function can stand on its own. But if you really want to hide it, you can put it as a nested subfunction in the defintion of `parseCommandLine` itself.
 
-{% highlight fsharp %}
+```fsharp
 // create the "public" parse function
 let parseCommandLine args = 
     // create the defaults
@@ -212,13 +212,13 @@ let parseCommandLine args =
 
     // call the recursive one with the initial options
     parseCommandLineRec args defaultOptions 
-{% endhighlight %}
+```
 
 In this case, I think it would just make things more complicated, so I have kept them separate.
 
 So, here is all the code at once, wrapped in a module:
 
-{% highlight fsharp %}
+```fsharp
 module CommandLineV1 =
 
     // constants used later
@@ -292,19 +292,19 @@ CommandLineV1.parseCommandLine  ["/o"; "S"]
 // error handling
 CommandLineV1.parseCommandLine ["/v"; "xyz"] 
 CommandLineV1.parseCommandLine ["/o"; "xyz"] 
-{% endhighlight %}
+```
 
 ## Second version
 
 In our initial model we used bool and string to represent the possible values. 
 
-{% highlight fsharp %}
+```fsharp
 type CommandLineOptions = {
     verbose: bool;
     subdirectories: bool;
     orderby: string; 
     }
-{% endhighlight %}
+```
 
 There are two problems with this:
 
@@ -313,9 +313,9 @@ There are two problems with this:
 * **The values are not self documenting.** For example, the verbose value is a bool. We only know that the bool represents the "verbose" option because of the *context* (the field named `verbose`) it is found in.
 If we passed that bool around, and took it out of context, we would not know what it represented. I'm sure we have all seen C# functions with many boolean parameters like this:
 
-{% highlight csharp %}
+```csharp
 myObject.SetUpComplicatedOptions(true,false,true,false,false);
-{% endhighlight %}
+```
 
 Because the bool doesn't represent anything at the domain level, it is very easy to make mistakes.
 
@@ -323,7 +323,7 @@ The solution to both these problems is to be as specific as possible when defini
 
 So here's a new version of `CommandLineOptions`:
 
-{% highlight fsharp %}
+```fsharp
 type OrderByOption = OrderBySize | OrderByName
 type SubdirectoryOption = IncludeSubdirectories | ExcludeSubdirectories
 type VerboseOption = VerboseOutput | TerseOutput
@@ -333,7 +333,7 @@ type CommandLineOptions = {
     subdirectories: SubdirectoryOption;
     orderby: OrderByOption
     }
-{% endhighlight %}
+```
 
 A couple of things to notice:
 
@@ -345,7 +345,7 @@ Once we have made the changes to the domain, it is easy to fix up the parsing lo
 
 So, here is all the revised code, wrapped in a "v2" module:
 
-{% highlight fsharp %}
+```fsharp
 module CommandLineV2 =
 
     type OrderByOption = OrderBySize | OrderByName
@@ -418,7 +418,7 @@ CommandLineV2.parseCommandLine ["/o"; "S"]
 // error handling
 CommandLineV2.parseCommandLine ["/v"; "xyz"] 
 CommandLineV2.parseCommandLine ["/o"; "xyz"] 
-{% endhighlight %}
+```
 
 ## Using fold instead of recursion?
 
@@ -435,7 +435,7 @@ And in a real-world situation, anything more complicated than this would be a si
 
 However, just to show you it can be done with `fold`:
 
-{% highlight fsharp %}
+```fsharp
 module CommandLineV3 =
 
     type OrderByOption = OrderBySize | OrderByName
@@ -531,7 +531,7 @@ CommandLineV3.parseCommandLine ["/o"; "S"]
 // error handling
 CommandLineV3.parseCommandLine ["/v"; "xyz"] 
 CommandLineV3.parseCommandLine ["/o"; "xyz"] 
-{% endhighlight %}
+```
 
 By the way, can you see a subtle change of behavior in this version? 
 
@@ -540,13 +540,13 @@ But in the 'fold' version, this token is swallowed and lost.
 
 To see this, compare the two implementations:
 
-{% highlight fsharp %}
+```fsharp
 // verbose set
 CommandLineV2.parseCommandLine ["/o"; "/v"] 
 
 // verbose not set! 
 CommandLineV3.parseCommandLine ["/o"; "/v"] 
-{% endhighlight %}
+```
 
 To fix this would be even more work. Again this argues for the second implementation as the easiest to debug and maintain.
 

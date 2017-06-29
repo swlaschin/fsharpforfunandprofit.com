@@ -15,20 +15,20 @@ You might be wondering how "everything is an expression" actually works in pract
 
 Let's start with some basic expression examples that should be familiar:
 
-{% highlight fsharp %}
+```fsharp
 1                            // literal
 [1;2;3]                      // list expression
 -2                           // prefix operator	
 2 + 2                        // infix operator	
 "string".Length              // dot lookup
 printf "hello"               // function application
-{% endhighlight %}
+```
 
 No problems there. Those are obviously expressions.
 
 But here are some more complex things which are *also* expressions. That is, each of these returns a value that can be used for something else. 
 
-{% highlight fsharp %}
+```fsharp
 fun () -> 1                  // lambda expression
 
 match 1 with                 // match expression
@@ -49,11 +49,11 @@ with
 
 
 let n=1 in n+2               // let expression
-{% endhighlight %}
+```
 
 In other languages, these might be statements, but in F# they really do return values, as you can see by binding a value to the result:
 
-{% highlight fsharp %}
+```fsharp
 let x1 = fun () -> 1                  
 
 let x2 = match 1 with                 
@@ -74,7 +74,7 @@ let x5 = try
 
 
 let x6 = let n=1 in n+2
-{% endhighlight %}
+```
 
 ## What kinds of expressions are there?
 
@@ -111,9 +111,9 @@ There will be some upcoming posts on these different types of control flow expre
 
 What about `let x=something`? In the examples above we saw:
 
-{% highlight fsharp %}
+```fsharp
 let x5 = let n=1 in n+2
-{% endhighlight %}
+```
 
 How can "`let`" be an expression? The reason will be discussed in the next post on ["let", "use" and "do"](/posts/let-use-do).
 
@@ -125,21 +125,21 @@ But before we cover the important expression types in details, here are some tip
 
 Normally, each expression is put on a new line. But you can use a semicolon to separate expressions on one line if you need to. Along with its use as a separator for list and record elements, this is one of the few times where a semicolon is used in F#.
 
-{% highlight fsharp %}
+```fsharp
 let f x =                           // one expression per line
       printfn "x=%i" x
       x + 1
 
 let f x = printfn "x=%i" x; x + 1   // all on same line with ";"
-{% endhighlight %}
+```
 
 The rule about requiring unit values until the last expression still applies, of course:
 
-{% highlight fsharp %}
+```fsharp
 let x = 1;2              // error: "1;" should be a unit expression
 let x = ignore 1;2       // ok
 let x = printf "hello";2 // ok
-{% endhighlight %}
+```
 
 ### Understanding expression evaluation order 
 
@@ -147,13 +147,13 @@ In F#, expressions are evaluated from the "inside out" -- that is, as soon as a 
 
 Have a look at the following code and try to guess what will happen, then evaluate the code and see.
 
-{% highlight fsharp %}
+```fsharp
 // create a clone of if-then-else
 let test b t f = if b then t else f
 
 // call it with two different choices
 test true (printfn "true") (printfn "false")
-{% endhighlight %}
+```
 
 What happens is that both "true" and "false" are printed, even though the test function will never actually evaluate the "else" branch.  Why? Because the `(printfn "false")` expression is evaluated immediately, regardless of how the test function will be using it.
 
@@ -163,31 +163,31 @@ The alternative style of evaluation is called "lazy", whereby expressions are on
 
 In F#, there are a number of techniques to force expressions *not* to be evaluated immediately. The simplest it to wrap it in a function that only gets evaluated on demand:
 
-{% highlight fsharp %}
+```fsharp
 // create a clone of if-then-else that accepts functions rather than simple values
 let test b t f = if b then t() else f()
 
 // call it with two different functions
 test true (fun () -> printfn "true") (fun () -> printfn "false")
-{% endhighlight %}
+```
 
 The problem with this is that now the "true" function might be evaluated twice by mistake, when we only wanted to evaluate it once!
 
 So, the preferred way for expressions not to be evaluated immediately is to use the `Lazy<>` wrapper.
 
-{% highlight fsharp %}
+```fsharp
 // create a clone of if-then-else with no restrictions...
 let test b t f = if b then t else f
 
 // ...but call it with lazy values
 let f = test true (lazy (printfn "true")) (lazy (printfn "false"))
-{% endhighlight %}
+```
 
 The final result value `f` is also a lazy value, and can be passed around without being evaluated until you are finally ready to get the result.
 
-{% highlight fsharp %}
+```fsharp
 f.Force()     // use Force() to force the evaluation of a lazy value
-{% endhighlight %}
+```
 
 If you never need the result, and never call `Force()`, then the wrapped value will never be evaluated.
 

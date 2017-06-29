@@ -26,7 +26,7 @@ So let's try implementing the main calculator function, and see how we do.
 
 First, we can immediately create a skeleton that matches each kind of input and processes it accordingly.
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
@@ -42,7 +42,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
         | Action Equals ->
             let newState = // do something
             newState //return
-{% endhighlight fsharp %}
+```
 
 You can see that this skeleton has a case for each type of input to handle it appropriately.
 Note that in all cases, a new state is returned.
@@ -54,24 +54,24 @@ The returned function is a value of type `Calculate` -- that's what the `:Calcul
 
 Here's just the top part:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
             // code
-{% endhighlight fsharp %}
+```
 
 Since it is returning a function, I chose to write it using a lambda. That's what the `fun (input,state) -> ` is for.
 
 But I could have also written it using an inner function, like this
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     let innerCalculate (input,state) = 
         match input with
             // code
     innerCalculate // return the inner function
-{% endhighlight fsharp %}
+```
 
 Both approaches are basically the same* -- take your pick!
 
@@ -86,7 +86,7 @@ That is, the services are only used in `createCalculate` itself, and are not vis
 
 The "main" or "bootstrapper" code that assembles all the components for the application would look something like this:
 
-{% highlight fsharp %}
+```fsharp
 // create the services
 let services = CalculatorServices.createServices()
 
@@ -99,7 +99,7 @@ let calculate = CalculatorImplementation.createCalculate services
 // create the UI and run it
 let form = new CalculatorUI.CalculatorForm(calculate)
 form.Show()
-{% endhighlight fsharp %}
+```
 
 ## Implementation: handling digits
 
@@ -107,26 +107,26 @@ Now let's start implementing the various parts of the calculation function. We'l
 
 To keep the main function clean, let's pass the reponsibility for all the work to a helper function `updateDisplayFromDigit`, like this:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
         | Digit d ->
             let newState = updateDisplayFromDigit services d state
             newState //return
-{% endhighlight fsharp %}
+```
 
 Note that I'm creating a `newState` value from the result of `updateDisplayFromDigit` and then returning it as a separate step. 
 
 I could have done the same thing in one step, without an explicit `newState` value, as shown below:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
         | Digit d ->
             updateDisplayFromDigit services d state
-{% endhighlight fsharp %}
+```
 
 Neither approach is automatically best. I would pick one or the other depending on the context. 
 
@@ -138,12 +138,12 @@ Alright, let's implement `updateDisplayFromDigit` now. It's pretty straightforwa
 * first use the `updateDisplayFromDigit` in the services to actually update the display
 * then create a new state from the new display and return it.
 
-{% highlight fsharp %}
+```fsharp
 let updateDisplayFromDigit services digit state =
     let newDisplay = services.updateDisplayFromDigit (digit,state.display)
     let newState = {state with display=newDisplay}
     newState //return
-{% endhighlight fsharp %}
+```
 
 ## Implementation: handling Clear and Equals 
 
@@ -156,7 +156,7 @@ We'll put that logic in a helper function called `updateDisplayFromPendingOp`.
 
 So here's what `createCalculate` looks like now:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
@@ -168,7 +168,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
         | Action Equals ->
             let newState = updateDisplayFromPendingOp services state
             newState //return
-{% endhighlight fsharp %}
+```
 
 Now to `updateDisplayFromPendingOp`. I spent a few minutes thinking about, and I've come up with the following algorithm for updating the display:
 
@@ -180,7 +180,7 @@ Now to `updateDisplayFromPendingOp`. I spent a few minutes thinking about, and I
 
 And here's what that logic looks like in imperative style code:
 
-{% highlight fsharp %}
+```fsharp
 // First version of updateDisplayFromPendingOp 
 // * very imperative and ugly
 let updateDisplayFromPendingOp services state =
@@ -201,7 +201,7 @@ let updateDisplayFromPendingOp services state =
             state // original state is untouched
     else
         state // original state is untouched
-{% endhighlight fsharp %}
+```
 
 Ewww! Don't try that at home! 
 
@@ -222,51 +222,51 @@ In order to use the bind pattern effectively, it's a good idea to break the code
 
 First, the code `if state.pendingOp.IsSome then do something` can be replaced by `Option.bind`. 
 
-{% highlight fsharp %}
+```fsharp
 let updateDisplayFromPendingOp services state =
     let result =
         state.pendingOp
         |> Option.bind ???
-{% endhighlight fsharp %}
+```
 
 But remember that the function has to return a state.
 If the overall result of the bind is `None`, then we have *not* created a new state, and we must return the original state that was passed in.
 
 This can be done with the built-in `defaultArg` function which, when applied to an option, returns the option's value if present, or the second parameter if `None`.
 
-{% highlight fsharp %}
+```fsharp
 let updateDisplayFromPendingOp services state =
     let result =
         state.pendingOp
         |> Option.bind ???
     defaultArg result state
-{% endhighlight fsharp %}
+```
 
 You can also tidy this up a bit as well by piping the result directly into `defaultArg`, like this:
 
-{% highlight fsharp %}
+```fsharp
 let updateDisplayFromPendingOp services state =
     state.pendingOp
     |> Option.bind ???
     |> defaultArg <| state
-{% endhighlight fsharp %}
+```
 
 I admit that the reverse pipe for `state` looks strange -- it's definitely an acquired taste!
 
 Onwards! Now what about the parameter to `bind`?  When this is called, we know that pendingOp is present, so we can write a lambda with those parameters, like this:
 
-{% highlight fsharp %}
+```fsharp
 let result = 
     state.pendingOp
     |> Option.bind (fun (op,pendingNumber) ->
         let currentNumberOpt = services.getDisplayNumber state.display
         // code
         )
-{% endhighlight fsharp %}
+```
 
 Alternatively, we could create a local helper function instead, and connect it to the bind, like this:
 
-{% highlight fsharp %}
+```fsharp
 let executeOp (op,pendingNumber) = 
     let currentNumberOpt = services.getDisplayNumber state.display
     /// etc
@@ -274,12 +274,12 @@ let executeOp (op,pendingNumber) =
 let result = 
     state.pendingOp
     |> Option.bind executeOp 
-{% endhighlight fsharp %}
+```
 
 I myself generally prefer the second approach when the logic is complicated, as it allows a chain of binds to be simple.
 That is, I try to make my code look like:
 
-{% highlight fsharp %}
+```fsharp
 let doSomething input = return an output option
 let doSomethingElse input = return an output option
 let doAThirdThing input = return an output option
@@ -288,7 +288,7 @@ state.pendingOp
 |> Option.bind doSomething
 |> Option.bind doSomethingElse
 |> Option.bind doAThirdThing
-{% endhighlight fsharp %}
+```
 
 Note that in this approach, each helper function has a non-option for input but always must output an *option*.
 
@@ -307,7 +307,7 @@ How to convert the pair into the triple? This can be done just by using `Option.
 If the currentNumber is `Some`, then the output of the map is `Some triple`.
 On the other hand, if the currentNumber is `None`, then the output of the map is `None` also.
 
-{% highlight fsharp %}
+```fsharp
 let getCurrentNumber (op,pendingNumber) = 
     let currentNumberOpt = services.getDisplayNumber state.display
     currentNumberOpt 
@@ -317,16 +317,16 @@ let result =
     state.pendingOp
     |> Option.bind getCurrentNumber
     |> Option.bind ???
-{% endhighlight fsharp %}
+```
 
 We can rewrite `getCurrentNumber` to be a bit more idiomatic by using pipes:
 
-{% highlight fsharp %}
+```fsharp
 let getCurrentNumber (op,pendingNumber) = 
     state.display
     |> services.getDisplayNumber 
     |> Option.map (fun currentNumber -> (op,pendingNumber,currentNumber))
-{% endhighlight fsharp %}
+```
 
 Now that we have a triple with valid values, we have everything we need to write a helper function for the math operation.
 
@@ -334,7 +334,7 @@ Now that we have a triple with valid values, we have everything we need to write
 * It does the math operation
 * It then pattern matches the Success/Failure result and outputs the new state if applicable.
 
-{% highlight fsharp %}
+```fsharp
 let doMathOp (op,pendingNumber,currentNumber) = 
     let result = services.doMathOperation (op,pendingNumber,currentNumber)
     match result with
@@ -344,7 +344,7 @@ let doMathOp (op,pendingNumber,currentNumber) =
         Some newState //return something
     | Failure error -> 
         None // failed
-{% endhighlight fsharp %}
+```
 
 Note that, unlike the earlier version with nested ifs, this version returns `Some` on success and `None` on failure.
 
@@ -360,24 +360,24 @@ So how are we going to implement this new requirement?
 
 In order to do this, we'll need a new "service" that accepts a `MathOperationError` and generates a `CalculatorDisplay`.
 
-{% highlight fsharp %}
+```fsharp
 type SetDisplayError = MathOperationError -> CalculatorDisplay 
-{% endhighlight fsharp %}
+```
 
 and we'll need to add it to the `CalculatorServices` structure too:
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorServices = {
     // as before
     setDisplayNumber: SetDisplayNumber 
     setDisplayError: SetDisplayError 
     initState: InitState 
     }
-{% endhighlight fsharp %}
+```
 
 `doMathOp` can now be altered to use the new service. Both `Success` and `Failure` cases now result in a new display, which in turn is wrapped in a new state.
 
-{% highlight fsharp %}
+```fsharp
 let doMathOp (op,pendingNumber,currentNumber) = 
     let result = services.doMathOperation (op,pendingNumber,currentNumber)
     let newDisplay = 
@@ -388,7 +388,7 @@ let doMathOp (op,pendingNumber,currentNumber) =
             services.setDisplayError error
     let newState = {display=newDisplay;pendingOp=None}
     Some newState //return something
-{% endhighlight fsharp %}
+```
 
 I'm going to leave the `Some` in the result, so we can stay with `Option.bind` in the result pipeline*. 
 
@@ -397,7 +397,7 @@ I'm going to leave the `Some` in the result, so we can stay with `Option.bind` i
 Putting it all together, we have the final version of `updateDisplayFromPendingOp`.
 Note that I've also added a `ifNone` helper that makes defaultArg better for piping.
 
-{% highlight fsharp %}
+```fsharp
 // helper to make defaultArg better for piping
 let ifNone defaultValue input = 
     // just reverse the parameters!
@@ -430,7 +430,7 @@ let updateDisplayFromPendingOp services state =
     |> Option.bind getCurrentNumber
     |> Option.bind doMathOp 
     |> ifNone state // return original state if anything fails
-{% endhighlight fsharp %}
+```
 
 ## Using a "maybe" computation expression instead of bind
 
@@ -442,17 +442,17 @@ Since we are dealing with Options, we can create a "maybe" computation expressio
 (If we were dealing with other types, we would need to create a different computation expression for each type).
 
 Here's the definition -- only four lines!
-{% highlight fsharp %}
+```fsharp
 type MaybeBuilder() =
     member this.Bind(x, f) = Option.bind f x
     member this.Return(x) = Some x
 
 let maybe = new MaybeBuilder()
-{% endhighlight fsharp %}
+```
 
 With this computation expression available, we can use `maybe` instead of bind, and our code would look something like this:
 
-{% highlight fsharp %}
+```fsharp
 let doSomething input = return an output option
 let doSomethingElse input = return an output option
 let doAThirdThing input = return an output option
@@ -463,11 +463,11 @@ let finalResult = maybe {
     let! result3 = doAThirdThing result2
     return result3
     }
-{% endhighlight fsharp %}
+```
 
 In our case, then we can write yet another version of `updateDisplayFromPendingOp` -- our fourth!
 
-{% highlight fsharp %}
+```fsharp
 // Fourth version of updateDisplayFromPendingOp 
 // * Changed to use "maybe" computation expression
 let updateDisplayFromPendingOp services state =
@@ -490,7 +490,7 @@ let updateDisplayFromPendingOp services state =
         return doMathOp (op,pendingNumber,currentNumber)
         }
     newState |> ifNone state
-{% endhighlight fsharp %}
+```
 
 Note that in *this* implementation, I don't need the `getCurrentNumber` helper any more, as I can just call `services.getDisplayNumber` directly.
 
@@ -512,7 +512,7 @@ But *in addition*, we need to push the new pending operation onto the state as w
 
 For the math operation case, then, there will be *two* state transformations, and `createCalculate` will look like this:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
@@ -521,7 +521,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
             let newState1 = updateDisplayFromPendingOp services state
             let newState2 = addPendingMathOp services op newState1 
             newState2 //return
-{% endhighlight fsharp %}
+```
 
 We've already defined `updateDisplayFromPendingOp` above.
 So we just need `addPendingMathOp` as a helper function to push the operation onto the state.
@@ -533,7 +533,7 @@ The algorithm for `addPendingMathOp` is:
 
 Here's the ugly version:
 
-{% highlight fsharp %}
+```fsharp
 // First version of addPendingMathOp 
 // * very imperative and ugly
 let addPendingMathOp services op state = 
@@ -545,13 +545,13 @@ let addPendingMathOp services op state =
         newState //return
     else                
         state // original state is untouched
-{% endhighlight fsharp %}
+```
 
 Again, we can make this more functional using exactly the same techniques we used for `updateDisplayFromPendingOp`.
 
 So here's the more idiomatic version using `Option.map` and a `newStateWithPending` helper function:
 
-{% highlight fsharp %}
+```fsharp
 // Second version of addPendingMathOp 
 // * Uses "map" and helper function
 let addPendingMathOp services op state = 
@@ -563,11 +563,11 @@ let addPendingMathOp services op state =
     |> services.getDisplayNumber 
     |> Option.map newStateWithPending 
     |> ifNone state
-{% endhighlight fsharp %}
+```
 
 And here's one using `maybe`:
 
-{% highlight fsharp %}
+```fsharp
 // Third version of addPendingMathOp 
 // * Uses "maybe"
 let addPendingMathOp services op state = 
@@ -578,7 +578,7 @@ let addPendingMathOp services op state =
         return {state with pendingOp=pendingOp}
         }
     |> ifNone state // return original state if anything fails
-{% endhighlight fsharp %}
+```
 
 As before, I'd probably go for the last implementation using `maybe`. But the `Option.map` one is fine too. 
 
@@ -586,7 +586,7 @@ As before, I'd probably go for the last implementation using `maybe`. But the `O
 
 Now we're done with the implementation part. Let's review the code:
 
-{% highlight fsharp %}
+```fsharp
 let updateDisplayFromDigit services digit state =
     let newDisplay = services.updateDisplayFromDigit (digit,state.display)
     let newState = {state with display=newDisplay}
@@ -638,7 +638,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
         | Action Equals ->
             let newState = updateDisplayFromPendingOp services state
             newState //return
-{% endhighlight fsharp %}
+```
 
 Not bad -- the whole implementation is less than 60 lines of code.
 

@@ -66,14 +66,14 @@ you need is stored there.
 
 So the code we need will look something like this:
 
-{% highlight text %}
+```text
 Open API connection
 Get product ids purchased by customer id using the API
 For each product id:
     get the product info for that id using the API
 Close API connection
 Return the list of product infos
-{% endhighlight text %}
+```
   
 How hard can that be?  
 
@@ -91,11 +91,11 @@ First let's define the domain types:
 
 Here are the types:
 
-{% highlight fsharp %}
+```fsharp
 type CustId = CustId of string
 type ProductId = ProductId of string
 type ProductInfo = {ProductName: string; } 
-{% endhighlight fsharp %}
+```
 
 For testing our api, let's create an `ApiClient` class with some `Get` and `Set` methods, backed by a static mutable dictionary.
 This is based on similar APIs such as the Redis client.
@@ -108,7 +108,7 @@ Notes:
 * To make it more realistic, I've also added dummy methods for `Open`, `Close` and `Dispose`.
 * All methods trace a log to the console.
 
-{% highlight fsharp %}
+```fsharp
 type ApiClient() =
     // static storage
     static let mutable data = Map.empty<string,obj>
@@ -152,12 +152,12 @@ type ApiClient() =
     interface System.IDisposable with
         member this.Dispose() =
             printfn "[API] Disposing"
-{% endhighlight fsharp %}
+```
 
 
 Let's do some tests:
 
-{% highlight fsharp %}
+```fsharp
 do
     use api = new ApiClient()
     api.Get "K1" |> printfn "[K1] %A"
@@ -167,11 +167,11 @@ do
 
     api.Set "K3" "hello" |> ignore
     api.Get<int> "K3" |> printfn "[K3] %A"
-{% endhighlight fsharp %}
+```
 
 And the results are:
 
-{% highlight text %}
+```text
 [API] Get "K1"
 [K1] Failure ["Key "K1" not found"]
 [API] Set "K2"
@@ -181,7 +181,7 @@ And the results are:
 [API] Get "K3"
 [K3] Failure ["Can't cast value at "K3" to Int32"]
 [API] Disposing
-{% endhighlight text %}
+```
   
 <a id="impl1"></a>
 <hr>
@@ -190,7 +190,7 @@ And the results are:
 
 For our first attempt at implementing the scenario, let's start with the pseudo-code from above:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
 
     // Open api connection       
@@ -207,7 +207,7 @@ let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
 
     // Return the list of product infos
     productInfosResult
-{% endhighlight fsharp %}
+```
 
 So far so good, but there is a bit of a problem already. 
 
@@ -219,7 +219,7 @@ Ok, how do we create our `productInfosResult`?
 Well that should be easy. If the `productIdsResult` is Success, then loop through each id and get the info for each id.
 If the `productIdsResult` is Failure, then just return that failure.
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
 
     // Open api connection       
@@ -245,7 +245,7 @@ let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
     
     // Return the list of product infos
     productInfosResult
-{% endhighlight fsharp %}
+```
 
 Hmmm. It's looking a bit ugly. And I'm having to use a mutable data structure (`productInfos`) to accumulate each product info and then wrap it in `Success`.
 
@@ -254,7 +254,7 @@ so `productInfos` is not the right type at all!
 
 Let's add code to test each `ProductInfo` result. If it's a success, then add it to the list of product infos, and if it's a failure, then return the failure.
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
 
     // Open api connection       
@@ -286,7 +286,7 @@ let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
     // Return the list of product infos
     productInfosResult
 
-{% endhighlight fsharp %}
+```
 
 Um, no. That won't work at all. The code above will not compile. We can't do an "early return" in the loop when a failure happens.
 
@@ -303,7 +303,7 @@ It would be great if we could hide all this unwrapping and testing of `Result`s.
 
 If we create a computation expression for `Result` we can write the code like this:
 
-{% highlight fsharp %}
+```fsharp
 /// CustId -> Result<ProductInfo list>
 let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
    
@@ -328,7 +328,7 @@ let getPurchaseInfo (custId:CustId) : Result<ProductInfo list> =
 
     // Return the list of product infos
     productInfosResult
-{% endhighlight fsharp %}
+```
 
 In `let productInfosResult = Result.result { .. }` code we create a `result` computation expression that simplifies all the unwrapping (with `let!`) and wrapping (with `return`).
 
@@ -340,7 +340,7 @@ because the `for productId in productIds do` is not actually a real `for` loop, 
 Which brings us onto the implementation of the `result` computation expression.  In the previous posts, `ResultBuilder` only had two methods, `Return` and `Bind`,
 but in order to get the `for..in..do` functionality, we have to implement a lot of other methods too, and it ends up being a bit more complicated.
 
-{% highlight fsharp %}
+```fsharp
 module Result = 
 
     let bind f xResult = ...
@@ -377,7 +377,7 @@ module Result =
                     body enum.Current)))
 
     let result = new ResultBuilder()
-{% endhighlight fsharp %}
+```
 
 I have a series about the [internals of computation expressions](/series/computation-expressions.html),
 so I don't want to explain all that code here. Instead, for the rest of the post
@@ -398,7 +398,7 @@ There a number of problems with this approach:
 
 We can solve both of these problems by separating the creation of an `ApiClient` from its use by parameterizing the action, like this.
 
-{% highlight fsharp %}
+```fsharp
 let executeApiAction apiAction  =
    
     // Open api connection       
@@ -413,11 +413,11 @@ let executeApiAction apiAction  =
 
     // return result
     result
-{% endhighlight fsharp %}
+```
 
 The action function that is passed in would look like this, with a parameter for the `ApiClient` as well as for the `CustId`:
 
-{% highlight fsharp %}
+```fsharp
 /// CustId -> ApiClient -> Result<ProductInfo list>
 let getPurchaseInfo (custId:CustId) (api:ApiClient) =
    
@@ -433,16 +433,16 @@ let getPurchaseInfo (custId:CustId) (api:ApiClient) =
 
     // return result
     productInfosResult
-{% endhighlight fsharp %}
+```
 
 Note that `getPurchaseInfo` has *two* parameters, but `executeApiAction` expects a function with only one.
 
 No problem! Just use partial application to bake in the first parameter:
 
-{% highlight fsharp %}
+```fsharp
 let action = getPurchaseInfo (CustId "C1")  // partially apply
 executeApiAction action 
-{% endhighlight fsharp %}
+```
 
 That's why the `ApiClient` is the *second* parameter in the parameter list -- so that we can do partial application.
 
@@ -450,7 +450,7 @@ That's why the `ApiClient` is the *second* parameter in the parameter list -- so
 
 We might need to get the product ids for some other purpose, and also the productInfo, so let's refactor those out into separate functions too:
 
-{% highlight fsharp %}
+```fsharp
 /// CustId -> ApiClient -> Result<ProductId list>
 let getPurchaseIds (custId:CustId) (api:ApiClient) =
     api.Get<ProductId list> custId
@@ -474,18 +474,18 @@ let getPurchaseInfo (custId:CustId) (api:ApiClient) =
 
     // return result
     result
-{% endhighlight fsharp %}
+```
 
 Now, we have these nice core functions `getPurchaseIds` and `getProductInfo`, but I'm annoyed that I have to write messy code to glue them together in `getPurchaseInfo`.
 
 Ideally, what I'd like to do is pipe the output of `getPurchaseIds` into `getProductInfo` like this:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo (custId:CustId) =
     custId 
     |> getPurchaseIds 
     |> List.map getProductInfo
-{% endhighlight fsharp %}
+```
 
 Or as a diagram:
 
@@ -527,16 +527,16 @@ Let's give this api-consuming function a name. Let's call it `ApiAction`.
 
 In fact, let's do more than that -- let's make it a type!
 
-{% highlight fsharp %}
+```fsharp
 type ApiAction<'a> = (ApiClient -> 'a)
-{% endhighlight fsharp %}
+```
 
 Unfortunately, as it stands, this is just a type alias for a function, not a separate type.
 We need to wrap it in a [single case union](/posts/designing-with-types-single-case-dus/) to make it a distinct type.
 
-{% highlight fsharp %}
+```fsharp
 type ApiAction<'a> = ApiAction of (ApiClient -> 'a)
-{% endhighlight fsharp %}
+```
 
 ### Rewriting to use ApiAction
 
@@ -544,7 +544,7 @@ Now that we have a real type to use, we can rewrite our core domain functions to
 
 First `getPurchaseIds`:
 
-{% highlight fsharp %}
+```fsharp
 // CustId -> ApiAction<Result<ProductId list>>
 let getPurchaseIds (custId:CustId) =
        
@@ -554,14 +554,14 @@ let getPurchaseIds (custId:CustId) =
 
     // wrap it in the single case
     ApiAction action
-{% endhighlight fsharp %}
+```
 
 The signature is now `CustId -> ApiAction<Result<ProductId list>>`, which you can interpret as meaning: "give me a CustId and I will give a you a ApiAction that, when
 given an api, will make a list of ProductIds". 
 
 Similarly, `getProductInfo` can be rewritten to return an `ApiAction`:
 
-{% highlight fsharp %}
+```fsharp
 // ProductId -> ApiAction<Result<ProductInfo>>
 let getProductInfo (productId:ProductId) =
 
@@ -571,7 +571,7 @@ let getProductInfo (productId:ProductId) =
 
     // wrap it in the single case
     ApiAction action
-{% endhighlight fsharp %}
+```
 
 Notice those signatures:
 
@@ -617,7 +617,7 @@ Enough diagrams -- let's write some code now.
 
 First, we need to define `map`, `apply`, `return` and `bind` for `ApiAction`:
 
-{% highlight fsharp %}
+```fsharp
 module ApiAction = 
 
     /// Evaluate the action with a given api
@@ -662,7 +662,7 @@ module ApiAction =
         let result = run api action
         api.Close()
         result
-{% endhighlight fsharp %}
+```
 
 Note that all the functions use a helper function called `run` which unwraps an `ApiAction` to get the function inside,
 and applies this to the `api` that is also passed in. The result is the value wrapped in the `ApiAction`.
@@ -674,7 +674,7 @@ And at the bottom, there is a `execute` function that creates an `ApiClient`, op
 And with the core functions for `ApiAction` defined, we can go ahead and define the functions for the compound type `ApiActionResult`,
 just as we did for `AsyncResult` in the [previous post](/posts/elevated-world-5/#asyncresult):
 
-{% highlight fsharp %}
+```fsharp
 module ApiActionResult = 
 
     let map f  = 
@@ -704,7 +704,7 @@ module ApiActionResult =
                     (Failure err) |> ApiAction.retn
             ApiAction.run api yAction  
         ApiAction newAction
-{% endhighlight fsharp %}
+```
 
 ## Working out the transforms
 
@@ -786,27 +786,27 @@ Well, we just saw this! It's `bind`.  So if we do that as well, we are finished.
 
 And here it is expressed as code:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo =
     let getProductInfo1 = traverse getProductInfo
     let getProductInfo2 = ApiActionResult.bind getProductInfo1 
     getPurchaseIds >> getProductInfo2
-{% endhighlight fsharp %}
+```
 
 Or to make it a bit less ugly:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo =
     let getProductInfoLifted =
         getProductInfo
         |> traverse 
         |> ApiActionResult.bind 
     getPurchaseIds >> getProductInfoLifted
-{% endhighlight fsharp %}
+```
 
 Let's compare that with the earlier version of `getPurchaseInfo`:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchaseInfo (custId:CustId) (api:ApiClient) =
    
     let result = Result.result {
@@ -821,7 +821,7 @@ let getPurchaseInfo (custId:CustId) (api:ApiClient) =
 
     // return result
     result
-{% endhighlight fsharp %}
+```
 
 Let's compare the two versions in a table:
 
@@ -856,7 +856,7 @@ As I noted earlier, it can be implemented mechanically, following a template.
 
 Here it is:
 
-{% highlight fsharp %}
+```fsharp
 let traverse f list =
     // define the applicative functions
     let (<*>) = ApiActionResult.apply
@@ -871,7 +871,7 @@ let traverse f list =
         retn cons <*> f head <*> tail
 
     List.foldBack folder list initState 
-{% endhighlight fsharp %}
+```
 
 ### Testing the implementation
 
@@ -879,18 +879,18 @@ Let's test it!
 
 First we need a helper function to show results:
 
-{% highlight fsharp %}
+```fsharp
 let showResult result =
     match result with
     | Success (productInfoList) -> 
         printfn "SUCCESS: %A" productInfoList
     | Failure errs -> 
         printfn "FAILURE: %A" errs
-{% endhighlight fsharp %}
+```
 
 Next, we need to load the API with some test data:
 
-{% highlight fsharp %}
+```fsharp
 let setupTestData (api:ApiClient) =
     //setup purchases
     api.Set (CustId "C1") [ProductId "P1"; ProductId "P2"] |> ignore
@@ -906,7 +906,7 @@ let setupTestData (api:ApiClient) =
 // and then that apiAction can be executed
 let setupAction = ApiAction setupTestData
 ApiAction.execute setupAction 
-{% endhighlight fsharp %}
+```
 
 * Customer C1 has purchased two products: P1 and P2.
 * Customer C2 has purchased two products: PX and P2.
@@ -917,16 +917,16 @@ Let's see how this works out for different customer ids.
 
 We'll start with Customer C1. For this customer we expect both product infos to be returned:
 
-{% highlight fsharp %}
+```fsharp
 CustId "C1"
 |> getPurchaseInfo
 |> ApiAction.execute
 |> showResult
-{% endhighlight fsharp %}
+```
 
 And here are the results:
 
-{% highlight text %}
+```text
 [API] Opening
 [API] Get CustId "C1"
 [API] Get ProductId "P1"
@@ -934,39 +934,39 @@ And here are the results:
 [API] Closing
 [API] Disposing
 SUCCESS: [{ProductName = "P1-Name";}; {ProductName = "P2-Name";}]
-{% endhighlight text %}
+```
 
 What happens if we use a missing customer, such as CX?
 
-{% highlight fsharp %}
+```fsharp
 CustId "CX"
 |> getPurchaseInfo
 |> ApiAction.execute
 |> showResult
-{% endhighlight fsharp %}
+```
 
 As expected, we get a nice "key not found" failure, and the rest of the operations are skipped as soon as the key is not found.
 
-{% highlight text %}
+```text
 [API] Opening
 [API] Get CustId "CX"
 [API] Closing
 [API] Disposing
 FAILURE: ["Key CustId "CX" not found"]
-{% endhighlight text %}
+```
 
 What about if one of the purchased products has no info? For example, customer C2 purchased PX and P2, but there is no info for PX.
 
-{% highlight fsharp %}
+```fsharp
 CustId "C2"
 |> getPurchaseInfo
 |> ApiAction.execute
 |> showResult
-{% endhighlight fsharp %}
+```
 
 The overall result is a failure. Any bad product causes the whole operation to fail.
 
-{% highlight text %}
+```text
 [API] Opening
 [API] Get CustId "C2"
 [API] Get ProductId "PX"
@@ -974,7 +974,7 @@ The overall result is a failure. Any bad product causes the whole operation to f
 [API] Closing
 [API] Disposing
 FAILURE: ["Key ProductId "PX" not found"]
-{% endhighlight text %}
+```
 
 But note that the data for product P2 is fetched even though product PX failed. Why? Because we are using the applicative version of `traverse`,
 so every element of the list is fetched "in parallel".  
@@ -999,7 +999,7 @@ The answer is simple -- we just need to modify the `traverse` function to skip f
 First, we need to create a new helper function for `ApiActionResult`. It will allow us to pass in two functions, one for the success case
 and one for the error case:
 
-{% highlight fsharp %}
+```fsharp
 module ApiActionResult = 
 
     let map = ...
@@ -1016,24 +1016,24 @@ module ApiActionResult =
                 | Result.Failure err -> onFailure err
             ApiAction.run api yAction  
         ApiAction newAction
-{% endhighlight fsharp %}
+```
 
 This helper function helps us match both cases inside a `ApiAction` without doing complicated unwrapping. We will need this for our `traverse` that skips failures.
 
 By the way, note that `ApiActionResult.bind` can be defined in terms of `either`:
 
-{% highlight fsharp %}
+```fsharp
 let bind f = 
     either 
         // Success? Run the function
         (fun x -> f x)
         // Failure? wrap the error in an ApiAction
         (fun err -> (Failure err) |> ApiAction.retn)
-{% endhighlight fsharp %}
+```
 
 Now we can define our "traverse with logging of failures" function:
 
-{% highlight fsharp %}
+```fsharp
 let traverseWithLog log f list =
     // define the applicative functions
     let (<*>) = ApiActionResult.apply
@@ -1050,17 +1050,17 @@ let traverseWithLog log f list =
             (fun h -> retn cons <*> retn h <*> tail)
             (fun errs -> log errs; tail)
     List.foldBack folder list initState 
-{% endhighlight fsharp %}
+```
 
 The only difference between this and the previous implementation is this bit:
 
-{% highlight fsharp %}
+```fsharp
 let folder head tail = 
     (f head) 
     |> ApiActionResult.either 
         (fun h -> retn cons <*> retn h <*> tail)
         (fun errs -> log errs; tail)
-{% endhighlight fsharp %}
+```
 
 This says that:
 
@@ -1071,7 +1071,7 @@ This says that:
 
 Let's create a new function `getPurchasesInfoWithLog` and try it with customer C2 and the missing product PX:
 
-{% highlight fsharp %}
+```fsharp
 let getPurchasesInfoWithLog =
     let log errs = printfn "SKIPPED %A" errs 
     let getProductInfoLifted =
@@ -1084,11 +1084,11 @@ CustId "C2"
 |> getPurchasesInfoWithLog
 |> ApiAction.execute
 |> showResult
-{% endhighlight fsharp %}
+```
 
 The result is a Success now, but only one `ProductInfo`, for P2, is returned. The log shows that PX was skipped.
 
-{% highlight text %}
+```text
 [API] Opening
 [API] Get CustId "C2"
 [API] Get ProductId "PX"
@@ -1097,7 +1097,7 @@ SKIPPED ["Key ProductId "PX" not found"]
 [API] Closing
 [API] Disposing
 SUCCESS: [{ProductName = "P2-Name";}]
-{% endhighlight text %}
+```
 
 <a id="readermonad"></a>
 <hr>
@@ -1111,32 +1111,32 @@ So in the spirit of "parameterize all the things", why not make it a parameter?
 
 That means that we could have defined `ApiAction` as follows:
 
-{% highlight fsharp %}
+```fsharp
 type ApiAction<'anything,'a> = ApiAction of ('anything -> 'a)
-{% endhighlight fsharp %}
+```
 
 But if it can be *anything*, why call it `ApiAction` any more? It could represent any set of things that depend on an object
 (such as an `api`) being passed in to them.
 
 We are not the first people to discover this! This type is commonly called the `Reader` type and is defined like this:  
 
-{% highlight fsharp %}
+```fsharp
 type Reader<'environment,'a> = Reader of ('environment -> 'a)
-{% endhighlight fsharp %}
+```
 
 The extra type `'environment` plays the same role that `ApiClient` did in our definition of `ApiAction`. There is some environment
 that is passed around as an extra parameter to all your functions, just as a `api` instance was.
 
 In fact, we can actually define `ApiAction` in terms of `Reader` very easily:
 
-{% highlight fsharp %}
+```fsharp
 type ApiAction<'a> = Reader<ApiClient,'a>
-{% endhighlight fsharp %}
+```
 
 The set of functions for `Reader` are exactly the same as for `ApiAction`. I have just taken the code and replaced `ApiAction` with `Reader` and
 `api` with `environment`!  
 
-{% highlight fsharp %}
+```fsharp
 module Reader = 
 
     /// Evaluate the action with a given environment
@@ -1172,7 +1172,7 @@ module Reader =
             let x = run environment xAction 
             run environment (f x)
         Reader newAction
-{% endhighlight fsharp %}
+```
 
 The type signatures are a bit harder to read now though!
 

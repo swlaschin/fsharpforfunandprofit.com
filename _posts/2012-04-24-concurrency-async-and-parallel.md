@@ -16,7 +16,7 @@ As noted in the previous post, F# can directly use all the usual .NET suspects, 
 
 Let's see a simple example where we wait for a timer event to go off:
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 let userTimerWithCallback = 
@@ -39,7 +39,7 @@ let userTimerWithCallback =
 
     //done
     printfn "Timer ticked at %O" DateTime.Now.TimeOfDay
-{% endhighlight  %}
+```
 
 This shows the use of `AutoResetEvent` as a synchronization mechanism. 
 
@@ -57,7 +57,7 @@ These workflows are objects that encapsulate a background task, and provide a nu
 
 Here's the previous example rewritten to use one:
 
-{% highlight fsharp %}
+```fsharp
 open System
 //open Microsoft.FSharp.Control  // Async.* is in this module.
 
@@ -79,7 +79,7 @@ let userTimerWithAsync =
 
     // done
     printfn "Timer ticked at %O" DateTime.Now.TimeOfDay
-{% endhighlight  %}
+```
 
 Here are the changes:
 
@@ -92,7 +92,7 @@ The async workflows can also be used with `IAsyncResult`, begin/end pairs, and o
 
 For example, here's how you might do an async file write by wrapping the `IAsyncResult` generated from `BeginWrite`.
 
-{% highlight fsharp %}
+```fsharp
 let fileWriteWithAsync = 
 
     // create a stream to write to
@@ -113,7 +113,7 @@ let fileWriteWithAsync =
 
     // done
     printfn "Async write completed"
-{% endhighlight  %}
+```
 
 ## Creating and nesting asynchronous workflows ##
 
@@ -123,7 +123,7 @@ The braces contain a set of expressions to be executed in the background.
 
 This simple workflow just sleeps for 2 seconds.
 
-{% highlight fsharp %}
+```fsharp
 let sleepWorkflow  = async{
     printfn "Starting sleep workflow at %O" DateTime.Now.TimeOfDay
     do! Async.Sleep 2000
@@ -131,14 +131,14 @@ let sleepWorkflow  = async{
     }
 
 Async.RunSynchronously sleepWorkflow  
-{% endhighlight  %}
+```
 
 *Note: the code `do! Async.Sleep 2000` is similar to `Thread.Sleep` but designed to work with asynchronous workflows.*
 	
 Workflows can contain *other* async workflows nested inside them.
 Within the braces, the nested workflows can be blocked on by using the `let!` syntax.
 
-{% highlight fsharp %}
+```fsharp
 let nestedWorkflow  = async{
 
     printfn "Starting parent"
@@ -157,7 +157,7 @@ let nestedWorkflow  = async{
 
 // run the whole workflow
 Async.RunSynchronously nestedWorkflow  
-{% endhighlight  %}
+```
 
 
 ## Cancelling workflows  ##
@@ -166,7 +166,7 @@ One very convenient thing about async workflows is that they support a built-in 
 
 Consider a simple task that prints numbers from 1 to 100:
 
-{% highlight fsharp %}
+```fsharp
 let testLoop = async {
     for i in [1..100] do
         // do something
@@ -176,13 +176,13 @@ let testLoop = async {
         do! Async.Sleep 10  
         printfn "..after"
     }
-{% endhighlight  %}
+```
 
 We can test it in the usual way:
 
-{% highlight fsharp %}
+```fsharp
 Async.RunSynchronously testLoop
-{% endhighlight  %}
+```
 
 Now let's say we want to cancel this task half way through. What would be the best way of doing it? 
 
@@ -190,7 +190,7 @@ In C#, we would have to create flags to pass in and then check them frequently, 
 
 Here an example of how we might cancel the task:
 
-{% highlight fsharp %}
+```fsharp
 open System
 open System.Threading
 
@@ -205,15 +205,15 @@ Thread.Sleep(200)
 
 // cancel after 200ms
 cancellationSource.Cancel()
-{% endhighlight  %}
+```
 
 In F#, any nested async call will check the cancellation token automatically! 
 
 In this case it was the line:
 
-{% highlight fsharp %}
+```fsharp
 do! Async.Sleep(10) 
-{% endhighlight  %}
+```
 
 As you can see from the output, this line is where the cancellation happened.
 
@@ -223,18 +223,18 @@ Another useful thing about async workflows is that they can be easily combined i
 
 Let's again create a simple workflow that just sleeps for a given time:
 
-{% highlight fsharp %}
+```fsharp
 // create a workflow to sleep for a time
 let sleepWorkflowMs ms = async {
     printfn "%i ms workflow started" ms
     do! Async.Sleep ms
     printfn "%i ms workflow finished" ms
     }
-{% endhighlight %}
+```
 
 Here's a version that combines two of these in series:
 
-{% highlight fsharp %}
+```fsharp
 let workflowInSeries = async {
     let! sleep1 = sleepWorkflowMs 1000
     printfn "Finished one" 
@@ -245,11 +245,11 @@ let workflowInSeries = async {
 #time
 Async.RunSynchronously workflowInSeries 
 #time
-{% endhighlight  %}
+```
 
 And here's a version that combines two of these in parallel:
 
-{% highlight fsharp %}
+```fsharp
 // Create them
 let sleep1 = sleepWorkflowMs 1000
 let sleep2 = sleepWorkflowMs 2000
@@ -260,7 +260,7 @@ let sleep2 = sleepWorkflowMs 2000
     |> Async.Parallel
     |> Async.RunSynchronously 
 #time
-{% endhighlight  %}
+```
 
 <div class="alert alert-info">
 Note: The #time command toggles the timer on and off. It only works in the interactive window, so this example must be sent to the interactive window in order to work corrrectly. 
@@ -280,7 +280,7 @@ and the corresponding performance increase that can be achieved.
 
 So here is a simple URL downloader, very similar to the one we saw at the start of the series:
 
-{% highlight fsharp %}
+```fsharp
 open System.Net
 open System
 open System.IO
@@ -292,11 +292,11 @@ let fetchUrl url =
     use reader = new IO.StreamReader(stream) 
     let html = reader.ReadToEnd() 
     printfn "finished downloading %s" url 
-{% endhighlight  %}
+```
 
 And here is some code to time it:
 
-{% highlight fsharp %}
+```fsharp
 // a list of sites to fetch
 let sites = ["http://www.bing.com";
              "http://www.google.com";
@@ -308,7 +308,7 @@ let sites = ["http://www.bing.com";
 sites                     // start with the list of sites
 |> List.map fetchUrl      // loop through each site and download
 #time                     // turn timer off
-{% endhighlight  %}
+```
 
 Make a note of the time taken, and let's if we can improve on it!
 
@@ -327,7 +327,7 @@ Unfortunately, this is quite hard to do in a standard C-like language. In C# for
 
 But as you can guess, F# makes this easy.  Here is the concurrent F# version of the downloader code:
 
-{% highlight fsharp %}
+```fsharp
 open Microsoft.FSharp.Control.CommonExtensions   
                                         // adds AsyncGetResponse
 
@@ -341,7 +341,7 @@ let fetchUrlAsync url =
         let html = reader.ReadToEnd() 
         printfn "finished downloading %s" url 
         }
-{% endhighlight  %}
+```
 
 Note that the new code looks almost exactly the same as the original. There are only a few minor changes. 
 
@@ -351,7 +351,7 @@ Note that the new code looks almost exactly the same as the original. There are 
 
 And here is a timed download using the async version.
 
-{% highlight fsharp %}
+```fsharp
 // a list of sites to fetch
 let sites = ["http://www.bing.com";
              "http://www.google.com";
@@ -365,7 +365,7 @@ sites
 |> Async.Parallel          // set up the tasks to run in parallel
 |> Async.RunSynchronously  // start them off
 #time                      // turn timer off
-{% endhighlight  %}
+```
 
 
 The way this works is:
@@ -390,7 +390,7 @@ I'll bet my serial version of quicksort against your parallel version of bubbles
 
 Anyway, with that caveat, let's create a little task that chews up some CPU. We'll test this serially and in parallel. 
 
-{% highlight fsharp %}
+```fsharp
 let childTask() = 
     // chew up some CPU. 
     for i in [1..1000] do 
@@ -404,13 +404,13 @@ let childTask() =
 #time
 childTask()
 #time
-{% endhighlight  %}
+```
 
 Adjust the upper bounds of the loops as needed to make this run in about 0.2 seconds.
 
 Now let's combine a bunch of these into a single serial task (using composition), and test it with the timer:
 
-{% highlight fsharp %}
+```fsharp
 let parentTask = 
     childTask
     |> List.replicate 20
@@ -420,21 +420,21 @@ let parentTask =
 #time
 parentTask()
 #time
-{% endhighlight  %}
+```
 
 This should take about 4 seconds.
 
 Now in order to make the `childTask` parallelizable, we have to wrap it inside an `async`:
 
-{% highlight fsharp %}
+```fsharp
 let asyncChildTask = async { return childTask() }
-{% endhighlight  %}
+```
 
 And to combine a bunch of asyncs into a single parallel task, we use `Async.Parallel`.
 
 Let's test this and compare the timings:
 
-{% highlight fsharp %}
+```fsharp
 let asyncParentTask = 
     asyncChildTask
     |> List.replicate 20
@@ -445,7 +445,7 @@ let asyncParentTask =
 asyncParentTask 
 |> Async.RunSynchronously
 #time
-{% endhighlight  %}
+```
 
 On a dual-core machine, the parallel version is about 50% faster. It will get faster in proportion to the number of cores or CPUs, of course, but sublinearly. Four cores will be faster than one core, but not four times faster. 
 

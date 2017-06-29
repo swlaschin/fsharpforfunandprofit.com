@@ -26,11 +26,11 @@ Well, there are two possible cases: either the data is valid (the happy path), o
 
 But as before, this would not be a valid function. A function can only have one output, so we must use the `Result` type we defined last time:
 
-{% highlight fsharp %}
+```fsharp
 type Result<'TSuccess,'TFailure> = 
     | Success of 'TSuccess
     | Failure of 'TFailure
-{% endhighlight %}
+```
 
 And the diagram now looks like this:
 
@@ -38,20 +38,20 @@ And the diagram now looks like this:
 
 To show you how this works in practice, here is an example of what an actual validation function might look like:
 
-{% highlight fsharp %}
+```fsharp
 type Request = {name:string; email:string}
 
 let validateInput input =
    if input.name = "" then Failure "Name must not be blank"
    else if input.email = "" then Failure "Email must not be blank"
    else Success input  // happy path
-{% endhighlight %}
+```
 
 If you look at the type of the function, the compiler has deduced that it takes a `Request` and spits out a `Result` as output, with a `Request` for the success case and a `string` for the failure case:
 
-{% highlight fsharp %}
+```fsharp
 validateInput : Request -> Result<Request,string>
-{% endhighlight %}
+```
 
 We can analyze the other steps in the flow in the same way. We will find that each one will have the same "shape" -- some sort of input and then this Success/Failure output.
 
@@ -130,21 +130,21 @@ The answer is simple. We can create an "adapter" function that has a "hole" or "
 
 And here's what the actual code looks like. I'm going to name the adapter function `bind`, which is the standard name for it.
 
-{% highlight fsharp %}
+```fsharp
 let bind switchFunction = 
     fun twoTrackInput -> 
         match twoTrackInput with
         | Success s -> switchFunction s
         | Failure f -> Failure f
-{% endhighlight %}
+```
 
 The bind function takes a switch function as a parameter and returns a new function. The new function takes a two-track input (which is of type `Result`) and then checks each case. If the input is a `Success` it calls the `switchFunction` with the value. But if the input is a `Failure`, then the switch function is bypassed.
 
 Compile it and then look at the function signature:
 
-{% highlight fsharp %}
+```fsharp
 val bind : ('a -> Result<'b,'c>) -> Result<'a,'c> -> Result<'b,'c>
-{% endhighlight %}
+```
 
 One way of interpreting this signature is that the `bind` function has one parameter, a switch function (`'a -> Result<..>`) and it returns a fully two-track function (`Result<..> -> Result<..>`) as output.
 
@@ -164,23 +164,23 @@ Just as an aside, there are some other ways of writing functions like this.
 
 One way is to use an explicit second parameter for the `twoTrackInput` rather than defining an internal function, like this:
 
-{% highlight fsharp %}
+```fsharp
 let bind switchFunction twoTrackInput = 
     match twoTrackInput with
     | Success s -> switchFunction s
     | Failure f -> Failure f
-{% endhighlight %}
+```
 
 This is exactly the same as the first definition. And if you are wondering how a two parameter function can be exactly the same as a one parameter function, you need to read the post on [currying](/posts/currying/)!
 
 Yet another way of writing it is to replace the `match..with` syntax with the more concise `function` keyword, like this:
 
-{% highlight fsharp %}
+```fsharp
 let bind switchFunction = 
     function
     | Success s -> switchFunction s
     | Failure f -> Failure f
-{% endhighlight %}
+```
 
 You might see all three styles in other code, but I personally prefer to use the second style (`let bind switchFunction twoTrackInput = `), because I think that having explicit parameters makes the code more readable for non-experts. 
 
@@ -190,7 +190,7 @@ Let's write a little bit of code now, to test the concepts.
 
 Let's start with what we already have defined. `Request`, `Result` and `bind`:
 
-{% highlight fsharp %}
+```fsharp
 type Result<'TSuccess,'TFailure> = 
     | Success of 'TSuccess
     | Failure of 'TFailure
@@ -201,12 +201,12 @@ let bind switchFunction twoTrackInput =
     match twoTrackInput with
     | Success s -> switchFunction s
     | Failure f -> Failure f
-{% endhighlight fsharp %}
+```
 
 
 Next we'll create three validation functions, each of which is a "switch" function, with the goal of combining them into one bigger function:
 
-{% highlight fsharp %}
+```fsharp
 let validate1 input =
    if input.name = "" then Failure "Name must not be blank"
    else Success input
@@ -218,13 +218,13 @@ let validate2 input =
 let validate3 input =
    if input.email = "" then Failure "Email must not be blank"
    else Success input
-{% endhighlight fsharp %}
+```
 
 Now to combine them, we apply `bind` to each validation function to create a new alternative function that is two-tracked.
 
 Then we can connect the two-tracked functions using standard function composition, like this:
 
-{% highlight fsharp %}
+```fsharp
 /// glue the three validation functions together
 let combinedValidation = 
     // convert from switch to two-track input
@@ -232,7 +232,7 @@ let combinedValidation =
     let validate3' = bind validate3
     // connect the two-tracks together
     validate1 >> validate2' >> validate3' 
-{% endhighlight fsharp %}
+```
 
 The functions `validate2'` and `validate3'` are new functions that take two-track input. If you look at their signatures you will see that they take a `Result` and return a `Result`.
 But note that `validate1` does not need to be converted to two track input. Its input is left as one-track, and its output is two-track already, as needed for composition to work.
@@ -243,18 +243,18 @@ Here's a diagram showing the `Validate1` switch (unbound) and the `Validate2` an
 
 We could have also "inlined" the `bind`, like this:
 
-{% highlight fsharp %}
+```fsharp
 let combinedValidation = 
     // connect the two-tracks together
     validate1 
     >> bind validate2 
     >> bind validate3
-{% endhighlight fsharp %}
+```
 
 
 Let's test it with two bad inputs and a good input:
 
-{% highlight fsharp %}
+```fsharp
 // test 1
 let input1 = {name=""; email=""}
 combinedValidation input1 
@@ -275,7 +275,7 @@ combinedValidation input3
 |> printfn "Result3=%A"
 
 // ==> Result3=Success {name = "Alice"; email = "good";}
-{% endhighlight fsharp %}
+```
 
 I would encourage you to try it for yourself and play around with the validation functions and test input.
 
@@ -288,11 +288,11 @@ While we are discussing the `bind` function, there is a common symbol for it, `>
 
 Here's the definition, which switches around the two parameters to make them easier to chain together:
 
-{% highlight fsharp %}
+```fsharp
 /// create an infix operator
 let (>>=) twoTrackInput switchFunction = 
     bind switchFunction twoTrackInput 
-{% endhighlight fsharp %}
+```
 
 *One way to remember the symbol is to think of it as the composition symbol, `>>`, followed by a two-track railway symbol, `=`.*
 
@@ -303,25 +303,25 @@ But in a "bind pipe" operation, the left hand side is a *two-track* value, and t
 
 Here it is in use to create another implementation of the `combinedValidation` function.
 
-{% highlight fsharp %}
+```fsharp
 let combinedValidation x = 
     x 
     |> validate1   // normal pipe because validate1 has a one-track input
                    // but validate1 results in a two track output...
     >>= validate2  // ... so use "bind pipe". Again the result is a two track output
     >>= validate3   // ... so use "bind pipe" again. 
-{% endhighlight fsharp %}
+```
 
 The difference between this implementation and the previous one is that this definition is *data-oriented* rather than *function-oriented*. It has an explicit parameter for the initial data value, namely `x`. `x` is passed to the first function, and then the output of that is passed to the second function, and so on.
 
 In the previous implementation (repeated below), there was no data parameter at all! The focus was on the functions themselves, not the data that flows through them.
 
-{% highlight fsharp %}
+```fsharp
 let combinedValidation = 
     validate1 
     >> bind validate2 
     >> bind validate3
-{% endhighlight fsharp %}
+```
 
 ## An alternative to bind 
 
@@ -347,23 +347,23 @@ Because each composition results in just another switch, we can always add anoth
 
 Here's the code for switch composition.  The standard symbol used is `>=>`, a bit like the normal composition symbol, but with a railway track between the angles.
 
-{% highlight fsharp %}
+```fsharp
 let (>=>) switch1 switch2 x = 
     match switch1 x with
     | Success s -> switch2 s
     | Failure f -> Failure f 
-{% endhighlight fsharp %}
+```
 
 Again, the actual implementation is very straightforward. Pass the single track input `x` through the first switch. On success, pass the result into the second switch, otherwise bypass the second switch completely.
 
 Now we can rewrite the `combinedValidation` function to use switch composition rather than bind:
 
-{% highlight fsharp %}
+```fsharp
 let combinedValidation = 
     validate1 
     >=> validate2 
     >=> validate3 
-{% endhighlight fsharp %}
+```
 
 This one is the simplest yet, I think.  It's very easy to extend of course, if we have a fourth validation function, we can just append it to the end.
 
@@ -404,10 +404,10 @@ And here's the same thing done by using `bind` on the second switch:
 
 Here's the switch composition operator rewritten using this way of thinking:
 
-{% highlight fsharp %}
+```fsharp
 let (>=>) switch1 switch2 = 
     switch1 >> (bind switch2)
-{% endhighlight fsharp %}
+```
 
 This implementation of switch composition is much simpler than the first one, but also more abstract. Whether it is easier to comprehend for a beginner is another matter! I find that if you think of functions as things in their own right, rather than just as conduits for data, this approach becomes easier to understand.
 
@@ -419,10 +419,10 @@ For example, let's say we have a function that is *not* a switch, just a regular
 
 Here's a real example - say that we want to trim and lowercase the email address after the validation is complete. Here's some code to do this:
 
-{% highlight fsharp %}
+```fsharp
 let canonicalizeEmail input =
    { input with email = input.email.Trim().ToLower() }
-{% endhighlight fsharp %}
+```
 
 This code takes a (single-track) `Request` and returns a (single-track) `Request`. 
 
@@ -436,11 +436,11 @@ In other words, we need an adapter block. It the same concept that we used for `
 
 The code to do this is trivial. All we need to do is take the output of the one track function and turn it into a two-track result. In this case, the result will *always* be Success.
 
-{% highlight fsharp %}
+```fsharp
 // convert a normal function into a switch
 let switch f x = 
     f x |> Success
-{% endhighlight fsharp %}
+```
 
 In railway terms, we have added a bit of failure track.  Taken as a whole, it *looks* like a switch function (one-track input, two-track output),
 but of course, the failure track is just a dummy and the switch never actually gets used.
@@ -449,17 +449,17 @@ but of course, the failure track is just a dummy and the switch never actually g
 
 Once `switch` is available, we can easily append the `canonicalizeEmail` function to the end of the chain. Since we are beginning to extend it, let's rename the function to `usecase`. 
 
-{% highlight fsharp %}
+```fsharp
 let usecase = 
     validate1 
     >=> validate2 
     >=> validate3 
     >=> switch canonicalizeEmail
-{% endhighlight fsharp %}
+```
 
 Try testing it to see what happens:
 
-{% highlight fsharp %}
+```fsharp
 let goodInput = {name="Alice"; email="UPPERCASE   "}
 usecase goodInput
 |> printfn "Canonicalize Good Result = %A"
@@ -471,7 +471,7 @@ usecase badInput
 |> printfn "Canonicalize Bad Result = %A"
 
 //Canonicalize Bad Result = Failure "Name must not be blank"
-{% endhighlight fsharp %}
+```
     
 ## Creating two-track functions from one-track functions 
 
@@ -489,23 +489,23 @@ And again, the actual implementation is very straightforward. If the two-track i
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 // convert a normal function into a two-track function
 let map oneTrackFunction twoTrackInput = 
     match twoTrackInput with
     | Success s -> Success (oneTrackFunction s)
     | Failure f -> Failure f
-{% endhighlight fsharp %}
+```
 
 And here it is in use with `canonicalizeEmail`:
 
-{% highlight fsharp %}
+```fsharp
 let usecase = 
     validate1 
     >=> validate2 
     >=> validate3 
     >> map canonicalizeEmail  // normal composition
-{% endhighlight fsharp %}
+```
 
 Note that *normal* composition is now used because `map canonicalizeEmail` is a fully two-track function and can be connected to the output of the `validate3` switch directly.
 
@@ -535,18 +535,18 @@ To make this work, we need another adapter function, like `switch`, except that 
 
 Here's the code, which I will call `tee`, after the UNIX tee command:
 
-{% highlight fsharp %}
+```fsharp
 let tee f x = 
     f x |> ignore
     x
-{% endhighlight fsharp %}
+```
 
   
 Once we have converted the dead-end function to a simple one-track pass through function, we can then use it in the data flow by converting it using `switch` or `map` as described above.
 
 Here's the code in use with the "switch composition" style:
 
-{% highlight fsharp %}
+```fsharp
 // a dead-end function    
 let updateDatabase input =
    ()   // dummy dead-end function for now
@@ -557,20 +557,20 @@ let usecase =
     >=> validate3 
     >=> switch canonicalizeEmail
     >=> switch (tee updateDatabase)
-{% endhighlight fsharp %}
+```
 
 Or alternatively, rather than using `switch` and then connecting with `>=>`, we can use `map` and connect with `>>`.  
 
 Here's a variant implementation which is exactly the same but uses the "two-track" style with normal composition
 
-{% highlight fsharp %}
+```fsharp
 let usecase = 
     validate1 
     >> bind validate2 
     >> bind validate3 
     >> map canonicalizeEmail   
     >> map (tee updateDatabase)
-{% endhighlight fsharp %}
+```
 
 ## Handling exceptions
 
@@ -578,24 +578,24 @@ Our dead end database update might not return anything, but that doesn't mean th
 
 The code is similar to the `switch` function, except that it catches exceptions. I'll call it `tryCatch`:
 
-{% highlight fsharp %}
+```fsharp
 let tryCatch f x =
     try
         f x |> Success
     with
     | ex -> Failure ex.Message
-{% endhighlight fsharp %}
+```
 
 And here is a modified version of the data flow, using `tryCatch` rather than `switch` for the update database code.
 
-{% highlight fsharp %}
+```fsharp
 let usecase = 
     validate1 
     >=> validate2 
     >=> validate3 
     >=> switch canonicalizeEmail
     >=> tryCatch (tee updateDatabase)
-{% endhighlight fsharp %}
+```
 
 ## Functions with two-track input
 
@@ -609,23 +609,23 @@ As we have done previously, we will create an adapter block, but this time it wi
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 let doubleMap successFunc failureFunc twoTrackInput =
     match twoTrackInput with
     | Success s -> Success (successFunc s)
     | Failure f -> Failure (failureFunc f)
-{% endhighlight fsharp %}
+```
 
 As an aside, we can use this function to create a simpler version of `map`, using `id` for the failure function:
 
-{% highlight fsharp %}
+```fsharp
 let map successFunc =
     doubleMap successFunc id
-{% endhighlight fsharp %}
+```
 
 Let's use `doubleMap` to insert some logging into the data flow:
 
-{% highlight fsharp %}
+```fsharp
 let log twoTrackInput = 
     let success x = printfn "DEBUG. Success so far: %A" x; x
     let failure x = printfn "ERROR. %A" x; x
@@ -638,11 +638,11 @@ let usecase =
     >=> switch canonicalizeEmail
     >=> tryCatch (tee updateDatabase)
     >> log
-{% endhighlight fsharp %}
+```
 
 Here's some test code, with the results:
 
-{% highlight fsharp %}
+```fsharp
 let goodInput = {name="Alice"; email="good"}
 usecase goodInput
 |> printfn "Good Result = %A"
@@ -656,20 +656,20 @@ usecase badInput
 
 // ERROR. "Name must not be blank"
 // Bad Result = Failure "Name must not be blank"
-{% endhighlight fsharp %}
+```
 
 
 ## Converting a single value to a two-track value
 
 For completeness, we should also create simple functions that turn a single simple value into a two-track value, either success or failure.
 
-{% highlight fsharp %}
+```fsharp
 let succeed x = 
     Success x
 
 let fail x = 
     Failure x
-{% endhighlight fsharp %}
+```
 
 Right now these are trivial, just calling the constructor of the `Result` type, but when we get down to some proper coding we'll see that by using these rather than the union case constructor directly, we can isolate ourselves from changes behind the scenes. 
 
@@ -691,14 +691,14 @@ So, what is the logic for adding two switches in parallel?
 
 Here's the function, which I will call `plus`:
 
-{% highlight fsharp %}
+```fsharp
 let plus switch1 switch2 x = 
     match (switch1 x),(switch2 x) with
     | Success s1,Success s2 -> Success (s1 + s2)
     | Failure f1,Success _  -> Failure f1
     | Success _ ,Failure f2 -> Failure f2
     | Failure f1,Failure f2 -> Failure (f1 + f2)
-{% endhighlight fsharp %}
+```
 
 But we now have a new problem. What do we do with two successes, or two failures? How do we combine the inner values?
 
@@ -708,14 +708,14 @@ The method of combining values might change in different contexts, so rather tha
 
 Here's a rewritten version:
 
-{% highlight fsharp %}
+```fsharp
 let plus addSuccess addFailure switch1 switch2 x = 
     match (switch1 x),(switch2 x) with
     | Success s1,Success s2 -> Success (addSuccess s1 s2)
     | Failure f1,Success _  -> Failure f1
     | Success _ ,Failure f2 -> Failure f2
     | Failure f1,Failure f2 -> Failure (addFailure f1 f2)
-{% endhighlight fsharp %}
+```
 
 I have put these new functions first in the parameter list, to aid partial application.
 
@@ -730,26 +730,26 @@ For validation then, the "plus" operation that we want is like an "AND" function
 
 That naturally leads to wanting to use `&&` as the operator symbol. Unfortunately, `&&` is reserved, but we can use `&&&`, like this: 
 
-{% highlight fsharp %}
+```fsharp
 // create a "plus" function for validation functions
 let (&&&) v1 v2 = 
     let addSuccess r1 r2 = r1 // return first
     let addFailure s1 s2 = s1 + "; " + s2  // concat
     plus addSuccess addFailure v1 v2 
-{% endhighlight fsharp %}
+```
 
 And now using `&&&`, we can create a single validation function that combines the three smaller validations:
 
-{% highlight fsharp %}
+```fsharp
 let combinedValidation = 
     validate1 
     &&& validate2 
     &&& validate3 
-{% endhighlight fsharp %}
+```
 
 Now let's try it with the same tests we had earlier:
 
-{% highlight fsharp %}
+```fsharp
 // test 1
 let input1 = {name=""; email=""}
 combinedValidation input1 
@@ -767,28 +767,28 @@ let input3 = {name="Alice"; email="good"}
 combinedValidation input3 
 |> printfn "Result3=%A"
 // ==>  Result3=Success {name = "Alice"; email = "good";}
-{% endhighlight fsharp %}
+```
 
 The first test now has *two* validation errors combined into a single string, just as we wanted.
 
 Next, we can tidy up the main dataflow function by using the `usecase` function now instead of the three separate validation functions we had before:
 
-{% highlight fsharp %}
+```fsharp
 let usecase = 
     combinedValidation
     >=> switch canonicalizeEmail
     >=> tryCatch (tee updateDatabase)
-{% endhighlight fsharp %}
+```
 
 And if we test that now, we can see that a success flows all the way to the end and that the email is lowercased and trimmed:
 
-{% highlight fsharp %}
+```fsharp
 // test 4
 let input4 = {name="Alice"; email="UPPERCASE   "}
 usecase input4
 |> printfn "Result4=%A"
 // ==>  Result4=Success {name = "Alice"; email = "uppercase";}
-{% endhighlight fsharp %}
+```
 
 *You might be asking, can we create a way of OR-ing validation functions as well? That is, the overall result is valid if either part is valid? The answer is yes, of course. Try it! I suggest that you use the symbol `|||` for this.*
 
@@ -800,14 +800,14 @@ The simplest way to do this is to create a two-track function to be injected int
 
 Here's the idea:
 
-{% highlight fsharp %}
+```fsharp
 let injectableFunction = 
     if config.debug then debugLogger else id
-{% endhighlight fsharp %}
+```
 
 Let's try it with some real code:
 
-{% highlight fsharp %}
+```fsharp
 type Config = {debug:bool}
 
 let debugLogger twoTrackInput = 
@@ -822,11 +822,11 @@ let usecase config =
     combinedValidation 
     >> map canonicalizeEmail
     >> injectableLogger config
-{% endhighlight fsharp %}
+```
 
 And here is it in use:
 
-{% highlight fsharp %}
+```fsharp
 let input = {name="Alice"; email="good"}
 
 let releaseConfig = {debug=false}
@@ -843,7 +843,7 @@ input
 
 // debug output
 // DEBUG. Success so far: {name = "Alice"; email = "good";}
-{% endhighlight fsharp %}
+```
 
 
 ## The railway track functions: A toolkit 
@@ -948,7 +948,7 @@ I have made some minor tweaks from the original code presented above:
 * Most functions are now defined in terms of a core function called `either`.
 * `tryCatch` has been given an extra parameter for the exception handler.
 
-{% highlight fsharp %}
+```fsharp
 // the two-track type
 type Result<'TSuccess,'TFailure> = 
     | Success of 'TSuccess
@@ -1010,7 +1010,7 @@ let plus addSuccess addFailure switch1 switch2 x =
     | Failure f1,Success _  -> Failure f1
     | Success _ ,Failure f2 -> Failure f2
     | Failure f1,Failure f2 -> Failure (addFailure f1 f2)
-{% endhighlight fsharp %}
+```
 
 
 ## Types vs. shapes
@@ -1048,9 +1048,9 @@ But there is another, more subtle aspect of generic functions that is worth poin
 
 To see what I mean, let's look at the signature for `map`:
 
-{% highlight fsharp %}
+```fsharp
 val map : ('a -> 'b) -> (Result<'a,'c> -> Result<'b,'c>)
-{% endhighlight fsharp %}
+```
 
 It takes a function parameter `'a -> 'b` and a value `Result<'a,'c>` and returns a value `Result<'b,'c>`.
 
@@ -1072,9 +1072,9 @@ In other words, there is basically *only one way to implement the `map` function
 
 On the other hand, imagine that the `map` function had been very specific about the types it needed, like this:
 
-{% highlight fsharp %}
+```fsharp
 val map : (int -> int) -> (Result<int,int> -> Result<int,int>)
-{% endhighlight fsharp %}
+```
 
 In this case, we can come up a huge number of different implementations. To list a few:
 
@@ -1111,7 +1111,7 @@ These guidelines may result in code that is not particularly concise or elegant,
 
 So with these guidelines, here are the main bits of the implementation so far. Note especially the use of `>>` everywhere in the final `usecase` function.
 
-{% highlight fsharp %}
+```fsharp
 open RailwayCombinatorModule 
 
 let (&&&) v1 v2 = 
@@ -1139,7 +1139,7 @@ let usecase =
     >> map canonicalizeEmail
     >> bind updateDatebaseStep
     >> log
-{% endhighlight fsharp %}
+```
 
 One final suggestion. If you are working with a team of non-experts, unfamiliar operator symbols will put people off. So here some extra guidelines with respect to operators:
 

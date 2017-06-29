@@ -26,32 +26,32 @@ We might not be able to get this exact syntax, but let's see how close we can ge
 
 First we need to define the data structure for a stack. To keep things simple, we'll just use a list of floats.
 
-{% highlight fsharp %}
+```fsharp
 type Stack = float list
-{% endhighlight %}
+```
 
 But, hold on, let's wrap it in a [single case union type](/posts/discriminated-unions/#single-case) to make it more descriptive, like this:
 
-{% highlight fsharp %}
+```fsharp
 type Stack = StackContents of float list
-{% endhighlight %}
+```
 
 For more details on why this is nicer, read the discussion of single case union types in [this post](/posts/discriminated-unions/#single-case).
 
 Now, to create a new stack, we use `StackContents` as a constructor:
 
-{% highlight fsharp %}
+```fsharp
 let newStack = StackContents [1.0;2.0;3.0]
-{% endhighlight %}
+```
 
 And to extract the contents of an existing Stack,  we pattern match with `StackContents`:
 
-{% highlight fsharp %}
+```fsharp
 let (StackContents contents) = newStack 
 
 // "contents" value set to 
 // float list = [1.0; 2.0; 3.0]
-{% endhighlight %}
+```
 
 
 ## The Push function
@@ -60,12 +60,12 @@ Next we need a way to push numbers on to the stack. This will be simply be prepe
 
 Here is our push function:
 
-{% highlight fsharp %}
+```fsharp
 let push x aStack =   
     let (StackContents contents) = aStack
     let newContents = x::contents
     StackContents newContents 
-{% endhighlight %}
+```
 
 This basic function has a number of things worth discussing.
 
@@ -80,18 +80,18 @@ Finally, the function can be made more concise by using pattern matching in the 
 
 Here is the rewritten version:
 
-{% highlight fsharp %}
+```fsharp
 let push x (StackContents contents) =   
     StackContents (x::contents)
-{% endhighlight %}
+```
 
 Much nicer!
 
 And by the way, look at the nice signature it has:
 
-{% highlight fsharp %}
+```fsharp
 val push : float -> Stack -> Stack
-{% endhighlight %}
+```
 
 As we know from a [previous post](/posts/function-signatures), the signature tells you a lot about the function.
 In this case, I could probably guess what it did from the signature alone, even without knowing that the name of the function was "push".
@@ -99,11 +99,11 @@ This is one of the reasons why it is a good idea to have explicit type names. If
 
 Anyway, now let's test it:
 
-{% highlight fsharp %}
+```fsharp
 let emptyStack = StackContents []
 let stackWith1 = push 1.0 emptyStack 
 let stackWith2 = push 2.0 stackWith1
-{% endhighlight %}
+```
 
 Works great!
 
@@ -111,49 +111,49 @@ Works great!
 
 With this simple function in place, we can easily define an operation that pushes a particular number onto the stack. 
 
-{% highlight fsharp %}
+```fsharp
 let ONE stack = push 1.0 stack
 let TWO stack = push 2.0 stack
-{% endhighlight %}
+```
 
 But wait a minute! Can you see that the `stack` parameter is used on both sides? In fact, we don't need to mention it at all. Instead we can skip the `stack` parameter and write the functions using partial application as follows:
 
-{% highlight fsharp %}
+```fsharp
 let ONE = push 1.0
 let TWO = push 2.0
 let THREE = push 3.0
 let FOUR = push 4.0
 let FIVE = push 5.0
-{% endhighlight %}
+```
 
 Now you can see that if the parameters for `push` were in a different order, we wouldn't have been able to do this. 
 
 While we're at it, let's define a function that creates an empty stack as well:
 
-{% highlight fsharp %}
+```fsharp
 let EMPTY = StackContents []
-{% endhighlight %}
+```
 
 Let's test all of these now:
 
-{% highlight fsharp %}
+```fsharp
 let stackWith1 = ONE EMPTY 
 let stackWith2 = TWO stackWith1
 let stackWith3  = THREE stackWith2 
-{% endhighlight %}
+```
 
 These intermediate stacks are annoying -- can we get rid of them? Yes!  Note that these functions ONE, TWO, THREE all have the same signature:
 
-{% highlight fsharp %}
+```fsharp
 Stack -> Stack
-{% endhighlight %}
+```
 
 This means that they can be chained together nicely! The output of one can be fed into the input of the next, as shown below:
 
-{% highlight fsharp %}
+```fsharp
 let result123 = EMPTY |> ONE |> TWO |> THREE 
 let result312 = EMPTY |> THREE |> ONE |> TWO
-{% endhighlight %}
+```
 
 
 ## Popping the stack
@@ -171,7 +171,7 @@ In other words, the `pop` function will have to return *two* values, the top plu
 
 Here's the implementation:
 
-{% highlight fsharp %}
+```fsharp
 /// Pop a value from the stack and return it 
 /// and the new stack as a tuple
 let pop (StackContents contents) = 
@@ -179,7 +179,7 @@ let pop (StackContents contents) =
     | top::rest -> 
         let newStack = StackContents rest
         (top,newStack)
-{% endhighlight %}
+```
 
 This function is also very straightforward. 
 
@@ -199,7 +199,7 @@ So now we have to decide how to handle this.
 
 Generally, I prefer to use error cases, but in this case, we'll use an exception. So here's the `pop` code changed to handle the empty case:
 
-{% highlight fsharp %}
+```fsharp
 /// Pop a value from the stack and return it 
 /// and the new stack as a tuple
 let pop (StackContents contents) = 
@@ -209,27 +209,27 @@ let pop (StackContents contents) =
         (top,newStack)
     | [] -> 
         failwith "Stack underflow"
-{% endhighlight %}
+```
 
 Now let's test it:
 
-{% highlight fsharp %}
+```fsharp
 let initialStack = EMPTY  |> ONE |> TWO 
 let popped1, poppedStack = pop initialStack
 let popped2, poppedStack2 = pop poppedStack
-{% endhighlight %}
+```
 
 and to test the underflow:
 
-{% highlight fsharp %}
+```fsharp
 let _ = pop EMPTY
-{% endhighlight %}
+```
 
 ## Writing the math functions
 
 Now with both push and pop in place, we can work on the "add" and "multiply" functions:
 
-{% highlight fsharp %}
+```fsharp
 let ADD stack =
    let x,s = pop stack  //pop the top of the stack
    let y,s2 = pop s     //pop the result stack
@@ -241,15 +241,15 @@ let MUL stack =
    let y,s2 = pop s     //pop the result stack
    let result = x * y   //do the math 
    push result s2       //push back on the doubly-popped stack
-{% endhighlight %}
+```
 
 Test these interactively:
 
-{% highlight fsharp %}
+```fsharp
 let add1and2 = EMPTY |> ONE |> TWO |> ADD
 let add2and3 = EMPTY |> TWO |> THREE |> ADD
 let mult2and3 = EMPTY |> TWO |> THREE |> MUL
-{% endhighlight %}
+```
 
 It works!
 
@@ -259,7 +259,7 @@ It is obvious that there is significant duplicate code between these two functio
 
 Both functions pop two values from the stack, apply some sort of binary function, and then push the result back on the stack.  This leads us to refactor out the common code into a "binary" function that takes a two parameter math function as a parameter:
 
-{% highlight fsharp %}
+```fsharp
 let binary mathFn stack = 
     // pop the top of the stack
     let y,stack' = pop stack    
@@ -269,7 +269,7 @@ let binary mathFn stack =
     let z = mathFn x y
     // push the result value back on the doubly-popped stack
     push z stack''      
-{% endhighlight %}
+```
 
 *Note that in this implementation, I've switched to using ticks to represent changed states of the "same" object, rather than numeric suffixes. Numeric suffixes can easily get quite confusing.*
 
@@ -279,78 +279,78 @@ Now that we have `binary`, we can define ADD and friends more simply:
 
 Here's a first attempt at ADD using the new `binary` helper:
 
-{% highlight fsharp %}
+```fsharp
 let ADD aStack = binary (fun x y -> x + y) aStack 
-{% endhighlight %}
+```
 
 But we can eliminate the lambda, as it is *exactly* the definition of the built-in `+` function!  Which gives us:
 
-{% highlight fsharp %}
+```fsharp
 let ADD aStack = binary (+) aStack 
-{% endhighlight %}
+```
 
 And again, we can use partial application to hide the stack parameter. Here's the final definition:
 
-{% highlight fsharp %}
+```fsharp
 let ADD = binary (+)
-{% endhighlight %}
+```
 
 And here's the definition of some other math functions:
 
-{% highlight fsharp %}
+```fsharp
 let SUB = binary (-)
 let MUL = binary (*)
 let DIV = binary (/)
-{% endhighlight %}
+```
 
 Let's test interactively again.
 
-{% highlight fsharp %}
+```fsharp
 let threeDivTwo = EMPTY |> THREE |> TWO |> DIV   // Answer: 1.5
 let twoSubtractFive = EMPTY |> TWO |> FIVE |> SUB  // Answer: -3.0
 let oneAddTwoSubThree = EMPTY |> ONE |> TWO |> ADD |> THREE |> SUB // Answer: 0.0
-{% endhighlight %}
+```
 
 In a similar fashion, we can create a helper function for unary functions
 
-{% highlight fsharp %}
+```fsharp
 let unary f stack = 
     let x,stack' = pop stack  //pop the top of the stack
     push (f x) stack'         //push the function value on the stack
-{% endhighlight %}
+```
     
 And then define some unary functions:
 
-{% highlight fsharp %}
+```fsharp
 let NEG = unary (fun x -> -x)
 let SQUARE = unary (fun x -> x * x)
-{% endhighlight %}
+```
 
 Test interactively again:
 
-{% highlight fsharp %}
+```fsharp
 let neg3 = EMPTY |> THREE |> NEG
 let square2 = EMPTY |> TWO |> SQUARE
-{% endhighlight %}
+```
 
 ## Putting it all together
 
 In the original requirements, we mentioned that we wanted to be able to show the results, so let's define a SHOW function.
 
-{% highlight fsharp %}
+```fsharp
 let SHOW stack = 
     let x,_ = pop stack
     printfn "The answer is %f" x
     stack  // keep going with same stack
-{% endhighlight %}
+```
 
 Note that in this case, we pop the original stack but ignore the diminished version. The final result of the function is the original stack, as if it had never been popped.
 
 So now finally, we can write the code example from the original requirements
 
-{% highlight fsharp %}
+```fsharp
 EMPTY |> ONE |> THREE |> ADD |> TWO |> MUL |> SHOW // (1+3)*2 = 8
-{% endhighlight %}
+```
 
 ### Going further
 
@@ -358,7 +358,7 @@ This is fun -- what else can we do?
 
 Well, we can define a few more core helper functions:
 
-{% highlight fsharp %}
+```fsharp
 /// Duplicate the top value on the stack
 let DUP stack = 
     // get the top of the stack
@@ -374,11 +374,11 @@ let SWAP stack =
     
 /// Make an obvious starting point
 let START  = EMPTY
-{% endhighlight %}
+```
     
 And with these additional functions in place, we can write some nice examples:
 
-{% highlight fsharp %}
+```fsharp
 START
     |> ONE |> TWO |> SHOW
 
@@ -393,7 +393,7 @@ START
     |> ONE |> TWO |> ADD |> SHOW  // 3
     |> THREE |> MUL |> SHOW       // 9
     |> TWO |> DIV |> SHOW         // 9 div 2 = 4.5
-{% endhighlight %}
+```
 
 ## Using composition instead of piping
 
@@ -401,15 +401,15 @@ But that's not all. In fact, there is another very interesting way to think abou
 
 As I pointed out earlier, they all have an identical signature: 
 
-{% highlight fsharp %}
+```fsharp
 Stack -> Stack
-{% endhighlight %}
+```
 
 So, because the input and output types are the same, these functions can be composed using the composition operator `>>`, not just chained together with pipes. 
 
 Here are some examples:
 
-{% highlight fsharp %}
+```fsharp
 // define a new function
 let ONE_TWO_ADD = 
     ONE >> TWO >> ADD 
@@ -442,7 +442,7 @@ let SUM_NUMBERS_UPTO =
 
 // test it with sum of numbers up to 9
 START |> THREE |> SQUARE |> SUM_NUMBERS_UPTO |> SHOW  // 45
-{% endhighlight %}
+```
 
 In each of these cases, a new function is defined by composing other functions together to make a new one. This is a good example of the "combinator" approach to building up functionality.
 
@@ -456,30 +456,30 @@ On the other hand, composition is a kind of "plan" for what you want to do, buil
 
 So for example, I can create a "plan" for how to square a number by combining smaller operations:
 
-{% highlight fsharp %}
+```fsharp
 let COMPOSED_SQUARE = DUP >> MUL 
-{% endhighlight %}
+```
 
 I cannot do the equivalent with the piping approach.
 
-{% highlight fsharp %}
+```fsharp
 let PIPED_SQUARE = DUP |> MUL 
-{% endhighlight %}
+```
 
 This causes a compilation error. I have to have some sort of concrete stack instance to make it work:
 
-{% highlight fsharp %}
+```fsharp
 let stackWith2 = EMPTY |> TWO
 let twoSquared = stackWith2 |> DUP |> MUL 
-{% endhighlight %}
+```
 
 And even then, I only get the answer for this particular input, not a plan for all possible inputs, as in the COMPOSED_SQUARE example.
 
 The other way to create a "plan" is to explicitly pass in a lambda to a more primitive function, as we saw near the beginning:
 
-{% highlight fsharp %}
+```fsharp
 let LAMBDA_SQUARE = unary (fun x -> x * x)
-{% endhighlight %}
+```
 
 This is much more explicit (and is likely to be faster) but loses all the benefits and clarity of the composition approach.
 
@@ -489,7 +489,7 @@ So, in general, go for the composition approach if you can!
 
 Here's the complete code for all the examples so far.
 
-{% highlight fsharp %}
+```fsharp
 // ==============================================
 // Types
 // ==============================================
@@ -606,7 +606,7 @@ let SUM_NUMBERS_UPTO =
     >> TWO   // n(n+1), 2      2 items on stack  
     >> DIV   // n(n+1)/2       1 item on stack
     
-{% endhighlight %}
+```
 
 ## Summary
 

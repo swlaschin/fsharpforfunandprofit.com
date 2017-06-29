@@ -85,14 +85,14 @@ Just like C#, F# can be used to write standard unit tests using the standard fra
 
 Here's an example of a test class written for use with NUnit. 
 
-{% highlight fsharp %}
+```fsharp
 [<TestFixture>]
 type TestClass() = 
 
     [<Test>]
     member this.When2IsAddedTo2Expect4() = 
         Assert.AreEqual(4, 2+2)
-{% endhighlight fsharp %} 
+``` 
 
 As you can see, there's a class with the `TestFixture` attribute, and a public void method with the `Test` attribute.
 All very standard.
@@ -100,25 +100,25 @@ All very standard.
 But there are some nice extras you get when you use F# rather than C#. First you can use the double backtick syntax to create more readable names,
 and second, you can use `let` bound functions in modules rather than classes, which simplifies the code.
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``When 2 is added to 2 expect 4``() = 
     Assert.AreEqual(4, 2+2)
-{% endhighlight fsharp %} 
+``` 
 
 The double backtick syntax makes the test results much easier to read. Here is the output of the test with a standard class name:
 
-{% highlight text %}
+```text
 TestClass.When2IsAddedTo2Expect4
 Result: Success
-{% endhighlight text %} 
+``` 
 
 vs. the output using the more friendly name:
 
-{% highlight text %}
+```text
 MyUnitTests.When 2 is added to 2 expect 4
 Result: Success
-{% endhighlight text %} 
+``` 
 
 So if you want to write test names that are accessible to non-programmers, give F# a go!
 
@@ -134,7 +134,7 @@ complex test attributes.
 
 Here's an example:
 
-{% highlight fsharp %}
+```fsharp
 let add1 x = x + 1
 
 // a simple test using any assertion framework:
@@ -151,13 +151,13 @@ let simpleTest =
 let parameterizedTest i = 
    testCase (sprintf "Test with %i" i) <| 
      ``Assert that add1 is x+1`` i
-{% endhighlight fsharp %}
+```
 
 You can run these tests directly in F# interactive using code like this: `run simpleTest`.
 
 You can also combine these tests into one or more lists, or hierarchical lists of lists:
 
-{% highlight fsharp %}
+```fsharp
 // create a hierarchy of tests 
 // mark it as the start point with the "Tests" attribute
 [<Fuchu.Tests>]
@@ -167,13 +167,13 @@ let tests =
       testList "Parameterized 1..10" ([1..10] |> List.map parameterizedTest) 
       testList "Parameterized 11..20" ([11..20] |> List.map parameterizedTest) 
    ]
-{% endhighlight fsharp %}
+```
 
 *The code above is [available on github](http://github.com/swlaschin/low-risk-ways-to-use-fsharp-at-work/blob/master/TestsInFsharp/OrganizeTestsWithFuchu.fs).*
 
 Finally, with Fuchu, the test assembly becomes its own test runner. Just make the assembly a console app instead of a library and add this code to the `program.fs` file:
 
-{% highlight fsharp %}
+```fsharp
 [<EntryPoint>]
 let main args = 
     let exitCode = defaultMainThisAssembly args
@@ -183,7 +183,7 @@ let main args =
 
     // return the exit code
     exitCode 
-{% endhighlight fsharp %}
+```
 
 [More on Fuchu here](http://bugsquash.blogspot.co.uk/2012/06/fuchu-functional-test-library-for-net.html).
 
@@ -197,7 +197,7 @@ I've made a little example, below, using the `Nunit.Runners` package.
 All right, this might not be the most exciting use of F#, but it does show off F#'s "object expression" syntax to 
 create the `NUnit.Core.EventListener` interface, so I thought I'd leave it in as a demo.
 
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -290,7 +290,7 @@ do
     Console.ReadLine() |> ignore
 
     // if running from the interactive session, reset session before recompiling MyUnitTests.dll
-{% endhighlight fsharp %} 
+``` 
 
 *The code above is [available on github](http://github.com/swlaschin/low-risk-ways-to-use-fsharp-at-work/blob/master/TestsInFsharp/nunit-test-runner.fsx).*
 
@@ -306,7 +306,7 @@ First up is [FsUnit](http://github.com/fsharp/FsUnit), which replaces `Assert` w
 
 Here's a snippet:
 
-{% highlight fsharp %}
+```fsharp
 open NUnit.Framework
 open FsUnit
 
@@ -323,7 +323,7 @@ let ``When 2.0 is added to 2.0 expect 4.01``() =
 [<Test>]
 let ``When ToLower(), expect lowercase letters``() = 
     "FSHARP".ToLower() |> should startWith "fs"
-{% endhighlight fsharp %} 
+``` 
 
 *The above code is [available on github](http://github.com/swlaschin/low-risk-ways-to-use-fsharp-at-work/blob/master/TestsInFsharp/TestWithFsUnit.fs).*
  
@@ -334,15 +334,15 @@ This information could potentially give you much more insight in why the assert 
 
 Here's a very simple example:
  
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``When 2 is added to 2 expect 4``() = 
     test <@ 2 + 2 = 4 @>
-{% endhighlight fsharp %} 
+``` 
 
 There are also a number of shortcut operators such as `=?` and `>?` that allow you to write your tests even more simply -- no asserts anywhere!
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``2 + 2 is 4``() = 
    let result = 2 + 2
@@ -352,7 +352,7 @@ let ``2 + 2 is 4``() =
 let ``2 + 2 is bigger than 5``() = 
    let result = 2 + 2
    result >? 5
-{% endhighlight fsharp %} 
+``` 
 <a name="test-fscheck"></a>
 
 *The above code is [available on github](http://github.com/swlaschin/low-risk-ways-to-use-fsharp-at-work/blob/master/TestsInFsharp/TestWithUnquote.fs).*
@@ -365,11 +365,11 @@ Let's say that we have written a function that converts numbers to Roman numeral
 
 We might start writing tests like this:
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``Test that 497 is CDXCVII``() = 
     arabicToRoman 497 |> should equal "CDXCVII"
-{% endhighlight fsharp %} 
+``` 
 
 But the problem with this approach is that it only tests a very specific example. There might be some edge cases that we haven't thought of.
 
@@ -386,7 +386,7 @@ So, let's see how we'd use FsCheck for our Roman numerals.
 
 First, we define some properties that we expect to hold for all Roman numerals.
 
-{% highlight fsharp %}
+```fsharp
 let maxRepetitionProperty ch count (input:string) = 
     let find = String.replicate (count+1) ch
     input.Contains find |> not
@@ -398,14 +398,14 @@ let ``has max rep of one V`` roman =
 // a property that holds for all roman numerals
 let ``has max rep of three Xs`` roman = 
     maxRepetitionProperty "X" 3 roman 
-{% endhighlight fsharp %} 
+``` 
 
 With this in place we create tests that:
 
 1. Create a property checker function suitable for passing to FsCheck.
 1. Use the `Check.Quick` function to generate hundreds of random test cases and send them into that property checker.
 
-{% highlight fsharp %}
+```fsharp
 [<Test>]
 let ``Test that roman numerals have no more than one V``() = 
     let property num = 
@@ -421,25 +421,25 @@ let ``Test that roman numerals have no more than three Xs``() =
         arabicToRoman num |> ``has max rep of three Xs``
 
     Check.QuickThrowOnFailure (testWithRange property)
-{% endhighlight fsharp %}
+```
 
 Here are the results of the test. You can see that 100 random numbers have been tested, not just one.
 
-{% highlight text %}
+```text
 Test that roman numerals have no more than one V
    Ok, passed 100 tests.
 
 Test that roman numerals have no more than three Xs
    Ok, passed 100 tests.
-{% endhighlight text %} 
+``` 
 
 If we changed the test to be "Test that roman numerals have no more than TWO Xs", then the test result is false, and looks like this:
 
-{% highlight text %}
+```text
 Falsifiable, after 33 tests 
 
 30
-{% endhighlight text %} 
+``` 
 
 In other words, after generating 33 different inputs, FsCheck has correctly found a number (30) that does not meet the required property. Very nice!
 
@@ -498,7 +498,7 @@ Or you can use it with the JSON type provider to call a web service for testing 
 
 *(Dont worry about not understanding the code -- this sample is just to show you how easy it is!)*
 
-{% highlight fsharp %}
+```fsharp
 // domain objects
 type EmailAddress = EmailAddress of string
 type PhoneNumber = PhoneNumber of string
@@ -568,11 +568,11 @@ let printRandomCustomers() =
 
     // print it
     data |> List.iter (printfn "%A")
-{% endhighlight fsharp %}
+```
 
 And here is a sampling of the results:
 
-{% highlight text %}
+```text
 {name = "Georgianne Stephan";
  email = EmailAddress "d@outlook.com";
  phone = PhoneNumber "(420)330-2080";
@@ -587,7 +587,7 @@ And here is a sampling of the results:
  email = EmailAddress "b@gmail.com";
  phone = PhoneNumber "(265)405-6619";
  birthdate = 21/07/1955 00:00:00;}
-{% endhighlight text %}
+```
 
 
 <a name="test-mock"></a>
@@ -603,7 +603,7 @@ Both are easy to do, and in a way that is similar to Moq.
 
 Here's some Moq code in C#:
 
-{% highlight csharp %}
+```csharp
 // Moq Method
 var mock = new Mock<IFoo>();
 mock.Setup(foo => foo.DoSomething("ping")).Returns(true);
@@ -614,11 +614,11 @@ mock.Setup(foo => foo.DoSomething(It.IsAny<string>())).Returns(true);
 
 // Moq Property
 mock.Setup(foo => foo.Name ).Returns("bar");
-{% endhighlight csharp %} 
+``` 
 
 And here's the equivalent Foq code in F#:
 
-{% highlight fsharp %}
+```fsharp
 // Foq Method
 let mock = 
     Mock<IFoo>()
@@ -630,7 +630,7 @@ mock.Setup(fun foo -> <@ foo.DoSomething(any()) @>).Returns(true)
 
 // Foq Property
 mock.Setup(fun foo -> <@ foo.Name @>).Returns("bar")
-{% endhighlight fsharp %} 
+``` 
 
 For more on mocking in F#, see:
 
@@ -657,7 +657,7 @@ Below is a snippet taken from the Canopy site. As you can see, the code is simpl
 
 Also, FAKE integrates with Canopy, so you can [run automated browser tests as part of a CI build](http://fsharp.github.io/FAKE/canopy.html).
 
-{% highlight fsharp %}
+```fsharp
 //start an instance of the firefox browser
 start firefox
 
@@ -685,7 +685,7 @@ start firefox
 
 //run all tests
 run()
-{% endhighlight fsharp %}
+```
 
 
 <a name="test-bdd"></a>
@@ -697,7 +697,7 @@ If you're not familiar with Behaviour Driven Development (BDD), the idea is that
 
 The standard format (Gherkin) for writing these tests uses the Given/When/Then syntax -- here's an example:
 
-{% highlight text %}
+```text
 Feature: Refunded or replaced items should be returned to stock
 
 Scenario 1: Refunded items should be returned to stock
@@ -705,7 +705,7 @@ Scenario 1: Refunded items should be returned to stock
 	And I have 3 black jumpers left in stock 
 	When they return the jumper for a refund 
 	Then I should have 4 black jumpers in stock
-{% endhighlight text %}
+```
 
 If you are using BDD already with .NET, you're probably using [SpecFlow](http://www.specflow.org/) or similar.
 
@@ -714,7 +714,7 @@ because, as with all things F#, the syntax is much more lightweight.
 
 For example, here's the full implementation of the scenario above. 
 
-{% highlight fsharp %}
+```fsharp
 type StockItem = { Count : int }
 
 let mutable stockItem = { Count = 0 }
@@ -731,11 +731,11 @@ let [<When>] ``they return the jumper for a refund`` () =
 let [<Then>] ``I should have (.*) black jumpers in stock`` (n:int) =     
     let passed = (stockItem.Count = n)
     Assert.True(passed)
-{% endhighlight fsharp %}
+```
  
 The C# equivalent has a lot more clutter, and the lack of double backtick syntax really hurts:
 
-{% highlight csharp %}
+```csharp
 [Given(@"a customer buys a black jumper")]
 public void GivenACustomerBuysABlackJumper()
 {
@@ -747,7 +747,7 @@ public void GivenIHaveNBlackJumpersLeftInStock(int n)
 {
    // code
 }
-{% endhighlight csharp %} 
+``` 
 
 *Examples taken from the [TickSpec](http://tickspec.codeplex.com/) site.*
 

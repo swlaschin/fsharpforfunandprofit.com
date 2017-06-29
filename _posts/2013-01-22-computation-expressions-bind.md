@@ -18,23 +18,23 @@ The [MSDN page on computation expressions](http://msdn.microsoft.com/en-us/libra
 
 Here's the `let!` expression documentation, along with a real example:
 
-{% highlight fsharp %}
+```fsharp
 // documentation
 {| let! pattern = expr in cexpr |}
 
 // real example
 let! x = 43 in some expression
-{% endhighlight fsharp %}
+```
 
 And here's the `Bind` method documentation, along with a real example:
 
-{% highlight fsharp %}
+```fsharp
 // documentation
 builder.Bind(expr, (fun pattern -> {| cexpr |}))
 
 // real example
 builder.Bind(43, (fun x -> some expression))
-{% endhighlight %}
+```
 
 Notice a few interesting things about this:
 
@@ -44,20 +44,20 @@ Notice a few interesting things about this:
 
 So in other words, if we chain a number of `let!` expressions together like this:
 
-{% highlight fsharp %}
+```fsharp
 let! x = 1
 let! y = 2
 let! z = x + y
-{% endhighlight fsharp %} 
+``` 
 
 the compiler converts it to calls to `Bind`, like this:
 
-{% highlight fsharp %}
+```fsharp
 Bind(1, fun x ->
 Bind(2, fun y ->
 Bind(x + y, fun z ->
 etc
-{% endhighlight fsharp %} 
+``` 
 
 I think you can see where we are going with this by now.
 
@@ -75,18 +75,18 @@ So when you think of `bind` this this way, you can see that it is similar to pip
 
 In fact, you can turn it into an infix operation like this:
 
-{% highlight fsharp %}
+```fsharp
 let (>>=) m f = pipeInto(m,f)
-{% endhighlight fsharp %}
+```
 
 *By the way, this symbol ">>=" is the standard way of writing bind as an infix operator. If you ever see it used in other F# code, that is probably what it represents.*
 
 Going back to the safe divide example, we can now write the workflow on one line, like this:
 
-{% highlight fsharp %}
+```fsharp
 let divideByWorkflow x y w z = 
     x |> divideBy y >>= divideBy w >>= divideBy z 
-{% endhighlight fsharp %}
+```
 
 You might be wondering exactly how this is different from normal piping or composition? It's not immediately obvious.
 
@@ -102,14 +102,14 @@ In the particular case of the `bind` for safe divide, the wrapper type is `Optio
 
 To see bind used in a different context, here is an example of the logging workflow expressed using a infix bind function:
 
-{% highlight fsharp %}
+```fsharp
 let (>>=) m f = 
     printfn "expression is %A" m
     f m
 
 let loggingWorkflow = 
     1 >>= (+) 2 >>= (*) 42 >>= id
-{% endhighlight fsharp %}
+```
 
 In this case, there is no wrapper type. Everything is an `int`. But even so, `bind` has the special behavior that performs the logging behind the scenes.
 
@@ -124,18 +124,18 @@ A particularly useful one is `Option.bind`, which does exactly what we wrote by 
 
 Here was our hand-crafted function:
 
-{% highlight fsharp %}
+```fsharp
 let pipeInto (m,f) =
    match m with
    | None -> 
        None
    | Some x -> 
        x |> f
-{% endhighlight fsharp %}
+```
 
 And here is the implementation of `Option.bind`:
 
-{% highlight fsharp %}
+```fsharp
 module Option = 
     let bind f m =
        match m with
@@ -143,17 +143,17 @@ module Option =
            None
        | Some x -> 
            x |> f 
-{% endhighlight fsharp %}
+```
 
 There is a moral in this -- don't be too hasty to write your own functions. There may well be library functions that you can reuse.
 
 Here is the "maybe" workflow, rewritten to use `Option.bind`:
 
-{% highlight fsharp %}
+```fsharp
 type MaybeBuilder() =
     member this.Bind(m, f) = Option.bind f m
     member this.Return(x) = Some x
-{% endhighlight fsharp %}
+```
 
 
 ## Reviewing the different approaches so far ##
@@ -164,7 +164,7 @@ We've used four different approaches for the "safe divide" example so far. Let's
 
 First the original version, using an explicit workflow:
 
-{% highlight fsharp %}
+```fsharp
 module DivideByExplicit = 
 
     let divideBy bottom top =
@@ -190,11 +190,11 @@ module DivideByExplicit =
     // test
     let good = divideByWorkflow 12 3 2 1
     let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 Next, using our own version of "bind"  (a.k.a. "pipeInto")      
 
-{% highlight fsharp %}
+```fsharp
 module DivideByWithBindFunction = 
 
     let divideBy bottom top =
@@ -217,11 +217,11 @@ module DivideByWithBindFunction =
     // test
     let good = divideByWorkflow 12 3 2 1
     let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 Next, using a computation expression:
 
-{% highlight fsharp %}
+```fsharp
 module DivideByWithCompExpr = 
 
     let divideBy bottom top =
@@ -247,11 +247,11 @@ module DivideByWithCompExpr =
     // test
     let good = divideByWorkflow 12 3 2 1
     let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 And finally, using bind as an infix operation:
 
-{% highlight fsharp %}
+```fsharp
 module DivideByWithBindOperator = 
 
     let divideBy bottom top =
@@ -269,7 +269,7 @@ module DivideByWithBindOperator =
     // test
     let good = divideByWorkflow 12 3 2 1
     let bad = divideByWorkflow 12 3 0 1
-{% endhighlight fsharp %}
+```
 
 Bind functions turn out to be very powerful. In the next post we'll see that combining `bind` with wrapper types creates an elegant way of passing extra information around in the background. 
 
@@ -283,13 +283,13 @@ Here is a little exercise for you.
 
 First, create a function that parses a string into a int:
 
-{% highlight fsharp %}
+```fsharp
 let strToInt str = ???
-{% endhighlight fsharp %}
+```
 
 and then create your own computation expression builder class so that you can use it in a workflow, as shown below.
 
-{% highlight fsharp %}
+```fsharp
 let stringAddWorkflow x y z = 
     yourWorkflow 
         {
@@ -302,23 +302,23 @@ let stringAddWorkflow x y z =
 // test
 let good = stringAddWorkflow "12" "3" "2"
 let bad = stringAddWorkflow "12" "xyz" "2"
-{% endhighlight fsharp %}
+```
 
 **Part 2 -- create a bind function** 
 
 Once you have the first part working, extend the idea by adding two more functions:
 
-{% highlight fsharp %}
+```fsharp
 let strAdd str i = ???
 let (>>=) m f = ???
-{% endhighlight fsharp %}
+```
 
 And then with these functions, you should be able to write code like this:
 
-{% highlight fsharp %}
+```fsharp
 let good = strToInt "1" >>= strAdd "2" >>= strAdd "3"
 let bad = strToInt "1" >>= strAdd "xyz" >>= strAdd "3"
-{% endhighlight fsharp %}
+```
 
 
 ## Summary ##

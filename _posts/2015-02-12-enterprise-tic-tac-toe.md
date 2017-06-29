@@ -78,16 +78,16 @@ Let's start with the first: initialization. This is equivalent to a `new`-style 
 
 For Tic-Tac-Toe, there are no configuration parameters needed, so the input would be "null" (aka `unit`) and the output would be a game ready to play, like this:
 
-{% highlight fsharp %}
+```fsharp
 type InitGame = unit -> Game
-{% endhighlight fsharp %}
+```
 
 Now, what is this `Game`?  Since everything is immutable, the other scenarios are going to have to take an existing game as input, and return a slightly changed version of the
 game. So `Game` is not quite appropriate. How about `GameState` instead? A "player X moves" function will thus look something like this:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = GameState * SomeOtherStuff -> GameState
-{% endhighlight fsharp %}
+```
 
 You'll see that I added `SomeOtherStuff` to the input parameters because there's *always* some other stuff! We'll worry about what the "other stuff" is later. 
 
@@ -100,10 +100,10 @@ get side-tracked by implementation details.
 
 I said originally that we should have a function for each scenario. Which means we would have functions like this:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = GameState * SomeOtherStuff -> GameState 
 type PlayerOMoves = GameState * SomeOtherStuff -> GameState 
-{% endhighlight fsharp %}
+```
 
 For each player's move, we start with the current game state, plus some other input created by the player, and end up with a *new* game state.
 
@@ -114,29 +114,29 @@ One approach is to have only *one* function, rather than *two*. That way there's
 
 But now we need to handle the two different input cases. How to do that?  Easy! A discriminated union type:
 
-{% highlight fsharp %}
+```fsharp
 type UserAction = 
     | PlayerXMoves of SomeStuff
     | PlayerOMoves of SomeStuff
-{% endhighlight fsharp %}
+```
 
 And now, to process a move, we just pass the user action along with the state, like this:
 
-{% highlight fsharp %}
+```fsharp
 type Move = UserAction * GameState -> GameState 
-{% endhighlight fsharp %}
+```
 
 So now there is only *one* function for the UI to call rather than two, and less to get wrong.
 
 This approach is great where there is one user, because it documents all the things that they can do. For example, in other games, you might have a type like this:
 
-{% highlight fsharp %}
+```fsharp
 type UserAction = 
     | MoveLeft 
     | MoveRight 
     | Jump
     | Fire
-{% endhighlight fsharp %}
+```
 
 However in this situation, this way doesn't feel quite right. Since there are *two* players, what I want to do is give each player their own distinct function to call
 and not allow them to use the other player's function. This not only stops the user interface component from messing up, but also gives me my capability-based security!
@@ -145,10 +145,10 @@ But now we are back to the original problem: how can we tell the two functions a
 
 What I'll do is to use types to distinguish them. We'll make the `SomeOtherStuff`  be *owned* by each player, like this:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = GameState * PlayerX's Stuff -> GameState 
 type PlayerOMoves = GameState * PlayerO's Stuff -> GameState 
-{% endhighlight fsharp %}
+```
 
 This way the two functions are distinct, and also PlayerO cannot call PlayerX's function without having some of PlayerX's `Stuff` as well.
 If this sound's complicated, stay tuned -- it's easier than it looks!
@@ -169,23 +169,23 @@ nor can I ever remember which integer in the pair is the row and which the colum
 
 Instead, let's define a type explicitly listing each position of horizontally and vertically:
 
-{% highlight fsharp %}
+```fsharp
 type HorizPosition = Left | HCenter | Right
 type VertPosition = Top | VCenter | Bottom
-{% endhighlight fsharp %}
+```
 
 And then the position of a square in the grid (which I'm going to call a "cell") is just a pair of these:
 
-{% highlight fsharp %}
+```fsharp
 type CellPosition = HorizPosition * VertPosition 
-{% endhighlight fsharp %}
+```
 
 If we go back to the "move function" definitions, we now have:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = GameState * CellPosition -> GameState 
 type PlayerOMoves = GameState * CellPosition -> GameState 
-{% endhighlight fsharp %}
+```
 
 which means: "to play a move, the input is a game state and a selected cell position, and the output is an updated game state".
 
@@ -193,17 +193,17 @@ Both player X and player O can play the *same* cell position, so, as we said ear
 
 I'm going to do that by wrapping them in a [single case union](/posts/designing-with-types-single-case-dus/):
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXPos = PlayerXPos of CellPosition 
 type PlayerOPos = PlayerOPos of CellPosition 
-{% endhighlight fsharp %}
+```
 
 And with that, our move functions now have different types and can't be mixed up:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = GameState * PlayerXPos -> GameState 
 type PlayerOMoves = GameState * PlayerOPos -> GameState 
-{% endhighlight fsharp %}
+```
 
 ## What is the GameState?
 
@@ -211,17 +211,17 @@ Now let's focus on the game state.  What information do we need to represent the
 
 I think it is obvious that the only thing we need is a list of the cells, so we can define a game state like this:
 
-{% highlight fsharp %}
+```fsharp
 type GameState = {
     cells : Cell list
     }
-{% endhighlight fsharp %}
+```
 
 But now, what do we need to define a `Cell`?
 
 First, the cell's position. Second, whether the cell has an "X" or an "O" on it. We can therefore define a cell like this:
 
-{% highlight fsharp %}
+```fsharp
 type CellState = 
     | X
     | O
@@ -231,7 +231,7 @@ type Cell = {
     pos : CellPosition 
     state : CellState 
     }
-{% endhighlight fsharp %}
+```
 
 ## Designing the output
 
@@ -243,11 +243,11 @@ the UI could cache the previous state and do a diff to decide what needs to be u
 In more complicated applications, with thousands of cells, we can be more efficient and make the UI's life easier
 by explicitly returning the cells that changed with each move, like this:
 
-{% highlight fsharp %}
+```fsharp
 // added "ChangedCells"
 type PlayerXMoves = GameState * PlayerXPos -> GameState * ChangedCells
 type PlayerOMoves = GameState * PlayerOPos -> GameState * ChangedCells
-{% endhighlight fsharp %}
+```
 
 Since Tic-Tac-Toe is a tiny game, I'm going to keep it simple and just return the game state and *not* anything like `ChangedCells` as well.
 
@@ -257,15 +257,15 @@ The UI should not have to "think" -- it should be given everything it needs to k
 As it stands, the cells can be fetched directly from the `GameState`, but I'd rather that the UI did *not* know how `GameState` is defined.
 So let's give the UI a function (`GetCells`, say) that can extract the cells from the `GameState`:
 
-{% highlight fsharp %}
+```fsharp
 type GetCells = GameState -> Cell list
-{% endhighlight fsharp %}
+```
 
 Another approach would be for `GetCells` to return all the cells pre-organized into a 2D grid -- that would make life even easier for the UI.
 
-{% highlight fsharp %}
+```fsharp
 type GetCells = GameState -> Cell[,] 
-{% endhighlight fsharp %}
+```
 
 But now the game engine is assuming the UI is using a indexed grid. Just as the UI shouldn't know about the internals of the backend, the backend shouldn't make assumptions about how the UI works.
 
@@ -277,7 +277,7 @@ Ok, the UI should have everything it needs to display the game now.
 
 Great! Let's look at what we've got so far:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeDomain =
 
     type HorizPosition = Left | HCenter | Right
@@ -307,7 +307,7 @@ module TicTacToeDomain =
     
     // helper function
     type GetCells = GameState -> Cell list
-{% endhighlight fsharp %}
+```
 
 Note that in order to make this code compile while hiding the implementation of `GameState`, I've used a generic exception class (`exn`) as a placeholder for the actual implementation of `GameState`.
 I could also have used `unit` or `string` instead, but `exn` is not likely to get mixed up with anything else, and
@@ -319,15 +319,15 @@ Just a reminder that in this design phase, I'm going to combine all the input pa
 
 This means that I'll write:
 
-{% highlight fsharp %}
+```fsharp
 InputParam1 * InputParam2 * InputParam3 -> Result 
-{% endhighlight fsharp %}
+```
 
 rather than the more standard:
 
-{% highlight fsharp %}
+```fsharp
 InputParam1 -> InputParam2 -> InputParam3 -> Result
-{% endhighlight fsharp %}
+```
 
 I'm doing this just to make the input and output obvious.  When it comes to the implementation, it's more than likely that we'll switch to the standard way, so that
 we can take advantage of the techniques in our functional toolbox such as partial application.
@@ -340,9 +340,9 @@ the design is small enough that I can do it in my head.
 
 So, let's pretend that we are the UI and we are given the design above. We start by calling the initialization function to get a new game:
 
-{% highlight fsharp %}
+```fsharp
 type InitGame = unit -> GameState 
-{% endhighlight fsharp %}
+```
 
 Ok, so now we have a `GameState` and we are ready to display the initial grid. 
 
@@ -355,9 +355,9 @@ One thing though. Since there is no input needed to set up the game, *and* the g
 
 Therefore we don't need a function to create the initial game state, just a "constant" that gets reused for each game.
 
-{% highlight fsharp %}
+```fsharp
 type InitialGameState = GameState 
-{% endhighlight fsharp %}
+```
 
 ## When does the game stop?
 
@@ -367,10 +367,10 @@ Next in our walkthrough, let's play a move.
 * We combine the player and `CellPosition` into the appropriate type, such as a `PlayerXPos`
 * We then pass that and the `GameState` into the appropriate `Move` function
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = 
     GameState * PlayerXPos -> GameState 
-{% endhighlight fsharp %}
+```
 
 The output is a new `GameState`. The UI then calls `GetCells` to get the new cells. We loop through this list, update the display, and now we're ready to try again.
 
@@ -382,26 +382,26 @@ As designed, This game will go on forever.  We need to include something in the 
 
 So let's create a `GameStatus` type to keep track of that. 
 
-{% highlight fsharp %}
+```fsharp
 type GameStatus = 
     | InProcess 
     | PlayerXWon 
     | PlayerOWon 
     | Tie
-{% endhighlight fsharp %}
+```
 
 And we need to add it to the output of the move as well, so now we have:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = 
     GameState * PlayerXPos -> GameState * GameStatus 
-{% endhighlight fsharp %}
+```
 
 So now we can keep playing moves repeatedly while `GameStatus` is `InProcess` and then stop.
 
 The pseudocode for the UI would look like
 
-{% highlight fsharp %}
+```fsharp
 // loop while game not over
 let rec playMove gameState = 
     let pos = // get position from user input
@@ -418,7 +418,7 @@ let rec playMove gameState =
 // start the game with the initial state
 let startGame() = 
     playMove initialGameState
-{% endhighlight fsharp %}
+```
 
 I think we've got everything we need to play a game now, so let's move on to error handling. 
 
@@ -466,19 +466,19 @@ And then we can require that *only* items in this list are allowed to be played 
 
 If we do this, our move type will look like this:
 
-{% highlight fsharp %}
+```fsharp
 type ValidPositionsForNextMove = CellPosition list
 
 // a move returns the list of available positions for the next move
 type PlayerXMoves = 
     GameState * PlayerXPos -> // input
         GameState * GameStatus * ValidPositionsForNextMove // output
-{% endhighlight fsharp %}
+```
 
 And we can extend this approach to stop player X playing twice in a row too. Simply make the `ValidPositionsForNextMove` be a list of `PlayerOPos` rather than generic positions.
 Player X will not be able to play them!
 
-{% highlight fsharp %}
+```fsharp
 type ValidMovesForPlayerX = PlayerXPos list
 type ValidMovesForPlayerO = PlayerOPos list
 
@@ -489,7 +489,7 @@ type PlayerXMoves =
 type PlayerOMoves = 
     GameState * PlayerOPos -> // input
         GameState * GameStatus * ValidMovesForPlayerX // output
-{% endhighlight fsharp %}
+```
 
 This approach also means that when the game is over, there are *no valid moves* available. So the UI cannot just loop forever, it will be forced to stop and deal with the situation.
 
@@ -502,7 +502,7 @@ Let's do some refactoring now.
 
 First we have a couple of choice types with a case for Player X and another similar case for Player O.
 
-{% highlight fsharp %}
+```fsharp
 type CellState = 
     | X
     | O
@@ -513,11 +513,11 @@ type GameStatus =
     | PlayerXWon 
     | PlayerOWon 
     | Tie
-{% endhighlight fsharp %}
+```
 
 Let's extract the players into their own type, and then we can parameterize the cases to make them look nicer:
 
-{% highlight fsharp %}
+```fsharp
 type Player = PlayerO | PlayerX
 
 type CellState = 
@@ -528,12 +528,12 @@ type GameStatus =
     | InProcess 
     | Won of Player
     | Tie
-{% endhighlight fsharp %}
+```
 
 The second thing we can do is to note that we only need the valid moves in the `InProcess` case, not the `Won` or `Tie` cases, so let's merge `GameStatus`
 and `ValidMovesForPlayer` into a single type called `MoveResult`, say:
 
-{% highlight fsharp %}
+```fsharp
 type ValidMovesForPlayerX = PlayerXPos list
 type ValidMovesForPlayerO = PlayerOPos list
 
@@ -542,13 +542,13 @@ type MoveResult =
     | PlayerOToMove of GameState * ValidMovesForPlayerO
     | GameWon of GameState * Player 
     | GameTied of GameState 
-{% endhighlight fsharp %}
+```
 
 We've replaced the `InProcess` case with two new cases `PlayerXToMove` and `PlayerOToMove`, which I think is actually clearer.
 
 The move functions now look like:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = 
     GameState * PlayerXPos -> 
         GameState * MoveResult
@@ -556,7 +556,7 @@ type PlayerXMoves =
 type PlayerOMoves = 
     GameState * PlayerOPos -> 
         GameState * MoveResult
-{% endhighlight fsharp %}
+```
 
 I could have had the new `GameState` returned as part of `MoveResult` as well, but I left it "outside" to make it clear that is not to be used by the UI.
 
@@ -566,9 +566,9 @@ This is a more advanced technique, so I'm not going to discuss it in this post.
 Finally, the `InitialGameState` should also take advantage of the `MoveResult` to return the available moves for the first player.
 Since it has both a game state and a initial set of moves, let's just call it `NewGame` instead.
 
-{% highlight fsharp %}
+```fsharp
 type NewGame = GameState * MoveResult      
-{% endhighlight fsharp %}
+```
 
 If the initial `MoveResult` is the `PlayerXToMove` case, then we have also constrained the UI so that only player X can move first.
 Again, this allows the UI to be ignorant of the rules.
@@ -577,7 +577,7 @@ Again, this allows the UI to be ignorant of the rules.
 
 So now here's the tweaked design we've got after doing the walkthrough. 
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeDomain =
 
     type HorizPosition = Left | HCenter | Right
@@ -621,7 +621,7 @@ module TicTacToeDomain =
     
     // helper function
     type GetCells = GameState -> Cell list
-{% endhighlight fsharp %}
+```
 
 We're not quite done with the outside-in design yet. One question is yet to be resolved: how can we hide the implementation of `GameState` from the UI?
 
@@ -636,7 +636,7 @@ It's obviously a good idea to keep these types separate. How should we do this?
 
 In F#, the easiest way is to put them into separate modules, like this:
 
-{% highlight fsharp %}
+```fsharp
 /// Types shared by the UI and the game logic
 module TicTacToeDomain = 
     
@@ -664,7 +664,7 @@ module TicTacToeImplementation =
         }
 
     // etc
-{% endhighlight fsharp %}
+```
 
 But if we want to keep the internals of the game logic private, what do we do with `GameState`?  It's used by public functions such as `PlayerXMoves`, but we want to keep
 its structure secret. How can we do that?
@@ -675,7 +675,7 @@ The first choice might be to put the public and private types in the same module
 
 Here's some code that demonstrates what this approach would look like:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeImplementation = 
      
     // public types  
@@ -704,7 +704,7 @@ module TicTacToeImplementation =
         }
 
     // etc
-{% endhighlight fsharp %}
+```
 
 All the types are in one module.
 
@@ -718,9 +718,9 @@ new ones can't be created, which sounds like what we need.
 We might have appeared to solve the issue, but this approach often causes problems of its own. For starters, trying to keep the `public` and `private` qualifiers straight
 can cause annoying compiler errors, such as this one:
 
-{% highlight text %}
+```text
 The type 'XXX' is less accessible than the value, member or type 'YYY' it is used in
-{% endhighlight text %}
+```
 
 And even if this weren't a problem, putting the "interface" and the "implementation" in the same file will generally
 end up creating extra complexity as the implementation gets larger.
@@ -734,7 +734,7 @@ This allows all the shared types to reference the abstract class or interface sa
 
 Here's how you might do this in F#:
 
-{% highlight fsharp %}
+```fsharp
 /// Types shared by the UI and the game logic
 module TicTacToeDomain = 
     
@@ -749,7 +749,7 @@ module TicTacToeImplementation =
         inherit GameState()
         
     // etc        
-{% endhighlight fsharp %}        
+```        
 
 But alas, there are problems with this approach too.
 
@@ -784,7 +784,7 @@ So here's some code demonstrating this approach.
 
 First the shared types, with `GameState<'T>` being the parameterized version.
 
-{% highlight fsharp %}
+```fsharp
 /// Types shared by the UI and the game logic
 module TicTacToeDomain = 
 
@@ -799,7 +799,7 @@ module TicTacToeDomain =
         'GameState * PlayerOPos -> 'GameState * MoveResult
     
     // etc
-{% endhighlight fsharp %}        
+```        
 
 The types that don't use the game state are unchanged, but you can see that `PlayerXMoves<'T>` has been parameterized with the game state.
 
@@ -808,7 +808,7 @@ Dealing with all these generics is one reason why type inference is so helpful i
 
 Now for the types internal to the game logic. They can all be public now, because the UI won't be able to know about them.
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeImplementation =
     open TicTacToeDomain
 
@@ -816,15 +816,15 @@ module TicTacToeImplementation =
     type GameState = {
         cells : Cell list
         }
-{% endhighlight fsharp %}        
+```        
 
 Finally, here's what the implementation of a `playerXMoves` function might look like:
 
-{% highlight fsharp %}
+```fsharp
 let playerXMoves : PlayerXMoves<GameState> = 
     fun (gameState,move) ->
         // logic
-{% endhighlight fsharp %}        
+```        
 
 This function references a particular implementation, but can be passed into the UI code because it conforms to the `PlayerXMoves<'T>` type.
 
@@ -851,7 +851,7 @@ Here's an example of what such code would look like:
 
 Here's some code to demonstrate this approach:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeImplementation = 
     open TicTacToeDomain 
    
@@ -894,7 +894,7 @@ module WinFormApplication =
     let form = 
         new TicTacToeForm<_>(newGame,playerXMoves,playerOMoves,getCells)
     form.Show()
-{% endhighlight fsharp %}
+```
 
 A few notes on this code:
 
@@ -902,28 +902,28 @@ First, I'm using WinForms rather than WPF because it has Mono support and becaus
 
 Next, you can see that I've explicitly added the type parameters to `TicTacToeForm<'T>` like this.  
 
-{% highlight fsharp %}
+```fsharp
 TicTacToeForm<'T>(newGame:NewGame<'T>, playerXMoves:PlayerXMoves<'T>, etc)
-{% endhighlight fsharp %}
+```
 
 I could have eliminated the type parameter for the form by doing something like this instead:
 
-{% highlight fsharp %}
+```fsharp
 TicTacToeForm(newGame:NewGame<_>, playerXMoves:PlayerXMoves<_>, etc)
-{% endhighlight fsharp %}
+```
 
 or even:
 
-{% highlight fsharp %}
+```fsharp
 TicTacToeForm(newGame, playerXMoves, etc)
-{% endhighlight fsharp %}
+```
 
 and let the compiler infer the types, but this often causes a "less generic" warning like this:
 
-{% highlight text %}
+```text
 warning FS0064: This construct causes code to be less generic than indicated by the type annotations. 
 The type variable 'T has been constrained to be type 'XXX'.
-{% endhighlight text %}
+```
 
 By explicitly writing `TicTacToeForm<'T>`, this can be avoided, although it is ugly for sure.
 
@@ -931,7 +931,7 @@ By explicitly writing `TicTacToeForm<'T>`, this can be avoided, although it is u
 
 We've got four different functions to export. That's getting a bit much so let's create a record to store them in:
 
-{% highlight fsharp %}
+```fsharp
 // the functions exported from the implementation
 // for the UI to use.
 type TicTacToeAPI<'GameState>  = 
@@ -941,13 +941,13 @@ type TicTacToeAPI<'GameState>  =
     playerOMoves : PlayerOMoves<'GameState> 
     getCells : GetCells<'GameState>
     }
-{% endhighlight fsharp %}
+```
 
 This acts both as a container to pass around functions, *and* as nice documentation of what functions are available in the API.
 
 The implementation now has to create an "api" object:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeImplementation = 
     open TicTacToeDomain 
    
@@ -963,11 +963,11 @@ module TicTacToeImplementation =
         playerXMoves = playerXMoves 
         getCells = getCells
         }
-{% endhighlight fsharp %}
+```
 
 But the UI code simplifies as a result:
 
-{% highlight fsharp %}
+```fsharp
 module WinFormUI = 
     open TicTacToeDomain
     open System.Windows.Forms
@@ -985,7 +985,7 @@ module WinFormApplication =
     // create form and start game
     let form = new TicTacToeForm<_>(api)
     form.Show()
-{% endhighlight fsharp %}
+```
 
 ## Prototyping a minimal implementation
 
@@ -997,7 +997,7 @@ For example, here is some minimal code to implement the `newGame` and `playerXMo
 * The `newGame` is just an game with no cells and no available moves
 * The minimal implementation of `move` is easy -- just return game over!
 
-{% highlight fsharp %}
+```fsharp
 let newGame : NewGame<GameState> = 
     // create initial game state with empty everything
     let gameState = { cells=[]}            
@@ -1021,13 +1021,13 @@ let api = {
     playerXMoves = playerXMoves 
     getCells = getCells
     }
-{% endhighlight fsharp %}
+```
 
 Now let's create a minimal implementation of the UI. We won't draw anything or respond to clicks, just mock up some functions so that we can test the logic. 
 
 Here's my first attempt:
 
-{% highlight fsharp %}
+```fsharp
 type TicTacToeForm<'GameState>(api:TicTacToeAPI<'GameState>) = 
     inherit Form()
 
@@ -1080,7 +1080,7 @@ type TicTacToeForm<'GameState>(api:TicTacToeAPI<'GameState>) =
             // etc
         | GameWon player -> 
             ?? // we aleady showed after the last move
-{% endhighlight fsharp %}
+```
 
 As you can see, I'm planning to use the standard Form event handling approach -- each cell will have a "clicked" event handler associated with it. 
 How the control or pixel location is converted to a `CellPosition` is something I'm not going to worry about right now, so I've just hard-coded some dummy data.
@@ -1090,9 +1090,9 @@ I'm *not* going to be pure here and have a recursive loop. Instead, I'll keep th
 But now we have got a tricky situation... What is the `gameState` when the game hasn't started yet? What should we initialize it to?  Similarly,
 when the game is over, what should it be set to?
 
-{% highlight fsharp %}
+```fsharp
 let mutable gameState : 'GameState = ???
-{% endhighlight fsharp %}
+```
 
 One choice might be to use a `GameState option` but that seems like a hack, and it makes me think that we are failing to think of something.
 
@@ -1112,23 +1112,23 @@ Again, this is for the UI only, it has nothing to do with the internal game stat
 
 So -- our solution to all problems! -- let's create a type to represent these states.
 
-{% highlight fsharp %}
+```fsharp
 type UiState = 
     | Idle
     | Playing
     | Won
     | Lost
-{% endhighlight fsharp %}
+```
 
 But do we really need the `Won` and `Lost` states? Why don't we just go straight back to `Idle` when the game is over?
 
 So now the type looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type UiState = 
     | Idle
     | Playing
-{% endhighlight fsharp %}
+```
 
 The nice thing about using a type like this is that we can easily store the data that we need for each state. 
 
@@ -1139,33 +1139,33 @@ The nice thing about using a type like this is that we can easily store the data
 
 So our final version looks like this. We've had to add the `<'GameState>` to `UiState` because we don't know what the actual game state is.
   
-{% highlight fsharp %}
+```fsharp
 type UiState<'GameState> = 
     | Idle
     | Playing of 'GameState * MoveResult 
-{% endhighlight fsharp %}
+```
 
 With this type now available, we no longer need to store the game state directly as a field in the class. Instead we store a mutable `UiState`, which is initialized to `Idle`.
 
-{% highlight fsharp %}
+```fsharp
 type TicTacToeForm<'GameState>(api:TicTacToeAPI<'GameState>) = 
     inherit Form()
 
     let mutable uiState = Idle
-{% endhighlight fsharp %}
+```
 
 When we start the game, we change the UI state to be `Playing`:
 
-{% highlight fsharp %}
+```fsharp
 let startGame()= 
     uiState <- Playing api.newGame
     // create cell grid from gameState 
-{% endhighlight fsharp %}
+```
 
 And when we handle a click, we only do something if the uiState is in `Playing` mode,
 and then we have no trouble getting the `gameState` and `lastMoveResult` that we need, because it is stored as part of the data for that case.
 
-{% highlight fsharp %}
+```fsharp
 let handleClick() =
     match uiState with
     | Idle -> ()
@@ -1193,11 +1193,11 @@ let handleClick() =
             // etc
         | _ -> 
             // ignore other states
-{% endhighlight fsharp %}
+```
 
 If you look at the last line of the `PlayerXToMove` case, you can see the global `uiState` field being updated with the new game state:
 
-{% highlight fsharp %}
+```fsharp
 | PlayerXToMove availableMoves -> 
     // snipped
     
@@ -1205,7 +1205,7 @@ If you look at the last line of the `PlayerXToMove` case, you can see the global
 
     // update the uiState with newGameState
     uiState <- Playing (newGameState,newResult)
-{% endhighlight fsharp %}
+```
 
 
 So where have we got to with this bit of prototyping?
@@ -1227,7 +1227,7 @@ If you don't want to read this code, you can skip to the [questions and summary]
 
 We'll start with our final domain design:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeDomain =
 
     type HorizPosition = Left | HCenter | Right
@@ -1278,13 +1278,13 @@ module TicTacToeDomain =
         playerOMoves : PlayerOMoves<'GameState> 
         getCells : GetCells<'GameState>
         }
-{% endhighlight fsharp %}
+```
 
 ## The complete game, part 2: The game logic implementation
 
 Next, here's a complete implementation of the design which I will not discuss in detail. I hope that the comments are self-explanatory. 
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeImplementation =
     open TicTacToeDomain
 
@@ -1459,7 +1459,7 @@ module TicTacToeImplementation =
         playerXMoves = playerXMoves 
         getCells = getCells
         }
-{% endhighlight fsharp %}
+```
 
 ## The complete game, part 3: A console based user interface
 
@@ -1470,7 +1470,7 @@ If you want to be extra good, it would be easy enough to convert this to a pure 
 
 Personally, I like to focus on the core domain logic being pure and I generally don't bother about the UI too much, but that's just me. 
 
-{% highlight fsharp %}
+```fsharp
 /// Console based user interface
 module ConsoleUi =
     open TicTacToeDomain
@@ -1613,23 +1613,23 @@ module ConsoleUi =
     let startGame api =
         let userAction = ContinuePlay api.newGame
         gameLoop api userAction 
-{% endhighlight fsharp %}
+```
 
 And finally, the application code that connects all the components together and launches the UI:
 
-{% highlight fsharp %}
+```fsharp
 module ConsoleApplication = 
 
     let startGame() =
         let api = TicTacToeImplementation.api
         ConsoleUi.startGame api
-{% endhighlight fsharp %}
+```
 
 ## Example game
 
 Here's what the output of this game looks like:
 
-{% highlight text %}
+```text
 |-|X|-|
 |X|-|-|
 |O|-|-|
@@ -1682,7 +1682,7 @@ Enter an int corresponding to a displayed move or q to quit:
 GAME WON by PlayerO
 
 Would you like to play again (y/n)?
-{% endhighlight text %}
+```
 
 ## Logging
 
@@ -1690,7 +1690,7 @@ Oops! We promised we would add logging to make it enterprise-ready!
 
 That's easy -- all we have to do is replace the api functions with equivalent functions that log the data we're interested in
 
-{% highlight fsharp %}
+```fsharp
 module Logger = 
     open TicTacToeDomain
      
@@ -1720,28 +1720,28 @@ module Logger =
             playerXMoves = playerXMoves
             playerOMoves = playerOMoves
             }
-{% endhighlight fsharp %}
+```
 
 Obviously, in a real system you'd replace it with a proper logging tool such as `log4net` and generate better output, but I think this demonstrates the idea.
 
 Now to use this, all we have to do is change the top level application to transform the original api to a logged version of the api:
 
-{% highlight fsharp %}
+```fsharp
 module ConsoleApplication = 
 
     let startGame() =
         let api = TicTacToeImplementation.api
         let loggedApi = Logger.injectLogging api
         ConsoleUi.startGame loggedApi 
-{% endhighlight fsharp %}
+```
 
 And that's it. Logging done!  
 
 Oh, and remember that I originally had the initial state created as a function rather than as a constant?
 
-{% highlight fsharp %}
+```fsharp
 type InitGame = unit -> GameState
-{% endhighlight fsharp %}
+```
 
 I changed to a constant early on in the design. But I'm regretting that now, because it means that I can't hook into the "init game" event and log it.
 If I do want to log the start of each game, I should really change it back to a function again.
@@ -1762,7 +1762,7 @@ And of course you'd have to tweak all the related classes too.
 
 Here's a snippet of what that would look like:
 
-{% highlight fsharp %}
+```fsharp
 type MoveResult<'PlayerXPos,'PlayerOPos> = 
     | PlayerXToMove of 'PlayerXPos list
     | PlayerOToMove of 'PlayerOPos list
@@ -1778,15 +1778,15 @@ type PlayerXMoves<'GameState,'PlayerXPos,'PlayerOPos> =
 type PlayerOMoves<'GameState,'PlayerXPos,'PlayerOPos> = 
     'GameState -> 'PlayerOPos -> 
         'GameState * MoveResult<'PlayerXPos,'PlayerOPos>      
-{% endhighlight fsharp %}
+```
 
 We'd also need a way for the UI to see if the `CellPosition` a user selected was valid. That is, given a `MoveResult` and the desired `CellPosition`, 
 if the position *is* valid, return `Some` move, otherwise return `None`.
 
-{% highlight fsharp %}
+```fsharp
 type GetValidXPos<'PlayerXPos,'PlayerOPos> = 
     CellPosition * MoveResult<'PlayerXPos,'PlayerOPos> -> 'PlayerXPos option
-{% endhighlight fsharp %}
+```
 
 It's getting kind of ugly now, though. That's one problem with type-first design: the type parameters can get complicated! 
 
@@ -1804,7 +1804,7 @@ implementation be public.
 
 You mean, why I am defining the functions like this:
 
-{% highlight fsharp %}
+```fsharp
 /// create the state of a new game
 let newGame : NewGame<GameState> = 
     // implementation
@@ -1812,11 +1812,11 @@ let newGame : NewGame<GameState> =
 let playerXMoves : PlayerXMoves<GameState> = 
     fun (gameState,move) ->
         // implementation
-{% endhighlight fsharp %}
+```
 
 rather than in the "normal" way like this:
 
-{% highlight fsharp %}
+```fsharp
 /// create the state of a new game
 let newGame  = 
     // implementation
@@ -1824,7 +1824,7 @@ let newGame  =
 let playerXMoves (gameState,move) = 
     // implementation
 
-{% endhighlight fsharp %}
+```
 
 I'm doing this when I want to treat functions as values. Just as we might say "*x* is a value of type *int*" like this `x :int = ...`,
 I'm saying that "*playerXMoves* is a value of type *PlayerXMoves*" like this:

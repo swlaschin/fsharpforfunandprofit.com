@@ -25,21 +25,21 @@ On this site, I generally don't use any math, but in this case I'm going to brea
 
 Ready? Here's the first one:
 
-{% highlight text %}
+```text
 1 + 2 = 3
-{% endhighlight  %}
+```
 
 Could you handle that? How about another one?
 
-{% highlight text %}
+```text
 1 + (2 + 3) = (1 + 2) + 3
-{% endhighlight  %}
+```
 
 And finally one more...
 
-{% highlight text %}
+```text
 1 + 0 = 1 and 0 + 1 = 1
-{% endhighlight  %}
+```
 
 Ok! We're done! If you can understand these equations, then you have all the math you need to understand monoids.
 
@@ -164,17 +164,17 @@ What about booleans combined using OR? Is there a zero for that as well? I'll le
 
 Moving on, what about string concatenation? Is there a "zero" for this?  Yes, indeed -- it is just the empty string.
 
-{% highlight text %}
+```text
 "" + "hello" = "hello"
 "hello" + "" = "hello"
-{% endhighlight  %}
+```
 
 Finally, for list concatenation, the "zero" is just the empty list.  
 
-{% highlight text %}
+```text
 [] @ [1;2;3] = [1;2;3]
 [1;2;3] @ [] = [1;2;3]
-{% endhighlight  %}
+```
 
 You can see that the "zero" value depends very much on the operation, not just on the set of things. The zero for integer addition is different from the "zero" for integer multiplication,
 which is different again from the from "zero" for `Max`.
@@ -187,11 +187,11 @@ So now let's revisit the equations with our new generalizations in mind.
 
 Before, we had:
 
-{% highlight text %}
+```text
 1 + 2 = 3
 1 + (2 + 3) = (1 + 2) + 3
 1 + 0 = 1 and 0 + 1 = 1
-{% endhighlight  %}
+```
 
 But now we have something much more abstract, a set of generalized requirements that can apply to all sorts of things:
 
@@ -425,11 +425,11 @@ Replace 'float' with 'real number' to get associativity.
 [<i>can</i> divide by zero](http://stackoverflow.com/questions/14682005/why-does-division-by-zero-in-ieee754-standard-results-in-infinite-value) and get a valid value. So floats are indeed closed under
 division! Here's a demonstration:
 
-{% highlight fsharp %}
+```fsharp
 let x = 1.0/0.0 // infinity
 let y = x * 2.0 // two times infinity 
 let z = 2.0 / x // two divided by infinity 
-{% endhighlight fsharp %}
+```
 
 ## What use are monoids to a programmer?
 
@@ -492,29 +492,29 @@ Consider the task of summing the first 8 integers; how could we implement this?
 
 One way would be a crude step-by-step sum, as follows:
 
-{% highlight fsharp %}
+```fsharp
 let sumUpTo2 = 1 + 2
 let sumUpTo3 = sumUpTo2 + 3
 let sumUpTo4 = sumUpTo3 + 4
 // etc
 let result = sumUpTo7 + 8
-{% endhighlight  %}
+```
 
 But because the sums can be done in any order, we could also implement the requirement by splitting the sum into two halves, like this
 
-{% highlight fsharp %}
+```fsharp
 let sum1To4 = 1 + 2 + 3 + 4
 let sum5To8 = 5 + 6 + 7 + 8
 let result = sum1To4 + sum5To8
-{% endhighlight  %}
+```
 
 and then we can recursively split the sums into sub-sums in the same way until we get down to the basic pairwise operation:
 
-{% highlight fsharp %}
+```fsharp
 let sum1To2 = 1 + 2 
 let sum3To4 = 3 + 4
 let sum1To4 = sum1To2 + sum3To4
-{% endhighlight  %}
+```
 
 This "divide and conquer" approach may seem like overkill for something like a simple sum, but we'll see in a future post that, in conjunction with a `map`, it is the basis for some well known aggregation algorithms.
 
@@ -606,7 +606,7 @@ Regarding the first point above, if we are concerned that the list might be empt
 
 Here are `reduce` and `fold` in action:
 
-{% highlight fsharp %}
+```fsharp
 // ok
 [1..10] |> List.reduce (+)
 
@@ -618,16 +618,16 @@ Here are `reduce` and `fold` in action:
 
 // ok with explicit zero
 [] |> List.fold (+) 0 
-{% endhighlight  %}
+```
 
 Using a "zero" can result in counter-intuitive results sometimes. For example, what is the *product* of an empty list of integers? 
 
 The answer is `1`, not `0` as you might expect!  Here's the code to prove it:
 
-{% highlight fsharp %}
+```fsharp
 [1..4] |> List.fold (*) 1  // result is 24
 [] |> List.fold (*) 1      // result is 1
-{% endhighlight  %}
+```
 
 ### Summary of the benefits
 
@@ -635,9 +635,9 @@ To sum up, a monoid is basically a way to describe an aggregation pattern -- we 
 
 Or in F# terms:
 
-{% highlight text %}
+```text
 Monoid Aggregation : 'T list -> 'T
-{% endhighlight text %}
+```
 
 So when you are designing code, and you start using terms like "sum", "product", "composition", or "concatenation", these are clues that you are dealing with a monoid.
 

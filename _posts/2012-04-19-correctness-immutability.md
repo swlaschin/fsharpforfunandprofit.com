@@ -12,7 +12,7 @@ To see why immutability is important, let's start with a small example.
 
 Here's some simple C# code that processes a list of numbers.
 
-{% highlight csharp %}
+```csharp
 public List<int> MakeList() 
 {
    return new List<int> {1,2,3,4,5,6,7,8,9,10};
@@ -27,11 +27,11 @@ public List<int> EvenNumbers(List<int> list)
 { 
    // some code
 }
-{% endhighlight %}
+```
 
 Now let me test it:
 
-{% highlight csharp %}
+```csharp
 public void Test() 
 { 
    var odds = OddNumbers(MakeList()); 
@@ -39,11 +39,11 @@ public void Test()
    // assert odds = 1,3,5,7,9 -- OK!
    // assert evens = 2,4,6,8,10 -- OK!
 }
-{% endhighlight %}
+```
 
 Everything works great, and the test passes, but I notice that I am creating the list twice -- surely I should refactor this out?  So I do the refactoring, and here's the new improved version:
 
-{% highlight csharp %}
+```csharp
 public void RefactoredTest() 
 { 
    var list = MakeList();
@@ -52,7 +52,7 @@ public void RefactoredTest()
    // assert odds = 1,3,5,7,9 -- OK!
    // assert evens = 2,4,6,8,10 -- FAIL!
 }
-{% endhighlight %}
+```
 
 But now the test suddenly fails! Why would a refactoring break the test? Can you tell just by looking at the code?
 
@@ -62,11 +62,11 @@ In other words, when I call the `OddNumbers` function, I am unintentionally crea
 
 Is there a way to ensure that this cannot happen?  Yes -- if the functions had used `IEnumerable` instead:
 
-{% highlight csharp %}
+```csharp
 public IEnumerable<int> MakeList() {}
 public List<int> OddNumbers(IEnumerable<int> list) {} 
 public List<int> EvenNumbers(IEnumerable <int> list) {}
-{% endhighlight %}
+```
 
 In this case we can be confident that calling the `OddNumbers` function could not possibly have any effect on the list, and `EvenNumbers` would work correctly. What's more, we can know this *just by looking at the signatures*, without having to examine the internals of the functions.  And if you try to make one of the functions misbehave by assigning to the list then you will get an error straight away, at compile time. 
 
@@ -98,26 +98,26 @@ When a program is designed using a transformation approach, the result tends to 
 
 We saw earlier that immutable values and types are the default in F#:
 
-{% highlight fsharp %}
+```fsharp
 // immutable list
 let list = [1;2;3;4]    
 
 type PersonalName = {FirstName:string; LastName:string}
 // immutable person
 let john = {FirstName="John"; LastName="Doe"}
-{% endhighlight %}
+```
 
 Because of this, F# has a number of tricks to make life easier and to optimize the underlying code.
 
 First, since you can't modify a data structure, you must copy it when you want to change it. F# makes it easy to copy another data structure with only the changes you want:
 
-{% highlight fsharp %}
+```fsharp
 let alice = {john with FirstName="Alice"}
-{% endhighlight %}
+```
 
 And complex data structures are implemented as linked lists or similar, so that common parts of the structure are shared. 
 
-{% highlight fsharp %}
+```fsharp
 // create an immutable list
 let list1 = [1;2;3;4]   
 
@@ -129,7 +129,7 @@ let list3 = list2.Tail
 
 // the two lists are the identical object in memory!
 System.Object.ReferenceEquals(list1,list3)
-{% endhighlight %}
+```
 
 This technique ensures that, while you might appear to have hundreds of copies of a list in your code, they are all sharing the same memory behind the scenes.
 

@@ -23,7 +23,7 @@ such there is really only one way of writing the code.
 
 I'm going to show all the code at once (below), and I'll add some comments afterwards.
 
-{% highlight fsharp %}
+```fsharp
 // ================================================
 // Implementation of CalculatorConfiguration
 // ================================================          
@@ -124,7 +124,7 @@ module CalculatorServices =
         setDisplayError = setDisplayError (config.divideByZeroMsg)
         initState = initState
         }
-{% endhighlight fsharp %}
+```
 
 Some comments:
 
@@ -144,7 +144,7 @@ I'm going to spare you all the painful iterations and just go directly to the fi
 
 I won't show all the code, as it is about 200 lines (and you can see it in the [gist](https://gist.github.com/swlaschin/0e954cbdc383d1f5d9d3#file-calculator_v1-fsx)), but here are some highlights:
 
-{% highlight fsharp %}
+```fsharp
 module CalculatorUI =
 
     open CalculatorDomain
@@ -156,7 +156,7 @@ module CalculatorUI =
         let mutable state = initState()
         let mutable setDisplayedText = 
             fun text -> () // do nothing
-{% endhighlight fsharp %}
+```
 
 The `CalculatorForm` is a subclass of `Form`, as usual. 
 
@@ -174,16 +174,16 @@ Well, after the state has changed, we need to refresh the control (a Label) that
 
 The standard way to do it is to make the label control a field in the form, like this:
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorForm(initState:InitState, calculate:Calculate) as this = 
     inherit Form()
 
     let displayControl :Label = null
-{% endhighlight fsharp %}
+```
 
 and then set it to an actual control value when the form has been initialized:
 
-{% highlight fsharp %}
+```fsharp
 member this.CreateDisplayLabel() = 
     let display = new Label(Text="",Size=displaySize,Location=getPos(0,0))
     display.TextAlign <- ContentAlignment.MiddleRight
@@ -192,7 +192,7 @@ member this.CreateDisplayLabel() =
 
     // traditional style - set the field when the form has been initialized
     displayControl <- display
-{% endhighlight fsharp %}
+```
 
 But this has the problem that you might accidentally try to access the label control before it is initialized, causing a NRE.
 Also, I'd prefer to focus on the desired behavior, rather than having a "global" field that can be accessed by anyone anywhere.
@@ -202,7 +202,7 @@ By using a function, we (a) encapsulate the access to the real control and (b) a
 The mutable function starts off with a safe default implementation (`fun text -> ()`),
 and is then changed to a *new* implementation when the label control is created:
 
-{% highlight fsharp %}
+```fsharp
 member this.CreateDisplayLabel() = 
     let display = new Label(Text="",Size=displaySize,Location=getPos(0,0))
     this.Controls.Add(display)
@@ -210,7 +210,7 @@ member this.CreateDisplayLabel() =
     // update the function that sets the text
     setDisplayedText <-
         (fun text -> display.Text <- text)
-{% endhighlight fsharp %}
+```
 
 
 ## Creating the buttons
@@ -219,7 +219,7 @@ The buttons are laid out in a grid, and so I create a helper function `getPos(ro
 
 Here's an example of creating the buttons:
 
-{% highlight fsharp %}
+```fsharp
 member this.CreateButtons() = 
     let sevenButton = new Button(Text="7",Size=buttonSize,Location=getPos(1,0),BackColor=DigitButtonColor)
     sevenButton |> addDigitButton Seven
@@ -235,11 +235,11 @@ member this.CreateButtons() =
 
     let addButton = new Button(Text="+",Size=doubleHeightSize,Location=getPos(1,4),BackColor=OpButtonColor)
     addButton |> addOpButton Add
-{% endhighlight fsharp %}
+```
 
 And since all the digit buttons have the same behavior, as do all the math op buttons, I just created some helpers that set the event handler in a generic way:
 
-{% highlight fsharp %}
+```fsharp
 let addDigitButton digit (button:Button) =
     button.Click.AddHandler(EventHandler(fun _ _ -> handleDigit digit))
     this.Controls.Add(button)
@@ -247,11 +247,11 @@ let addDigitButton digit (button:Button) =
 let addOpButton op (button:Button) =
     button.Click.AddHandler(EventHandler(fun _ _ -> handleOp op))
     this.Controls.Add(button)
-{% endhighlight fsharp %}
+```
 
 I also added some keyboard support:
 
-{% highlight fsharp %}
+```fsharp
 member this.KeyPressHandler(e:KeyPressEventArgs) =
     match e.KeyChar with
     | '0' -> handleDigit Zero
@@ -260,11 +260,11 @@ member this.KeyPressHandler(e:KeyPressEventArgs) =
     | '.' | ',' -> handleDigit DecimalSeparator
     | '+' -> handleOp Add
     // etc
-{% endhighlight fsharp %}
+```
 
 Button clicks and keyboard presses are eventually routed into the key function `handleInput`, which does the calculation.
 
-{% highlight fsharp %}
+```fsharp
 let handleInput input =
      let newState = calculate(input,state)
      state <- newState 
@@ -275,7 +275,7 @@ let handleDigit digit =
 
 let handleOp op =
      Op op |> handleInput 
-{% endhighlight fsharp %}
+```
 
 As you can see, the implementation of `handleInput` is trivial.
 It calls the calculation function that was injected, sets the mutable state to the result, and then updates the display.
@@ -319,13 +319,13 @@ What changes do we need to make to the code?
 
 First, we need to store the flag somewhere. We'll store it in the `CalculatorState` of course!
 
-{% highlight fsharp %}
+```fsharp
 type CalculatorState = {
     display: CalculatorDisplay
     pendingOp: (CalculatorMathOp * Number) option
     allowAppend: bool
     }
-{% endhighlight fsharp %}
+```
 
 (*This might seem like a good solution for now, but using flags like this is really a design smell.
 In the next post, I'll use a [different approach](/posts/designing-with-types-representing-states/#replace-flags) which doesn't involve flags)*
@@ -346,14 +346,14 @@ We'll make the following tweaks to the code:
 
 Most of the services are fine. The only service that is broken now is `initState`, which just needs to be tweaked to have `allowAppend` be true when starting.
 
-{% highlight fsharp %}
+```fsharp
 let initState :InitState = fun () -> 
     {
     display=""
     pendingOp = None
     allowAppend = true
     }
-{% endhighlight fsharp %}
+```
 
 ## Fixing the user interface
 
@@ -417,7 +417,7 @@ Now I'm not saying that I am against automated testing. In fact, I do use it all
 
 So, for example, here is how I might test this code:
 
-{% highlight fsharp %}
+```fsharp
 module CalculatorTests =
     open CalculatorDomain
     open System
@@ -460,7 +460,7 @@ module CalculatorTests =
     do 
         ``when I input 1 + 2, I expect 3``()
         ``when I input 1 + 2 + 3, I expect 6``() 
-{% endhighlight fsharp %}
+```
 
 And of course, this would be easily adapted to using [NUnit or similar](/posts/low-risk-ways-to-use-fsharp-at-work-3/). 
 

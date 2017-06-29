@@ -11,7 +11,7 @@ In the previous post, we were introduced to the "maybe" workflow, which allowed 
 
 A typical use of the "maybe" workflow looked something like this:
 
-{% highlight fsharp %}
+```fsharp
 let result = 
     maybe 
         {
@@ -19,7 +19,7 @@ let result =
         let! anInt2 = expression of Option<int>
         return anInt + anInt2 
         }    
-{% endhighlight fsharp %}
+```
 
 As we saw before, there is some apparently strange behavior going on here:
 
@@ -33,15 +33,15 @@ We will follow up these observations in this post, and we will see that this lea
 
 Let's look at another example. Say that we are accessing a database, and we want to capture the result in a Success/Error union type, like this:
 
-{% highlight fsharp %}
+```fsharp
 type DbResult<'a> = 
     | Success of 'a
     | Error of string
-{% endhighlight fsharp %}
+```
 
 We then use this type in our database access methods. Here are some very simple stubs to give you an idea of how the `DbResult` type might be used:
 
-{% highlight fsharp %}
+```fsharp
 let getCustomerId name =
     if (name = "") 
     then Error "getCustomerId failed"
@@ -56,14 +56,14 @@ let getLastProductForOrder orderId =
     if (orderId  = "") 
     then Error "getLastProductForOrder failed"
     else Success "Product456"
-{% endhighlight fsharp %}
+```
 
 
 Now let's say we want to chain these calls together. First get the customer id from the name, and then get the order for the customer id, and then get the product from the order.
 
 Here's the most explicit way of doing it. As you can see, we have to have pattern matching at each step.
 
-{% highlight fsharp %}
+```fsharp
 let product = 
     let r1 = getCustomerId "Alice"
     match r1 with 
@@ -79,13 +79,13 @@ let product =
             | Success productId ->
                 printfn "Product is %s" productId
                 r3
-{% endhighlight fsharp %}
+```
 
 Really ugly code. And the top-level flow has been submerged in the error handling logic.  
 
 Computation expressions to the rescue!  We can write one that handles the branching of Success/Error behind the scenes:
 
-{% highlight fsharp %}
+```fsharp
 type DbResultBuilder() =
 
     member this.Bind(m, f) = 
@@ -99,11 +99,11 @@ type DbResultBuilder() =
         Success x
 
 let dbresult = new DbResultBuilder()
-{% endhighlight fsharp %}
+```
 
 And with this workflow, we can focus on the big picture and write much cleaner code:
 
-{% highlight fsharp %}
+```fsharp
 let product' = 
     dbresult {
         let! custId = getCustomerId "Alice"
@@ -113,11 +113,11 @@ let product' =
         return productId
         }
 printfn "%A" product'
-{% endhighlight fsharp %}
+```
 
 And if there are errors, the workflow traps them nicely and tells us where the error was, as in this example below:
 
-{% highlight fsharp %}
+```fsharp
 let product'' = 
     dbresult {
         let! custId = getCustomerId "Alice"
@@ -127,7 +127,7 @@ let product'' =
         return productId
         }
 printfn "%A" product''
-{% endhighlight fsharp %}
+```
 
 
 ## The role of wrapper types in workflows
@@ -147,9 +147,9 @@ Let's look again at the definition of the `Bind` and `Return` methods of a compu
 
 We'll start off with the easy one, `Return`. The signature of `Return` [as documented on MSDN](http://msdn.microsoft.com/en-us/library/dd233182.aspx) is just this:
 
-{% highlight fsharp %}
+```fsharp
 member Return : 'T -> M<'T>
-{% endhighlight fsharp %}
+```
 
 In other words, for some type `T`, the `Return` method just wraps it in the wrapper type. 
 
@@ -157,7 +157,7 @@ In other words, for some type `T`, the `Return` method just wraps it in the wrap
 
 And we've seen two examples of this usage. The `maybe` workflow returns a `Some`, which is an option type, and the `dbresult` workflow returns `Success`, which is part of the `DbResult` type.
 
-{% highlight fsharp %}
+```fsharp
 // return for the maybe workflow
 member this.Return(x) = 
     Some x
@@ -165,13 +165,13 @@ member this.Return(x) =
 // return for the dbresult workflow
 member this.Return(x) = 
     Success x
-{% endhighlight fsharp %}
+```
 
 Now let's look at `Bind`.  The signature of `Bind` is this:
 
-{% highlight fsharp %}
+```fsharp
 member Bind : M<'T> * ('T -> M<'U>) -> M<'U>
-{% endhighlight fsharp %}
+```
 
 It looks complicated, so let's break it down.  It takes a tuple `M<'T> * ('T -> M<'U>)` and returns a `M<'U>`, where `M<'U>` means the wrapper type applied to type `U`.
 
@@ -189,7 +189,7 @@ In other words, what `Bind` does is:
 
 With this understanding, here are the `Bind` methods that we have seen already:
 
-{% highlight fsharp %}
+```fsharp
 // return for the maybe workflow
 member this.Bind(m,f) = 
    match m with
@@ -203,7 +203,7 @@ member this.Bind(m, f) =
     | Success x -> 
         printfn "\tSuccessful: %s" x
         f x
-{% endhighlight fsharp %}
+```
 
 Look over this code and make sure that you understand why these methods do indeed follow the pattern described above.
 
@@ -223,7 +223,7 @@ To see this, we can revisit the example above, but rather than using strings eve
 
 We'll start with the types again, this time defining `CustomerId`, etc.
 
-{% highlight fsharp %}
+```fsharp
 type DbResult<'a> = 
     | Success of 'a
     | Error of string
@@ -231,11 +231,11 @@ type DbResult<'a> =
 type CustomerId =  CustomerId of string
 type OrderId =  OrderId of int
 type ProductId =  ProductId of string
-{% endhighlight fsharp %}
+```
 
 The code is almost identical, except for the use of the new types in the `Success` line.
 
-{% highlight fsharp %}
+```fsharp
 let getCustomerId name =
     if (name = "") 
     then Error "getCustomerId failed"
@@ -250,13 +250,13 @@ let getLastProductForOrder (OrderId orderId) =
     if (orderId  = 0) 
     then Error "getLastProductForOrder failed"
     else Success (ProductId "Product456")
-{% endhighlight fsharp %}
+```
 
 
 Here's the long-winded version again. 
 
 
-{% highlight fsharp %}
+```fsharp
 let product = 
     let r1 = getCustomerId "Alice"
     match r1 with 
@@ -272,7 +272,7 @@ let product =
             | Success productId ->
                 printfn "Product is %A" productId
                 r3
-{% endhighlight fsharp %}
+```
 
 There are a couple of changes worth discussing: 
 
@@ -281,7 +281,7 @@ There are a couple of changes worth discussing:
 
 Next up, the builder, which hasn't changed at all except for the `| Error e -> Error e` line.
 
-{% highlight fsharp %}
+```fsharp
 type DbResultBuilder() =
 
     member this.Bind(m, f) = 
@@ -295,11 +295,11 @@ type DbResultBuilder() =
         Success x
 
 let dbresult = new DbResultBuilder()
-{% endhighlight fsharp %}
+```
 
 Finally, we can use the workflow as before.  
 
-{% highlight fsharp %}
+```fsharp
 let product' = 
     dbresult {
         let! custId = getCustomerId "Alice"
@@ -309,13 +309,13 @@ let product' =
         return productId
         }
 printfn "%A" product'
-{% endhighlight fsharp %}
+```
 
 At each line, the returned value is of a *different* type (`DbResult<CustomerId>`,`DbResult<OrderId>`, etc), but because they have the same wrapper type in common, the bind works as expected.
 
 And finally, here's the workflow with an error case.
 
-{% highlight fsharp %}
+```fsharp
 let product'' = 
     dbresult {
         let! custId = getCustomerId "Alice"
@@ -325,7 +325,7 @@ let product'' =
         return productId
         }
 printfn "%A" product''
-{% endhighlight fsharp %}
+```
 
 
 ## Composition of computation expressions
@@ -338,7 +338,7 @@ In other words, because a workflow returns a wrapper type, and because `let!` co
 
 For example, say that you have a workflow called `myworkflow`. Then you can write the following:
 
-{% highlight fsharp %}
+```fsharp
 let subworkflow1 = myworkflow { return 42 }
 let subworkflow2 = myworkflow { return 43 }
 
@@ -348,11 +348,11 @@ let aWrappedValue =
         let! unwrappedValue2 = subworkflow2
         return unwrappedValue1 + unwrappedValue2
         }
-{% endhighlight fsharp %}
+```
 
 Or you can even "inline" them, like this:
 
-{% highlight fsharp %}
+```fsharp
 let aWrappedValue = 
     myworkflow {
         let! unwrappedValue1 = myworkflow {
@@ -365,18 +365,18 @@ let aWrappedValue =
             }
         return unwrappedValue1 + unwrappedValue2
         }
-{% endhighlight fsharp %}
+```
 
 If you have used the `async` workflow, you probably have done this already, because an async workflow typically contains other asyncs embedded in it:
 
-{% highlight fsharp %}
+```fsharp
 let a = 
     async {
         let! x = doAsyncThing  // nested workflow
         let! y = doNextAsyncThing x // nested workflow
         return x + y
     }
-{% endhighlight fsharp %}
+```
 
 ## Introducing "ReturnFrom"
 
@@ -390,7 +390,7 @@ The corresponding method in the "builder" class is called `ReturnFrom`. Typicall
 
 Here is a variant on the "maybe" workflow to show how it can be used:
 
-{% highlight fsharp %}
+```fsharp
 type MaybeBuilder() =
     member this.Bind(m, f) = Option.bind f m
     member this.Return(x) = 
@@ -401,21 +401,21 @@ type MaybeBuilder() =
         m
 
 let maybe = new MaybeBuilder()
-{% endhighlight fsharp %}
+```
 
 And here it is in use, compared with a normal `return`.
 
-{% highlight fsharp %}
+```fsharp
 // return an int
 maybe { return 1  }
 
 // return an Option
 maybe { return! (Some 2)  }
-{% endhighlight fsharp %}
+```
 
 For a more realistic example, here is `return!` used in conjunction with `divideBy`:
 
-{% highlight fsharp %}
+```fsharp
 // using return
 maybe 
     {
@@ -430,7 +430,7 @@ maybe
     let! x = 12 |> divideBy 3
     return! x |> divideBy 2  // return an Option
     }    
-{% endhighlight fsharp %}
+```
 
 ## Summary
 

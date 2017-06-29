@@ -23,7 +23,7 @@ We'll use a simple example. Let's say that you are designing an e-commerce site 
 
 In C#, we might think that this is simple enough and dive straight into coding. Here is a straightforward implementation in C# that seems OK at first glance. 
 
-{% highlight csharp %}
+```csharp
 public class NaiveShoppingCart<TItem>
 {
    private List<TItem> items;
@@ -68,7 +68,7 @@ public class NaiveShoppingCart<TItem>
       }
    }
 }
-{% endhighlight  %}
+```
 
 Unfortunately, it's actually a pretty bad design:
 
@@ -79,9 +79,9 @@ So many problems in such a short piece of code!
 
 What would happen if we had even more complicated requirements and the code was thousands of lines long?  For example, the fragment that is repeated everywhere:
 
-{% highlight csharp %}
+```csharp
 if (!this.IsPaidFor) { do something }
-{% endhighlight  %}
+```
 
 looks like it will be quite brittle if requirements change in some methods but not others.
 
@@ -113,7 +113,7 @@ It's worth noting that these kinds of state-oriented models are very common in b
 
 Now we have the design, we can reproduce it in F#:
 
-{% highlight fsharp %}
+```fsharp
 type CartItem = string    // placeholder for a more complicated type
 
 type EmptyState = NoItems // don't use empty list! We want to
@@ -129,7 +129,7 @@ type Cart =
     | Empty of EmptyState 
     | Active of ActiveState 
     | PaidFor of PaidForState 
-{% endhighlight  %}
+```
 
 We create a type for each state, and `Cart` type that is a choice of any one of the states. I have given everything a distinct name (e.g. `PaidItems` and `UnpaidItems` rather than just `Items`) because this helps the inference engine and makes the code more self documenting.
 
@@ -140,7 +140,7 @@ We create a type for each state, and `Cart` type that is a choice of any one of 
 
 Next we can create the operations for each state. The main thing to note is each operation will always take one of the States as input and return a new Cart. That is, you start off with a particular known state, but you return a `Cart` which is a wrapper for a choice of three possible states.
 
-{% highlight fsharp %}
+```fsharp
 // =============================
 // operations on empty state
 // =============================
@@ -168,11 +168,11 @@ let removeFromActiveState state itemToRemove =
 let payForActiveState state amount = 
    // returns a new PaidFor Cart
    Cart.PaidFor {PaidItems=state.UnpaidItems; Payment=amount}
-{% endhighlight  %}
+```
 
 Next, we attach the operations to the states as methods
 
-{% highlight fsharp %}
+```fsharp
 type EmptyState with
    member this.Add = addToEmptyState 
 
@@ -180,11 +180,11 @@ type ActiveState with
    member this.Add = addToActiveState this 
    member this.Remove = removeFromActiveState this 
    member this.Pay = payForActiveState this 
-{% endhighlight  %}   
+```   
 
 And we can create some cart level helper methods as well. At the cart level, we have to explicitly handle each possibility for the internal state with a `match..with` expression.
 
-{% highlight fsharp %}
+```fsharp
 let addItemToCart cart item =  
    match cart with
    | Empty state -> state.Add item
@@ -220,25 +220,25 @@ type Cart with
    member this.Add = addItemToCart this 
    member this.Remove = removeItemFromCart this 
    member this.Display = displayCart this 
-{% endhighlight  %}
+```
 
 ## Testing the design ##
 
 Let's exercise this code now:
 
-{% highlight fsharp %}
+```fsharp
 let emptyCart = Cart.NewCart
 printf "emptyCart="; emptyCart.Display
 
 let cartA = emptyCart.Add "A"
 printf "cartA="; cartA.Display
-{% endhighlight  %}
+```
 
 We now have an active cart with one item in it. Note that "`cartA`" is a completely different object from "`emptyCart`" and is in a different state.
 
 Let's keep going:
 
-{% highlight fsharp %}
+```fsharp
 let cartAB = cartA.Add "B"
 printf "cartAB="; cartAB.Display
 
@@ -247,16 +247,16 @@ printf "cartB="; cartB.Display
 
 let emptyCart2 = cartB.Remove "B"
 printf "emptyCart2="; emptyCart2.Display
-{% endhighlight  %}
+```
 
 So far, so good. Again, all these are distinct objects in different states,
 
 Let's test the requirement that you cannot remove items from an empty cart:
 
-{% highlight fsharp %}
+```fsharp
 let emptyCart3 = emptyCart2.Remove "B"    //error
 printf "emptyCart3="; emptyCart3.Display
-{% endhighlight  %}
+```
 
 An error -- just what we want!
 
@@ -264,33 +264,33 @@ Now say that we want to pay for a cart. We didn't create this method at the Cart
 
 First we'll try to pay for cartA.
 
-{% highlight fsharp %}
+```fsharp
 //  try to pay for cartA
 let cartAPaid = 
     match cartA with
     | Empty _ | PaidFor _ -> cartA 
     | Active state -> state.Pay 100m
 printf "cartAPaid="; cartAPaid.Display
-{% endhighlight  %}
+```
 
 The result was a paid cart.
 
 Now we'll try to pay for the emptyCart.
 
-{% highlight fsharp %}
+```fsharp
 //  try to pay for emptyCart
 let emptyCartPaid = 
     match emptyCart with
     | Empty _ | PaidFor _ -> emptyCart
     | Active state -> state.Pay 100m
 printf "emptyCartPaid="; emptyCartPaid.Display
-{% endhighlight  %}
+```
 
 Nothing happens. The cart is empty, so the Active branch is not called. We might want to raise an error or log a message in the other branches, but no matter what we do we cannot accidentally call the `Pay` method on an empty cart, because that state does not have a method to call!
 
 The same thing happens if we accidentally try to pay for a cart that is already paid.
 
-{% highlight fsharp %}
+```fsharp
 //  try to pay for cartAB 
 let cartABPaid = 
     match cartAB with
@@ -302,18 +302,18 @@ let cartABPaidAgain =
     match cartABPaid with
     | Empty _ | PaidFor _ -> cartABPaid  // return the same cart
     | Active state -> state.Pay 100m
-{% endhighlight  %}
+```
 
 You might argue that the client code above might not be representative of code in the real world -- it is well-behaved and already dealing with the requirements. 
 
 So what happens if we have badly written or malicious client code that tries to force payment:
 
-{% highlight fsharp %}
+```fsharp
 match cartABPaid with
 | Empty state -> state.Pay 100m
 | PaidFor state -> state.Pay 100m
 | Active state -> state.Pay 100m
-{% endhighlight  %}
+```
 
 If we try to force it like this, we will get compile errors. There is no way the client can create code that does not meet the requirements.
 
@@ -370,7 +370,7 @@ If you are interested to see what the C# code for a solution looks like, here it
 The key thing to note is that, because C# doesn't have union types, the implementation uses a ["fold" function](/posts/match-expression/#folds),
 a function that has three function parameters, one for each state. To use the cart, the caller passes a set of three lambdas in, and the (hidden) state determines what happens.
 
-{% highlight csharp %}
+```csharp
 var paidCart = cartA.Do(
     // lambda for Empty state
     state => cartA,  
@@ -378,11 +378,11 @@ var paidCart = cartA.Do(
     state => state.Pay(100),
     // lambda for Paid state
     state => cartA);
-{% endhighlight  %}
+```
 
 This approach means that the caller can never call the "wrong" function, such as "Pay" for the Empty state, because the parameter to the lambda will not support it. Try it and see!
 
-{% highlight csharp %}
+```csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -645,4 +645,4 @@ namespace WhyUseFsharp
     }
 }
 
-{% endhighlight  %}
+```

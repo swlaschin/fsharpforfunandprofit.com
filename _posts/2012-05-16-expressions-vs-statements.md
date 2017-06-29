@@ -30,7 +30,7 @@ Using expressions consistently leads to code that is both safer and more compact
 
 First, let's look at a statement based approach.  Statements don't return values, so you have to use temporary variables that are assigned to from within statement bodies.  Here are some examples using a C-like language (OK, C#) rather than F#:
 
-{% highlight csharp %}
+```csharp
 public void IfThenElseStatement(bool aBool)
 {
    int result;     //what is the value of result before it is used?
@@ -40,7 +40,7 @@ public void IfThenElseStatement(bool aBool)
    }
    Console.WriteLine("result={0}", result);
 }
-{% endhighlight %}
+```
 
 Because the "if-then" is a statement, the `result` variable must be defined *outside* the statement and but assigned to *inside* the statement, which leads to some issues:
 
@@ -53,13 +53,13 @@ Note: the code above will not compile in C# because the compiler will complain i
 
 For comparison, here is the same code, rewritten in an expression-oriented style:
 
-{% highlight csharp %}
+```csharp
 public void IfThenElseExpression(bool aBool)
 {
     int result = aBool ? 42 : 0;
     Console.WriteLine("result={0}", result);
 }
-{% endhighlight %}
+```
 
 In the expression-oriented version, none of the earlier issues even apply!  
 
@@ -69,29 +69,29 @@ In the expression-oriented version, none of the earlier issues even apply!
 
 In F#, the two examples would be written as:
 
-{% highlight fsharp %}
+```fsharp
 let IfThenElseStatement aBool = 
    let mutable result = 0       // mutable keyword required
    if (aBool) then result <- 42 
    printfn "result=%i" result
-{% endhighlight %}
+```
 
 The "`mutable`" keyword is considered a code smell in F#, and is discouraged except in certain special cases. It should be avoided at all cost while you are learning!
 
 In the expression based version, the mutable variable has been eliminated and there is no reassignment anywhere.  
 
-{% highlight fsharp %}
+```fsharp
 let IfThenElseExpression aBool = 
    let result = if aBool then 42 else 0   
                 // note that the else case must be specified 
    printfn "result=%i" result
-{% endhighlight %}
+```
 
 Once we have the `if` statement converted into an expression, it is now trivial to refactor it and move the entire subexpression to a different context without introducing errors.
 
 Here's the refactored version in C#:
 
-{% highlight csharp %}
+```csharp
 public int StandaloneSubexpression(bool aBool)
 {
     return aBool ? 42 : 0;
@@ -102,18 +102,18 @@ public void IfThenElseExpressionRefactored(bool aBool)
     int result = StandaloneSubexpression(aBool);
     Console.WriteLine("result={0}", result);
 }
-{% endhighlight %}
+```
 
 And in F#:
 
-{% highlight fsharp %}
+```fsharp
 let StandaloneSubexpression aBool = 
    if aBool then 42 else 0   
 
 let IfThenElseExpressionRefactored aBool = 
    let result = StandaloneSubexpression aBool 
    printfn "result=%i" result
-{% endhighlight %}
+```
 
 
 
@@ -121,7 +121,7 @@ let IfThenElseExpressionRefactored aBool =
 
 Going back to C# again, here is a similar example of statements vs. expressions using a loop statement 
 
-{% highlight csharp %}
+```csharp
 public void LoopStatement()
 {
     int i;    //what is the value of i before it is used? 
@@ -137,13 +137,13 @@ public void LoopStatement()
 
     Console.WriteLine("sum={0}", sum);
 }
-{% endhighlight %}
+```
 
 I've used an old-style "for" statement, where the index variables are declared outside the loop. Many of the issues discussed earlier apply to the loop index "`i`" and the max value "`length`", such as: can they be used outside the loop? And what happens if they are not assigned to?
 
 A more modern version of a for-loop addresses these issues by declaring and assigning the loop variables in the "for" loop itself, and by requiring the "`sum`" variable to be initialized:
 
-{% highlight csharp %}
+```csharp
 public void LoopStatementBetter()
 {
     var array = new int[] { 1, 2, 3 };
@@ -156,13 +156,13 @@ public void LoopStatementBetter()
 
     Console.WriteLine("sum={0}", sum);
 }
-{% endhighlight %}
+```
 
 This more modern version follows the general principle of combining the declaration of a local variable with its first assignment. 
 
 But of course, we can keep improving by using a `foreach` loop instead of a `for` loop:
 
-{% highlight csharp %}
+```csharp
 public void LoopStatementForEach()
 {
     var array = new int[] { 1, 2, 3 };
@@ -175,13 +175,13 @@ public void LoopStatementForEach()
 
     Console.WriteLine("sum={0}", sum);
 }
-{% endhighlight %}
+```
 
 Each time, not only are we condensing the code, but we are reducing the likelihood of errors.
 
 But taking that principle to its logical conclusion leads to a completely expression based approach! Here's how it might be done using LINQ:
 
-{% highlight csharp %}
+```csharp
 public void LoopExpression()
 {
     var array = new int[] { 1, 2, 3 };
@@ -190,7 +190,7 @@ public void LoopExpression()
 
     Console.WriteLine("sum={0}", sum);
 }
-{% endhighlight %}
+```
 
 Note that I could have used LINQ's built-in "sum" function, but I used `Aggregate` in order to show how the sum logic embedded in a statement can be converted into a lambda and used as part of an expression.
 

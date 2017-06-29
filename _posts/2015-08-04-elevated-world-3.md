@@ -140,14 +140,14 @@ To see how both the applicative style and monadic style can be used, let's look 
 
 Say that we have a simple domain containing a `CustomerId`, an `EmailAddress`, and a `CustomerInfo` which is a record containing both of these.
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = CustomerId of int
 type EmailAddress = EmailAddress of string
 type CustomerInfo = {
     id: CustomerId
     email: EmailAddress
     }
-{% endhighlight fsharp %}
+```
 
 And let's say that there is some validation around creating a `CustomerId`. For example, that the inner `int` must be positive.
 And of course, there will be some validation around creating a `EmailAddress` too. For example, that it must contain an "@" sign at least.
@@ -156,17 +156,17 @@ How would we do this?
 
 First we create a type to represent the success/failure of validation.
 
-{% highlight fsharp %}
+```fsharp
 type Result<'a> = 
     | Success of 'a
     | Failure of string list
-{% endhighlight fsharp %}
+```
 
 Note that I have defined the `Failure` case to contain a *list* of strings, not just one. This will become important later.
 
 With `Result` in hand, we can go ahead and define the two constructor/validation functions as required:
 
-{% highlight fsharp %}
+```fsharp
 let createCustomerId id =
     if id > 0 then
         Success (CustomerId id)
@@ -182,7 +182,7 @@ let createEmailAddress str =
     else
         Failure ["Email must contain @-sign"]
 // string -> Result<EmailAddress>        
-{% endhighlight fsharp %}
+```
 
 Notice that `createCustomerId` has type `int -> Result<CustomerId>`, and `createEmailAddress` has type `string -> Result<EmailAddress>`.
 
@@ -193,7 +193,7 @@ That means that both of these validation functions are world-crossing functions,
 
 Since we are dealing with world-crossing functions, we know that we will have to use functions like `apply` and `bind`, so let's define them for our `Result` type.
 
-{% highlight fsharp %}
+```fsharp
 module Result = 
 
     let map f xResult = 
@@ -229,7 +229,7 @@ module Result =
         | Failure errs ->
             Failure errs
     // Signature: ('a -> Result<'b>) -> Result<'a> -> Result<'b>
-{% endhighlight fsharp %}
+```
 
 If we check the signatures, we can see that they are exactly as we want:
 
@@ -254,17 +254,17 @@ Now that we have have the domain and the toolset around `Result`, let's try usin
 The outputs of the validation are already elevated to `Result`, so we know we'll need to use some sort of "lifting" approach to work with them.
 
 First we'll create a function in the normal world that creates a `CustomerInfo` record given a normal `CustomerId` and a normal `EmailAddress`:
-{% highlight fsharp %}
+```fsharp
 let createCustomer customerId email = 
     { id=customerId;  email=email }
 // CustomerId -> EmailAddress -> CustomerInfo
-{% endhighlight fsharp %}
+```
 
 Note that the signature is `CustomerId -> EmailAddress -> CustomerInfo`.
 
 Now we can use the lifting technique with `<!>` and `<*>` that was explained in the previous post:
 
-{% highlight fsharp %}
+```fsharp
 let (<!>) = Result.map
 let (<*>) = Result.apply
 
@@ -274,7 +274,7 @@ let createCustomerResultA id email =
     let emailResult = createEmailAddress email
     createCustomer <!> idResult <*> emailResult
 // int -> string -> Result<CustomerInfo>
-{% endhighlight fsharp %}
+```
 
 The signature of this shows that we start with a normal `int` and `string` and return a `Result<CustomerInfo>`
 
@@ -282,7 +282,7 @@ The signature of this shows that we start with a normal `int` and `string` and r
 
 Let's try it out with some good and bad data:
 
-{% highlight fsharp %}
+```fsharp
 let goodId = 1
 let badId = 0
 let goodEmail = "test@example.com"
@@ -297,7 +297,7 @@ let badCustomerA =
     createCustomerResultA badId badEmail
 // Result<CustomerInfo> =
 //   Failure ["CustomerId must be positive"; "Email must contain @-sign"]
-{% endhighlight fsharp %}
+```
 
 The `goodCustomerA` is a `Success` and contains the right data, but the `badCustomerA` is a `Failure` and contains two validation error messages. Excellent!
 
@@ -311,7 +311,7 @@ Now let's do another implementation, but this time using monadic style. In this 
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 let (>>=) x f = Result.bind f x
 
 // monadic version
@@ -322,14 +322,14 @@ let createCustomerResultM id email =
     Success customer
     ))
 // int -> string -> Result<CustomerInfo>
-{% endhighlight fsharp %}
+```
 
 The signature of the monadic-style `createCustomerResultM` is exactly the same as the applicative-style `createCustomerResultA` but internally it is doing something different,
 which will be reflected in the different results we get.
 
 ![](/assets/img/vgfp_monadic_style.png)
 
-{% highlight fsharp %}
+```fsharp
 let goodCustomerM =
     createCustomerResultM goodId goodEmail
 // Result<CustomerInfo> =
@@ -339,7 +339,7 @@ let badCustomerM =
     createCustomerResultM badId badEmail
 // Result<CustomerInfo> =
 //   Failure ["CustomerId must be positive"]
-{% endhighlight fsharp %}
+```
 
 In the good customer case, the end result is the same, but in the bad customer case, only *one* error is returned, the first one.
 The rest of the validation was short circuited after the `CustomerId` creation failed.
@@ -374,7 +374,7 @@ Finally, let's build a computation expression for these `Result` types.
 
 To do this, we just define a class with members called `Return` and `Bind`, and then we create an instance of that class, called `result`, say:
 
-{% highlight fsharp %}
+```fsharp
 module Result = 
 
     type ResultBuilder() =
@@ -382,17 +382,17 @@ module Result =
         member this.Bind(x,f) = bind f x
 
     let result = new ResultBuilder()
-{% endhighlight fsharp %}
+```
 
 We can then rewrite the `createCustomerResultM` function to look like this:
 
-{% highlight fsharp %}
+```fsharp
 let createCustomerResultCE id email = result {
     let! customerId = createCustomerId id 
     let! emailAddress = createEmailAddress email  
     let customer = createCustomer customerId emailAddress 
     return customer }
-{% endhighlight fsharp %}
+```
 
 This computation expression version looks almost like using an imperative language. 
 
@@ -413,7 +413,7 @@ The trick for doing this is to convert all them to the *same* type, after which 
 
 Let's revisit the previous validation example, but let's change the record so that it has an extra property, a `name` of type string:
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = CustomerId of int
 type EmailAddress = EmailAddress of string
 
@@ -422,19 +422,19 @@ type CustomerInfo = {
     name: string  // New!
     email: EmailAddress
     }
-{% endhighlight fsharp %}
+```
 
 As before, we want to create a function in the normal world that we will later lift to the `Result` world.
 
-{% highlight fsharp %}
+```fsharp
 let createCustomer customerId name email = 
     { id=customerId; name=name; email=email }
 // CustomerId -> String -> EmailAddress -> CustomerInfo
-{% endhighlight fsharp %}
+```
 
 Now we are ready to update the lifted `createCustomer` with the extra parameter:
 
-{% highlight fsharp %}
+```fsharp
 let (<!>) = Result.map
 let (<*>) = Result.apply
 
@@ -443,7 +443,7 @@ let createCustomerResultA id name email =
     let emailResult = createEmailAddress email
     createCustomer <!> idResult <*> name <*> emailResult
 // ERROR                            ~~~~     
-{% endhighlight fsharp %}
+```
 
 But this won't compile!  In the series of parameters `idResult <*> name <*> emailResult` one of them is not like the others. 
 The problem is that `idResult` and `emailResult` are both Results, but `name` is still a string.
@@ -451,13 +451,13 @@ The problem is that `idResult` and `emailResult` are both Results, but `name` is
 The fix is just to lift `name` into the world of results (say `nameResult`) by using `return`, which for `Result` is just `Success`.
 Here is the corrected version of the function that does work:
 
-{% highlight fsharp %}
+```fsharp
 let createCustomerResultA id name email = 
     let idResult = createCustomerId id
     let emailResult = createEmailAddress email
     let nameResult = Success name  // lift name to Result
     createCustomer <!> idResult <*> nameResult <*> emailResult
-{% endhighlight fsharp %}
+```
 
 ### Making functions consistent 
 

@@ -145,7 +145,7 @@ To get started, just link in the type provider DLL as we have seen before.
 The site is throttled, so you'll probably need an API key if you're using it a lot
 ([api details here](http://developers.google.com/console/help/?csw=1#activatingapis))
 
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -164,22 +164,22 @@ let FreebaseApiKey = "<enter your freebase-enabled google API key here>"
 type FreebaseDataWithKey = FreebaseDataProvider<Key=FreebaseApiKey>
 let data = FreebaseDataWithKey.GetDataContext()
 *)
-{% endhighlight fsharp %}
+```
 
 Once the type provider is loaded, you can start asking questions, such as...
 
 *"Who are the US presidents?"*
 
-{% highlight fsharp %}
+```fsharp
 data.Society.Government.``US Presidents``
 |> Seq.map (fun p ->  p.``President number`` |> Seq.head, p.Name)
 |> Seq.sortBy fst
 |> Seq.iter (fun (n,name) -> printfn "%s was number %i" name n )
-{% endhighlight fsharp %}
+```
 
 Result:
 
-{% highlight text %}
+```text
 George Washington was number 1
 John Adams was number 2
 Thomas Jefferson was number 3
@@ -192,26 +192,26 @@ George H. W. Bush was number 41
 Bill Clinton was number 42
 George W. Bush was number 43
 Barack Obama was number 44
-{% endhighlight text %}
+```
 
 Not bad for just four lines of code!
 
 How about *"what awards did Casablanca win?"*
 
-{% highlight fsharp %}
+```fsharp
 data.``Arts and Entertainment``.Film.Films.IndividualsAZ.C.Casablanca.``Awards Won``
 |> Seq.map (fun award -> award.Year, award.``Award category``.Name)
 |> Seq.sortBy fst
 |> Seq.iter (fun (year,name) -> printfn "%s -- %s" year name)
-{% endhighlight fsharp %}
+```
 
 The result is:
 
-{% highlight text %}
+```text
 1943 -- Academy Award for Best Director
 1943 -- Academy Award for Best Picture
 1943 -- Academy Award for Best Screenplay
-{% endhighlight text %}
+```
 
 So that's Freebase. Lots of good information, both useful and frivolous.
 
@@ -225,7 +225,7 @@ Well, you can also get the same affect by getting data from Freebase, which make
 [Kit Eason](http://twitter.com/kitlovesfsharp) showed how to do this in a [tweet](http://twitter.com/kitlovesfsharp/status/296240699735695360),
 and here's an example based on his code:
 
-{% highlight fsharp %}
+```fsharp
 let randomElement =
     let random = new System.Random()
     fun (arr:string array) -> arr.[random.Next(arr.Length)]
@@ -249,7 +249,7 @@ Seq.init 10 ( fun _ ->
      Surname = (randomElement surnames) }
      )
 |> Seq.iter (printfn "%A")
-{% endhighlight fsharp %}
+```
 
 The results are:
 
@@ -274,7 +274,7 @@ On the other extreme from Freebase is the [World Bank Open Data](http://data.wor
 
 The setup is identical to Freebase, but no API key is needed.
 
-{% highlight fsharp %}
+```fsharp
 // sets the current directory to be same as the script directory
 System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 
@@ -284,13 +284,13 @@ System.IO.Directory.SetCurrentDirectory (__SOURCE_DIRECTORY__)
 open FSharp.Data
 
 let data = WorldBankData.GetDataContext()
-{% endhighlight fsharp %}
+```
 
 With the type provider set up, we can do a serious query, such as:
 
 *"How do malnutrition rates compare between low income and high income countries?"*
 
-{% highlight fsharp %}
+```fsharp
 // Create a list of countries to process
 let groups = 
  [| data.Countries.``Low income``
@@ -310,18 +310,18 @@ let getYearValue (year:int) (ind:Runtime.WorldBank.Indicator) =
 |> Seq.iter (
     fun (group,(indName, indYear, indValue)) -> 
        printfn "%s -- %s %i %0.2f%% " group indName indYear indValue)
-{% endhighlight fsharp %}
+```
 
 The result is:
 
-{% highlight text %}
+```text
 Low income -- Malnutrition prevalence, weight for age (% of children under 5) 2010 23.19% 
 High income -- Malnutrition prevalence, weight for age (% of children under 5) 2010 1.36% 
-{% endhighlight text %}
+```
 
 Similarly, here is the code to compare maternal mortality rates:
 
-{% highlight fsharp %}
+```fsharp
 // Create a list of countries to process
 let countries = 
  [| data.Countries.``European Union``
@@ -337,15 +337,15 @@ let countries =
 |> Seq.iter (
     fun (group,(indName, indYear, indValue)) -> 
        printfn "%s -- %s %i %0.1f" group indName indYear indValue)
-{% endhighlight fsharp %}
+```
 
 The result is:
 
-{% highlight text %}
+```text
 European Union -- Maternal mortality ratio (modeled estimate, per 100,000 live births) 2010 9.0 
 United Kingdom -- Maternal mortality ratio (modeled estimate, per 100,000 live births) 2010 12.0 
 United States -- Maternal mortality ratio (modeled estimate, per 100,000 live births) 2010 21.0 
-{% endhighlight text %}
+```
 
 [More on how to use the World Bank type provider](http://fsharp.github.io/FSharp.Data/library/WorldBank.html).
 

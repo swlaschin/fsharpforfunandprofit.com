@@ -33,7 +33,7 @@ Here's the UML diagram:
 
 And here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type RegularExpression =
     | Literal of string
     | Sequence of RegularExpression list
@@ -43,7 +43,7 @@ type RegularExpression =
 // An interpreter takes a string input and a RegularExpression
 // and returns a value of some kind    
 type Interpret<'a> =  string -> RegularExpression -> 'a
-{% endhighlight fsharp %}    
+```    
 
 That's quite straightforward.
 
@@ -57,7 +57,7 @@ Here's the UML diagram:
 
 And here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type Student = {
     Name: string
     Address: string
@@ -97,7 +97,7 @@ type EnrollmentRepository = Enrollment list
 type IsElegibleToEnroll = Student -> Seminar -> bool
 type GetSeminarsTaken = Student -> EnrollmentRepository -> Seminar list
 type AddStudentToWaitingList = Student -> Seminar -> Seminar 
-{% endhighlight fsharp %}
+```
 
 The F# mirrors the UML diagram, but I find that by writing functions for all the activities rather than drawing pictures, holes in the original requirements are revealed.
 
@@ -109,9 +109,9 @@ Instead, for the functional version, I created an `EnrollmentRepository` to deco
 
 Similarly, it's not clear how enrollment actually works, so I created an `EnrollStudent` function to make it clear what inputs are needed.
 
-{% highlight fsharp %}
+```fsharp
 type EnrollStudent = Student -> Seminar -> Enrollment option
-{% endhighlight fsharp %}
+```
 
 Because the function returns an `option`, it is immediately clear that enrollment might fail (e.g student is not eligible to enroll, or is enrolling twice by mistake).
 
@@ -124,7 +124,7 @@ Here's another one (*[source](http://www.tutorialspoint.com/uml/uml_class_diagra
 
 And here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type Customer = {name:string; location:string}
 
 type NormalOrder = {date: DateTime; number: string; customer: Customer}
@@ -140,7 +140,7 @@ type Dispatch =  Order -> Order
 
 // this operation only works on Special orders
 type Receive =  SpecialOrder -> SpecialOrder
-{% endhighlight fsharp %}    
+```    
 
 I'm just copying the UML diagram, but I have to say that I hate this design. It's crying out to have more fine grained states. 
 
@@ -155,7 +155,7 @@ Here's a much better version of orders and customers (*[source](http://edn.embar
 
 And here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type Date = System.DateTime
 
 // == Customer related ==
@@ -219,7 +219,7 @@ type GetPriceForQuantity = Item -> Qty -> Price
 type CalcTax = Order -> Tax
 type CalcTotal = Order -> Price
 type CalcTotalWeight = Order -> int<grams>
-{% endhighlight fsharp %}
+```
 
 I've done some minor tweaking, adding units of measure for the weight, creating types to represent `Qty` and `Price`.
 
@@ -229,13 +229,13 @@ and a separate `PaidOrder` type (e.g. to stop you paying for the same order twic
 
 Here's the kind of thing I mean:
 
-{% highlight fsharp %}
+```fsharp
 // Try to authorize a payment. Note that it might fail
 type Authorize =  UnauthorizedPayment -> AuthorizedPayment option
 
 // Pay an unpaid order with an authorized payment.
 type PayOrder = UnpaidOrder -> AuthorizedPayment -> PaidOrder
-{% endhighlight fsharp %}
+```
 
 
 ## Hotel Booking
@@ -246,7 +246,7 @@ Here's one from the JetBrains IntelliJ documentation (*[source](https://www.jetb
 
 Here's the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type Date = System.DateTime
 
 type User = {
@@ -317,7 +317,7 @@ type RegisterAction = {
     verify: string
     registered: bool
     }
-{% endhighlight fsharp %}    
+```    
 
 I have to stop there, sorry. The design is driving me crazy. I can't even.
 
@@ -335,7 +335,7 @@ Here's the F# equivalent. Note that because it is code, I can add comments to sp
 
 Note also that I can say `ISBN: string option` to indicate an optional ISBN rather that the awkward `[0..1]` syntax.
 
-{% highlight fsharp %}
+```fsharp
 type Author = {
     name: string
     biography: string
@@ -407,11 +407,11 @@ and History = {
     borrowedOn: Date
     returnedOn: Date option
     }
-{% endhighlight fsharp %}
+```
 
 Since the Search and Manage interfaces are undefined, we can just use placeholders (`unit`) for the inputs and outputs.
 
-{% highlight fsharp %}
+```fsharp
 type Librarian = {
     name: string
     address: string
@@ -432,18 +432,18 @@ type ManageResult = unit // to do
 
 /// Only librarians can do management
 type ManageInterface = Librarian -> Catalogue -> ManageRequest -> ManageResult   
-{% endhighlight fsharp %}    
+```    
 
 Again, this might not be the perfect design. For example, it's not clear that only `Active` accounts could borrow a book, which I might represent in F# as: 
 
-{% highlight fsharp %}
+```fsharp
 type Account = 
     | Active of ActiveAccount
     | Closed of ClosedAccount
     
 /// Only ActiveAccounts can borrow
 type Borrow = ActiveAccount -> BookItem -> History
-{% endhighlight fsharp %}    
+```    
 
 If you want to see a more modern approach to modelling this domain using CQRS and event sourcing, see [this post](http://thinkbeforecoding.com/post/2009/11/02/Event-Sourcing-and-CQRS-Lets-use-it).
 
@@ -456,7 +456,7 @@ The final example is from a software licensing domain (*[source](http://www.uml-
 
 Here's the F# equivalent. 
 
-{% highlight fsharp %}
+```fsharp
 open System
 type Date = System.DateTime
 type String50 = string
@@ -573,7 +573,7 @@ type Entitlement = {
     customer: Customer
     products: Product list
     }
-{% endhighlight fsharp %}    
+```    
 
 This diagram is just pure data and no methods, so there are no function types.  I have a feeling that there are some important business rules that have not been captured.
 

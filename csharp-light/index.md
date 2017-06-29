@@ -21,7 +21,7 @@ So, if you are a skeptical C# developer, let me show you that F# is almost ident
 
 Here is the "C# light" example that I used throughout the slides:
 
-{% highlight csharp %}
+```csharp
 class Person(string name, DateTime birthday) =
 
     /// Full name
@@ -29,11 +29,11 @@ class Person(string name, DateTime birthday) =
 
     /// Birthday
     member Birthday = birthday
-{% endhighlight csharp %}
+```
 
 And here is the equivalent F# code:
 
-{% highlight fsharp %}
+```fsharp
 type Person(name :string, birthday :DateTime) =
 
     /// Full name
@@ -41,7 +41,7 @@ type Person(name :string, birthday :DateTime) =
 
     /// Birthday
     member this.Birthday = birthday
-{% endhighlight fsharp %}
+```
 
 There are a few minor syntax changes:
 
@@ -55,19 +55,19 @@ But other than that, the code is very similar.
 
 Here is the example in the C# light slide deck which uses a syntax similar to anonymous types to declare a simple DTO class:
 
-{% highlight csharp %}
+```csharp
 class Person = {string name, DateTime birthday}
 
 var person = {name="Alice", birthday=Today}
-{% endhighlight csharp %}
+```
 
 And here is the F# equivalent:
 
-{% highlight fsharp %}
+```fsharp
 type Person = {name :string; birthday :DateTime}
 
 let person = {name="Alice"; birthday=DateTime.Today}
-{% endhighlight fsharp %}
+```
 
 There are two more changes here:
 
@@ -78,7 +78,7 @@ There are two more changes here:
 
 As promised by the slides, the F# compiler *does* automatically generate equality code for most types.
 
-{% highlight fsharp %}
+```fsharp
 type Person = {name :string; birthday :DateTime}
 
 let alice1 = {name="Alice"; birthday=DateTime.Today}
@@ -86,14 +86,14 @@ let alice2 = {name="Alice"; birthday=DateTime.Today}
 
 if alice1 = alice2 then
     Console.WriteLine("Alice1 and Alice2 are equal")  // true!
-{% endhighlight fsharp %}
+```
 
 
 ## Immutability
 
 In F#, user-defined types are immutable by default.  If you want to change them, you have to use the `mutable` keyword.
 
-{% highlight fsharp %}
+```fsharp
 type Person = {name :string; birthday :DateTime}
 
 //define an immutable Alice 
@@ -108,26 +108,26 @@ let mutable alice4 = {name="Alice"; birthday=DateTime.Today}
 //changing mutable Alice to Bob is ok
 alice4 <- {name="Bob"; birthday=DateTime.Today}
 Console.WriteLine("Alice's name is " + alice4.name)
-{% endhighlight fsharp %}
+```
 
 ## Non-null reference classes
 
 In F#, user-defined types are not allowed to be null.
 
-{% highlight fsharp %}
+```fsharp
 type Person = {name :string; birthday :DateTime}
 
 let mutable alice4 = {name="Alice"; birthday=DateTime.Today}
 alice4 <- null  // error
    // The type 'Person' does not have 'null' as a proper value
-{% endhighlight fsharp %}
+```
 
 
 ## Allow anonymous types to implement interfaces
 
 Here's how an object instance can implement an interface in F#, in this case `IDisposable`.
 
-{% highlight fsharp %}
+```fsharp
 do 
 
     // create it with a "using" block
@@ -139,14 +139,14 @@ do
     Console.WriteLine("Doing something") 
     
     // tempDisposable goes out of scope and is disposed
-{% endhighlight fsharp %}
+```
 
 The console output is:
 
-{% highlight text %}
+```text
 Doing something 
 Disposed
-{% endhighlight text %}
+```
     
 In F#, these are actually called ["object expressions"](/posts/object-expressions/).
     
@@ -157,16 +157,16 @@ best things about F#.
 
 Here's the C# light version:
 
-{% highlight csharp %}
+```csharp
 class PaymentMethod = 
 | Cash
 | Check(int checkNo)
 | Card(string cardType, string cardNo)
-{% endhighlight csharp %}
+```
 
 And here's the F# version:
 
-{% highlight fsharp %}
+```fsharp
 type CheckNo = int
 type CardType = Visa | Mastercard
 type CardNo = string
@@ -175,27 +175,27 @@ type PaymentMethod =
 | Cash
 | Check of CheckNo
 | Card of CardType * CardNo
-{% endhighlight fsharp %}
+```
 
 Here's the C# way of constructing an object:
 
-{% highlight csharp %}
+```csharp
 PaymentMethod cash = Cash();
 PaymentMethod check = Check(123);
 PaymentMethod card = Card("Visa", "4012888888881881");
-{% endhighlight csharp %}
+```
 
 And here's the F# way:
 
-{% highlight fsharp %}
+```fsharp
 let cash = Cash
 let check = Check 123
 let card = Card (Visa, "4012888888881881")
-{% endhighlight fsharp %}
+```
 
 Finally, here's the C# way of deconstructing a payment:
 
-{% highlight csharp %}
+```csharp
 void PrintPayment(payment) =   
    switch (payment) 
    {
@@ -203,11 +203,11 @@ void PrintPayment(payment) =
      case Check(checkNo) : // print check info
      case Card(cardType,cardNo) // print card info
    }
-{% endhighlight csharp %}
+```
 
 And here's the F# way:
 
-{% highlight fsharp %}
+```fsharp
 let printPayment payment =   
    match payment with
    | Cash -> printfn "Cash"
@@ -217,7 +217,7 @@ let printPayment payment =
 printPayment cash
 printPayment check
 printPayment card   
-{% endhighlight fsharp %}
+```
 
 ##  Interested in learning more?
 

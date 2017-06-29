@@ -12,37 +12,37 @@ A particularly convenient feature of F# is that complicated functions with many 
 
 Let's start with a very simple example of how this works. We'll start with a trivial function:
 
-{% highlight fsharp %}
+```fsharp
 // define a adding function
 let add x y = x + y
 
 // normal use 
 let z = add 1 2
-{% endhighlight  %}
+```
 
 But we can do something strange as well -- we can call the function with only one parameter!
 
-{% highlight fsharp %}
+```fsharp
 let add42 = add 42
-{% endhighlight  %}
+```
 
 The result is a new function that has the "42" baked in, and now takes only one parameter instead of two!  This technique is called "partial application", and it means that, for any function, you can "fix" some of the parameters and leave other ones open to be filled in later.
 
-{% highlight fsharp %}
+```fsharp
 // use the new function
 add42 2
 add42 3
-{% endhighlight  %}
+```
 
 With that under our belt, let's revisit the generic logger that we saw earlier:
 
-{% highlight fsharp %}
+```fsharp
 let genericLogger anyFunc input = 
    printfn "input is %A" input   //log the input
    let result = anyFunc input    //evaluate the function
    printfn "result is %A" result //log the result
    result                        //return the result
-{% endhighlight  %}
+```
 
 Unfortunately, I have hard-coded the logging operations.  Ideally, I'd like to make this more generic so that I can choose how logging is done. 
 
@@ -50,17 +50,17 @@ Of course, F# being a functional programming language, we will do this by passin
 
 In this case we would pass "before" and "after" callback functions to the library function, like this:
 
-{% highlight fsharp %}
+```fsharp
 let genericLogger before after anyFunc input = 
    before input               //callback for custom behavior
    let result = anyFunc input //evaluate the function
    after result               //callback for custom behavior
    result                     //return the result
-{% endhighlight  %}
+```
 
 You can see that the logging function now has four parameters. The "before" and "after" actions are passed in as explicit parameters as well as the function and its input. To use this in practice, we just define the functions and pass them in to the library function along with the final int parameter:
 
-{% highlight fsharp %}
+```fsharp
 let add1 input = input + 1
 
 // reuse case 1
@@ -76,7 +76,7 @@ genericLogger
     (fun x -> printfn " ended with=%i" x) 
     add1                              // main function
     2                                 // parameter 
-{% endhighlight  %}
+```
 
 This is a lot more flexible. I don't have to create a new function every time I want to change the behavior -- I can define the behavior on the fly. 
 
@@ -84,7 +84,7 @@ But you might be thinking that this is a bit ugly. A library function might expo
 
 Luckily, we know the solution for this. We can use partial application to fix some of the parameters. So in this case, let's define a new function which fixes the `before` and `after` functions, as well as the `add1` function, but leaves the final parameter open.
 
-{% highlight fsharp %}
+```fsharp
 // define a reusable function with the "callback" functions fixed
 let add1WithConsoleLogging = 
     genericLogger
@@ -92,16 +92,16 @@ let add1WithConsoleLogging =
         (fun x -> printfn " result=%i" x)
         add1
         // last parameter NOT defined here yet!
-{% endhighlight  %}
+```
 
 The new "wrapper" function is called with just an int now, so the code is much cleaner. As in the earlier example, it can be used anywhere the original `add1` function could be used without any changes.
 
-{% highlight fsharp %}
+```fsharp
 add1WithConsoleLogging 2
 add1WithConsoleLogging 3
 add1WithConsoleLogging 4
 [1..5] |> List.map add1WithConsoleLogging 
-{% endhighlight  %}
+```
 
 ## The functional approach in C# ##
 
@@ -111,7 +111,7 @@ But classical style inheritance is now becoming frowned upon in object-oriented 
 
 Here's the F# code translated into C# (note that I had to specify the types for each Action)
 
-{% highlight csharp %}
+```csharp
 public class GenericLoggerHelper<TInput, TResult>
 {
     public TResult GenericLogger(
@@ -126,11 +126,11 @@ public class GenericLoggerHelper<TInput, TResult>
         return result;
     }
 }
-{% endhighlight  %}
+```
 
 And here it is in use:
 
-{% highlight csharp %}
+```csharp
 [NUnit.Framework.Test]
 public void TestGenericLogger()
 {
@@ -141,6 +141,6 @@ public void TestGenericLogger()
         x => x + 1,
         3);
 }
-{% endhighlight  %}
+```
 
 In C#, this style of programming is required when using the LINQ libraries, but many developers have not embraced it fully to make their own code more generic and adaptable. And it's not helped by the ugly `Action<>` and `Func<>` type declarations that are required. But it can certainly make the code much more reusable. 

@@ -80,7 +80,7 @@ I'm going to want to have a small timeout for the later tests on bad uris, so th
 
 One trick is to just subclass `WebClient` and intercept the method that builds a request. So here it is:
 
-{% highlight fsharp %}
+```fsharp
 // define a millisecond Unit of Measure
 type [<Measure>] ms
 
@@ -92,7 +92,7 @@ type WebClientWithTimeout(timeout:int<ms>) =
         let result = base.GetWebRequest(address)
         result.Timeout <- int timeout 
         result
-{% endhighlight fsharp %}
+```
 
 Notice that I'm using units of measure for the timeout value. I find that units of measure are invaluable to distiguish seconds from milliseconds.
 I once accidentally set a timeout to 2000 seconds rather than 2000 milliseconds and I don't want to make that mistake again!
@@ -100,7 +100,7 @@ I once accidentally set a timeout to 2000 seconds rather than 2000 milliseconds 
 The next bit of code defines our domain types.  We want to be able to keep the url and the size together as we process them. We could use a tuple,
 but I am a proponent of [using types to model your domain](/posts/designing-with-types-single-case-dus/), if only for documentation.
 
-{% highlight fsharp %}
+```fsharp
 // The content of a downloaded page 
 type UriContent = 
     UriContent of System.Uri * string
@@ -108,13 +108,13 @@ type UriContent =
 // The content size of a downloaded page 
 type UriContentSize = 
     UriContentSize of System.Uri * int
-{% endhighlight fsharp %}
+```
 
 Yes, this might be overkill for a trivial example like this, but in a more serious project I think it is very much worth doing.
 
 Now for the code that does the downloading:
 
-{% highlight fsharp %}
+```fsharp
 /// Get the contents of the page at the given Uri
 /// Uri -> Async<Result<UriContent>>
 let getUriContent (uri:System.Uri) = 
@@ -132,7 +132,7 @@ let getUriContent (uri:System.Uri) =
             let err = sprintf "[%s] %A" uri.Host ex.Message
             return Result.Failure [err ]
         }
-{% endhighlight fsharp %}
+```
 
 Notes:
 
@@ -143,18 +143,18 @@ Notes:
 
 Before moving on, let's test this code interactively. First we need a helper to print the result:
 
-{% highlight fsharp %}
+```fsharp
 let showContentResult result =
     match result with
     | Success (UriContent (uri, html)) -> 
         printfn "SUCCESS: [%s] First 100 chars: %s" uri.Host (html.Substring(0,100)) 
     | Failure errs -> 
         printfn "FAILURE: %A" errs
-{% endhighlight fsharp %}
+```
 
 And then we can try it out on a good site:
 
-{% highlight fsharp %}
+```fsharp
 System.Uri ("http://google.com") 
 |> getUriContent 
 |> Async.RunSynchronously 
@@ -163,11 +163,11 @@ System.Uri ("http://google.com")
 //  [google.com] Started ...
 //  [google.com] ... finished
 // SUCCESS: [google.com] First 100 chars: <!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lang="en-GB"><head><meta cont
-{% endhighlight fsharp %}
+```
 
 and a bad one:
 
-{% highlight fsharp %}
+```fsharp
 System.Uri ("http://example.bad") 
 |> getUriContent 
 |> Async.RunSynchronously 
@@ -176,13 +176,13 @@ System.Uri ("http://example.bad")
 //  [example.bad] Started ...
 //  [example.bad] ... exception
 // FAILURE: ["[example.bad] "The remote name could not be resolved: 'example.bad'""]
-{% endhighlight fsharp %}
+```
 
 ### Extending the Async type with `map` and `apply` and `bind`
 
 At this point, we know that we are going to be dealing with the world of `Async`, so before we go any further, let's make sure that we have our four core functions available:
 
-{% highlight fsharp %}
+```fsharp
 module Async = 
 
     let map f xAsync = async {
@@ -217,7 +217,7 @@ module Async =
         // as f will return an Async
         return! f x
         }
-{% endhighlight fsharp %}
+```
 
 These implementations are straightforward:
 
@@ -233,7 +233,7 @@ These implementations are straightforward:
 
 Getting back on track, we can continue from the downloading step and move on to the process of converting the result to a `UriContentSize`:
 
-{% highlight fsharp %}
+```fsharp
 /// Make a UriContentSize from a UriContent
 /// UriContent -> Result<UriContentSize>
 let makeContentSize (UriContent (uri, html)) = 
@@ -242,7 +242,7 @@ let makeContentSize (UriContent (uri, html)) =
     else
         let uriContentSize = UriContentSize (uri, html.Length)
         Result.Success uriContentSize 
-{% endhighlight fsharp %}
+```
 
 If the input html is null or empty we'll treat this an error, otherwise we'll return a `UriContentSize`.
 
@@ -264,30 +264,30 @@ In this case, `Result<UriContent> -> Result<UriContentSize>` becomes `Async<Resu
 
 And now that it has the right kind of input, so we can compose it with `getUriContent`:
 
-{% highlight fsharp %}
+```fsharp
 /// Get the size of the contents of the page at the given Uri
 /// Uri -> Async<Result<UriContentSize>>
 let getUriContentSize uri =
     getUriContent uri 
     |> Async.map (Result.bind makeContentSize)
-{% endhighlight fsharp %}
+```
 
 That's some gnarly type signature, and it's only going to get worse!  It's at times like these that I really appreciate type inference.
 
 Let's test again. First a helper to format the result:
 
-{% highlight fsharp %}
+```fsharp
 let showContentSizeResult result =
     match result with
     | Success (UriContentSize (uri, len)) -> 
         printfn "SUCCESS: [%s] Content size is %i" uri.Host len 
     | Failure errs -> 
         printfn "FAILURE: %A" errs
-{% endhighlight fsharp %}
+```
 
 And then we can try it out on a good site:
 
-{% highlight fsharp %}
+```fsharp
 System.Uri ("http://google.com") 
 |> getUriContentSize 
 |> Async.RunSynchronously 
@@ -296,11 +296,11 @@ System.Uri ("http://google.com")
 //  [google.com] Started ...
 //  [google.com] ... finished
 //SUCCESS: [google.com] Content size is 44293
-{% endhighlight fsharp %}
+```
 
 and a bad one:
 
-{% highlight fsharp %}
+```fsharp
 System.Uri ("http://example.bad") 
 |> getUriContentSize
 |> Async.RunSynchronously 
@@ -309,7 +309,7 @@ System.Uri ("http://example.bad")
 //  [example.bad] Started ...
 //  [example.bad] ... exception
 //FAILURE: ["[example.bad] "The remote name could not be resolved: 'example.bad'""]
-{% endhighlight fsharp %}
+```
 
 ### Getting the largest size from a list 
 
@@ -317,7 +317,7 @@ The last step in the process is to find the largest page size.
 
 That's easy. Once we have a list of `UriContentSize`, we can easily find the largest one using `List.maxBy`:
 
-{% highlight fsharp %}
+```fsharp
 /// Get the largest UriContentSize from a list
 /// UriContentSize list -> UriContentSize
 let maxContentSize list = 
@@ -327,7 +327,7 @@ let maxContentSize list =
 
     // use maxBy to find the largest            
     list |> List.maxBy contentSize 
-{% endhighlight fsharp %}
+```
 
 ### Putting it all together
 
@@ -352,7 +352,7 @@ We're ready to assemble all the pieces now, using the following algorithm:
 
 Here's the complete code:
 
-{% highlight fsharp %}
+```fsharp
 /// Get the largest page size from a list of websites
 let largestPageSizeA urls = 
     urls
@@ -374,14 +374,14 @@ let largestPageSizeA urls =
     // find the largest in the inner list to get 
     //   a "Async<Result<UriContentSize>>"
     |> Async.map (Result.map maxContentSize)
-{% endhighlight fsharp %}
+```
 
 This function has signature `string list -> Async<Result<UriContentSize>>`, which is just what we wanted!
 
 There are two `sequence` functions involved here: `sequenceAsyncA` and `sequenceResultA`. The implementations are as you would expect from
 all the previous discussion, but I'll show the code anyway:
 
-{% highlight fsharp %}
+```fsharp
 module List =
 
     /// Map a Async producing function over a list to get a new Async 
@@ -429,14 +429,14 @@ module List =
     /// Transform a "list<Result>" into a "Result<list>" 
     /// and collect the results using apply.
     let sequenceResultA x = traverseResultA id x
-{% endhighlight fsharp %}
+```
 
 ### Adding a timer
 
 It will be interesting to see how long the download takes for different scenarios,
 so let's create a little timer that runs a function a certain number of times and takes the average:
 
-{% highlight fsharp %}
+```fsharp
 /// Do countN repetitions of the function f and print the time per run
 let time countN label f  = 
 
@@ -461,7 +461,7 @@ let time countN label f  =
 
     let avgTimePerRun = totalMs / int64 countN
     printfn "%s: Average time per run:%6ims " label avgTimePerRun 
-{% endhighlight fsharp %}
+```
 
 
 ### Ready to download at last
@@ -470,7 +470,7 @@ Let's download some sites for real!
 
 We'll define two lists of sites: a "good" one, where all the sites should be accessible, and a "bad" one, containing invalid sites.
 
-{% highlight fsharp %}
+```fsharp
 let goodSites = [
     "http://google.com"
     "http://bbc.co.uk"
@@ -484,21 +484,21 @@ let badSites = [
     "http://verybad.example.com"
     "http://veryverybad.example.com"
     ]
-{% endhighlight fsharp %}
+```
 
 Let's start by running `largestPageSizeA` 10 times with the good sites list: 
  
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeA goodSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeA_Good" f
-{% endhighlight fsharp %} 
+``` 
 
 The output is something like this:
 
-{% highlight text %}
+```text
 [google.com] Started ...
 [bbc.co.uk] Started ...
 [fsharp.org] Started ...
@@ -510,23 +510,23 @@ The output is something like this:
 
 SUCCESS: [bbc.co.uk] Content size is 108983
 largestPageSizeA_Good: Average time per run:   533ms 
-{% endhighlight text %} 
+``` 
 
 We can see immediately that the downloads are happening in parallel -- they have all started before the first one has finished. 
 
 Now what about if some of the sites are bad?
 
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeA badSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeA_Bad" f
-{% endhighlight fsharp %} 
+``` 
  
 The output is something like this: 
 
-{% highlight text %}
+```text
 [example.com] Started ...
 [bad.example.com] Started ...
 [verybad.example.com] Started ...
@@ -543,7 +543,7 @@ FAILURE: [
  "[veryverybad.example.com] "The remote name could not be resolved: 'veryverybad.example.com'""]
 
 largestPageSizeA_Bad: Average time per run:  2252ms 
-{% endhighlight text %} 
+``` 
 
 Again, all the downloads are happening in parallel, and all four failures are returned. 
 
@@ -557,7 +557,7 @@ However, let's look at what you *could* do if you wanted to.
 
 Here's the original version, with comments removed:
 
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeA urls = 
     urls
     |> List.map (fun s -> System.Uri(s))   
@@ -565,37 +565,37 @@ let largestPageSizeA urls =
     |> List.sequenceAsyncA
     |> Async.map List.sequenceResultA
     |> Async.map (Result.map maxContentSize)
-{% endhighlight fsharp %} 
+``` 
 
 The first two `List.map`s could be combined:
 
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeA urls = 
     urls
     |> List.map (fun s -> System.Uri(s) |> getUriContentSize)   
     |> List.sequenceAsyncA
     |> Async.map List.sequenceResultA
     |> Async.map (Result.map maxContentSize)
-{% endhighlight fsharp %} 
+``` 
 
 The  `map-sequence` can be replaced with a `traverse`:
 
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeA urls = 
     urls
     |> List.traverseAsyncA (fun s -> System.Uri(s) |> getUriContentSize)   
     |> Async.map List.sequenceResultA
     |> Async.map (Result.map maxContentSize)
-{% endhighlight fsharp %} 
+``` 
 
 and finally the two `Async.map`s can be combined too:
 
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeA urls = 
     urls
     |> List.traverseAsyncA (fun s -> System.Uri(s) |> getUriContentSize)   
     |> Async.map (List.sequenceResultA >> Result.map maxContentSize)
-{% endhighlight fsharp %} 
+``` 
 
 Personally, I think we've gone too far here. I prefer the original version to this one!
 
@@ -609,7 +609,7 @@ Let's reimplement the downloading logic using monadic style and see what differe
 
 First we need a monadic version of the downloader:
 
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeM urls = 
     urls
     |> List.map (fun s -> System.Uri(s))
@@ -617,23 +617,23 @@ let largestPageSizeM urls =
     |> List.sequenceAsyncM              // <= "M" version
     |> Async.map List.sequenceResultM   // <= "M" version
     |> Async.map (Result.map maxContentSize)
-{% endhighlight fsharp %}  
+```  
  
 This one uses the monadic `sequence` functions (I won't show them -- the implementation is as you expect).
 
 Let's run `largestPageSizeM` 10 times with the good sites list and see if there is any difference from the applicative version: 
  
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeM goodSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeM_Good" f
-{% endhighlight fsharp %} 
+``` 
 
 The output is something like this:
 
-{% highlight text %}
+```text
   [google.com] Started ...
   [google.com] ... finished
   [bbc.co.uk] Started ...
@@ -645,7 +645,7 @@ The output is something like this:
 
 SUCCESS: [bbc.co.uk] Content size is 108695
 largestPageSizeM_Good: Average time per run:   955ms 
-{% endhighlight text %} 
+``` 
 
 There is a big difference now -- it is obvious that the downloads are happening in series -- each one starts only when the previous one has finished. 
 
@@ -654,17 +654,17 @@ As a result, the average time is 955ms per run, almost twice that of the applica
 Now what about if some of the sites are bad?  What should we expect? Well, because it's monadic, we should expect that after the first error,
 the remaining sites are skipped, right?  Let's see if that happens! 
 
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeM badSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeM_Bad" f
-{% endhighlight fsharp %} 
+``` 
  
 The output is something like this: 
 
-{% highlight text %}
+```text
 [example.com] Started ...
 [example.com] ... exception
 [bad.example.com] Started ...
@@ -676,7 +676,7 @@ The output is something like this:
 
 FAILURE: ["[example.com] "The remote server returned an error: (404) Not Found.""]
 largestPageSizeM_Bad: Average time per run:  2371ms 
-{% endhighlight text %} 
+``` 
 
 Well that was unexpected! All of the sites were visited in series, even though the first one had an error. But in that case, why is only the *first* error returned,
 rather than *all* the the errors? 
@@ -721,7 +721,7 @@ And also, the "swapping" becomes much simpler:
 
 OK, let's define the `AsyncResult` type and it's associated `map`, `return`, `apply` and `bind` functions.
 
-{% highlight fsharp %}
+```fsharp
 /// type alias (optional)
 type AsyncResult<'a> = Async<Result<'a>>
 
@@ -746,7 +746,7 @@ module AsyncResult =
         | Success x -> return! f x
         | Failure err -> return (Failure err)
         }
-{% endhighlight fsharp %} 
+``` 
 
 Notes:
 
@@ -759,7 +759,7 @@ Notes:
 
 With `bind` and `return` in place, we can create the appropriate `traverse` and `sequence` functions for `AsyncResult`:
 
-{% highlight fsharp %}
+```fsharp
 module List =
 
     /// Map an AsyncResult producing function over a list to get a new AsyncResult
@@ -786,33 +786,33 @@ module List =
     /// Transform a "list<AsyncResult>" into a "AsyncResult<list>"
     /// and collect the results using bind.
     let sequenceAsyncResultM x = traverseAsyncResultM id x
-{% endhighlight fsharp %} 
+``` 
  
 ### Defining and testing the downloading functions
  
 Finally, the `largestPageSize` function is simpler now, with only one sequence needed.
  
-{% highlight fsharp %}
+```fsharp
 let largestPageSizeM_AR urls = 
     urls
     |> List.map (fun s -> System.Uri(s) |> getUriContentSize)
     |> List.sequenceAsyncResultM 
     |> AsyncResult.map maxContentSize
-{% endhighlight fsharp %} 
+``` 
 
 Let's run `largestPageSizeM_AR` 10 times with the good sites list and see if there is any difference from the applicative version: 
  
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeM_AR goodSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeM_AR_Good" f
-{% endhighlight fsharp %} 
+``` 
 
 The output is something like this:
 
-{% highlight text %}
+```text
 [google.com] Started ...
 [google.com] ... finished
 [bbc.co.uk] Started ...
@@ -824,29 +824,29 @@ The output is something like this:
 
 SUCCESS: [bbc.co.uk] Content size is 108510
 largestPageSizeM_AR_Good: Average time per run:  1026ms 
-{% endhighlight text %} 
+``` 
 
 Again, the downloads are happening in series. And again, the time per run is almost twice that of the applicative version.  
 
 And now the moment we've been waiting for! Will it skip the downloading after the first bad site?
 
-{% highlight fsharp %}
+```fsharp
 let f() = 
     largestPageSizeM_AR badSites
     |> Async.RunSynchronously 
     |> showContentSizeResult 
 time 10 "largestPageSizeM_AR_Bad" f
-{% endhighlight fsharp %} 
+``` 
  
 The output is something like this: 
 
-{% highlight text %}
+```text
   [example.com] Started ...
   [example.com] ... exception
 
 FAILURE: ["[example.com] "The remote server returned an error: (404) Not Found.""]
 largestPageSizeM_AR_Bad: Average time per run:   117ms 
-{% endhighlight text %} 
+``` 
 
 Success! The error from the first bad site prevented the rest of the downloads, and the short run time is proof of that.
 

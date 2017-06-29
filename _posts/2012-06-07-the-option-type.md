@@ -22,11 +22,11 @@ In F#, it is called the `Option` type, and is defined as union type with two cas
 
 Here is a definition:
 
-{% highlight fsharp %}
+```fsharp
 type Option<'a> =       // use a generic definition  
    | Some of 'a           // valid value
    | None                 // missing
-{% endhighlight %}
+```
 
 <div class="alert alert-error">
 IMPORTANT: if you evaluate this in the interactive window, be sure to reset the session afterwards, so that the built-in type is restored.
@@ -34,25 +34,25 @@ IMPORTANT: if you evaluate this in the interactive window, be sure to reset the 
 
 The option type is used in the same way as any union type in construction, by specifying one of the two cases, the `Some` case or the `None` case:
 
-{% highlight fsharp %}
+```fsharp
 let validInt = Some 1
 let invalidInt = None
-{% endhighlight %}
+```
 
 and when pattern matching, as with any union type, you must always match all the cases:
 
-{% highlight fsharp %}
+```fsharp
 match validInt with 
 | Some x -> printfn "the valid value is %A" x
 | None -> printfn "the value is None" 
-{% endhighlight %}
+```
 
 When defining a type that references the Option type, you must specify the generic type to use.  You can do this in an explicit way, with angle brackets, or use the built-in "`option`" keyword which comes after the type. The following examples are identical:
 
-{% highlight fsharp %}
+```fsharp
 type SearchResult1 = Option<string>  // Explicit C#-style generics 
 type SearchResult2 = string option   // built-in postfix keyword
-{% endhighlight %}
+```
 
 
 
@@ -63,14 +63,14 @@ The option type is widely used in the F# libraries for values that might be miss
 
 For example, the `List.tryFind` function returns an option, with the `None` case used indicate that nothing matches the search predicate.
 
-{% highlight fsharp %}
+```fsharp
 [1;2;3;4]  |> List.tryFind (fun x-> x = 3)  // Some 3
 [1;2;3;4]  |> List.tryFind (fun x-> x = 10) // None
-{% endhighlight %}
+```
 
 Let's revisit the same example we used for tuples and records, and see how options might be used instead:
 
-{% highlight fsharp %}
+```fsharp
 // the tuple version of TryParse
 let tryParseTuple intStr = 
    try
@@ -102,7 +102,7 @@ tryParseOption "99"
 tryParseTuple "abc"
 tryParseRecord "abc"
 tryParseOption "abc"
-{% endhighlight %}
+```
 
 Of these three approaches, the "option" version is generally preferred; no new types need to be defined and for simple cases, the meaning of `None` is obvious from the context.
 
@@ -112,37 +112,37 @@ Of these three approaches, the "option" version is generally preferred; no new t
 
 Like other union types, option types have an automatically defined equality operation
 
-{% highlight fsharp %}
+```fsharp
 let o1 = Some 42
 let o2 = Some 42
 
 let areEqual = (o1=o2)
-{% endhighlight  %}
+```
 
 
 ### Option representation
 
 Option types have a nice default string representation, and unlike other union types, the `ToString()` representation is also nice.
 
-{% highlight fsharp %}
+```fsharp
 let o = Some 42
 printfn "%A" o   // nice
 printfn "%O" o   // nice
-{% endhighlight  %}
+```
 
 ### Options are not just for primitive types
 
 The F# option is a true first class type (it's just a normal union type, after all). You can use it with *any* type.  For example, you can have an option of a complex type like Person,
 or a tuple type like `int*int`, or a function type like `int->bool`, or even an option of an option type.
 
-{% highlight fsharp %}
+```fsharp
 type OptionalString = string option 
 type OptionalPerson = Person option       // optional complex type
 type OptionalTuple = (int*int) option       
 type OptionalFunc = (int -> bool) option  // optional function
 type NestedOptionalString = OptionalString option //nested options!
 type StrangeOption = string option option option
-{% endhighlight %}
+```
 
 ## How the Option type should not be used
 
@@ -150,7 +150,7 @@ The option type has functions such as `IsSome`, `IsNone` and `Value`, which allo
 
 Here is how not to do it:
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 
 // testing using IsSome
@@ -158,16 +158,16 @@ if x.IsSome then printfn "x is %i" x.Value   // ugly!!
 
 // no matching at all
 printfn "x is %i" x.Value   // ugly and dangerous!!
-{% endhighlight %}
+```
 
 Here is how to do it properly:
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 match x with 
 | Some i -> printfn "x is %i" i
 | None -> () // what to do here?
-{% endhighlight %}
+```
 
 The pattern matching approach also forces you to think about and document what happens in the `None` case, which you might easily overlook when using `IsSome`.
 
@@ -176,42 +176,42 @@ The pattern matching approach also forces you to think about and document what h
 If you are doing a lot of pattern matching on options, look into the `Option` module, as it has some useful helper functions like `map`, `bind`, `iter` and so on.
 
 For example, say that I want to multiply the value of an option by 2 if it is valid. Here's the pattern matching way:
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 let result = match x with 
 | Some i -> Some(i * 2)
 | None -> None
-{% endhighlight %}
+```
 
 And here's a more compact version written using `Option.map`:
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 x |> Option.map (fun v -> v * 2)
-{% endhighlight %}
+```
 
 Or perhaps I want to multiply the value of an option by 2 if it is valid but return 0 if it is `None`. Here's the pattern matching way:
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 let result = match x with 
 | Some i -> i * 2
 | None -> 0
-{% endhighlight %}
+```
 
 And here's the same thing as a one-liner using `Option.fold`:
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 x |> Option.fold (fun _ v -> v * 2) 0 
-{% endhighlight %}
+```
 
 In simple cases like the one above, the `defaultArg` function can be used as well.
 
-{% highlight fsharp %}
+```fsharp
 let x = Some 99
 defaultArg x 0 
-{% endhighlight %}
+```
 
   
 <a id="option-is-not-null"></a>
@@ -225,13 +225,13 @@ In a language like C# or Java, "null" means a reference or pointer to an object 
 
 For example, in the C# code below we create two string variables, one with a valid string and one with a null string. 
 
-{% highlight csharp %}
+```csharp
 string s1 = "abc";
 var len1 = s1.Length;
 
 string s2 = null;
 var len2 = s2.Length;
-{% endhighlight %}
+```
 
 This compiles perfectly, of course. The compiler cannot tell the difference between the two variables.
 The `null` is exactly the same type as the valid string, so all the `System.String` methods and properties can be used on it, including the `Length` property. 
@@ -240,28 +240,28 @@ Now, we know that this code will fail by just looking at it, but the compiler ca
 
 Now let's look at the nearest F# equivalent of the C# example above. In F#, to indicate missing data, you would use an option type and set it to `None`. (In this artificial example we have to use an ugly explicitly typed `None` -- normally this would not be necessary.)
 
-{% highlight fsharp %}
+```fsharp
 let s1 = "abc"
 var len1 = s1.Length
 
 // create a string option with value None
 let s2 = Option<string>.None
 let len2 = s2.Length
-{% endhighlight %}
+```
 
 In the F# version, we get a *compile-time* error immediately.  The `None` is *not* a string, it's a different type altogether, so you can't call `Length` on it directly.
 And to be clear, `Some [string]` is *also* not the same type as `string`, so you can't call `Length` on it either!  
 
 So if `Option<string>` is not a string, but you want to do something with the string it (might) contain, you are forced to have to pattern match on it (assuming you don't do bad things as described earlier).
 
-{% highlight fsharp %}
+```fsharp
 let s2 = Option<string>.None
 
 //which one is it?
 let len2 = match s2 with
 | Some s -> s.Length
 | None -> 0
-{% endhighlight %}
+```
 
 You always have to pattern match, because given a value of type `Option<string>`, you can't tell whether it is Some or None.
 
@@ -281,9 +281,9 @@ In a true functional language there can be a concept of missing data, but there 
 
 For example, consider a value bound to the result of an expression like this:
 
-{% highlight fsharp %}
+```fsharp
 let x = "hello world"
-{% endhighlight %}
+```
 
 How can that value ever be uninitialized, or become null, or even become any other value at all? 
 
@@ -298,7 +298,7 @@ As a general rule, nulls are never created in "pure" F#, but only by interacting
 
 Here are some examples:
 
-{% highlight fsharp %}
+```fsharp
 // pure F# type is not allowed to be null (in general)
 type Person = {first:string; last:string}  
 let p : Person = null                      // error! 
@@ -306,11 +306,11 @@ let p : Person = null                      // error!
 // type defined in CLR, so is allowed to be null
 let s : string = null                      // no error! 
 let line = streamReader.ReadLine()         // no error if null 
-{% endhighlight %}
+```
 
 In these cases, it is good practice to immediately check for nulls and convert them into an option type!  
 
-{% highlight fsharp %}
+```fsharp
 // streamReader example
 let line = match streamReader.ReadLine()  with
            | null -> None
@@ -325,7 +325,7 @@ let GetEnvVar var =
 // try it
 GetEnvVar "PATH"
 GetEnvVar "TEST"
-{% endhighlight %}
+```
 
 And on occasion, you may need to pass a null to an external library. You can do this using the `null` keyword as well.
 

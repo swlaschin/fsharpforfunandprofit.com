@@ -14,7 +14,7 @@ In this post we will look at making implicit states explicit by using state mach
 
 In an [earlier post](/posts/designing-with-types-single-case-dus/) in this series, we looked at single case unions as a wrapper for types such as email addresses.
 
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type T = EmailAddress of string
@@ -23,14 +23,14 @@ module EmailAddress =
         if System.Text.RegularExpressions.Regex.IsMatch(s,@"^\S+@\S+\.\S+$") 
             then Some (EmailAddress s)
             else None
-{% endhighlight fsharp %}     
+```     
 
 This code assumes that either an address is valid or it is not. If it is not, we reject it altogether and return `None` instead of a valid value.
 
 But there are degrees of validity. For example, what happens if we want to keep an invalid email address around rather than just rejecting it?  In this case, as usual, we want to use the type system to make sure that we don't get a valid address mixed up with an invalid address.
 
 The obvious way to do this is with a union type:
-{% highlight fsharp %}
+```fsharp
 module EmailAddress = 
 
     type T = 
@@ -45,18 +45,18 @@ module EmailAddress =
     // test
     let valid = create "abc@example.com"
     let invalid = create "example.com"
-{% endhighlight fsharp %}     
+```     
 
 and with these types we can ensure that only valid emails get sent:
 
-{% highlight fsharp %}
+```fsharp
 let sendMessageTo t = 
     match t with 
     | ValidEmailAddress email ->
          // send email
     | InvalidEmailAddress _ -> 
          // ignore
-{% endhighlight fsharp %}     
+```     
 
 So far, so good. This kind of design should be obvious to you by now.  
 
@@ -156,7 +156,7 @@ Typically, each state will have its own type, to store the data that is relevant
 
 Here's an example using the shopping cart state machine:
 
-{% highlight fsharp %}
+```fsharp
 type ActiveCartData = { UnpaidItems: string list }
 type PaidCartData = { PaidItems: string list; Payment: float }
 
@@ -164,7 +164,7 @@ type ShoppingCart =
     | EmptyCart  // no data
     | ActiveCart of ActiveCartData
     | PaidCart of PaidCartData
-{% endhighlight fsharp %}     
+```     
 
 Note that the `EmptyCart` state has no data, so no special type is needed.
 
@@ -172,7 +172,7 @@ Each event is then represented by a function that accepts the entire state machi
 
 Here's an example using two of the shopping cart events:
 
-{% highlight fsharp %}
+```fsharp
 let addItem cart item = 
     match cart with
     | EmptyCart -> 
@@ -196,7 +196,7 @@ let makePayment cart payment =
     | PaidCart _ ->  
         // ignore
         cart
-{% endhighlight fsharp %}     
+```     
 
 You can see that from the caller's point of view, the set of states is treated as "one thing" for general manipulation (the `ShoppingCart` type), but when processing the events internally, each state is treated separately.
 
@@ -206,21 +206,21 @@ Guideline: *Event handling functions should always accept and return the entire 
 
 You might ask: why do we have to pass in the whole shopping cart to the event-handling functions? For example, the `makePayment` event only has relevance when the cart is in the Active state, so why not just explicitly pass it the ActiveCart type, like this:
 
-{% highlight fsharp %}
+```fsharp
 let makePayment2 activeCart payment = 
     let {UnpaidItems=existingItems} = activeCart
     {PaidItems = existingItems; Payment=payment}
-{% endhighlight fsharp %}     
+```     
 
 Let's compare the function signatures:
 
-{% highlight fsharp %}
+```fsharp
 // the original function 
 val makePayment : ShoppingCart -> float -> ShoppingCart
 
 // the new more specific function
 val makePayment2 :  ActiveCartData -> float -> PaidCartData
-{% endhighlight fsharp %}     
+```     
 
 You will see that the original `makePayment` function takes a cart and results in a cart, while the new function takes an `ActiveCartData` and results in a `PaidCartData`, which seems to be much more relevant.
 
@@ -232,12 +232,12 @@ Occasionally you do genuinely need to treat one of the states as a separate enti
 
 For example, if I need to report on all paid carts, I can pass it a list of `PaidCartData`.
 
-{% highlight fsharp %}
+```fsharp
 let paymentReport paidCarts = 
     let printOneLine {Payment=payment} = 
         printfn "Paid %f for items" payment
     paidCarts |> List.iter printOneLine
-{% endhighlight fsharp %}     
+```     
 
 By using a list of `PaidCartData` as the parameter rather than `ShoppingCart` itself, I ensure that I cannot accidentally report on unpaid carts.
 
@@ -253,13 +253,13 @@ Let's look at how we can apply this approach to a real example now.
 In the `Contact` example from an [earlier post](/posts/designing-with-types-intro/) we had a flag that was used to indicate whether a customer had verified their email address. 
 The type looked like this:
 
-{% highlight fsharp %}
+```fsharp
 type EmailContactInfo = 
     {
     EmailAddress: EmailAddress.T;
     IsEmailVerified: bool;
     }
-{% endhighlight fsharp %}     
+```     
 
 Any time you see a flag like this, chances are you are dealing with state. In this case, the boolean is used to indicate that we have two states: "Unverified" and "Verified". 
 
@@ -277,7 +277,7 @@ We'll start by defining the two states.
 * For the "Unverified" state, the only data we need to keep is the email address. 
 * For the "Verified" state, we might want to keep some extra data in addition to the email address, such as the date it was verified, the number of recent password resets, on so on. This data is not relevant (and should not even be visible) to the "Unverified" state.
 
-{% highlight fsharp %}
+```fsharp
 module EmailContactInfo = 
     open System
 
@@ -295,7 +295,7 @@ module EmailContactInfo =
         | UnverifiedState of UnverifiedData
         | VerifiedState of VerifiedData
 
-{% endhighlight fsharp %}
+```
 
 Note that for the `UnverifiedData` type I just used a type alias. No need for anything more complicated right now, but using a type alias makes the purpose explicit and helps with refactoring.
 
@@ -304,7 +304,7 @@ Now let's handle the construction of a new state machine, and then the events.
 * Construction *always* results in an unverified email, so that is easy.
 * There is only one event that transitions from one state to another: the "verified" event.
 
-{% highlight fsharp %}
+```fsharp
 module EmailContactInfo = 
 
     // types as above
@@ -322,13 +322,13 @@ module EmailContactInfo =
         | VerifiedState _ ->
             // ignore
             emailContactInfo
-{% endhighlight fsharp %}
+```
 
 Note that, as [discussed here](/posts/match-expression/), every branch of the match must return the same type, so when ignoring the verified state we must still return something, such as the object that was passed in.
 
 Finally, we can write the two utility functions `sendVerificationEmail` and `sendPasswordReset`.
 
-{% highlight fsharp %}
+```fsharp
 module EmailContactInfo = 
 
     // types and functions as above
@@ -350,7 +350,7 @@ module EmailContactInfo =
         | VerifiedState _ ->
             // ignore
             printfn "sending password reset"
-{% endhighlight fsharp %}
+```
 
 ## Using explicit cases to replace case/switch statements ##
 
@@ -369,7 +369,7 @@ and so on.
 
 Now, without using union types, we might represent this design by using an enum to represent the state, like this:
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 type PackageStatus = 
@@ -384,11 +384,11 @@ type Package =
     DeliveryDate: DateTime;
     DeliverySignature: string;
     }
-{% endhighlight fsharp %}
+```
 
 And then the code to handle the "putOnTruck" and "signedFor" events might look like this:
 
-{% highlight fsharp %}
+```fsharp
 let putOnTruck package = 
     {package with PackageStatus=OutForDelivery}
 
@@ -406,7 +406,7 @@ let signedFor package signature =
             }
     else
         failwith "package already delivered"
-{% endhighlight fsharp %}
+```
 
 This code has some subtle bugs in it.
 
@@ -416,7 +416,7 @@ This code has some subtle bugs in it.
 
 But as usual, the idiomatic and more type-safe F# approach is to use an overall union type rather than embed a status value inside a data structure.
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 type UndeliveredData = 
@@ -440,11 +440,11 @@ type Package =
     | Undelivered of UndeliveredData 
     | OutForDelivery of OutForDeliveryData
     | Delivered of DeliveredData 
-{% endhighlight fsharp %}
+```
 
 And then the event handlers *must* handle every case.
 
-{% highlight fsharp %}
+```fsharp
 let putOnTruck package = 
     match package with
     | Undelivered {PackageId=id} ->
@@ -466,7 +466,7 @@ let signedFor package signature =
             }
     | Delivered _ ->
         failwith "package already delivered"
-{% endhighlight fsharp %}
+```
 
 *Note: I am using `failWith` to handle the errors. In a production system, this code should be replaced by client driven error handlers.
 See the discussion of handling constructor errors in the [post about single case DUs](/posts/designing-with-types-single-case-dus/) for some ideas.*
@@ -477,7 +477,7 @@ Finally, there are often cases where a system has states, but they are implicit 
 
 For example, here is a type that represents an order. 
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 type Order = 
@@ -491,7 +491,7 @@ type Order =
     ReturnedDate: DateTime option;
     ReturnedReason: string option;
     }
-{% endhighlight fsharp %}
+```
 
 You can guess that Orders can be "new", "paid", "shipped" or "returned", and have timestamps and extra information for each transition, but this is not made explicit in the structure.
 
@@ -501,7 +501,7 @@ And now let's look at the kind of ugly code that might test these option types t
 
 Again, there is some important business logic that depends on the state of the order, but nowhere is it explicitly documented what the various states and transitions are.
 
-{% highlight fsharp %}
+```fsharp
 let makePayment order payment = 
     if (order.PaidDate.IsSome)
     then failwith "order is already paid"
@@ -519,13 +519,13 @@ let shipOrder order shippingMethod =
         ShippedDate=Some DateTime.UtcNow
         ShippingMethod=Some shippingMethod
         }
-{% endhighlight fsharp %}
+```
 
 *Note: I added `IsSome` to test for option values being present as a direct port of the way that a C# program would test for `null`. But `IsSome` is both ugly and dangerous.  Don't use it!*
 
 Here is a better approach using types that makes the states explicit.
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 type InitialOrderData = 
@@ -554,11 +554,11 @@ type Order =
     | Paid of InitialOrderData * PaidOrderData
     | Shipped of InitialOrderData * PaidOrderData * ShippedOrderData
     | Returned of InitialOrderData * PaidOrderData * ShippedOrderData * ReturnedOrderData
-{% endhighlight fsharp %}
+```
 
 And here are the event handling methods:
 
-{% highlight fsharp %}
+```fsharp
 let makePayment order payment = 
     match order with
     | Unpaid i -> 
@@ -581,7 +581,7 @@ let shipOrder order shippingMethod =
     | _ ->
         printfn "order is already shipped"
         order
-{% endhighlight fsharp %}
+```
 
 *Note: Here I am using `printfn` to handle the errors. In a production system, do use a different approach.*
 

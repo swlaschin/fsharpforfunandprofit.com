@@ -21,7 +21,7 @@ And `CustomerId(42)` is not equal to `OrderId(42)`. In fact, they should not eve
 
 Types to the rescue, of course.
 
-{% highlight fsharp %}
+```fsharp
 type CustomerId = CustomerId of int
 type OrderId = OrderId of int
 
@@ -30,24 +30,24 @@ let orderId = OrderId 42
 
 // compiler error
 printfn "cust is equal to order? %b" (custId = orderId) 
-{% endhighlight fsharp %}
+```
 
 Similarly, you might want avoid mixing up semantically different date values by wrapping them in a type. (`DateTimeKind` is an attempt at this, but not always reliable.)
 
-{% highlight fsharp %}
+```fsharp
 type LocalDttm = LocalDttm of System.DateTime
 type UtcDttm = UtcDttm of System.DateTime
-{% endhighlight fsharp %}
+```
 
 With these types we can ensure that we always pass the right kind of datetime as parameters. Plus, it acts as documentation as well.
 
-{% highlight fsharp %}
+```fsharp
 let SetOrderDate (d:LocalDttm) = 
     () // do something
 
 let SetAuditTimestamp (d:UtcDttm) = 
     () // do something
-{% endhighlight fsharp %}
+```
 
 ## Constraints on integers
 
@@ -55,7 +55,7 @@ Just as we had validation and constraints on types such as `String50` and `ZipCo
 
 For example, an inventory management system or a shopping cart may require that certain types of number are always positive.  You might ensure this by creating a `NonNegativeInt` type.
 
-{% highlight fsharp %}
+```fsharp
 module NonNegativeInt = 
     type T = NonNegativeInt of int
 
@@ -70,7 +70,7 @@ module InventoryManager =
     let SetStockQuantity (i:NonNegativeInt.T) = 
         //set stock
         ()
-{% endhighlight fsharp %}
+```
 
 ## Embedding business rules in the type
 
@@ -82,7 +82,7 @@ Is it worth trying to avoid this issue by using constrained types? Let's look at
 
 Here is a very simple shopping cart manager using a standard `int` type for the quantity. The quantity is incremented or decremented when the related buttons are clicked. Can you find the obvious bug?
 
-{% highlight fsharp %}
+```fsharp
 module ShoppingCartWithBug = 
 
     let mutable itemQty = 1  // don't do this at home!
@@ -92,13 +92,13 @@ module ShoppingCartWithBug =
 
     let decrementClicked() = 
         itemQty <- itemQty - 1
-{% endhighlight fsharp %}
+```
 
 If you can't quickly find the bug, perhaps you should consider making any constraints more explicit. 
 
 Here is the same simple shopping cart manager using a typed quantity instead. Can you find the bug now?  (Tip: paste the code into a F# script file and run it) 
 
-{% highlight fsharp %}
+```fsharp
 module ShoppingCartQty = 
 
     type T = ShoppingCartQty of int
@@ -122,7 +122,7 @@ module ShoppingCartWithTypedQty =
 
     let decrementClicked() = 
         itemQty <- ShoppingCartQty.decrement itemQty
-{% endhighlight fsharp %}
+```
 
 You might think this is overkill for such a trivial problem. But if you want to avoid being in the DailyWTF, it might be worth considering.
 
@@ -132,7 +132,7 @@ Not all systems can handle all possible dates. Some systems can only store dates
 
 As with integers, it might be useful to have constraints on the valid dates built into the type, so that any out of bound issues are dealt with at construction time rather than later on.
 
-{% highlight fsharp %}
+```fsharp
 type SafeDate = SafeDate of System.DateTime
 
 let create dttm = 
@@ -141,7 +141,7 @@ let create dttm =
     if dttm < min || dttm > max
     then None
     else Some (SafeDate dttm)
-{% endhighlight fsharp %}
+```
 
 
 ## Union types vs. units of measure
@@ -159,7 +159,7 @@ To avoid this scenario, I often like to create separate types for seconds and mi
 
 Here's a type based approach using single case unions:
 
-{% highlight fsharp %}
+```fsharp
 type TimeoutSecs = TimeoutSecs of int
 type TimeoutMs = TimeoutMs of int
 
@@ -176,11 +176,11 @@ let sleep (TimeoutMs ms) =
 /// timeout after a certain number of seconds    
 let commandTimeout (TimeoutSecs s) (cmd:System.Data.IDbCommand) = 
     cmd.CommandTimeout <- s
-{% endhighlight fsharp %}
+```
 
 And here's the same thing using units of measure:
 
-{% highlight fsharp %}
+```fsharp
 [<Measure>] type sec 
 [<Measure>] type ms
 
@@ -197,7 +197,7 @@ let sleep (ms:int<ms>) =
 /// timeout after a certain number of seconds    
 let commandTimeout (s:int<sec>) (cmd:System.Data.IDbCommand) = 
     cmd.CommandTimeout <- (s * 1<_>)
-{% endhighlight fsharp %}
+```
 
 Which approach is better?
 

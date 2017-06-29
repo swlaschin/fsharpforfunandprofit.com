@@ -15,7 +15,7 @@ In soccer, the offside rule says that in some situations, a player cannot be "ah
 
 Generally, once an offside line has been set, all the expressions must align with the line.
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //3456789
 let f = 
@@ -33,11 +33,11 @@ let f =
  x+1         // offside! You are ahead of the ball!
              // error FS0588: Block following this 
              // 'let' is unfinished
-{% endhighlight %}
+```
 
 Various tokens can trigger new offside lines to be created. For example, when the F# sees the "`=`" used in a let expression, a new offside line is created at the position of the very next symbol or word encountered.
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //34567890123456789
 let f =   let x=1  // line is now at column 11 (start of "let x=")
@@ -53,11 +53,11 @@ let f =
    let x=1  // first word after = sign defines the line 
             // offside line is now at column 4
    x+1      // must start at column 4 from now on
-{% endhighlight %}
+```
 
 Other tokens have the same behavior, including parentheses, "`then`", "`else`", "`try`", "`finally`" and "`do`", and "`->`" in match clauses.
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //34567890123456789
 let f = 
@@ -76,11 +76,11 @@ let f =
    | 1 ->
        1+2          // first char after match "->" defines 
                     // a new line at col 8
-{% endhighlight %}
+```
 
 The offside lines can be nested, and are pushed and popped as you would expect:
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //34567890123456789
 let f = 
@@ -90,16 +90,16 @@ let f =
                      // pop the offside line stack now
    g + 1             // back to previous line. "g" must align
                      // at col 4
-{% endhighlight %}
+```
 
 New offside lines can never go forward further than the previous line on the stack:
 
-{% highlight fsharp %}
+```fsharp
 let f = 
    let g = (         // let defines a new line at col 4
   1+2)               // oops! Cant define new line less than 4
    g 
-{% endhighlight %}
+```
 
 ## Special cases ##
 
@@ -107,7 +107,7 @@ There are number of special cases which have been created to make code formattin
 
 Infix operators such as "+", "|>" and ">>" are allowed to be outside the line by their length plus one space:
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //34567890123456789
 let x =  1   // defines a new line at col 10
@@ -116,26 +116,26 @@ let x =  1   // defines a new line at col 10
 
 let f g h =   g   // defines a new line at col 15
            >> h   // ">>" allowed to be outside the line
-{% endhighlight %}
+```
 
 If an infix operator starts a line, that line does not have to be strict about the alignment:
 
-{% highlight fsharp %}
+```fsharp
 let x =  1   // defines a new line at col 10
         + 2   // infix operators that start a line don't count
              * 3  // starts with "*" so doesn't need to align
          - 4  // starts with "-" so doesn't need to align
-{% endhighlight %}
+```
 
 If a "`fun`" keyword starts an expression, the "fun" does *not* start a new offside line:
 
-{% highlight fsharp %}
+```fsharp
 //character columns
 //34567890123456789
 let f = fun x ->  // "fun" should define a new line at col 9
    let y = 1      // but doesn't. The real line starts here.
    x + y          
-{% endhighlight %}
+```
 
 ### Finding out more 
 
@@ -152,7 +152,7 @@ By default, F# uses indentation to indicate block structure -- this is called "l
 
 Here is an example of verbose syntax with wacky indentation that would not otherwise be acceptable:
 
-{% highlight fsharp %}
+```fsharp
 #indent "off"
 
       let f = 
@@ -163,13 +163,13 @@ begin "a" end else begin
 end
 
 #indent "on"
-{% endhighlight %}
+```
 
 Verbose syntax is always available, even in "light" mode, and is occasionally useful. For example, when you want to embed "let" into a one line expression:
 
-{% highlight fsharp %}
+```fsharp
 let x = let y = 1 in let z = 2 in y + z
-{% endhighlight %}
+```
 
 Other cases when you might want to use verbose syntax are:
 

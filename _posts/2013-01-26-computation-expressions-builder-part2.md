@@ -13,7 +13,7 @@ In this post we're going to look at returning multiple values from a computation
 
 So far, our expression builder class looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     member this.Bind(m, f) = 
         match m with 
@@ -45,7 +45,7 @@ type TraceBuilder() =
         
 // make an instance of the workflow                
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 And this class has worked fine so far. But we are about to run into a problem...
 
@@ -55,36 +55,36 @@ Previously, we saw how `yield` could be used to return values just like `return`
 
 Normally, `yield` is not used just once, of course, but multiple times in order to return values at different stages of a process such as an enumeration. So let's try that:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     } |> printfn "Result for yield then yield: %A" 
-{% endhighlight fsharp %}
+```
 
 But uh-oh, we get an error message:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'Combine' method.
-{% endhighlight text %}
+```
 
 And if you use `return` instead of `yield`, you get the same error.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     return 1
     return 2
     } |> printfn "Result for return then return: %A" 
-{% endhighlight fsharp %}
+```
 
 And this problem occurs in other contexts too.  For example, if we want to do something and then return, like this:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     if true then printfn "hello" 
     return 1
     } |> printfn "Result for if then return: %A" 
-{% endhighlight fsharp %}
+```
 
 We get the same error message about a missing 'Combine' method.
 
@@ -94,16 +94,16 @@ So what's going on here?
 
 To understand, let's go back to the behind-the-scenes view of the computation expression. We have seen that `return` and `yield` are really just the last step in a series of continuations, like this:
 
-{% highlight fsharp %}
+```fsharp
 Bind(1,fun x -> 
    Bind(2,fun y -> 
      Bind(x + y,fun z -> 
         Return(z)  // or Yield
-{% endhighlight fsharp %}
+```
 
 You can think of `return` (or `yield`) as "resetting" the indentation, if you like. So when we `return/yield` and then `return/yield` again, we are generating code like this: 
 
-{% highlight fsharp %}
+```fsharp
 Bind(1,fun x -> 
    Bind(2,fun y -> 
      Bind(x + y,fun z -> 
@@ -113,14 +113,14 @@ Bind(3,fun w ->
    Bind(4,fun u -> 
      Bind(w + u,fun v -> 
         Yield(v)
-{% endhighlight fsharp %}
+```
 
 But really this can be simplified to:
 
-{% highlight fsharp %}
+```fsharp
 let value1 = some expression 
 let value2 = some other expression 
-{% endhighlight fsharp %}
+```
 
 In other words, we now have *two* values in our computation expression. And then the obvious question is, how should these two values be combined to give a single result for the computation expression as a whole? 
 
@@ -134,7 +134,7 @@ The answer is by using the `Combine` method, which takes two *wrapped* values an
 
 In our case, we are dealing specifically with `int options`, so one simple implementation that leaps to mind it just to add the numbers together. Each parameter is an `option` of course (the wrapped type), so we need to pick them apart and handle the four possible cases:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
 
@@ -155,26 +155,26 @@ type TraceBuilder() =
 
 // make a new instance        
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 Running the test code again:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     } |> printfn "Result for yield then yield: %A" 
-{% endhighlight fsharp %}
+```
 
 But now we get a different error message:
 
-{% highlight text %}
+```text
 This control construct may only be used if the computation expression builder defines a 'Delay' method
-{% endhighlight text %}
+```
 
 The `Delay` method is a hook that allows you to delay evaluation of a computation expression until needed -- we'll discuss this in detail very soon; but for now, let's create a default implementation:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
 
@@ -184,55 +184,55 @@ type TraceBuilder() =
 
 // make a new instance        
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 Running the test code again:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     } |> printfn "Result for yield then yield: %A" 
-{% endhighlight fsharp %}
+```
 
 And finally we get the code to complete. 
 
-{% highlight text %}
+```text
 Delay
 Yield an unwrapped 1 as an option
 Delay
 Yield an unwrapped 2 as an option
 combining 1 and 2
 Result for yield then yield: Some 3
-{% endhighlight text %}
+```
 
 The result of the entire workflow is the sum of all the yields, namely `Some 3`.
 
 If we have a "failure" in the workflow (e.g. a `None`), the second yield doesn't occur and the overall result is `Some 1` instead.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     let! x = None
     yield 2
     } |> printfn "Result for yield then None: %A" 
-{% endhighlight fsharp %}
+```
 
 We can have three `yields` rather than two:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     yield 2
     yield 3
     } |> printfn "Result for yield x 3: %A" 
-{% endhighlight fsharp %}
+```
 
 The result is what you would expect, `Some 6`.
         
 We can even try mixing up `yield` and `return` together. Other than the syntax difference, the overall effect is the same.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     yield 1
     return 2
@@ -242,7 +242,7 @@ trace {
     return 1
     return 2
     } |> printfn "Result for return then return: %A" 
-{% endhighlight fsharp %}
+```
 
 ## Using Combine for sequence generation
 
@@ -255,7 +255,7 @@ No, `yield` is naturally used as part of sequence generation, and now that we un
 
 Here's the full class:
 
-{% highlight fsharp %}
+```fsharp
 type ListBuilder() =
     member this.Bind(m, f) = 
         m |> List.collect f
@@ -286,11 +286,11 @@ type ListBuilder() =
 
 // make an instance of the workflow                
 let listbuilder = new ListBuilder()
-{% endhighlight fsharp %}
+```
 
 And here it is in use:
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     yield 1
     yield 2
@@ -300,24 +300,24 @@ listbuilder {
     yield 1
     yield! [2;3]
     } |> printfn "Result for yield then yield! : %A" 
-{% endhighlight fsharp %}
+```
 
 And here's a more complicated example with a `for` loop and some `yield`s.
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     for i in ["red";"blue"] do
         yield i
         for j in ["hat";"tie"] do
             yield! [i + " " + j;"-"]
     } |> printfn "Result for for..in..do : %A" 
-{% endhighlight fsharp %}
+```
 
 And the result is:
 
-{% highlight text %}
+```text
 ["red"; "red hat"; "-"; "red tie"; "-"; "blue"; "blue hat"; "-"; "blue tie"; "-"]    
-{% endhighlight  %}
+```
 
 You can see that by combining `for..in..do` with `yield`, we are not too far away from the built-in `seq` expression syntax (except that `seq` is lazy, of course).
 
@@ -330,23 +330,23 @@ As you can see from the example above, you can use `yield` in creative ways to g
 
 The `Combine` method only has two parameters.  So what happens when you combine more than two values? For example, here are four values to combine:
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     yield 1
     yield 2
     yield 3
     yield 4
     } |> printfn "Result for yield x 4: %A" 
-{% endhighlight fsharp %}
+```
 
 If you look at the output you can see that the values are combined pair-wise, as you might expect.  
 
-{% highlight text %}
+```text
 combining [3] and [4]
 combining [2] and [3; 4]
 combining [1] and [2; 3; 4]
 Result for yield x 4: [1; 2; 3; 4]
-{% endhighlight text %}
+```
 
 A subtle but important point is that they are combined "backwards", starting from the last value.  First "3" is combined with "4", and the result of that is then combined with "2", and so on.
 
@@ -356,12 +356,12 @@ A subtle but important point is that they are combined "backwards", starting fro
 
 In the second of our earlier problematic examples, we didn't have a sequence; we just had two separate expressions in a row.
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     if true then printfn "hello"  //expression 1
     return 1                      //expression 2
     } |> printfn "Result for combine: %A" 
-{% endhighlight fsharp %}
+```
 
 How should these expressions be combined?  
 
@@ -378,15 +378,15 @@ In this case, we also generally use the "failure" value for `Zero`.
 
 This approach is useful for chaining together a series of "or else" expressions where the first success "wins" and becomes the overall result.  
 
-{% highlight text %}
+```text
 if (do first expression)
 or else (do second expression)
 or else (do third expression)
-{% endhighlight text %}
+```
 
 For example, for the `maybe` workflow, it is common to return the first expression if it is `Some`, but otherwise the second expression, like this:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
     
@@ -402,13 +402,13 @@ type TraceBuilder() =
         
 // make a new instance        
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 **Example: Parsing**
 
 Let's try a parsing example with this implementation:
 
-{% highlight fsharp %}
+```fsharp
 type IntOrBool = I of int | B of bool
 
 let parseInt s = 
@@ -425,13 +425,13 @@ trace {
     return! parseBool "42"  // fails
     return! parseInt "42"
     } |> printfn "Result for parsing: %A" 
-{% endhighlight fsharp %}
+```
 
 We get the following result:
 
-{% highlight text %}
+```text
 Some (I 42)
-{% endhighlight text %}
+```
 
 You can see that the first `return!` expression is `None`, and ignored. So the overall result is the second expression, `Some (I 42)`.
 
@@ -439,7 +439,7 @@ You can see that the first `return!` expression is `None`, and ignored. So the o
 
 In this example, we'll try looking up the same key in a number of dictionaries, and return when we find a value:
 
-{% highlight fsharp %}
+```fsharp
 let map1 = [ ("1","One"); ("2","Two") ] |> Map.ofList
 let map2 = [ ("A","Alice"); ("B","Bob") ] |> Map.ofList
 
@@ -447,13 +447,13 @@ trace {
     return! map1.TryFind "A"
     return! map2.TryFind "A"
     } |> printfn "Result for map lookup: %A" 
-{% endhighlight fsharp %}
+```
 
 We get the following result:
 
-{% highlight text %}
+```text
 Result for map lookup: Some "Alice"
-{% endhighlight text %}
+```
 
 You can see that the first lookup is `None`, and ignored. So the overall result is the second lookup.
 
@@ -465,17 +465,17 @@ If the workflow has the concept of sequential steps, then the overall result is 
 
 In normal F#, this would be written:
 
-{% highlight text %}
+```text
 do some expression
 do some other expression 
 final expression
-{% endhighlight text %}
+```
 
 Or using the semicolon syntax, just:
 
-{% highlight text %}
+```text
 some expression; some other expression; final expression
-{% endhighlight text %}
+```
 
 In normal F#, each expression (other than the last) evaluates to the unit value.  
 
@@ -483,7 +483,7 @@ The equivalent approach for a computation expression is to treat each expression
 
 This is exactly what bind does, of course, and so the easiest implementation is just to reuse the `Bind` method itself. Also, for this approach to work it is important that `Zero` is the wrapped unit value.
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     // other members as before
 
@@ -497,23 +497,23 @@ type TraceBuilder() =
         
 // make a new instance        
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 The difference from a normal bind is that the continuation has a unit parameter, and evaluates to `b`.  This in turn forces `a` to be of type `WrapperType<unit>` in general, or `unit option` in our case.
 
 Here's an example of sequential processing that works with this implementation of `Combine`:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     if true then printfn "hello......."
     if false then printfn ".......world"
     return 1
     } |> printfn "Result for sequential combine: %A" 
-{% endhighlight fsharp %}
+```
 
 Here's the following trace. Note that the result of the whole expression was the result of the last expression in the sequence, just like normal F# code.
 
-{% highlight text %}
+```text
 hello.......
 Zero
 Returning a unwrapped <null> as an option
@@ -523,7 +523,7 @@ Returning a unwrapped 1 as an option
 Combining Some null with Some 1
 Combining Some null with Some 1
 Result for sequential combine: Some 1
-{% endhighlight text %}
+```
 
 ### Implementing combine for workflows that build data structures
 
@@ -563,7 +563,7 @@ As with all the builder methods, if you don't need them, you don't need to imple
 
 Here's an example of a minimal implementation that works:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
 
     member this.ReturnFrom(x) = x
@@ -577,21 +577,21 @@ type TraceBuilder() =
 
 // make an instance of the workflow                
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 And here it is in use:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     if true then printfn "hello......."
     if false then printfn ".......world"
     return! Some 1
     } |> printfn "Result for minimal combine: %A" 
-{% endhighlight fsharp %}
+```
 
 Similarly, if you have a data-structure oriented workflow, you could just implement `Combine` and some other helpers. For example, here is a minimal implementation of our list builder class:
 
-{% highlight fsharp %}
+```fsharp
 type ListBuilder() =
 
     member this.Yield(x) = [x]
@@ -606,11 +606,11 @@ type ListBuilder() =
 
 // make an instance of the workflow                
 let listbuilder = new ListBuilder()
-{% endhighlight fsharp %}
+```
 
 And even with the minimal implementation, we can write code like this:
 
-{% highlight fsharp %}
+```fsharp
 listbuilder { 
     yield 1
     yield 2
@@ -620,7 +620,7 @@ listbuilder {
     for i in [1..5] do yield i + 2
     yield 42
     } |> printfn "Result: %A" 
-{% endhighlight fsharp %}
+```
 
 
 ## A standalone "Combine" function
@@ -634,7 +634,7 @@ one fails) that we used earlier for options is sometimes written as `<++`.
 
 So here is an example of a standalone left-biased combination of options, as used in a dictionary lookup example.
 
-{% highlight fsharp %}
+```fsharp
 module StandaloneCombine = 
 
     let combine a b = 
@@ -654,7 +654,7 @@ module StandaloneCombine =
         <++ (map2.TryFind "A")
         <++ (map2.TryFind "B")
         |> printfn "Result of adding options is: %A"
-{% endhighlight fsharp %}
+```
 
 
 ## Summary 

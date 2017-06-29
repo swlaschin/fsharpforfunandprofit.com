@@ -13,7 +13,7 @@ To see what some real F# code looks like, let's start with a simple problem:  "s
 
 We'll compare an F# implementation with a C# implementation. First, the F# code:
 
-{% highlight fsharp %}
+```fsharp
 // define the square function
 let square x = x * x
 
@@ -23,7 +23,7 @@ let sumOfSquares n =
 
 // try it
 sumOfSquares 100
-{% endhighlight %}
+```
 
 The mysterious looking `|>` is called the pipe operator. It just pipes the output of one expression into the input of the next. So the code for `sumOfSquares` reads as:
 
@@ -34,7 +34,7 @@ The mysterious looking `|>` is called the pipe operator. It just pipes the outpu
 
 Next, here's a C# implementation using the classic (non-functional) style of a C-based language. (A more functional version using LINQ is discussed later.)
 
-{% highlight csharp %}
+```csharp
 public static class SumOfSquaresHelper
 {
    public static int Square(int i)
@@ -52,7 +52,7 @@ public static class SumOfSquaresHelper
       return sum;
    }
 }
-{% endhighlight %}
+```
 
 What are the differences?
 
@@ -70,12 +70,12 @@ In F# it is common for entire functions to be written on one line, as the "squar
 
 When a function does have multiple lines, F# uses indentation to indicate a block of code, which eliminates the need for braces. (If you have ever used Python, this is the same idea). So the `sumOfSquares` function could also have been written this way:
 
-{% highlight fsharp %}
+```fsharp
 let sumOfSquares n = 
    [1..n] 
    |> List.map square 
    |> List.sum
-{% endhighlight %}
+```
 
 The only drawback is that you have to indent your code carefully. Personally, I think it is worth the trade-off. 
 
@@ -90,15 +90,15 @@ F# uses a technique called "type inference" to infer the types you are using fro
 
 In this case, the type inference algorithm notes that we started with a list of integers. That in turn implies that the square function and the sum function must be taking ints as well, and that the final value must be an int. You can see what the inferred types are by looking at the result of the compilation in the interactive window. You'll see something like:
 
-{% highlight fsharp %}
+```fsharp
 val square : int -> int
-{% endhighlight %}
+```
 
 which means that the "square" function takes an int and returns an int.
 
 If the original list had used floats instead, the type inference system would have deduced that the square function used floats instead. Try it and see:
 
-{% highlight fsharp %}
+```fsharp
 // define the square function
 let squareF x = x * x
 
@@ -107,7 +107,7 @@ let sumOfSquaresF n =
    [1.0 .. n] |> List.map squareF |> List.sum  // "1.0" is a float
 
 sumOfSquaresF 100.0
-{% endhighlight %}
+```
 
 The type checking is very strict! If you try using a list of floats (`[1.0..n]`) in the original `sumOfSquares` example, or a list of ints (`[1 ..n]`) in the `sumOfSquaresF` example, you will get a type error from the compiler.
 
@@ -117,7 +117,7 @@ Finally, F# has an interactive window where you can test the code immediately an
 
 For example, I can write my square function and immediately test it:
 
-{% highlight fsharp %}
+```fsharp
 // define the square function
 let square x = x * x
 
@@ -125,7 +125,7 @@ let square x = x * x
 let s2 = square 2
 let s3 = square 3
 let s4 = square 4
-{% endhighlight %}
+```
 
 When I am satisfied that it works, I can move on to the next bit of code.
 
@@ -141,7 +141,7 @@ My original example was written using "old-style" C#.  C# has incorporated a lot
 
 So here is another C# version -- a line-for-line translation of the F# code.
 
-{% highlight csharp %}
+```csharp
 public static class FunctionalSumOfSquaresHelper
 {
    public static int SumOfSquares(int n)
@@ -151,7 +151,7 @@ public static class FunctionalSumOfSquaresHelper
          .Sum();
    }
 }
-{% endhighlight %}
+```
 
 However, in addition to the noise of the curly braces and periods and semicolons, the C# version needs to declare the parameter and return types, unlike the F# version. 
 

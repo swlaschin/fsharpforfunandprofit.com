@@ -64,38 +64,38 @@ In this post, we'll be working with a generic `Tree` inspired by the `FileSystem
 
 Here was the original design:
 
-{% highlight fsharp %}
+```fsharp
 type FileSystemItem =
     | File of FileInfo
     | Directory of DirectoryInfo
 and FileInfo = {name:string; fileSize:int}
 and DirectoryInfo = {name:string; dirSize:int; subitems:FileSystemItem list}
-{% endhighlight fsharp %}
+```
 
 We can separate out the data from the recursion, and create a generic `Tree` type like this:
 
-{% highlight fsharp %}
+```fsharp
 type Tree<'LeafData,'INodeData> =
     | LeafNode of 'LeafData
     | InternalNode of 'INodeData * Tree<'LeafData,'INodeData> seq
-{% endhighlight fsharp %}
+```
 
 Notice that I have used `seq` to represent the subitems rather than `list`. The reason for this will become apparent shortly.
 
 The file system domain can then be modelled using `Tree` by specifying `FileInfo` as data associated with a leaf node and `DirectoryInfo` as data associated with an internal node:
 
-{% highlight fsharp %}
+```fsharp
 type FileInfo = {name:string; fileSize:int}
 type DirectoryInfo = {name:string; dirSize:int}
 
 type FileSystemItem = Tree<FileInfo,DirectoryInfo>
-{% endhighlight fsharp %}
+```
 
 ### `cata` and `fold` for Tree
 
 We can define `cata` and `fold` in the usual way:
 
-{% highlight fsharp %}
+```fsharp
 module Tree = 
 
     let rec cata fLeaf fNode (tree:Tree<'LeafData,'INodeData>) :'r = 
@@ -118,7 +118,7 @@ module Tree =
             let finalAccum = subtrees |> Seq.fold recurse localAccum 
             // ... and return it
             finalAccum 
-{% endhighlight fsharp %}
+```
 
 Note that I am *not* going to implement `foldBack` for the `Tree` type, because it's unlikely that the tree will get so deep as to cause a stack overflow.
 Functions that need inner data can use `cata`.
@@ -127,7 +127,7 @@ Functions that need inner data can use `cata`.
 
 Let's test it with the same values that we used before:
 
-{% highlight fsharp %}
+```fsharp
 let fromFile (fileInfo:FileInfo) = 
     LeafNode fileInfo 
 
@@ -140,11 +140,11 @@ let build  = fromFile {name="build.bat"; fileSize=3}
 let src = fromDir {name="src"; dirSize=10} [readme; config; build]
 let bin = fromDir {name="bin"; dirSize=10} []
 let root = fromDir {name="root"; dirSize=5} [src; bin]
-{% endhighlight fsharp %}
+```
 
 The `totalSize` function is almost identical to the one in the previous post:
 
-{% highlight fsharp %}
+```fsharp
 let totalSize fileSystemItem =
     let fFile acc (file:FileInfo) = 
         acc + file.fileSize
@@ -155,11 +155,11 @@ let totalSize fileSystemItem =
 readme |> totalSize  // 1
 src |> totalSize     // 16 = 10 + (1 + 2 + 3)
 root |> totalSize    // 31 = 5 + 16 + 10
-{% endhighlight fsharp %}
+```
 
 And so is the `largestFile` function:
 
-{% highlight fsharp %}
+```fsharp
 let largestFile fileSystemItem =
     let fFile (largestSoFarOpt:FileInfo option) (file:FileInfo) = 
         match largestSoFarOpt with
@@ -188,7 +188,7 @@ bin |> largestFile
 
 root |> largestFile    
 // Some {name = "build.bat"; fileSize = 3}
-{% endhighlight fsharp %}
+```
 
 The source code for this section is available at [this gist](https://gist.github.com/swlaschin/1ef784481bae91b63a36).
 
@@ -199,16 +199,16 @@ The source code for this section is available at [this gist](https://gist.github
 We can use the `Tree` to model the *real* file system too!  To do this,
 just set the leaf node type to `System.IO.FileInfo` and the internal node type to `System.IO.DirectoryInfo`.
 
-{% highlight fsharp %}
+```fsharp
 open System
 open System.IO
 
 type FileSystemTree = Tree<IO.FileInfo,IO.DirectoryInfo>
-{% endhighlight fsharp %}
+```
 
 And let's create some helper methods to create the various nodes:
 
-{% highlight fsharp %}
+```fsharp
 let fromFile (fileInfo:FileInfo) = 
     LeafNode fileInfo 
 
@@ -218,25 +218,25 @@ let rec fromDir (dirInfo:DirectoryInfo) =
         yield! dirInfo.EnumerateDirectories() |> Seq.map fromDir
         }
     InternalNode (dirInfo,subItems)
-{% endhighlight fsharp %}
+```
 
 Now you can see why I used `seq` rather than `list` for the subitems. The `seq` is lazy, which means that we can create nodes 
 without actually hitting the disk.
 
 Here's the `totalSize` function again, this time using the real file information:
 
-{% highlight fsharp %}
+```fsharp
 let totalSize fileSystemItem =
     let fFile acc (file:FileInfo) = 
         acc + file.Length
     let fDir acc (dir:DirectoryInfo)= 
         acc 
     Tree.fold fFile fDir 0L fileSystemItem 
-{% endhighlight fsharp %}
+```
 
 Let's see what the size of the current directory is:
 
-{% highlight fsharp %}
+```fsharp
 // set the current directory to the current source directory
 Directory.SetCurrentDirectory __SOURCE_DIRECTORY__
 
@@ -245,11 +245,11 @@ let currentDir = fromDir (DirectoryInfo("."))
 
 // get the size of the current directory 
 currentDir  |> totalSize  
-{% endhighlight fsharp %}
+```
 
 Similarly, we can get the largest file:
 
-{% highlight fsharp %}
+```fsharp
 let largestFile fileSystemItem =
     let fFile (largestSoFarOpt:FileInfo option) (file:FileInfo) = 
         match largestSoFarOpt with
@@ -268,7 +268,7 @@ let largestFile fileSystemItem =
     Tree.fold fFile fDir None fileSystemItem
 
 currentDir |> largestFile  
-{% endhighlight fsharp %}
+```
 
 So that's one big benefit of using generic recursive types. If we can turn a real-world hierarchy into our tree structure, we can get all the benefits of fold "for free".
 
@@ -293,7 +293,7 @@ The implementation of `map` can also be done mechanically, using the following r
 
 Here's the implementation of `map` for `Tree`, created by following those rules:
   
-{% highlight fsharp %}
+```fsharp
 module Tree = 
 
     let rec cata ...
@@ -310,22 +310,22 @@ module Tree =
             let newNodeInfo = fNode nodeInfo
             let newSubtrees = subtrees |> Seq.map recurse 
             InternalNode (newNodeInfo, newSubtrees)
-{% endhighlight fsharp %}
+```
 
 If we look at the signature of `Tree.map`, we can see that all the leaf data is transformed to type `'a`, all the node data is transformed to type `'b`,
 and the final result is a `Tree<'a,'b>`.
 
-{% highlight fsharp %}
+```fsharp
 val map :
   fLeaf:('LeafData -> 'a) ->
   fNode:('INodeData -> 'b) ->
   tree:Tree<'LeafData,'INodeData> -> 
   Tree<'a,'b>
-{% endhighlight fsharp %}
+```
 
 We can define `Tree.iter` in a similar way:
 
-{% highlight fsharp %}
+```fsharp
 module Tree = 
 
     let rec map ...
@@ -338,7 +338,7 @@ module Tree =
         | InternalNode (nodeInfo,subtrees) -> 
             subtrees |> Seq.iter recurse 
             fNode nodeInfo
-{% endhighlight fsharp %}
+```
 
 
 <a id="listing"></a>
@@ -349,7 +349,7 @@ module Tree =
 Let's say we want to use `map` to transform the file system into a directory listing - a tree of strings where each string has information
 about the corresponding file or directory. Here's how we could do it:
 
-{% highlight fsharp %}
+```fsharp
 let dirListing fileSystemItem =
     let printDate (d:DateTime) = d.ToString()
     let mapFile (fi:FileInfo) = 
@@ -357,25 +357,25 @@ let dirListing fileSystemItem =
     let mapDir (di:DirectoryInfo) = 
         di.FullName 
     Tree.map mapFile mapDir fileSystemItem
-{% endhighlight fsharp %}
+```
 
 And then we can print the strings out like this:
 
-{% highlight fsharp %}
+```fsharp
 currentDir 
 |> dirListing 
 |> Tree.iter (printfn "%s") (printfn "\n%s")
-{% endhighlight fsharp %}
+```
 
 The results will look something like this:
 
-{% highlight text %}
+```text
   8315  10/08/2015 23:37:41  Fold.fsx
   3680  11/08/2015 23:59:01  FoldAndRecursiveTypes.fsproj
   1010  11/08/2015 01:19:07  FoldAndRecursiveTypes.sln
   1107  11/08/2015 23:59:01  HtmlDom.fsx
     79  11/08/2015 01:21:54  LinkedList.fsx
-{% endhighlight text %}
+```
 
 *The source code for this example is available at [this gist](https://gist.github.com/swlaschin/77fadc19acb8cc850276).*
 
@@ -399,7 +399,7 @@ Before we start writing the main code, we'll need some helper functions.
 First, a generic function that folds over the lines in a file asynchronously.
 This will be the basis of the pattern matching.
 
-{% highlight fsharp %}
+```fsharp
 /// Fold over the lines in a file asynchronously
 /// passing in the current line and line number tothe folder function.
 ///
@@ -419,19 +419,19 @@ let foldLinesAsync folder acc (fi:FileInfo) =
             lineNo <- lineNo + 1
         return acc
     }
-{% endhighlight fsharp %}
+```
 
 Next, a little helper that allows us to `map` over `Async` values:
 
-{% highlight fsharp %}
+```fsharp
 let asyncMap f asyncX = async { 
     let! x = asyncX
     return (f x)  }
-{% endhighlight fsharp %}
+```
 
 Now for the central logic. We will create a function that, given a `textPattern` and a `FileInfo`, will return a list of lines that match the textPattern, but asynchronously:
 
-{% highlight fsharp %}
+```fsharp
 /// return the matching lines in a file, as an async<string list>
 let matchPattern textPattern (fi:FileInfo) = 
     // set up the regex
@@ -451,11 +451,11 @@ let matchPattern textPattern (fi:FileInfo) =
     |> foldLinesAsync folder []
     // the fold output is in reverse order, so reverse it
     |> asyncMap List.rev
-{% endhighlight fsharp %}
+```
 
 And now for the `grep` function itself:
 
-{% highlight fsharp %}
+```fsharp
 let grep filePattern textPattern fileSystemItem =
     let regex = Text.RegularExpressions.Regex(pattern=filePattern)
 
@@ -481,19 +481,19 @@ let grep filePattern textPattern fileSystemItem =
     |> Seq.choose id              // choose the Somes (where a file was processed)
     |> Async.Parallel             // merge all asyncs into a single async
     |> asyncMap (Array.toList >> List.collect id)  // flatten array of lists into a single list
-{% endhighlight fsharp %}
+```
 
 Let's test it!
 
-{% highlight fsharp %}
+```fsharp
 currentDir 
 |> grep "fsx" "LinkedList" 
 |> Async.RunSynchronously
-{% endhighlight fsharp %}
+```
 
 The result will look something like this:
 
-{% highlight text %}
+```text
 "                  SizeOfTypes.fsx:120     type LinkedList<'a> = ";
 "                  SizeOfTypes.fsx:122         | Cell of head:'a * tail:LinkedList<'a>";
 "                  SizeOfTypes.fsx:125     let S = size(LinkedList<'a>)";
@@ -503,7 +503,7 @@ The result will look something like this:
 "      RecursiveTypesAndFold-3.fsx:26      module LinkedList = ";
 "      RecursiveTypesAndFold-3.fsx:39              list:LinkedList<'a> ";
 "      RecursiveTypesAndFold-3.fsx:64              list:LinkedList<'a> -> ";
-{% endhighlight text %}
+```
 
 That's not bad for about 40 lines of code. This conciseness is because we are using various kinds of `fold` and `map` which hide the recursion, allowing
 us to focus on the pattern matching logic itself.
@@ -529,7 +529,7 @@ To model the file system hierarchy in the database, say that we have four tables
 
 Here are the database table definitions:
 
-{% highlight text %}
+```text
 CREATE TABLE DbDir (
 	DirId int IDENTITY NOT NULL,
 	Name nvarchar(50) NOT NULL
@@ -550,7 +550,7 @@ CREATE TABLE DbDir_Dir (
 	ParentDirId int NOT NULL,
 	ChildDirId int NOT NULL
 )
-{% endhighlight text %}
+```
 
 That's simple enough. But note that in order to save a directory completely along with its relationships to its child items, we first need the ids of all its children,
 and each child directory needs the ids of its children, and so on.
@@ -562,16 +562,16 @@ This implies that we should use `cata` instead of `fold`, so that we have access
 We're not wise enough to be using the [SQL Provider](https://fsprojects.github.io/SQLProvider/) and so we have written our
 own table insertion functions, like this dummy one:
 
-{% highlight fsharp %}
+```fsharp
 /// Insert a DbFile record 
 let insertDbFile name (fileSize:int64) =
     let id = nextIdentity()
     printfn "%10s: inserting id:%i name:%s size:%i" "DbFile" id name fileSize
-{% endhighlight fsharp %}
+```
 
 In a real database, the identity column would be automatically generated for you, but for this example, I'll use a little helper function `nextIdentity`:
 
-{% highlight fsharp %}
+```fsharp
 let nextIdentity =
     let id = ref 0
     fun () -> 
@@ -582,43 +582,43 @@ let nextIdentity =
 nextIdentity() // 1
 nextIdentity() // 2
 nextIdentity() // 3
-{% endhighlight fsharp %}
+```
 
 Now in order to insert a directory, we need to first know all the ids of the files in the directory. This implies that the `insertDbFile` function should
 return the id that was generated.
 
-{% highlight fsharp %}
+```fsharp
 /// Insert a DbFile record and return the new file id
 let insertDbFile name (fileSize:int64) =
     let id = nextIdentity()
     printfn "%10s: inserting id:%i name:%s size:%i" "DbFile" id name fileSize
     id
-{% endhighlight fsharp %}
+```
 
 But that logic applies to the directories too:
 
-{% highlight fsharp %}
+```fsharp
 /// Insert a DbDir record and return the new directory id
 let insertDbDir name =
     let id = nextIdentity()
     printfn "%10s: inserting id:%i name:%s" "DbDir" id name
     id
-{% endhighlight fsharp %}
+```
 
 But that's still not good enough. When the child ids are passed to the parent directory, it needs to distinguish between files and directories, because
 the relations are stored in different tables.
 
 No problem -- we'll just use a choice type to distinguish between them!
 
-{% highlight fsharp %}
+```fsharp
 type PrimaryKey =
     | FileId of int
     | DirId of int
-{% endhighlight fsharp %}
+```
 
 With this in place, we can complete the implementation of the database functions:
 
-{% highlight fsharp %}
+```fsharp
 /// Insert a DbFile record and return the new PrimaryKey
 let insertDbFile name (fileSize:int64) =
     let id = nextIdentity()
@@ -638,7 +638,7 @@ let insertDbDir_File dirId fileId =
 /// Insert a DbDir_Dir record
 let insertDbDir_Dir parentDirId childDirId =
     printfn "%10s: inserting parentDir:%i childDir:%i" "DbDir_Dir" parentDirId childDirId
-{% endhighlight fsharp %}
+```
 
 ### Working with the catamorphism
 
@@ -646,27 +646,27 @@ As noted above, we need to use `cata` instead of `fold`, because we need the inn
 
 The function to handle the `File` case is easy -- just insert it and return the `PrimaryKey`.
 
-{% highlight fsharp %}
+```fsharp
 let fFile (fi:FileInfo) = 
     insertDbFile fi.Name fi.Length
-{% endhighlight fsharp %}
+```
 
 The function to handle the `Directory` case will be passed the `DirectoryInfo` and a sequence of `PrimaryKey`s from the children that have already been inserted.
 
 It should insert the main directory record, then insert the children, and then return the `PrimaryKey` for the next higher level:
 
-{% highlight fsharp %}
+```fsharp
 let fDir (di:DirectoryInfo) childIds  = 
     let dirId = insertDbDir di.Name
     // insert the children
     // return the id to the parent
     dirId
-{% endhighlight fsharp %}
+```
 
 After inserting the directory record and getting its id, for each child id, we insert either into the `DbDir_File` table or the `DbDir_Dir`,
 depending on the type of the `childId`.
 
-{% highlight fsharp %}
+```fsharp
 let fDir (di:DirectoryInfo) childIds  = 
     let dirId = insertDbDir di.Name
     let parentPK = pkToInt dirId 
@@ -677,13 +677,13 @@ let fDir (di:DirectoryInfo) childIds  =
     )
     // return the id to the parent
     dirId
-{% endhighlight fsharp %}
+```
 
 Note that I've also created a little helper function `pkToInt` that extracts the integer id from the `PrimaryKey` type.
 
 Here is all the code in one chunk:
 
-{% highlight fsharp %}
+```fsharp
 open System
 open System.IO
 
@@ -740,22 +740,22 @@ let insertFileSystemTree fileSystemItem =
 
     fileSystemItem
     |> Tree.cata fFile fDir 
-{% endhighlight fsharp %}
+```
 
 Now let's test it:
 
-{% highlight fsharp %}
+```fsharp
 // get the current directory as a Tree
 let currentDir = fromDir (DirectoryInfo("."))
 
 // insert into the database
 currentDir 
 |> insertFileSystemTree
-{% endhighlight fsharp %}
+```
 
 The output should look something like this:
 
-{% highlight text %}
+```text
      DbDir: inserting id:41 name:FoldAndRecursiveTypes
     DbFile: inserting id:42 name:Fold.fsx size:8315
 DbDir_File: inserting parentDir:41 childFile:42
@@ -768,7 +768,7 @@ DbDir_File: inserting parentDir:41 childFile:44
      DbDir: inserting id:58 name:Debug
  DbDir_Dir: inserting parentDir:57 childDir:58
  DbDir_Dir: inserting parentDir:41 childDir:57
-{% endhighlight text %}
+```
 
 You can see that the ids are being generated as the files are iterated over, and that each `DbFile` insert is followed by a `DbDir_File` insert.
 
@@ -788,7 +788,7 @@ Let's use the Gift domain again, but this time, we'll model the `Gift` type as a
 
 Here are the main types again, but notice that the final `Gift` type is defined as a tree:
 
-{% highlight fsharp %}
+```fsharp
 type Book = {title: string; price: decimal}
 type ChocolateType = Dark | Milk | SeventyPercent
 type Chocolate = {chocType: ChocolateType ; price: decimal}
@@ -810,11 +810,11 @@ type GiftDecoration =
     | WithACard of string
 
 type Gift = Tree<GiftContents,GiftDecoration>
-{% endhighlight fsharp %}
+```
 
 As usual, we can create some helper functions to assist with constructing a `Gift`:
 
-{% highlight fsharp %}
+```fsharp
 let fromBook book = 
     LeafNode (Book book)
 
@@ -836,11 +836,11 @@ let withCard message innerGift =
 let putTwoThingsInBox innerGift innerGift2 = 
     let container = Boxed
     InternalNode (container, [innerGift;innerGift2])
-{% endhighlight fsharp %}
+```
 
 And we can create some sample data:
 
-{% highlight fsharp %}
+```fsharp
 let wolfHall = {title="Wolf Hall"; price=20m}
 let yummyChoc = {chocType=SeventyPercent; price=5m}
 
@@ -866,11 +866,11 @@ let twoWrappedPresentsInBox =
     let thing1 = wolfHall |> fromBook |> wrapInPaper HappyHolidays
     let thing2 = yummyChoc |> fromChoc  |> wrapInPaper HappyBirthday
     putTwoThingsInBox thing1 thing2 
-{% endhighlight fsharp %}
+```
 
 Functions like `description` now need to handle a *list* of inner texts, rather than one. We'll just concat the strings together with an `&` separator:
 
-{% highlight fsharp %}
+```fsharp
 let description gift =
 
     let fLeaf leafData = 
@@ -892,11 +892,11 @@ let description gift =
 
     // main call
     Tree.cata fLeaf fNode gift  
-{% endhighlight fsharp %}
+```
 
 Finally, we can check that the function still works as before, and that multiple items are handled correctly:
 
-{% highlight fsharp %}
+```fsharp
 birthdayPresent |> description
 // "'Wolf Hall' wrapped in HappyBirthday paper with a card saying 'Happy Birthday'"
 
@@ -911,7 +911,7 @@ twoWrappedPresentsInBox |> description
 // "'Wolf Hall' wrapped in HappyHolidays paper 
 //   & SeventyPercent chocolate wrapped in HappyBirthday paper 
 //   in a box"
-{% endhighlight fsharp %}
+```
 
 ### Step 1: Defining `GiftDto` 
 
@@ -938,7 +938,7 @@ do proper validation.
 So, let's define some DTO types for out domain. Each DTO type will correspond to a domain type, so let's start with `GiftContents`.
 We'll define a corresponding DTO type called `GiftContentsDto` as follows:
 
-{% highlight fsharp %}
+```fsharp
 [<CLIMutableAttribute>]
 type GiftContentsDto = {
     discriminator : string // "Book" or "Chocolate"
@@ -949,7 +949,7 @@ type GiftContentsDto = {
     // for all cases
     price: decimal
     }
-{% endhighlight fsharp %}
+```
 
 Obviously, this quite different from the original `GiftContents`, so let's look at the differences:
 
@@ -962,7 +962,7 @@ Obviously, this quite different from the original `GiftContents`, so let's look 
 
 The `GiftDecorationDto` type is created in the same way, with a discriminator and strings rather than unions.
 
-{% highlight fsharp %}
+```fsharp
 [<CLIMutableAttribute>]
 type GiftDecorationDto = {
     discriminator: string // "Wrapped" or "Boxed" or "WithACard"
@@ -971,13 +971,13 @@ type GiftDecorationDto = {
     // for "WithACard" case only
     message: string  
     }
-{% endhighlight fsharp %}
+```
 
 Finally, we can define a `GiftDto` type as being a tree that is composed of the two DTO types:
 
-{% highlight fsharp %}
+```fsharp
 type GiftDto = Tree<GiftContentsDto,GiftDecorationDto>
-{% endhighlight fsharp %}
+```
 
 ### Step 2: Transforming a `Gift` to a `GiftDto` 
 
@@ -987,7 +987,7 @@ that converts from `GiftDecoration` to `GiftDecorationDto`.
 
 Here's the complete code for `giftToDto`, which should be self-explanatory:
 
-{% highlight fsharp %}
+```fsharp
 let giftToDto (gift:Gift) :GiftDto =
     
     let fLeaf leafData :GiftContentsDto = 
@@ -1010,7 +1010,7 @@ let giftToDto (gift:Gift) :GiftDto =
 
     // main call
     Tree.map fLeaf fNode gift  
-{% endhighlight fsharp %}
+```
 
 You can see that the case (`Book`, `Chocolate`, etc.) is turned into a `discriminator` string and the `chocolateType` is also turned into a string, just
 as explained above.
@@ -1026,7 +1026,7 @@ If the leaf value is not null, then the record must represent the `LeafNode` cas
 
 Here's the definition of the data type:
 
-{% highlight fsharp %}
+```fsharp
 /// A DTO that represents a Tree
 /// The Leaf/Node choice is turned into a record
 [<CLIMutableAttribute>]
@@ -1034,14 +1034,14 @@ type TreeDto<'LeafData,'NodeData> = {
     leafData : 'LeafData
     nodeData : 'NodeData
     subtrees : TreeDto<'LeafData,'NodeData>[] }
-{% endhighlight fsharp %}
+```
 
 As before, the type has the `CLIMutableAttribute`. And as before, the type has fields to store the data from all possible choices.
 The `subtrees` are stored as an array rather than a seq -- this makes the serializer happy! 
 
 To create a `TreeDto`, we use our old friend `cata` to assemble the record from a regular `Tree`.
 
-{% highlight fsharp %}
+```fsharp
 /// Transform a Tree into a TreeDto
 let treeToDto tree : TreeDto<'LeafData,'NodeData> =
     
@@ -1057,7 +1057,7 @@ let treeToDto tree : TreeDto<'LeafData,'NodeData> =
 
     // recurse to build up the TreeDto
     Tree.cata fLeaf fNode tree 
-{% endhighlight fsharp %}
+```
 
 Note that in F#, records are not nullable, so I am using `Unchecked.defaultof<'NodeData>` rather than `null` to indicate missing data.
 
@@ -1074,7 +1074,7 @@ Finally we can serialize the `TreeDto` using a JSON serializer.
 For this example, I am using the built-in `DataContractJsonSerializer` so that I don't need to take
 a dependency on a NuGet package. There are other JSON serializers that might be better for a serious project.
 
-{% highlight fsharp %}
+```fsharp
 #r "System.Runtime.Serialization.dll"
 
 open System.Runtime.Serialization
@@ -1087,7 +1087,7 @@ let toJson (o:'a) =
     serializer.WriteObject(stream,o) 
     stream.Close()
     encoding.GetString(stream.ToArray())
-{% endhighlight fsharp %}
+```
 
 ### Step 5: Assembling the pipeline
 
@@ -1101,13 +1101,13 @@ So, putting it all together, we have the following pipeline:
 
 Here's some example code:
 
-{% highlight fsharp %}
+```fsharp
 let goodJson = christmasPresent |> giftToDto |> treeToDto |> toJson  
-{% endhighlight fsharp %}
+```
 
 And here is what the JSON output looks like:
 
-{% highlight text %}
+```text
 {
   "leafData@": null,
   "nodeData@": {
@@ -1138,7 +1138,7 @@ And here is what the JSON output looks like:
     }
   ]
 }
-{% endhighlight text %}
+```
 
 The ugly `@` signs on the field names are an artifact of serializing the F# record type.
 This can be corrected with a bit of effort, but I'm not going to bother right now!
@@ -1165,14 +1165,14 @@ Simple! We just need to reverse the pipeline:
 
 We can deserialize the `TreeDto` using a JSON serializer.
 
-{% highlight fsharp %}
+```fsharp
 let fromJson<'a> str = 
     let serializer = new DataContractJsonSerializer(typeof<'a>)
     let encoding = System.Text.UTF8Encoding()
     use stream = new System.IO.MemoryStream(encoding.GetBytes(s=str))
     let obj = serializer.ReadObject(stream) 
     obj :?> 'a
-{% endhighlight fsharp %}
+```
 
 What if the deserialization fails? For now, we will ignore any error handling and let the exception propagate.
 
@@ -1181,7 +1181,7 @@ What if the deserialization fails? For now, we will ignore any error handling an
 To transform a `TreeDto` into a `Tree` we recursively loop through the record and its subtrees, turning each one into a `InternalNode`
 or a `LeafNode`, based on whether the appropriate field is null or not.
 
-{% highlight fsharp %}
+```fsharp
 let rec dtoToTree (treeDto:TreeDto<'Leaf,'Node>) :Tree<'Leaf,'Node> =
     let nullLeaf = Unchecked.defaultof<'Leaf>
     let nullNode = Unchecked.defaultof<'Node>
@@ -1199,7 +1199,7 @@ let rec dtoToTree (treeDto:TreeDto<'Leaf,'Node>) :Tree<'Leaf,'Node> =
     // if both missing then fail
     else
         failwith "expecting leaf or node data"
-{% endhighlight fsharp %}
+```
 
 As you can see, a number of things could go wrong:
 
@@ -1225,7 +1225,7 @@ The code can be grouped as follows:
 * And finally, the `dtoToGift` function itself.  It looks at the `discriminator` field to see which case converter to call,
   and throws an exception if the discriminator value is not recognized.
 
-{% highlight fsharp %}
+```fsharp
 let strToBookTitle str =
     match str with
     | null -> failwith "BookTitle must not be null" 
@@ -1287,49 +1287,49 @@ let dtoToGift (giftDto:GiftDto) :Gift=
 
     // map the tree
     Tree.map fLeaf fNode giftDto  
-{% endhighlight fsharp %}
+```
 
 ### Step 4: Assembling the pipeline
 
 We can now assemble the pipeline that takes a JSON string and creates a `Gift`.
 
-{% highlight fsharp %}
+```fsharp
 let goodGift = goodJson |> fromJson |> dtoToTree |> dtoToGift
 
 // check that the description is unchanged
 goodGift |> description
 // "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
-{% endhighlight fsharp %}
+```
 
 This works fine, but the error handling is terrible!
 
 Look what happens if we corrupt the JSON a little:
 
-{% highlight fsharp %}
+```fsharp
 let badJson1 = goodJson.Replace("leafData","leafDataXX")
 
 let badJson1_result = badJson1 |> fromJson |> dtoToTree |> dtoToGift
 // Exception "The data contract type 'TreeDto' cannot be deserialized because the required data member 'leafData@' was not found."
-{% endhighlight fsharp %}
+```
 
 We get an ugly exception.
 
 Or what if a discriminator is wrong?
 
-{% highlight fsharp %}
+```fsharp
 let badJson2 = goodJson.Replace("Wrapped","Wrapped2")
 
 let badJson2_result = badJson2 |> fromJson |> dtoToTree |> dtoToGift
 // Exception "Unknown node discriminator 'Wrapped2'"
-{% endhighlight fsharp %}
+```
 
 or one of the values for the WrappingPaperStyle DU?
 
-{% highlight fsharp %}
+```fsharp
 let badJson3 = goodJson.Replace("HappyHolidays","HappyHolidays2")
 let badJson3_result = badJson3 |> fromJson |> dtoToTree |> dtoToGift
 // Exception "WrappingPaperStyle HappyHolidays2 not recognized"
-{% endhighlight fsharp %}
+```
 
 We get lots of exceptions, and as as functional programmers, we should try to remove them whenever we can.
 
@@ -1344,11 +1344,11 @@ How we can do that will be discussed in the next section.
 
 To address the error handling issue, we're going use the `Result` type shown below:
 
-{% highlight fsharp %}
+```fsharp
 type Result<'a> = 
     | Success of 'a
     | Failure of string list
-{% endhighlight fsharp %}
+```
 
 I'm not going to explain how it works here.
 If you are not familar with this approach, please [read my post](/posts/recipe-part2/) or [watch my talk](/rop/) on the topic of functional error handling.
@@ -1359,7 +1359,7 @@ Let's revisit all the steps from the previous section, and use `Result` rather t
 
 When we deserialize the `TreeDto` using a JSON serializer we will trap exceptions and turn them into a `Result`.
 
-{% highlight fsharp %}
+```fsharp
 let fromJson<'a> str = 
     try
         let serializer = new DataContractJsonSerializer(typeof<'a>)
@@ -1371,7 +1371,7 @@ let fromJson<'a> str =
     with
     | ex -> 
         Result.failWithMsg ex.Message
-{% endhighlight fsharp %}
+```
 
 The signature of `fromJson` is now `string -> Result<'a>`.
 
@@ -1380,7 +1380,7 @@ The signature of `fromJson` is now `string -> Result<'a>`.
 As before, we transform a `TreeDto` into a `Tree` by recursively looping through the record and its subtrees, turning each one into a `InternalNode`
 or a `LeafNode`. This time, though, we use `Result` to handle any errors.
 
-{% highlight fsharp %}
+```fsharp
 let rec dtoToTreeOfResults (treeDto:TreeDto<'Leaf,'Node>) :Tree<Result<'Leaf>,Result<'Node>> =
     let nullLeaf = Unchecked.defaultof<'Leaf>
     let nullNode = Unchecked.defaultof<'Node>
@@ -1401,7 +1401,7 @@ let rec dtoToTreeOfResults (treeDto:TreeDto<'Leaf,'Node>) :Tree<Result<'Leaf>,Re
         
 // val dtoToTreeOfResults : 
 //   treeDto:TreeDto<'Leaf,'Node> -> Tree<Result<'Leaf>,Result<'Node>>
-{% endhighlight fsharp %}
+```
 
 But uh-oh, we now have a `Tree` where every internal node and leaf is wrapped in a `Result`.  It's a tree of `Results`!
 The actual ugly signature is this: `Tree<Result<'Leaf>,Result<'Node>>`.
@@ -1426,7 +1426,7 @@ is a mechanical process:
 Here is the actual code -- don't worry if you can't understand it immediately. Luckily, we only need to write it once for each combination
 of types, so for any kind of Tree/Result combination in the future, we're set!
 
-{% highlight fsharp %}
+```fsharp
 /// Convert a tree of Results into a Result of tree
 let sequenceTreeOfResult tree =
     // from the lower level
@@ -1447,17 +1447,17 @@ let sequenceTreeOfResult tree =
     
 // val sequenceTreeOfResult :
 //    tree:Tree<Result<'a>,Result<'b>> -> Result<Tree<'a,'b>>
-{% endhighlight fsharp %}
+```
 
 Finally, the actual `dtoToTree` function is simple -- just send the `treeDto` through `dtoToTreeOfResults` and then use `sequenceTreeOfResult` to
 convert the final result into a `Result<Tree<..>>`, which is just what we need.
 
-{% highlight fsharp %}
+```fsharp
 let dtoToTree treeDto =
     treeDto |> dtoToTreeOfResults |> sequenceTreeOfResult 
     
 // val dtoToTree : treeDto:TreeDto<'a,'b> -> Result<Tree<'a,'b>>    
-{% endhighlight fsharp %}
+```
 
 ### Step 3: Transforming a `GiftDto` into a `Gift`
 
@@ -1470,7 +1470,7 @@ use `sequenceTreeOfResult` again to get it back into the correct `Result<Tree<..
 Let's start with the helper methods (such as `strToChocolateType`) that convert a string into a proper domain type.
 This time, they return a `Result` rather than throwing an exception.
 
-{% highlight fsharp %}
+```fsharp
 let strToBookTitle str =
     match str with
     | null -> Result.failWithMsg "BookTitle must not be null"
@@ -1494,13 +1494,13 @@ let strToCardMessage str =
     match str with
     | null -> Result.failWithMsg "CardMessage must not be null" 
     | _ -> Result.retn str
-{% endhighlight fsharp %}
+```
 
 The case converter methods have to build a `Book` or `Chocolate` from parameters that are `Result`s rather than normal values. This is
 where lifting functions like `Result.lift2` can help.
 For details on how this works, see [this post on lifting](/posts/elevated-world/#lift) and [this one on validation with applicatives](/posts/elevated-world-3/#validation).
   
-{% highlight fsharp %}
+```fsharp
 let bookFromDto (dto:GiftContentsDto) =
     let book bookTitle price = 
         Book {title=bookTitle; price=price}
@@ -1527,21 +1527,21 @@ let boxedFromDto (dto:GiftDecorationDto) =
 let withACardFromDto (dto:GiftDecorationDto) =
     let message = strToCardMessage dto.message
     Result.map WithACard message 
-{% endhighlight fsharp %}
+```
 
 And finally, the `dtoToGift` function itself is changed to return a `Result` if the `discriminator` is invalid.  
 
 As before, this mapping creates a Tree of Results, so we pipe the output of the `Tree.map` through `sequenceTreeOfResult` ...
 
-{% highlight fsharp %}
+```fsharp
 `Tree.map fLeaf fNode giftDto |> sequenceTreeOfResult`
-{% endhighlight fsharp %}
+```
 
 ... to return a Result of Tree.
 
 Here's the complete code for `dtoToGift`:
 
-{% highlight fsharp %}
+```fsharp
 open TreeDto_WithErrorHandling
 
 /// Transform a GiftDto to a Result<Gift>
@@ -1562,13 +1562,13 @@ let dtoToGift (giftDto:GiftDto) :Result<Gift>=
 
     // map the tree
     Tree.map fLeaf fNode giftDto |> sequenceTreeOfResult   
-{% endhighlight fsharp %}
+```
 
 The type signature of `dtoToGift` has changed -- it now returns a `Result<Gift>` rather than just a `Gift`.
 
-{% highlight fsharp %}
+```fsharp
 // val dtoToGift : GiftDto -> Result<GiftUsingTree.Gift>
-{% endhighlight fsharp %}
+```
 
 
 ### Step 4: Assembling the pipeline
@@ -1584,43 +1584,43 @@ In both case, `Result.bind` can be used to solve that problem of mis-matched out
 
 Ok, let's try deserializing the `goodJson` string we created earlier.
 
-{% highlight fsharp %}
+```fsharp
 let goodGift = goodJson |> fromJson |> Result.bind dtoToTree |> Result.bind dtoToGift
 
 // check that the description is unchanged
 goodGift |> description
 // Success "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
-{% endhighlight fsharp %}
+```
 
 That's fine. 
 
 Let's see if the error handling has improved now.
 We'll corrupt the JSON again:
 
-{% highlight fsharp %}
+```fsharp
 let badJson1 = goodJson.Replace("leafData","leafDataXX")
 
 let badJson1_result = badJson1 |> fromJson |> Result.bind dtoToTree |> Result.bind dtoToGift
 // Failure ["The data contract type 'TreeDto' cannot be deserialized because the required data member 'leafData@' was not found."]
-{% endhighlight fsharp %}
+```
 
 Great! We get an nice `Failure` case.
 
 Or what if a discriminator is wrong?
 
-{% highlight fsharp %}
+```fsharp
 let badJson2 = goodJson.Replace("Wrapped","Wrapped2")
 let badJson2_result = badJson2 |> fromJson |> Result.bind dtoToTree |> Result.bind dtoToGift
 // Failure ["Unknown node discriminator 'Wrapped2'"]
-{% endhighlight fsharp %}
+```
 
 or one of the values for the WrappingPaperStyle DU?
 
-{% highlight fsharp %}
+```fsharp
 let badJson3 = goodJson.Replace("HappyHolidays","HappyHolidays2")
 let badJson3_result = badJson3 |> fromJson |> Result.bind dtoToTree |> Result.bind dtoToGift
 // Failure ["WrappingPaperStyle HappyHolidays2 not recognized"]
-{% endhighlight fsharp %}
+```
 
 Again, nice `Failure` cases. 
 
@@ -1629,14 +1629,14 @@ more than one error, the various errors can be aggregated so that we get a list 
 
 Let's see this in action by introducing two errors into the JSON string:
 
-{% highlight fsharp %}
+```fsharp
 // create two errors
 let badJson4 = goodJson.Replace("HappyHolidays","HappyHolidays2")
                        .Replace("SeventyPercent","SeventyPercent2")
 let badJson4_result = badJson4 |> fromJson |> Result.bind dtoToTree |> Result.bind dtoToGift
 // Failure ["WrappingPaperStyle HappyHolidays2 not recognized"; 
 //          "ChocolateType SeventyPercent2 not recognized"]
-{% endhighlight fsharp %}
+```
 
 So overall, I'd say that's a success!
 

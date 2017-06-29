@@ -66,7 +66,7 @@ Before we look at the flaw, let's first review the recursive type `Gift` and the
 
 Here's the domain:
 
-{% highlight fsharp %}
+```fsharp
 type Book = {title: string; price: decimal}
 
 type ChocolateType = Dark | Milk | SeventyPercent
@@ -83,11 +83,11 @@ type Gift =
     | Wrapped of Gift * WrappingPaperStyle
     | Boxed of Gift 
     | WithACard of Gift * message:string
-{% endhighlight fsharp %}
+```
 
 Here are some example values that we'll be using in this post:
 
-{% highlight fsharp %}
+```fsharp
 // A Book
 let wolfHall = {title="Wolf Hall"; price=20m}
 // A Chocolate
@@ -96,11 +96,11 @@ let yummyChoc = {chocType=SeventyPercent; price=5m}
 let birthdayPresent = WithACard (Wrapped (Book wolfHall, HappyBirthday), "Happy Birthday")
 // A Gift
 let christmasPresent = Wrapped (Boxed (Chocolate yummyChoc), HappyHolidays)
-{% endhighlight fsharp %}
+```
 
 Here's the catamorphism:
 
-{% highlight fsharp %}
+```fsharp
 let rec cataGift fBook fChocolate fWrapped fBox fCard gift :'r =
     let recurse = cataGift fBook fChocolate fWrapped fBox fCard
     match gift with 
@@ -114,11 +114,11 @@ let rec cataGift fBook fChocolate fWrapped fBox fCard gift :'r =
         fBox (recurse gift)
     | WithACard (gift,message) -> 
         fCard (recurse gift,message) 
-{% endhighlight fsharp %}
+```
 
 and here is a `totalCostUsingCata` function built using `cataGift`:
 
-{% highlight fsharp %}
+```fsharp
 let totalCostUsingCata gift =
     let fBook (book:Book) = 
         book.price
@@ -132,7 +132,7 @@ let totalCostUsingCata gift =
         innerCost + 2.0m
     // call the catamorphism
     cataGift fBook fChocolate fWrapped fBox fCard gift
-{% endhighlight fsharp %}
+```
 
 ### What's the flaw?
 
@@ -142,42 +142,42 @@ What we'll do is create a `Box` inside a `Box` inside a `Box` a very large numbe
 
 Here's a little helper function to create nested boxes:
 
-{% highlight fsharp %}
+```fsharp
 let deeplyNestedBox depth =
     let rec loop depth boxSoFar =
         match depth with
         | 0 -> boxSoFar 
         | n -> loop (n-1) (Boxed boxSoFar)
     loop depth (Book wolfHall)
-{% endhighlight fsharp %}
+```
 
 Let's try it to make sure it works:
 
-{% highlight fsharp %}
+```fsharp
 deeplyNestedBox 5
 // Boxed (Boxed (Boxed (Boxed (Boxed (Book {title = "Wolf Hall"; price = 20M})))))
 
 deeplyNestedBox 10
 //  Boxed(Boxed(Boxed(Boxed(Boxed
 //   (Boxed(Boxed(Boxed(Boxed(Boxed(Book {title = "Wolf Hall";price = 20M}))))))))))
-{% endhighlight fsharp %}
+```
 
 Now try running `totalCostUsingCata` with these deeply nested boxes:
 
-{% highlight fsharp %}
+```fsharp
 deeplyNestedBox 10 |> totalCostUsingCata       // OK     30.0M
 deeplyNestedBox 100 |> totalCostUsingCata      // OK    120.0M
 deeplyNestedBox 1000 |> totalCostUsingCata     // OK   1020.0M
-{% endhighlight fsharp %}
+```
 
 So far so good.
 
 But if we use much larger numbers, we soon run into a stack overflow exception:
 
-{% highlight fsharp %}
+```fsharp
 deeplyNestedBox 10000 |> totalCostUsingCata  // Stack overflow?
 deeplyNestedBox 100000 |> totalCostUsingCata // Stack overflow?
-{% endhighlight fsharp %}
+```
 
 The exact number which causes an error depends on the environment, available memory, and so on.
 But it is a certainty that you will run into it when you start using largish numbers.
@@ -189,7 +189,7 @@ Why is this happening?
 Recall that the definition of the cost for the Boxed case (`fBox`) was `innerCost + 1.0m`.
 And what is the inner cost?  That's another box too, so we end up with a chain of calculations looking like this:
 
-{% highlight fsharp %}
+```fsharp
 innerCost + 1.0m where innerCost = 
   innerCost2 + 1.0m where innerCost2 = 
     innerCost3 + 1.0m where innerCost3 = 
@@ -198,7 +198,7 @@ innerCost + 1.0m where innerCost =
         innerCost999 + 1.0m where innerCost999 = 
           innerCost1000 + 1.0m where innerCost1000 = 
             book.price
-{% endhighlight fsharp %}
+```
 
 In other words, `innerCost1000` has to be calculated before `innerCost999` can be calculated,
 and 999 other inner costs have to be calculated before the top level `innerCost` can be calculated.
@@ -212,7 +212,7 @@ All these unfinished calculations are stacked up waiting for the inner one to co
 The solution to this problem is simple. Rather than each level waiting for the inner cost to be calculated, each level calculates the cost so far, using an accumulator,
 and passes that down to the next inner level. When we get to the bottom level, we have the final answer.
 
-{% highlight fsharp %}
+```fsharp
 costSoFar = 1.0m; evaluate calcInnerCost with costSoFar: 
   costSoFar = costSoFar + 1.0m; evaluate calcInnerCost with costSoFar: 
     costSoFar = costSoFar + 1.0m; evaluate calcInnerCost with costSoFar: 
@@ -221,7 +221,7 @@ costSoFar = 1.0m; evaluate calcInnerCost with costSoFar:
         costSoFar = costSoFar + 1.0m; evaluate calcInnerCost with costSoFar: 
           costSoFar = costSoFar + 1.0m; evaluate calcInnerCost with costSoFar: 
             finalCost = costSoFar + book.price   // final answer
-{% endhighlight fsharp %}
+```
 
 The big advantange of this approach is that all calculations at a particular level are *completely finished* before the next lowel level is called.
 Which means that the level and its associated data can be safely discarded from the stack. Which means no stack overflow!
@@ -232,7 +232,7 @@ An implementation like this, where the higher levels can be safely discarded, is
 
 Let's rewrite the total cost function from scratch, using an accumulator called `costSoFar`:
 
-{% highlight fsharp %}
+```fsharp
 let rec totalCostUsingAcc costSoFar gift =
     match gift with 
     | Book book -> 
@@ -248,7 +248,7 @@ let rec totalCostUsingAcc costSoFar gift =
     | WithACard (innerGift,message) -> 
         let newCostSoFar = costSoFar + 2.0m
         totalCostUsingAcc newCostSoFar innerGift 
-{% endhighlight fsharp %}
+```
 
 A few things to note:
 
@@ -259,12 +259,12 @@ A few things to note:
 
 Let's stress test this version:
 
-{% highlight fsharp %}
+```fsharp
 deeplyNestedBox 1000 |> totalCostUsingAcc 0.0m     // OK    1020.0M
 deeplyNestedBox 10000 |> totalCostUsingAcc 0.0m    // OK   10020.0M
 deeplyNestedBox 100000 |> totalCostUsingAcc 0.0m   // OK  100020.0M
 deeplyNestedBox 1000000 |> totalCostUsingAcc 0.0m  // OK 1000020.0M
-{% endhighlight fsharp %}
+```
 
 Excellent. Up to one million nested levels without a hiccup.
 
@@ -277,7 +277,7 @@ Now let's apply the same design principle to the catamorphism implementation.
 We'll create a new function `foldGift`.
 We'll introduce an accumulator `acc` that we will thread through each level, and the non-recursive cases will return the final accumulator.
 
-{% highlight fsharp %}
+```fsharp
 let rec foldGift fBook fChocolate fWrapped fBox fCard acc gift :'r =
     let recurse = foldGift fBook fChocolate fWrapped fBox fCard 
     match gift with 
@@ -296,12 +296,12 @@ let rec foldGift fBook fChocolate fWrapped fBox fCard acc gift :'r =
     | WithACard (innerGift,message) -> 
         let newAcc = fCard acc message 
         recurse newAcc innerGift
-{% endhighlight fsharp %}
+```
 
 If we look at the type signature, we can see that it is subtly different. The type of the accumulator `'a` is being used everywhere now.
 The only time where the final return type is used is in the two non-recursive cases (`fBook` and `fChocolate`).
 
-{% highlight fsharp %}
+```fsharp
 val foldGift :
   fBook:('a -> Book -> 'r) ->
   fChocolate:('a -> Chocolate -> 'r) ->
@@ -314,13 +314,13 @@ val foldGift :
   gift:Gift -> 
   // return value
   'r
-{% endhighlight fsharp %}
+```
 
 Let's look at this more closely, and compare the signatures of the original catamorphism from the last post with the signatures of the new `fold` function.
 
 First of all, the non-recursive cases:
 
-{% highlight fsharp %}
+```fsharp
 // original catamorphism
 fBook:(Book -> 'r)
 fChocolate:(Chocolate -> 'r)
@@ -328,7 +328,7 @@ fChocolate:(Chocolate -> 'r)
 // fold
 fBook:('a -> Book -> 'r)
 fChocolate:('a -> Chocolate -> 'r)
-{% endhighlight fsharp %}
+```
 
 As you can see, with "fold", the non-recursive cases take an extra parameter (the accumulator) and return the `'r` type.
 
@@ -337,7 +337,7 @@ We will need to take advantage of this shortly.
 
 What about the recursive cases? How did their signature change?
 
-{% highlight fsharp %}
+```fsharp
 // original catamorphism
 fWrapped:('r -> WrappingPaperStyle -> 'r) 
 fBox:('r -> 'r) 
@@ -345,7 +345,7 @@ fBox:('r -> 'r)
 // fold
 fWrapped:('a -> WrappingPaperStyle -> 'a)
 fBox:('a -> 'a)
-{% endhighlight fsharp %}
+```
 
 For the recursive cases, the structure is identical but all use of the `'r` type has been replaced with the `'a` type.
 The recursive cases do not use the `'r` type at all.
@@ -354,7 +354,7 @@ The recursive cases do not use the `'r` type at all.
 
 Once again, we can reimplement the total cost function, but this time using the `foldGift` function:
 
-{% highlight fsharp %}
+```fsharp
 let totalCostUsingFold gift =  
 
     let fBook costSoFar (book:Book) = 
@@ -373,14 +373,14 @@ let totalCostUsingFold gift =
 
     // call the fold
     foldGift fBook fChocolate fWrapped fBox fCard initialAcc gift 
-{% endhighlight fsharp %}
+```
 
 And again, we can process very large numbers of nested boxes without a stack overflow:
 
-{% highlight fsharp %}
+```fsharp
 deeplyNestedBox 100000 |> totalCostUsingFold  // no problem   100020.0M
 deeplyNestedBox 1000000 |> totalCostUsingFold // no problem  1000020.0M
-{% endhighlight fsharp %}
+```
 
 <a id="problems"></a>
 
@@ -398,7 +398,7 @@ To see what the problem is, let's revisit the `description` function that we cre
 
 The original one was not tail-recursive, so let's make it safer and reimplement it using `foldGift`.
 
-{% highlight fsharp %}
+```fsharp
 let descriptionUsingFold gift =
     let fBook descriptionSoFar (book:Book) = 
         sprintf "'%s' %s" book.title descriptionSoFar
@@ -420,30 +420,30 @@ let descriptionUsingFold gift =
 
     // main call
     foldGift fBook fChocolate fWrapped fBox fCard initialAcc gift 
-{% endhighlight fsharp %}
+```
 
 Let's see what the output is:
 
-{% highlight fsharp %}
+```fsharp
 birthdayPresent |> descriptionUsingFold  
 // "'Wolf Hall'  with a card saying 'Happy Birthday' wrapped in HappyBirthday paper"
 
 christmasPresent |> descriptionUsingFold  
 // "SeventyPercent chocolate  wrapped in HappyHolidays paper in a box"
-{% endhighlight fsharp %}
+```
 
 These outputs are wrong! The order of the decorations has been mixed up.
 
 It's supposed to be a wrapped book with a card, not a book and a card wrapped together.
 And it's supposed to be chocolate in a box, then wrapped, not wrapped chocolate in a box!
 
-{% highlight fsharp %}
+```fsharp
 // OUTPUT: "'Wolf Hall'  with a card saying 'Happy Birthday' wrapped in HappyBirthday paper"
 // CORRECT "'Wolf Hall' wrapped in HappyBirthday paper with a card saying 'Happy Birthday'"
 
 // OUTPUT: "SeventyPercent chocolate  wrapped in HappyHolidays paper in a box"
 // CORRECT "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
-{% endhighlight fsharp %}
+```
 
 What has gone wrong?
 
@@ -463,14 +463,14 @@ that will build the appropriate description given the value of the next layer do
 
 Here's the implementation for the non-recursive cases:
 
-{% highlight fsharp %}
+```fsharp
 let fBook descriptionGenerator (book:Book) = 
     descriptionGenerator (sprintf "'%s'" book.title)
 //  ~~~~~~~~~~~~~~~~~~~~  <= a function as an accumulator!
 
 let fChocolate descriptionGenerator (choc:Chocolate) = 
     descriptionGenerator (sprintf "%A chocolate" choc.chocType)
-{% endhighlight fsharp %}
+```
 
 The implementation for recursive cases is a bit more complicated:
 
@@ -481,7 +481,7 @@ The implementation for recursive cases is a bit more complicated:
 
 It's more complicated to talk about than to demonstrate, so here are implementations for two of the cases:
 
-{% highlight fsharp %}
+```fsharp
 let fWrapped descriptionGenerator style = 
     let newDescriptionGenerator innerText =
         let newInnerText = sprintf "%s wrapped in %A paper" innerText style
@@ -493,11 +493,11 @@ let fBox descriptionGenerator =
         let newInnerText = sprintf "%s in a box" innerText 
         descriptionGenerator newInnerText 
     newDescriptionGenerator 
-{% endhighlight fsharp %}
+```
 
 We can simplify that code a little by using a lambda directly:
 
-{% highlight fsharp %}
+```fsharp
 let fWrapped descriptionGenerator style = 
     fun innerText ->
         let newInnerText = sprintf "%s wrapped in %A paper" innerText style
@@ -507,13 +507,13 @@ let fBox descriptionGenerator =
     fun innerText ->
         let newInnerText = sprintf "%s in a box" innerText 
         descriptionGenerator newInnerText 
-{% endhighlight fsharp %}
+```
 
 We could continue to make it more compact using piping and other things, but I think that what we have here is a good balance between conciseness and obscurity.
 
 Here is the entire function:
 
-{% highlight fsharp %}
+```fsharp
 let descriptionUsingFoldWithGenerator gift =
 
     let fBook descriptionGenerator (book:Book) = 
@@ -542,19 +542,19 @@ let descriptionUsingFoldWithGenerator gift =
 
     // main call
     foldGift fBook fChocolate fWrapped fBox fCard initialAcc gift 
-{% endhighlight fsharp %}
+```
 
 Again, I'm using overly descriptive intermediate values to make it clear what is going on.
 
 If we try `descriptionUsingFoldWithGenerator` now, we get the correct answers again:
 
-{% highlight fsharp %}
+```fsharp
 birthdayPresent |> descriptionUsingFoldWithGenerator  
 // CORRECT "'Wolf Hall' wrapped in HappyBirthday paper with a card saying 'Happy Birthday'"
 
 christmasPresent |> descriptionUsingFoldWithGenerator  
 // CORRECT "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
-{% endhighlight fsharp %}
+```
 
 <a id="foldback"></a>
 
@@ -567,7 +567,7 @@ This one we will call "foldback":
 
 Here's the implementation:
 
-{% highlight fsharp %}
+```fsharp
 let rec foldbackGift fBook fChocolate fWrapped fBox fCard generator gift :'r =
     let recurse = foldbackGift fBook fChocolate fWrapped fBox fCard 
     match gift with 
@@ -590,14 +590,14 @@ let rec foldbackGift fBook fChocolate fWrapped fBox fCard generator gift :'r =
             let newInnerVal = fCard innerVal message 
             generator newInnerVal 
         recurse newGenerator innerGift 
-{% endhighlight fsharp %}
+```
 
 You can see that it is just like the `descriptionUsingFoldWithGenerator` implementation, except that we are using generic `newInnerVal` and `generator` values.
 
 The type signatures are similar to the original catamorphism, except that every case works with `'a` only now.
 The only time `'r` is used is in the generator function itself!
 
-{% highlight fsharp %}
+```fsharp
 val foldbackGift :
   fBook:(Book -> 'a) ->
   fChocolate:(Chocolate -> 'a) ->
@@ -610,13 +610,13 @@ val foldbackGift :
   gift:Gift -> 
   // return value
   'r
-{% endhighlight fsharp %}
+```
 
 *The `foldback` implementation above is written from scratch. If you want a fun exercise, see if you can write `foldback` in terms of `fold`.*
 
 Let's rewrite the `description` function using `foldback`: 
 
-{% highlight fsharp %}
+```fsharp
 let descriptionUsingFoldBack gift =
     let fBook (book:Book) = 
         sprintf "'%s'" book.title 
@@ -632,17 +632,17 @@ let descriptionUsingFoldBack gift =
     let initialAcc = fun innerText -> innerText 
     // main call
     foldbackGift fBook fChocolate fWrapped fBox fCard initialAcc gift 
-{% endhighlight fsharp %}
+```
 
 And the results are still correct:
 
-{% highlight fsharp %}
+```fsharp
 birthdayPresent |> descriptionUsingFoldBack
 // CORRECT "'Wolf Hall' wrapped in HappyBirthday paper with a card saying 'Happy Birthday'"
 
 christmasPresent |> descriptionUsingFoldBack
 // CORRECT "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
-{% endhighlight fsharp %}
+```
 
 ### Comparing `foldback` to the original catamorphism
 
@@ -650,7 +650,7 @@ The implementation of `descriptionUsingFoldBack` is almost identical to the vers
 
 Here's the version using `cataGift`:
 
-{% highlight fsharp %}
+```fsharp
 let descriptionUsingCata gift =
     let fBook (book:Book) = 
         sprintf "'%s'" book.title 
@@ -664,11 +664,11 @@ let descriptionUsingCata gift =
         sprintf "%s with a card saying '%s'" innerText message
     // call the catamorphism
     cataGift fBook fChocolate fWrapped fBox fCard gift
-{% endhighlight fsharp %}
+```
 
 And here's the version using `foldbackGift`:
 
-{% highlight fsharp %}
+```fsharp
 let descriptionUsingFoldBack gift =
     let fBook (book:Book) = 
         sprintf "'%s'" book.title 
@@ -684,7 +684,7 @@ let descriptionUsingFoldBack gift =
     let initialAcc = fun innerText -> innerText    // could be replaced with id
     // main call
     foldbackGift fBook fChocolate fWrapped fBox fCard initialAcc gift 
-{% endhighlight fsharp %}
+```
 
 All the handler functions are basically identical. The only change is the addition of an initial generator function, which is just `id` in this case.
 
@@ -698,15 +698,15 @@ faster way, which we'll look at in the next post.
 
 In `foldGift` the signature for `fWrapped` is:
 
-{% highlight fsharp %}
+```fsharp
 fWrapped:('a -> WrappingPaperStyle -> 'a) 
-{% endhighlight fsharp %}
+```
 
 But in `foldbackGift` the signature for `fWrapped` is:
 
-{% highlight fsharp %}
+```fsharp
 fWrapped:('a -> WrappingPaperStyle -> 'a) 
-{% endhighlight fsharp %}
+```
 
 Can you spot the difference? No, me neither.
 
@@ -716,7 +716,7 @@ while in `foldbackGift` version, the first parameter is the accumulator from the
 It is therefore common to change the signature of the `foldBack` version so that the accumulator
 always comes *last*, while in the normal `fold` function, the accumulator always comes *first*.
 
-{% highlight fsharp %}
+```fsharp
 let rec foldbackGift fBook fChocolate fWrapped fBox fCard gift generator :'r =
 //swapped =>                                              ~~~~~~~~~~~~~~ 
 
@@ -750,11 +750,11 @@ let rec foldbackGift fBook fChocolate fWrapped fBox fCard gift generator :'r =
             generator newInnerVal 
         recurse innerGift newGenerator 
 //swapped =>    ~~~~~~~~~~~~~~~~~~~~~~ 
-{% endhighlight fsharp %}
+```
 
 This change shows up in the type signature. The `Gift` value comes before the accumulator now:
 
-{% highlight fsharp %}
+```fsharp
 val foldbackGift :
   fBook:(Book -> 'a) ->
   fChocolate:(Chocolate -> 'a) ->
@@ -767,17 +767,17 @@ val foldbackGift :
   generator:('a -> 'r) -> 
   // return value
   'r
-{% endhighlight fsharp %}
+```
 
 and now we *can* tell the two versions apart easily.
 
-{% highlight fsharp %}
+```fsharp
 // fold
 fWrapped:('a -> WrappingPaperStyle -> 'a) 
 
 // foldback
 fWrapped:(WrappingPaperStyle -> 'a -> 'a)
-{% endhighlight fsharp %}
+```
 
 
 <a id="rules"></a>

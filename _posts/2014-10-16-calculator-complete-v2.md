@@ -30,7 +30,7 @@ The `allowAppend` flag we added as a patch was one way to take the context into 
 
 Second there was a bit of special case code for certain inputs (`Zero` and `DecimalSeparator`), as you can see from this code snippet:
 
-{% highlight fsharp %}
+```fsharp
 let appendCh= 
     match digit with
     | Zero -> 
@@ -47,7 +47,7 @@ let appendCh=
             "" 
         else 
             config.decimalSeparator
-{% endhighlight fsharp %}
+```
 
 This makes me think that these inputs should be treated as different *in the design itself* and not hidden in the implementation
 -- after all we want the design to also act as documentation as much as possible.
@@ -103,17 +103,17 @@ But my preferred approach (for an ad-hoc manual implementation) makes extensive 
 First, create a union type that represents all the states.
 For example, if there are three states called "A", "B" and "C", the type would look like this:
 
-{% highlight fsharp %}
+```fsharp
 type State = 
     | AState 
     | BState 
     | CState
-{% endhighlight fsharp %}
+```
 
 In many cases, each state will need to store some data that is relevant to that state.
 So we will need to create types to hold that data as well.
 
-{% highlight fsharp %}
+```fsharp
 type State = 
     | AState of AStateData
     | BState of BStateData
@@ -122,22 +122,22 @@ and AStateData =
     {something:int}
 and BStateData = 
     {somethingElse:int}
-{% endhighlight fsharp %}
+```
 
 Next, all possible events that can happen are defined in another union type. If events have data associated with them, add that as well.
 
-{% highlight fsharp %}
+```fsharp
 type InputEvent = 
     | XEvent
     | YEvent of YEventData
     | ZEvent
 and YEventData =
     {eventData:string}
-{% endhighlight fsharp %}
+```
 
 Finally, we can create a "transition" function that, given a current state and input event, returns a new state.
 
-{% highlight fsharp %}
+```fsharp
 let transition (currentState,inputEvent) =
     match currentState,inputEvent with
     | AState, XEvent -> // new state
@@ -147,7 +147,7 @@ let transition (currentState,inputEvent) =
     | BState, YEvent -> // new state
     | CState, XEvent -> // new state
     | CState, ZEvent -> // new state
-{% endhighlight fsharp %}
+```
 
 What I like about this approach in a language with pattern matching, like F#,
 is that **if we forget to handle a particular combination of state and event, we get a compiler warning**. How awesome is that?
@@ -160,7 +160,7 @@ Forcing yourself to consider every possible combination is thus a helpful design
 Now, even with a small number of states and events, the number of possible combinations gets large very quickly.
 To make it more manageable in practice, I typically create a series of helper functions, one for each state, like this:
 
-{% highlight fsharp %}
+```fsharp
 let aStateHandler stateData inputEvent = 
     match inputEvent with
     | XEvent -> // new state
@@ -190,11 +190,11 @@ let transition (currentState,inputEvent) =
     | CState -> 
         // new state
         cStateHandler inputEvent 
-{% endhighlight fsharp %}
+```
 
 So let's try this approach and attempt to implement the state diagram above:
 
-{% highlight fsharp %}
+```fsharp
 let aStateHandler stateData inputEvent = 
     match inputEvent with
     | XEvent -> 
@@ -233,7 +233,7 @@ let transition (currentState,inputEvent) =
         bStateHandler stateData inputEvent 
     | CState -> 
         cStateHandler inputEvent 
-{% endhighlight fsharp %}
+```
 
 If we try to compile this, we immediately get some warnings:
 
@@ -247,7 +247,7 @@ If you want to ignore an event, do it explicitly.
 
 Here's the fixed up code, which compiles without warnings:
 
-{% highlight fsharp %}
+```fsharp
 let bStateHandler stateData inputEvent = 
     match inputEvent with
     | XEvent 
@@ -267,7 +267,7 @@ let cStateHandler inputEvent =
     | ZEvent -> 
         // transition to B state
         BState {somethingElse=42}
-{% endhighlight fsharp %}
+```
 
 *You can see the code for this example in [this gist](https://gist.github.com/swlaschin/0e954cbdc383d1f5d9d3#file-statemachine-fsx).*
 
@@ -562,7 +562,7 @@ Now that we've done all this work, the conversion into types is straightforward.
 
 Here are the main types:
 
-{% highlight fsharp %}
+```fsharp
 type Calculate = CalculatorInput * CalculatorState -> CalculatorState 
 // five states        
 and CalculatorState = 
@@ -588,12 +588,12 @@ and ComputedStateData =
     {displayNumber:Number; pendingOp:PendingOp option}
 and ErrorStateData = 
     MathOperationError
-{% endhighlight fsharp %}
+```
 
 If we compare these types to the first design (below), we have now made it clear that there is something special about `Zero` and `DecimalSeparator`,
 as they have been promoted to first class citizens of the input type.
 
-{% highlight fsharp %}
+```fsharp
 // from the old design
 type CalculatorInput = 
     | Digit of CalculatorDigit
@@ -608,12 +608,12 @@ type CalculatorInput =
     | MathOp of CalculatorMathOp
     | Equals 
     | Clear
-{% endhighlight fsharp %}        
+```        
 
 Also, in the old design, we had a single state type (below) that stored data for all contexts, while in the new design, the state is *explicitly different* for each context.
 The types `ZeroStateData`, `AccumulatorStateData`, `ComputedStateData`, and `ErrorStateData` make this obvious.
 
-{% highlight fsharp %}
+```fsharp
 // from the old design
 type CalculatorState = {
     display: CalculatorDisplay
@@ -627,11 +627,11 @@ type CalculatorState =
     | AccumulatorWithDecimalState of AccumulatorStateData 
     | ComputedState of ComputedStateData 
     | ErrorState of ErrorStateData 
-{% endhighlight fsharp %}        
+```        
 
 Now that we have the basics of the new design, we need to define the other types referenced by it:
 
-{% highlight fsharp %}
+```fsharp
 and DigitAccumulator = string
 and PendingOp = (CalculatorMathOp * Number)
 and Number = float
@@ -645,11 +645,11 @@ and MathOperationResult =
     | Failure of MathOperationError
 and MathOperationError = 
     | DivideByZero
-{% endhighlight fsharp %}
+```
 
 And finally, we can define the services:
 
-{% highlight fsharp %}
+```fsharp
 // services used by the calculator itself
 type AccumulateNonZeroDigit = NonZeroDigit * DigitAccumulator -> DigitAccumulator 
 type AccumulateZero = DigitAccumulator -> DigitAccumulator 
@@ -670,7 +670,7 @@ type CalculatorServices = {
     getDisplayFromState :GetDisplayFromState 
     getPendingOpFromState :GetPendingOpFromState 
     }
-{% endhighlight fsharp %}
+```
 
 Note that because the state is much more complicated, I've added helper function `getDisplayFromState` that extracts the display text from the state.
 This helper function will be used the UI or other clients (such as tests) that need to get the text to display.
@@ -685,7 +685,7 @@ Now we can create a state-based implementation, using the pattern described earl
 
 Let's start with the main function that does the state transitions:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     // create some local functions with partially applied services
     let handleZeroState = handleZeroState services
@@ -706,7 +706,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
             handleComputed stateData input
         | ErrorState stateData -> 
             handleError stateData input
-{% endhighlight fsharp %}
+```
                 
 As you can see, it passes the responsibility to a number of handlers, one for each state, which will be discussed below.
 
@@ -714,7 +714,7 @@ But before we do that, I thought it might be instructive to compare the new stat
 
 Here is the code from the previous one:
 
-{% highlight fsharp %}
+```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 
     fun (input,state) -> 
         match input with
@@ -731,7 +731,7 @@ let createCalculate (services:CalculatorServices) :Calculate =
         | Action Equals ->
             let newState = updateDisplayFromPendingOp services state
             newState //return
-{% endhighlight fsharp %}
+```
 
 If we compare the two implementations, we can see that there has been a shift of emphasis from events to state.
 You can see this by comparing how main pattern matching is done in the two implementations:
@@ -754,7 +754,7 @@ just as I have done here.
 We have already documented the requirements for each state transition, so writing the code is straightforward.
 We'll start with the code for the `ZeroState` handler:
 
-{% highlight fsharp %}
+```fsharp
 let handleZeroState services pendingOp input = 
     // create a new accumulatorStateData object that is used when transitioning to other states
     let accumulatorStateData = {digits=""; pendingOp=pendingOp}
@@ -779,13 +779,13 @@ let handleZeroState services pendingOp input =
         newState  // transition to ComputedState or ErrorState
     | Clear -> 
         ZeroState None // transition to ZeroState and throw away any pending ops
-{% endhighlight fsharp %}
+```
 
 Again, the *real* work is done in helper functions such as `accumulateNonZeroDigit` and `getComputationState`. We'll look at those in a minute.
 
 Here is the code for the `AccumulatorState` handler:
 
-{% highlight fsharp %}
+```fsharp
 let handleAccumulatorState services stateData input = 
     match input with
     | Zero -> 
@@ -810,11 +810,11 @@ let handleAccumulatorState services stateData input =
         newState  // transition to ComputedState or ErrorState
     | Clear -> 
         ZeroState None // transition to ZeroState and throw away any pending op
-{% endhighlight fsharp %}
+```
 
 Here is the code for the `ComputedState` handler:
 
-{% highlight fsharp %}
+```fsharp
 let handleComputedState services stateData input = 
     let emptyAccumulatorStateData = {digits=""; pendingOp=stateData.pendingOp}
     match input with
@@ -838,7 +838,7 @@ let handleComputedState services stateData input =
         replacePendingOp stateData nextOp 
     | Clear -> 
         ZeroState None // transition to ZeroState and throw away any pending op
-{% endhighlight fsharp %}
+```
 
 ## The helper functions
 
@@ -846,13 +846,13 @@ Finally, let's look at the helper functions:
 
 The accumulator helpers are trivial -- they just call the appropriate service and wrap the result in an `AccumulatorData` record.
 
-{% highlight fsharp %}
+```fsharp
 let accumulateNonZeroDigit services digit accumulatorData =
     let digits = accumulatorData.digits
     let newDigits = services.accumulateNonZeroDigit (digit,digits)
     let newAccumulatorData = {accumulatorData with digits=newDigits}
     newAccumulatorData // return
-{% endhighlight fsharp %}
+```
 
 The `getComputationState` helper is much more complex -- the most complex function in the entire code base, I should think.
 
@@ -863,7 +863,7 @@ but there are a couple of changes:
 * The `match result with Success/Failure` code now returns *two* possible states: `ComputedState` or `ErrorState`.
 * If there is no pending op, we *still* need to return a valid `ComputedState`, which is what `computeStateWithNoPendingOp` does.
 
-{% highlight fsharp %}
+```fsharp
 let getComputationState services accumulatorStateData nextOp = 
 
     // helper to create a new ComputedState from a given displayNumber 
@@ -894,13 +894,13 @@ let getComputationState services accumulatorStateData nextOp =
         return newState
         } |> ifNone computeStateWithNoPendingOp 
 
-{% endhighlight fsharp %}
+```
 
 Finally, we have a new piece of code that wasn't in the previous implementation at all! 
 
 What do you do when you get two math ops in a row? We just replace the old pending op (if any) with the new one (if any).
 
-{% highlight fsharp %}
+```fsharp
 let replacePendingOp (computedStateData:ComputedStateData) nextOp = 
     let newPending = maybe {
         let! existing,displayNumber  = computedStateData.pendingOp
@@ -909,7 +909,7 @@ let replacePendingOp (computedStateData:ComputedStateData) nextOp =
         }
     {computedStateData with pendingOp=newPending}
     |> ComputedState
-{% endhighlight fsharp %}
+```
 
 ## Completing the calculator
 

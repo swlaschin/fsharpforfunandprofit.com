@@ -28,7 +28,7 @@ As you might expect from the term "functional programming", functions are everyw
 
 Of course, functions are first class entities, and can be passed around like any other value:
 
-{% highlight fsharp %}
+```fsharp
 let square x = x * x
 
 // functions as values
@@ -38,7 +38,7 @@ let result = [1..10] |> List.map squareclone
 // functions taking other functions as parameters
 let execFunction aFunc aParam = aFunc aParam
 let result2 = execFunction square 12
-{% endhighlight  %}
+```
 
 But C# has first-class functions too, so what's so special about functional programming?
 
@@ -63,12 +63,12 @@ and larger chunks are created by combining smaller chunks using composition rath
 If you have used LINQ or SQL you will already be familiar with expression-based languages. For example, in pure SQL, 
 you cannot have assignments. Instead, you must have subqueries within larger queries. 
 
-{% highlight sql %}
+```sql
 SELECT EmployeeName 
 FROM Employees
 WHERE EmployeeID IN 
 	(SELECT DISTINCT ManagerID FROM Employees)  -- subquery
-{% endhighlight %}
+```
 
 F# works in the same way -- every function definition is a single expression, not a set of statements.
 
@@ -77,7 +77,7 @@ To see this, let's compare some statement-based code in C# with the equivalent e
 
 First, the statement-based code. Statements don't return values, so you have to use temporary variables that are assigned to from within statement bodies.  
 
-{% highlight csharp %}
+```csharp
 // statement-based code in C#
 int result;     
 if (aBool)
@@ -85,7 +85,7 @@ if (aBool)
   result = 42; 
 }
 Console.WriteLine("result={0}", result);
-{% endhighlight %}
+```
 
 Because the `if-then` block is a statement, the `result` variable must be defined *outside* the statement but assigned to from *inside* the statement, which leads to issues such as:
 
@@ -95,11 +95,11 @@ Because the `if-then` block is a statement, the `result` variable must be define
 
 For comparison, here is the same code, rewritten in an expression-oriented style:
 
-{% highlight csharp %}
+```csharp
 // expression-based code in C#
 int result = (aBool) ? 42 : 0;
 Console.WriteLine("result={0}", result);
-{% endhighlight %}
+```
 
 In the expression-oriented version, none of these issues apply:  
 
@@ -118,17 +118,17 @@ The type system in F# is based on the concept of **algebraic types**. That is, n
 
 For example, given existing types `int` and `bool`, we can create a new product type that must have one of each:
 
-{% highlight fsharp %}
+```fsharp
 //declare it
 type IntAndBool = {intPart: int; boolPart: bool}
 
 //use it
 let x = {intPart=1; boolPart=false}
-{% endhighlight  %}
+```
 
 Alternatively, we can create a new union/sum type that has a choice between each type:
 
-{% highlight fsharp %}
+```fsharp
 //declare it
 type IntOrBool = 
   | IntChoice of int
@@ -137,7 +137,7 @@ type IntOrBool =
 //use it
 let y = IntChoice 42
 let z = BoolChoice true
-{% endhighlight  %}
+```
 
 These "choice" types are not available in C#, but are incredibly useful for modeling many real-world cases, such as states in a state machine (which is a surprisingly common theme in many domains).
 
@@ -159,24 +159,24 @@ F# does support some of these, but F# also supports the most general form of con
 
 A typical matching expression that replaces `if-then-else` looks like this:
 
-{% highlight fsharp %}
+```fsharp
 match booleanExpression with
 | true -> // true branch
 | false -> // false branch
-{% endhighlight %}
+```
 
 And the replacement of `switch` might look like this:
 
-{% highlight fsharp %}
+```fsharp
 match aDigit with
 | 1 -> // Case when digit=1
 | 2 -> // Case when digit=2
 | _ -> // Case otherwise
-{% endhighlight %}
+```
 
 Finally, loops are generally done using recursion, and typically look something like this:
 
-{% highlight fsharp %}
+```fsharp
 match aList with
 | [] -> 
      // Empty case 
@@ -184,7 +184,7 @@ match aList with
      // Case with at least one element.
      // Process first element, and then call 
      // recursively with the rest of the list
-{% endhighlight %}
+```
 
 Although the match expression seems unnecessarily complicated at first, you'll see that in practice it is both elegant and powerful.
 
@@ -197,7 +197,7 @@ We mentioned above that F# supports a "union" or "choice" type. This is used ins
 In the following example, we create a `Shape` type representing four different shapes and then define a `draw` function with different behavior for each kind of shape.
 This is similar to polymorphism in an object oriented language, but based on functions.
 
-{% highlight fsharp %}
+```fsharp
 type Shape =        // define a "union" of alternative structures
     | Circle of radius:int 
     | Rectangle of height:int * width:int
@@ -220,7 +220,7 @@ let point = Point(2,3)
 let polygon = Polygon( [(1,1); (2,2); (3,3)])
 
 [circle; rect; polygon; point] |> List.iter draw
-{% endhighlight  %}
+```
 
 A few things to note:
 
@@ -229,9 +229,9 @@ A few things to note:
 * You can see that the `match..with` logic not only matches against the internal structure of the shape, but also assigns values based on what is appropriate for the shape. 
 * The underscore is similar to the "default" branch in a switch statement, except that in F# it is required -- every possible case must always be handled. If you comment out the line 
 
-{% highlight fsharp %}
+```fsharp
   | _ -> printfn "I don't recognize this shape"
-{% endhighlight  %}
+```
 
 see what happens when you compile!
 

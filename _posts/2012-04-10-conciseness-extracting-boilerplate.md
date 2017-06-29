@@ -19,7 +19,7 @@ Obviously, all these requirements are similar, but how would you extract any com
 
 Let's start with some straightforward implementations in C# first:
 
-{% highlight csharp %}
+```csharp
 public static int Product(int n)
 {
     int product = 1;
@@ -59,7 +59,7 @@ public static int AlternatingSum(int n)
     }
     return sum;
 }
-{% endhighlight  %}
+```
 
 What do all these implementations have in common?  The looping logic!  As programmers, we are told to remember the DRY principle ("don't repeat yourself"), yet here we have repeated almost exactly the same loop logic each time. Let's see if we can extract just the differences between these three methods:
 
@@ -92,7 +92,7 @@ What do all these implementations have in common?  The looping logic!  As progra
 
 Is there a way to strip the duplicate code and focus on the just the setup and inner loop logic?  Yes there is. Here are the same three functions in F#:
 
-{% highlight fsharp %}
+```fsharp
 let product n = 
     let initialValue = 1
     let action productSoFar x = productSoFar * x
@@ -117,7 +117,7 @@ let alternatingSum n =
 
 //test
 alternatingSum 100
-{% endhighlight  %}
+```
 
 All three of these functions have the same pattern:
 
@@ -137,7 +137,7 @@ By using `List.fold` and avoiding any loop logic at all, the F# code gains a num
 
 By the way, the sum of squares example could also be written using `fold` as well:
 
-{% highlight fsharp %}
+```fsharp
 let sumOfSquaresWithFold n = 
     let initialValue = 0
     let action sumSoFar x = sumSoFar + (x*x)
@@ -145,13 +145,13 @@ let sumOfSquaresWithFold n =
 
 //test
 sumOfSquaresWithFold 100
-{% endhighlight  %}
+```
 
 ## "Fold" in C# ##
 
 Can you use the "fold" approach in C#? Yes. LINQ does have an equivalent to `fold`, called `Aggregate`. And here is the C# code rewritten to use it:
 
-{% highlight csharp %}
+```csharp
 public static int ProductWithAggregate(int n)
 {
     var initialValue = 1;
@@ -181,7 +181,7 @@ public static int AlternatingSumsWithAggregate(int n)
         .Aggregate(initialValue, action)
         .Item2;
 }
-{% endhighlight  %}
+```
 
 Well, in some sense these implementations are simpler and safer than the original C# versions, but all the extra noise from the generic types makes this approach much less elegant than the equivalent code in F#.  You can see why most C# programmers prefer to stick with explicit loops.
 
@@ -192,7 +192,7 @@ The LINQ method 'max' only returns the maximum value, not the whole element that
 
 Here's a solution using an explicit loop:
 
-{% highlight csharp %}
+```csharp
 public class NameAndSize
 {
     public string Name;
@@ -217,7 +217,7 @@ public static NameAndSize MaxNameAndSize(IList<NameAndSize> list)
     return maxSoFar;
 }
 
-{% endhighlight  %}
+```
 
 Doing this in LINQ seems hard to do efficiently (that is, in one pass), and has come up as a [Stack Overflow question](http://stackoverflow.com/questions/1101841/linq-how-to-perform-max-on-a-property-of-all-objects-in-a-collection-and-ret). Jon Skeet event wrote an [article about it](http://codeblog.jonskeet.uk/2005/10/02/a-short-case-study-in-linq-efficiency/).
 
@@ -225,7 +225,7 @@ Again, fold to the rescue!
 
 And here's the C# code using `Aggregate`:
 
-{% highlight csharp %}
+```csharp
 public class NameAndSize
 {
     public string Name;
@@ -244,13 +244,13 @@ public static NameAndSize MaxNameAndSize(IList<NameAndSize> list)
         (maxSoFar, x) => x.Size > maxSoFar.Size ? x : maxSoFar;
     return list.Aggregate(initialValue, action);
 }
-{% endhighlight  %} 
+``` 
 
 Note that this C# version returns null for an empty list.  That seems dangerous -- so what should happen instead? Throwing an exception? That doesn't seem right either.
 
 Here's the F# code using fold:
 
-{% highlight fsharp %}
+```fsharp
 type NameAndSize= {Name:string;Size:int}
  
 let maxNameAndSize list = 
@@ -266,7 +266,7 @@ let maxNameAndSize list =
     | first::rest -> 
         let max = innerMaxNameAndSize first rest
         Some max
-{% endhighlight  %} 
+``` 
 
 The F# code has two parts:
 
@@ -277,7 +277,7 @@ Doing this guarantees that the caller of the function has to handle both cases.
 
 And a test:
 
-{% highlight fsharp %}
+```fsharp
 //test
 let list = [
     {Name="Alice"; Size=10}
@@ -287,19 +287,19 @@ let list = [
     ]    
 maxNameAndSize list
 maxNameAndSize []
-{% endhighlight  %} 
+``` 
 
 Actually, I didn't need to write this at all, because F# already has a `maxBy` function!
 
-{% highlight fsharp %}
+```fsharp
 // use the built in function
 list |> List.maxBy (fun item -> item.Size)
 [] |> List.maxBy (fun item -> item.Size)
-{% endhighlight  %} 
+``` 
 
 But as you can see, it doesn't handle empty lists well. Here's a version that wraps the `maxBy` safely.
 
-{% highlight fsharp %}
+```fsharp
 let maxNameAndSize list = 
     match list with
     | [] -> 
@@ -307,4 +307,4 @@ let maxNameAndSize list =
     | _ -> 
         let max = list |> List.maxBy (fun item -> item.Size)
         Some max
-{% endhighlight  %} 
+``` 

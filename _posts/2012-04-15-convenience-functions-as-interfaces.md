@@ -17,25 +17,25 @@ To see how this works, let's compare the same design pattern in C# and F#. For e
 
 Let's say that we have a calculator interface:
 
-{% highlight csharp %}
+```csharp
 interface ICalculator 
 {
    int Calculate(int input);
 }
-{% endhighlight  %}
+```
 
 And then a specific implementation:
 
-{% highlight csharp %}
+```csharp
 class AddingCalculator: ICalculator
 {
    public int Calculate(int input) { return input + 1; }
 }
-{% endhighlight  %}
+```
 
 And then if we want to add logging, we can wrap the core calculator implementation inside a logging wrapper.
 
-{% highlight csharp %}
+```csharp
 class LoggingCalculator: ICalculator
 {
    ICalculator _innerCalculator;
@@ -53,7 +53,7 @@ class LoggingCalculator: ICalculator
       return result; 
    }
 }
-{% endhighlight  %}
+```
 
 So far, so straightforward. But note that, for this to work, we must have defined an interface for the classes. If there had been no `ICalculator` interface, it would be necessary to retrofit the existing code.
 
@@ -61,7 +61,7 @@ And here is where F# shines. In F#, you can do the same thing without having to 
 
 Here is the equivalent F# code.
 
-{% highlight fsharp %}
+```fsharp
 let addingCalculator input = input + 1
 
 let loggingCalculator innerCalculator input = 
@@ -69,7 +69,7 @@ let loggingCalculator innerCalculator input =
    let result = innerCalculator input
    printfn "result is %A" result
    result
-{% endhighlight  %}   
+```   
 
 In other words, the signature of the function *is* the interface.  
    
@@ -77,7 +77,7 @@ In other words, the signature of the function *is* the interface.
 
 Even nicer is that by default, the F# logging code can be made completely generic so that it will work for *any* function at all. Here are some examples:
 
-{% highlight fsharp %}
+```fsharp
 let add1 input = input + 1
 let times2 input = input * 2
 
@@ -89,21 +89,21 @@ let genericLogger anyFunc input =
 
 let add1WithLogging = genericLogger add1
 let times2WithLogging = genericLogger times2
-{% endhighlight %}
+```
 
 The new "wrapped" functions can be used anywhere the original functions could be used -- no one can tell the difference!
 
-{% highlight fsharp %}
+```fsharp
 // test
 add1WithLogging 3
 times2WithLogging 3
 
 [1..5] |> List.map add1WithLogging
-{% endhighlight  %}
+```
 
 Exactly the same generic wrapper approach can be used for other things. For example, here is a generic wrapper for timing a function.
 
-{% highlight fsharp %}
+```fsharp
 let genericTimer anyFunc input = 
    let stopwatch = System.Diagnostics.Stopwatch()
    stopwatch.Start() 
@@ -115,7 +115,7 @@ let add1WithTimer = genericTimer add1WithLogging
 
 // test
 add1WithTimer 3
-{% endhighlight  %}
+```
 
 The ability to do this kind of generic wrapping is one of the great conveniences of the function-oriented approach. You can take any function and create a similar function based on it.  As long as the new function has exactly the same inputs and outputs as the original function, the new can be substituted for the original anywhere.  Some more examples:
 
@@ -130,7 +130,7 @@ Let's use the familiar example of inheritance: an `Animal` superclass with `Cat`
 
 In a true functional design, there are no subclasses, but instead the `Animal` class would have a `NoiseMaking` function that would be passed in with the constructor.   This approach is exactly the same as the "strategy" pattern in OO design.
 
-{% highlight fsharp %}
+```fsharp
 type Animal(noiseMakingStrategy) = 
    member this.MakeNoise = 
       noiseMakingStrategy() |> printfn "Making noise %s" 
@@ -146,7 +146,7 @@ let woofOrBark() = if (System.DateTime.Now.Second % 2 = 0)
 let dog = Animal(woofOrBark)
 dog.MakeNoise
 dog.MakeNoise  //try again a second later
-{% endhighlight  %}
+```
 
 Note that again, we do not have to define any kind of `INoiseMakingStrategy` interface first. Any function with the right signature will work.
 As a consequence, in the functional model, the standard .NET "strategy" interfaces such as `IComparer`, `IFormatProvider`, and `IServiceProvider` become irrelevant.

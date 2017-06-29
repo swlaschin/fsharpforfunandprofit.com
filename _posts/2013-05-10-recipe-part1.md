@@ -109,13 +109,13 @@ The answer is to use a union type, with one case to represent each of the differ
 
 Here's an example of a possible type definition for the output:
 
-{% highlight fsharp %}
+```fsharp
 type UseCaseResult = 
     | Success
     | ValidationError 
     | UpdateError 
     | SmtpError 
-{% endhighlight %}
+```
 
 And here's the diagram reworked to show a single output with four different cases embedded in it:
 
@@ -127,11 +127,11 @@ This does solve the problem, but having one error case for each step in the flow
 
 Yes! All we *really* need is *two* cases. One for the happy path, and one for all other error paths, like this:
 
-{% highlight fsharp %}
+```fsharp
 type UseCaseResult = 
     | Success 
     | Failure
-{% endhighlight %}
+```
 
 ![A function with a 2 case union output](/assets/img/Recipe_Function_Union2.png)
 
@@ -141,11 +141,11 @@ One more thing though -- as it stands there is no data in the result at all, jus
 
 Here's the final, completely generic and reusable version:
 
-{% highlight fsharp %}
+```fsharp
 type Result<'TSuccess,'TFailure> = 
     | Success of 'TSuccess
     | Failure of 'TFailure
-{% endhighlight %}
+```
 
 In fact, there is already a type almost exactly like this defined in the F# library. It's called [Choice](http://msdn.microsoft.com/en-us/library/ee353439.aspx). For clarity though, I will continue to use the `Result` type defined above for this and the next post.  When we come to some more serious coding, we'll revisit this.
 

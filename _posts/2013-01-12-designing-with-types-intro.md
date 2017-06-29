@@ -20,7 +20,7 @@ Many of the suggestions are also feasable in C# or Java, but the lightweight nat
 
 For demonstration of the various uses of types, I'll work with a very straightforward example, namely a `Contact` type, such as the one below. 
 
-{% highlight fsharp %}
+```fsharp
 type Contact = 
     {
     FirstName: string;
@@ -40,7 +40,7 @@ type Contact =
     IsAddressValid: bool; 
     }
 
-{% endhighlight  %}
+```
 
 This seems very obvious -- I'm sure we have all seen something like this many times. So what can we do with it?  How can we refactor this to make the most of the type system?
 
@@ -62,7 +62,7 @@ For `PostalAddress`, it seems clear that the core "address" part is a useful com
 
 So it seems that we should create *two* types. One is a generic `PostalAddress` and the other is an address in the context of a contact, which we can call `PostalContactInfo`, say.
 
-{% highlight fsharp %}
+```fsharp
 type PostalAddress = 
     {
     Address1: string;
@@ -77,12 +77,12 @@ type PostalContactInfo =
     Address: PostalAddress;
     IsAddressValid: bool;
     }
-{% endhighlight fsharp %}
+```
  
  
 Finally, we can use the option type to signal that certain values, such as `MiddleInitial`, are indeed optional.
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = 
     {
     FirstName: string;
@@ -90,13 +90,13 @@ type PersonalName =
     MiddleInitial: string option;
     LastName: string;
     }
-{% endhighlight fsharp %}
+```
 
 ## Summary
  
 With all these changes, we now have the following code:
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = 
     {
     FirstName: string;
@@ -133,7 +133,7 @@ type Contact =
     PostalContactInfo: PostalContactInfo;
     }
 
-{% endhighlight  %}
+```
 
 We haven't written a single function yet, but already the code represents the domain better. However, this is just the beginning of what we can do.
 

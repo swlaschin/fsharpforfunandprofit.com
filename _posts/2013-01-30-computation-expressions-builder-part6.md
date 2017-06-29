@@ -26,12 +26,12 @@ To understand, we have to revisit the concept of continuations again.
 
 In previous posts, we saw that a series of expressions is converted into a chain of continuations like this:
 
-{% highlight fsharp %}
+```fsharp
 Bind(1,fun x -> 
    Bind(2,fun y -> 
      Bind(x + y,fun z -> 
         Return(z)  // or Yield
-{% endhighlight fsharp %}
+```
 
 And this is the key to understanding a "while" loop -- it can be expanded in the same way.  
 
@@ -44,7 +44,7 @@ First, some terminology. A while loop has two parts:
 
 With this in place, we can create pseudo-code for a while loop using continuations:
 
-{% highlight fsharp %}
+```fsharp
 // evaluate test function
 let bool = guard()  
 if not bool 
@@ -80,7 +80,7 @@ else
             body()         
             
             // etc
-{% endhighlight fsharp %}
+```
 
 One question that is immediately apparent is: what should be returned when the while loop test fails?  Well, we have seen this before with `if..then..`, and the answer is of course to use the `Zero` value. 
 
@@ -88,7 +88,7 @@ The next thing is that the `body()` result is being discarded. Yes, it is a unit
 
 So here is a revised version of the pseudo-code, using `Zero` and `Bind`:
 
-{% highlight fsharp %}
+```fsharp
 // evaluate test function
 let bool = guard()  
 if not bool 
@@ -120,13 +120,13 @@ else
                     Bind( body(), fun () ->  
                     
                     // etc
-{% endhighlight fsharp %}
+```
 
 In this case, the continuation function passed into `Bind` has a unit parameter, because the `body` function does not have a value.
 
 Finally, the pseudo-code can be simplified by collapsing it into a recursive function like this:
 
-{% highlight fsharp %}
+```fsharp
 member this.While(guard, body) =
     // evaluate test function
     if not (guard()) 
@@ -138,7 +138,7 @@ member this.While(guard, body) =
         this.Bind( body(), fun () -> 
             // call recursively
             this.While(guard, body))  
-{% endhighlight fsharp %}
+```
 
 And indeed, this is the standard "boiler-plate" implementation for `While` in almost all builder classes. 
 
@@ -150,7 +150,7 @@ Also note that, although this is a recursive function, we didn't need the `rec` 
 
 Let's look at it being used in the `trace` builder.  Here's the complete builder class, with the `While` method:
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
     member this.Bind(m, f) = 
         match m with 
@@ -190,21 +190,21 @@ type TraceBuilder() =
 
 // make an instance of the workflow                
 let trace = new TraceBuilder()
-{% endhighlight fsharp %}
+```
 
 If you look at the signature for `While`, you will see that the `body` parameter is `unit -> unit option`, that is, a delayed function. As noted above, if you don't implement `Delay` properly, you will get unexpected behavior and cryptic compiler errors.
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder =
     // other members
     member
       While : guard:(unit -> bool) * body:(unit -> unit option) -> unit option
 
-{% endhighlight fsharp %}
+```
 
 And here is a simple loop using a mutable value that is incremented each time round.
 
-{% highlight fsharp %}
+```fsharp
 let mutable i = 1
 let test() = i < 5
 let inc() = i <- i + 1
@@ -214,7 +214,7 @@ let m = trace {
         printfn "i is %i" i
         inc() 
     } 
-{% endhighlight fsharp %}
+```
 
 ## Handling exceptions with "try..with"
 
@@ -227,17 +227,17 @@ If we look at a `try..with` expression for example, it has two parts:
 
 With this in place, we can create pseudo-code for the exception handler:
 
-{% highlight fsharp %}
+```fsharp
 try
     let wrapped = delayedBody()  
     wrapped  // return a wrapped value
 with
 | e -> handlerPart e
-{% endhighlight fsharp %}
+```
 
 And this maps exactly to a standard implementation:
 
-{% highlight fsharp %}
+```fsharp
 member this.TryWith(body, handler) =
     try 
         printfn "TryWith Body"
@@ -246,20 +246,20 @@ member this.TryWith(body, handler) =
         e ->
             printfn "TryWith Exception handling"
             handler e
-{% endhighlight fsharp %}
+```
 
 As you can see, it is common to use pass the returned value through `ReturnFrom` so that it gets the same treatment as other wrapped values.
 
 Here is an example snippet to test how the handling works:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     try
         failwith "bang"
     with
     | e -> printfn "Exception! %s" e.Message
     } |> printfn "Result %A"
-{% endhighlight fsharp %}
+```
 
 
 ## Implementing "try..finally"
@@ -271,7 +271,7 @@ trace {
 
 Just as with `try..with`, the standard implementation is obvious.
 
-{% highlight fsharp %}
+```fsharp
 member this.TryFinally(body, compensation) =
     try 
         printfn "TryFinally Body"
@@ -279,18 +279,18 @@ member this.TryFinally(body, compensation) =
     finally 
         printfn "TryFinally compensation"
         compensation() 
-{% endhighlight fsharp %}
+```
 
 Another little snippet:
 
-{% highlight fsharp %}
+```fsharp
 trace { 
     try
         failwith "bang"
     finally
         printfn "ok" 
     } |> printfn "Result %A"
-{% endhighlight fsharp %}
+```
 
 ## Implementing "using"
 
@@ -298,15 +298,15 @@ The final method to implement is `Using`.  This is the builder method for implem
 
 This is what the MSDN documentation says about `use!`:
 
-{% highlight text %}
+```text
 {| use! value = expr in cexpr |} 
-{% endhighlight text %}
+```
 
 is translated to:
 
-{% highlight text %}
+```text
 builder.Bind(expr, (fun value -> builder.Using(value, (fun value -> {| cexpr |} ))))
-{% endhighlight text %}
+```
 
 In other words, the `use!` keyword triggers both a `Bind` and a `Using`. First a `Bind` is done to unpack the wrapped value,
 and then the unwrapped disposable is passed into `Using` to ensure disposal, with the continuation function as the second parameter.
@@ -317,14 +317,14 @@ Of course we want to ensure that the disposable value is always disposed no matt
 
 Here's a standard implementation:
 
-{% highlight fsharp %}
+```fsharp
 member this.Using(disposable:#System.IDisposable, body) =
     let body' = fun () -> body disposable
     this.TryFinally(body', fun () -> 
         match disposable with 
             | null -> () 
             | disp -> disp.Dispose())
-{% endhighlight fsharp %}
+```
 
 Notes:
 
@@ -334,7 +334,7 @@ Notes:
 Here's a demonstration of `Using` in action. Note that the `makeResource` makes a *wrapped* disposable.  If it wasn't wrapped, we wouldn't need the special
 `use!` and could just use a normal `use` instead.
 
-{% highlight fsharp %}
+```fsharp
 let makeResource name =
     Some { 
     new System.IDisposable with
@@ -346,7 +346,7 @@ trace {
     printfn "Disposable in use"
     return 1
     } |> printfn "Result: %A" 
-{% endhighlight fsharp %}
+```
 
 
 ## "For" revisited
@@ -355,12 +355,12 @@ Finally, we can revisit how `For` is implemented.  In the previous examples, `Fo
 
 Here's the standard implementation for `For` now:
 
-{% highlight fsharp %}
+```fsharp
 member this.For(sequence:seq<_>, body) =
        this.Using(sequence.GetEnumerator(),fun enum -> 
             this.While(enum.MoveNext, 
                 this.Delay(fun () -> body enum.Current)))
- {% endhighlight fsharp %}
+ ```
 
 As you can see, it is quite different from the previous implementation, in order to handle a generic `IEnumerable<_>`.
 
@@ -377,7 +377,7 @@ but it can obscure the simplicity of the methods.
 
 So as a final step, let's have a look at the complete code for the "trace" builder class, but this time without any extraneous code at all.  Even though the code is cryptic, the purpose and implementation of each method should now be familiar to you.
 
-{% highlight fsharp %}
+```fsharp
 type TraceBuilder() =
 
     member this.Bind(m, f) = 
@@ -423,7 +423,7 @@ type TraceBuilder() =
             this.While(enum.MoveNext, 
                 this.Delay(fun () -> body enum.Current)))
                 
-{% endhighlight fsharp %}
+```
 
 After all this discussion, the code seems quite tiny now. And yet this builder implements every standard method, uses delayed functions.
 A lot of functionality in a just a few lines!

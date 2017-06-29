@@ -15,7 +15,7 @@ We'll look at the way pattern matching is used for binding values to expressions
 
 In the following examples, we are binding to the internal members of tuples and lists directly:
 
-{% highlight fsharp %}
+```fsharp
 //matching tuples directly
 let firstPart, secondPart, _ =  (1,2,3)  // underscore means ignore
 
@@ -34,11 +34,11 @@ listMatcher [1;2;3;4]
 listMatcher [1;2]
 listMatcher [1]
 listMatcher []
-{% endhighlight %}
+```
 
 You can also bind values to the inside of complex structures such as records. In the following example, we will create an "`Address`" type, and then a "`Customer`" type which contains an address. Next, we will create a customer value, and then match various properties against it. 
 
-{% highlight fsharp %}
+```fsharp
 // create some types
 type Address = { Street: string; City: string; }   
 type Customer = { ID: int; Name: string; Address: Address}   
@@ -58,7 +58,7 @@ printfn "The customer called %s has id %i" name2 id2
 // extract name and address
 let { Name=name3;  Address={Street=street3}  } =  customer1   
 printfn "The customer is called %s and lives on %s" name3 street3
-{% endhighlight  %}
+```
 
 In the last example, note how we could reach right into the `Address` substructure and pull out the street as well as the customer name.  
 

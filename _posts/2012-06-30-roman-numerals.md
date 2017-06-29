@@ -33,10 +33,10 @@ As before we'll start by first creating the internal model, and then look at how
 
 Here's a first stab at the model. We'll treat a `RomanNumeral` as a list of `RomanDigits`.
 
-{% highlight fsharp %}
+```fsharp
 type RomanDigit = int
 type RomanNumeral = RomanDigit list 
-{% endhighlight %}
+```
 
 No, stop right there! A `RomanDigit` is not just *any* digit, it has to be taken from a limited set.
 
@@ -45,10 +45,10 @@ We can do this by creating a [single case union type](/posts/discriminated-union
 
 Here's a much better version:
 
-{% highlight fsharp %}
+```fsharp
 type RomanDigit = I | V | X | L | C | D | M
 type RomanNumeral = RomanNumeral of RomanDigit list 
-{% endhighlight %}
+```
 
 ### Output: Converting a numeral to an int
 
@@ -56,7 +56,7 @@ Now let's do the output logic, converting a Roman numeral to an int.
 
 The digit conversion is easy:
 
-{% highlight fsharp %}
+```fsharp
 /// Converts a single RomanDigit to an integer
 let digitToInt =
     function
@@ -72,14 +72,14 @@ let digitToInt =
 I  |> digitToInt
 V  |> digitToInt
 M  |> digitToInt
-{% endhighlight %}
+```
 
 Note that we're using the `function` keyword instead of the `match..with` expression.
 
 To convert a list of digits, we'll use a recursive loop again.
 There is a special case when we need to look ahead to the next digit, and if it is larger than the current one, then use their difference.
 
-{% highlight fsharp %}
+```fsharp
 let rec digitsToInt =
     function
         
@@ -103,13 +103,13 @@ let rec digitsToInt =
 [I;X]  |> digitsToInt
 [M;C;M;L;X;X;I;X]  |> digitsToInt // 1979
 [M;C;M;X;L;I;V] |> digitsToInt // 1944
-{% endhighlight %}
+```
 
 *Note that the "less than" operation did not have to be defined. The types are automatically sorted by their order of declaration.*
 
 Finally, we can convert the `RomanNumeral` type itself by unpacking the contents into a list and calling `digitsToInt`.
 
-{% highlight fsharp %}
+```fsharp
 /// converts a RomanNumeral to an integer
 let toInt (RomanNumeral digits) = digitsToInt digits
 
@@ -119,7 +119,7 @@ x |> toInt
 
 let x = RomanNumeral [M;C;M;L;X;X;I;X]
 x |> toInt
-{% endhighlight %}
+```
 
 That takes care of the output.
 
@@ -129,7 +129,7 @@ Now let's do the input logic, converting a string to our internal model.
 
 First, let's handle a single character conversion. It seems straightforward.
 
-{% highlight fsharp %}
+```fsharp
 let charToRomanDigit =
     function
     | 'I' -> I
@@ -139,7 +139,7 @@ let charToRomanDigit =
     | 'C' -> C
     | 'D' -> D
     | 'M' -> M
-{% endhighlight %}
+```
 
 The compiler doesn't like that! What happens if we get some other character? 
 
@@ -149,7 +149,7 @@ So, what should be done for bad input. How about printing an error message?
 
 Let's try again and add a case to handle all other characters:
 
-{% highlight fsharp %}
+```fsharp
 let charToRomanDigit =
     function
     | 'I' -> I
@@ -160,7 +160,7 @@ let charToRomanDigit =
     | 'D' -> D
     | 'M' -> M
 	| ch -> eprintf "%c is not a valid character" ch
-{% endhighlight %}
+```
 
 The compiler doesn't like that either! The normal cases return a valid `RomanDigit` but the error case returns `unit`. As we saw in the [earlier post](/posts/pattern-matching), every branch *must* return the same type.
 
@@ -171,7 +171,7 @@ But on further consideration, we might also want the caller to know what the bad
 
 Here's the fixed up version:
 
-{% highlight fsharp %}
+```fsharp
 type ParsedChar = 
     | Digit of RomanDigit 
     | BadChar of char
@@ -186,26 +186,26 @@ let charToRomanDigit =
     | 'D' -> Digit D
     | 'M' -> Digit M
     | ch -> BadChar ch
-{% endhighlight %}
+```
 
 Note that I have removed the error message. Since the bad char is being returned, the caller can print its own message for the `BadChar` case.
 
 Next, we should check the function signature to make sure it is what we expect:
 
-{% highlight fsharp %}
+```fsharp
 charToRomanDigit : char -> ParsedChar
-{% endhighlight %}
+```
 
 That looks good.  
 
 Now, how can we convert a string into these digits? We convert the string to a char array, convert that into a list, and then do a final conversion using `charToRomanDigit`.
 
-{% highlight fsharp %}
+```fsharp
 let toRomanDigitList s = 
     s.ToCharArray() // error FS0072
     |> List.ofArray 
     |> List.map charToRomanDigit
-{% endhighlight %}
+```
 
 But the compiler complains again with "FS0072: Lookup on object of indeterminate type",
 
@@ -213,18 +213,18 @@ That typically happens when you use a method rather than a function.  Any object
 
 In this case, the solution is just to use an explicit type annotation on the parameter -- our first so far!
 
-{% highlight fsharp %}
+```fsharp
 let toRomanDigitList (s:string) = 
     s.ToCharArray() 
     |> List.ofArray 
     |> List.map charToRomanDigit
-{% endhighlight %}
+```
 
 But look at the signature:
 
-{% highlight fsharp %}
+```fsharp
 toRomanDigitList : string -> ParsedChar list
-{% endhighlight %}
+```
 
 It still has the pesky `ParsedChar` in it rather than `RomanDigits`. How do we want to proceed? Answer, let's pass the buck again and let someone else deal with it!
 
@@ -232,12 +232,12 @@ It still has the pesky `ParsedChar` in it rather than `RomanDigits`. How do we w
 
 In this case, the client is the top level function that creates a `RomanNumeral` type. Here's our first attempt:
 
-{% highlight fsharp %}
+```fsharp
 // convert a string to a RomanNumeral
 let toRomanNumeral s = 
     toRomanDigitList s
     |> RomanNumeral
-{% endhighlight %}
+```
 
 The compiler is not happy -- the `RomanNumeral` constructor requires a list of `RomanDigits`, but the `toRomanDigitList` is giving us a list of `ParsedChars` instead.
 
@@ -253,7 +253,7 @@ If we do this, the output of `List.choose` will be a list of `RomanDigits`, exac
 
 Here is everything put together:
 
-{% highlight fsharp %}
+```fsharp
 /// Convert a string to a RomanNumeral
 /// Does not validate the input.E.g. "IVIV" would be valid
 let toRomanNumeral s = 
@@ -267,11 +267,11 @@ let toRomanNumeral s =
             None
         )
     |> RomanNumeral
-{% endhighlight %}
+```
 
 Let's test!
 
-{% highlight fsharp %}
+```fsharp
 // test good cases
 
 "IIII"  |> toRomanNumeral
@@ -285,7 +285,7 @@ Let's test!
 // error cases
 "MC?I" |> toRomanNumeral
 "abc" |> toRomanNumeral
-{% endhighlight %}
+```
 
 Ok, everything is good so far. Let's move on to validation.
 
@@ -301,7 +301,7 @@ The validation rules were not listed in the requirements, so let's put down our 
 
 We can convert these requirements into a pattern matching function as follows:
 
-{% highlight fsharp %}
+```fsharp
 let runsAllowed = 
     function 
     | I | X | C | M -> true
@@ -358,13 +358,13 @@ let rec isValidDigitList digitList =
         // check the remainder of the list
         isValidDigitList ds 
 
-{% endhighlight %}
+```
 
 *Again, note that "equality" and "less than" did not need to be defined.*
 
 And let's test the validation:
 
-{% highlight fsharp %}
+```fsharp
 // test valid 
 let validList = [
     [I;I;I;I]
@@ -395,10 +395,10 @@ let invalidList = [
     [X;L;D]
     ]
 let testInvalid = invalidList |> List.map isValidDigitList
-{% endhighlight %}
+```
 
 Finally, we add a top level function to test validity of the `RomanNumeral` type itself.
-{% highlight fsharp %}
+```fsharp
 // top level check for validity
 let isValid (RomanNumeral digitList) =
     isValidDigitList digitList
@@ -423,13 +423,13 @@ let isValid (RomanNumeral digitList) =
     | n ->
         printfn "%A is not valid" n
     )
-{% endhighlight %}
+```
 
 ## The entire code for the first version
 
 Here's all the code in one module:
 
-{% highlight fsharp %}
+```fsharp
 module RomanNumeralsV1 =
 
     // ==========================================
@@ -576,7 +576,7 @@ module RomanNumeralsV1 =
     let isValid (RomanNumeral digitList) =
         isValidDigitList digitList
 
-{% endhighlight %}
+```
 
 ## Second version
 
@@ -584,9 +584,9 @@ The code works, but there is something that's bugging me about it. The validatio
 
 And also, I can think of examples that should fail validation, but pass, such as "VIV":
 
-{% highlight fsharp %}
+```fsharp
 "VIV" |> toRomanNumeral |> isValid
-{% endhighlight %}
+```
 
 We could try to tighten up our validation rules, but let's try another tack. Complicated logic is often a sign that you don't quite understand the domain properly.
 
@@ -598,7 +598,7 @@ Let's run with it and see what happens.
 
 Here's the new types for the domain. I now have a digit type for every possible digit. The `RomanNumeral` type stays the same.
 
-{% highlight fsharp %}
+```fsharp
 type RomanDigit = 
     | I | II | III | IIII 
     | IV | V 
@@ -608,13 +608,13 @@ type RomanDigit =
     | CD | D 
     | CM | M | MM | MMM | MMMM
 type RomanNumeral = RomanNumeral of RomanDigit list 
-{% endhighlight %}
+```
 
 ### Output: second version
 
 Next, converting a single `RomanDigit` to an integer is the same as before, but with more cases:
 
-{% highlight fsharp %}
+```fsharp
 /// Converts a single RomanDigit to an integer
 let digitToInt =
     function
@@ -631,11 +631,11 @@ I  |> digitToInt
 III  |> digitToInt
 V  |> digitToInt
 CM  |> digitToInt
-{% endhighlight %}
+```
 
 Calculating the sum of the digits is now trivial. No special cases needed:
 
-{% highlight fsharp %}
+```fsharp
 /// converts a list of digits to an integer
 let digitsToInt list = 
     list |> List.sumBy digitToInt 
@@ -647,18 +647,18 @@ let digitsToInt list =
 [IX]  |> digitsToInt
 [M;CM;L;X;X;IX]  |> digitsToInt // 1979
 [M;CM;XL;IV] |> digitsToInt // 1944
-{% endhighlight %}
+```
 
 Finally, the top level function is identical:
 
-{% highlight fsharp %}
+```fsharp
 /// converts a RomanNumeral to an integer
 let toInt (RomanNumeral digits) = digitsToInt digits
 
 // test
 let x = RomanNumeral [M;CM;LX;X;IX]
 x |> toInt
-{% endhighlight %}
+```
 
 ### Input: second version
 
@@ -667,7 +667,7 @@ That means we can't just pull off one character like we did in the first version
 
 Also, we want to convert IIII into a single `IIII` digit rather than 4 separate `I` digits, so we put the longest matches at the front.
 
-{% highlight fsharp %}
+```fsharp
 type ParsedChar = 
     | Digit of RomanDigit 
     | BadChar of char
@@ -743,13 +743,13 @@ let rec toRomanDigitListRec charList =
     | [] -> 
         []
 
-{% endhighlight %}
+```
 
 Well, this is much longer than the first version, but otherwise basically the same.
 
 The top level functions are unchanged.
 
-{% highlight fsharp %}
+```fsharp
 let toRomanDigitList (s:string) = 
     s.ToCharArray() 
     |> List.ofArray 
@@ -780,7 +780,7 @@ let toRomanNumeral s =
 // error cases
 "MC?I" |> toRomanNumeral
 "abc" |> toRomanNumeral
-{% endhighlight %}
+```
 
 ### Validation: second version
 
@@ -788,7 +788,7 @@ Finally, let's see how the new domain model affects the validation rules.  Now, 
 
 * Each digit must be smaller than the preceding digit
 
-{% highlight fsharp %}
+```fsharp
 // check for validity
 let rec isValidDigitList digitList =
     match digitList with
@@ -819,13 +819,13 @@ let isValid (RomanNumeral digitList) =
 "IIXX" |> toRomanNumeral |> isValid
 "VV" |> toRomanNumeral |> isValid
 
-{% endhighlight %}
+```
 
 Alas, after all that, we still didn't fix the bad case that triggered the rewrite!
 
-{% highlight fsharp %}
+```fsharp
 "VIV" |> toRomanNumeral |> isValid
-{% endhighlight %}
+```
 
 There is a not-too-complicated fix for this, but I think it's time to leave it alone now!
 
@@ -833,7 +833,7 @@ There is a not-too-complicated fix for this, but I think it's time to leave it a
 
 Here's all the code in one module for the second version:
 
-{% highlight fsharp %}
+```fsharp
 module RomanNumeralsV2 =
 
     // ==========================================
@@ -992,7 +992,7 @@ module RomanNumeralsV2 =
         isValidDigitList digitList
 
 
-{% endhighlight %}
+```
 
 ## Comparing the two versions
 
@@ -1013,7 +1013,7 @@ Finally, let's see how we might make this object oriented. We don't care about t
 
 And here they are:
 
-{% highlight fsharp %}
+```fsharp
 type RomanNumeral with
 
     static member FromString s = 
@@ -1024,17 +1024,17 @@ type RomanNumeral with
 
     override this.ToString() = 
         sprintf "%A" this
-{% endhighlight %}
+```
 
 *Note: you can ignore the compiler warning about deprecated overrides.*
 
 Let's use this in an object oriented way now:
 
-{% highlight fsharp %}
+```fsharp
 let r = RomanNumeral.FromString "XXIV"
 let s = r.ToString()
 let i = r.ToInt()
-{% endhighlight %}
+```
 
 
 ## Summary

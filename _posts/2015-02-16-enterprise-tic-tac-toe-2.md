@@ -31,7 +31,7 @@ To recap the previous post briefly, here is the old design:
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeDomain =
 
     type HorizPosition = Left | HCenter | Right
@@ -68,7 +68,7 @@ module TicTacToeDomain =
         'GameState -> PlayerXPos -> 'GameState * MoveResult
     type PlayerOMoves<'GameState> = 
         'GameState -> PlayerOPos -> 'GameState * MoveResult
-{% endhighlight fsharp %}
+```
 
 ## What's wrong with the old design?
 
@@ -115,44 +115,44 @@ In this case, I want to give the user the capability to mark a specific position
 
 Here's what I had before:
 
-{% highlight fsharp %}
+```fsharp
 type PlayerXMoves = 
     GameState * PlayerXPos -> // input
         GameState * MoveResult // output
-{% endhighlight fsharp %}
+```
 
 The user is passing in the location (`PlayerXPos`) that they want to play.
 
 But let's now take away the user's ability to choose the position. Why don't I give the user a function, a `MoveCapability` say, that has the position baked in?
 
-{% highlight fsharp %}
+```fsharp
 type MoveCapability = 
     GameState -> // input
         GameState * MoveResult // output
-{% endhighlight fsharp %}
+```
 
 In fact, why not bake the game state into the function too? That way a malicious user can't pass the wrong game state to me.
 
 This means that there is no "input" at all now -- everything is baked in!
 
-{% highlight fsharp %}
+```fsharp
 type MoveCapability = 
     unit -> // no input
         GameState * MoveResult // output
-{% endhighlight fsharp %}
+```
 
 But now we have to give the user a whole set of capabilities, one for each possible move they can make.
 Where do these capabilities come from?  
 
 Answer, the `MoveResult` of course! We'll change the `MoveResult` to return a list of capabilities rather than a list of positions.
 
-{% highlight fsharp %}
+```fsharp
 type MoveResult = 
     | PlayerXToMove of MoveCapability list 
     | PlayerOToMove of MoveCapability list 
     | GameWon of Player 
     | GameTied 
-{% endhighlight fsharp %}
+```
 
 Excellent! I'm much happier with this approach.
 
@@ -160,10 +160,10 @@ And now that the `MoveCapability` contains the game state baked in, we don't nee
 
 So our move function has simplified dramatically and now looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type MoveCapability = 
     unit -> MoveResult 
-{% endhighlight fsharp %}
+```
 
 Look ma! No `'GameState` parameter! It's gone!
 
@@ -180,7 +180,7 @@ So now let's pretend we are the UI, and let's attempt to use the new design.
   
 Here's some pseudo-code for the UI game loop:  
   
-{% highlight fsharp %}
+```fsharp
 // loop while game not over
 let rec playMove moveResult = 
 
@@ -201,53 +201,53 @@ let rec playMove moveResult =
         // play another move
         playMove newMoveResult
     | etc            
-{% endhighlight fsharp %}
+```
 
 Let's deal with the first issue: how does the user know which capability is associated with which square?
 
 The answer is just to create a new structure that "labels" the capability. In this case, with the cell position.
-{% highlight fsharp %}
+```fsharp
 type NextMoveInfo = {
     posToPlay : CellPosition 
     capability : MoveCapability }
-{% endhighlight fsharp %}
+```
 
 And now we must change the `MoveResult` to return a list of these labelled capabilities, rather than the unlabelled ones:
 
-{% highlight fsharp %}
+```fsharp
 type MoveResult = 
     | PlayerXToMove of NextMoveInfo list 
     | PlayerOToMove of NextMoveInfo list 
     | GameWon of Player 
     | GameTied 
-{% endhighlight fsharp %}
+```
 
 Note that the cell position is for the user's information only -- the actual position is still baked into the capability and cannot be forged.
 
 Now for the second issue: how does the UI know what to display as a result of the move?  Let's just return that information to it directly in a new structure:
 
-{% highlight fsharp %}
+```fsharp
 /// Everything the UI needs to know to display the board
 type DisplayInfo = {
     cells : Cell list
     }
-{% endhighlight fsharp %}
+```
 
 And once again, the `MoveResult` must be changed, this time to return the `DisplayInfo` for each case:
 
-{% highlight fsharp %}
+```fsharp
 type MoveResult = 
     | PlayerXToMove of DisplayInfo * NextMoveInfo list 
     | PlayerOToMove of DisplayInfo * NextMoveInfo list 
     | GameWon of DisplayInfo * Player 
     | GameTied of DisplayInfo 
-{% endhighlight fsharp %}
+```
 
 ## Dealing with circular dependencies
 
 Here's our final design:
 
-{% highlight fsharp %}
+```fsharp
 /// The capability to make a move at a particular location.
 /// The gamestate, player and position are already "baked" into the function.
 type MoveCapability = 
@@ -270,7 +270,7 @@ type MoveResult =
     | PlayerOToMove of DisplayInfo * NextMoveInfo list 
     | GameWon of DisplayInfo * Player 
     | GameTied of DisplayInfo 
-{% endhighlight fsharp %}
+```
 
 But oops! This won't compile!
 
@@ -281,14 +281,14 @@ and there are [normally work-arounds which you can use](/posts/removing-cyclic-d
 
 In this case though, I will link them together using the `and` keyword, which replaces the `type` keyword and is useful for just these kinds of cases.
 
-{% highlight fsharp %}
+```fsharp
 type MoveCapability = 
     // etc
 and NextMoveInfo = {
     // etc
 and MoveResult = 
     // etc
-{% endhighlight fsharp %}
+```
 
 ## Revisiting the API
 
@@ -296,7 +296,7 @@ What does the API look like now?
 
 Originally, we had an API with slots for the three use-cases and also a helper function `getCells`:
 
-{% highlight fsharp %}
+```fsharp
 type TicTacToeAPI<'GameState>  = 
     {
     newGame : NewGame<'GameState>
@@ -304,7 +304,7 @@ type TicTacToeAPI<'GameState>  =
     playerOMoves : PlayerOMoves<'GameState> 
     getCells : GetCells<'GameState>
     }
-{% endhighlight fsharp %}
+```
 
 But now, we don't need the `playerXMoves` or `playerOMoves`, because they are returned to us in the `MoveResult` of a previous move.
 
@@ -312,14 +312,14 @@ And `getCells` is no longer needed either, because we are returning the `Display
 
 So after all these changes, the new API just has a single slot in it and looks like this:
 
-{% highlight fsharp %}
+```fsharp
 type NewGame = unit -> MoveResult
 
 type TicTacToeAPI = 
     {
     newGame : NewGame 
     }
-{% endhighlight fsharp %}
+```
 
 I've changed `NewGame` from a constant to a parameterless function, which is in fact, just a `MoveCapability` in disguise.
 
@@ -327,7 +327,7 @@ I've changed `NewGame` from a constant to a parameterless function, which is in 
 
 Here's the new design in full:
 
-{% highlight fsharp %}
+```fsharp
 module TicTacToeDomain =
 
     type HorizPosition = Left | HCenter | Right
@@ -379,7 +379,7 @@ module TicTacToeDomain =
         {
         newGame : MoveCapability
         }
-{% endhighlight fsharp %}
+```
 
 I'm much happier with this design than with the previous one:
 
@@ -408,7 +408,7 @@ First, given a `MoveCapability`, we want to transform it into another `MoveCapab
 
 Here's the code for that:
 
-{% highlight fsharp %}
+```fsharp
 /// Transform a MoveCapability into a logged version
 let transformCapability transformMR player cellPos (cap:MoveCapability) :MoveCapability =
     
@@ -418,7 +418,7 @@ let transformCapability transformMR player cellPos (cap:MoveCapability) :MoveCap
         let moveResult = cap() 
         transformMR moveResult 
     newCap
-{% endhighlight fsharp %}    
+```    
 
 This code works as follows:
 
@@ -430,13 +430,13 @@ This code works as follows:
 
 Now that we can transform a `MoveCapability`, we can go up a level and transform a `NextMoveInfo`.
   
-{% highlight fsharp %}
+```fsharp
 /// Transform a NextMove into a logged version
 let transformNextMove transformMR player (move:NextMoveInfo) :NextMoveInfo = 
     let cellPos = move.posToPlay 
     let cap = move.capability
     {move with capability = transformCapability transformMR player cellPos cap} 
-{% endhighlight fsharp %}
+```
 
 This code works as follows:
 
@@ -446,7 +446,7 @@ This code works as follows:
    
 Finally, we need to implement the function that will transform a `MoveResult`:
    
-{% highlight fsharp %}
+```fsharp
 /// Transform a MoveResult into a logged version
 let rec transformMoveResult (moveResult:MoveResult) :MoveResult =
     
@@ -465,7 +465,7 @@ let rec transformMoveResult (moveResult:MoveResult) :MoveResult =
     | GameTied display ->
         printfn "LOGINFO: Game tied" 
         moveResult
-{% endhighlight fsharp %}
+```
 
 This code works as follows:
 
@@ -477,7 +477,7 @@ This code works as follows:
 
 Finally, we can inject logging into the API as a whole by transforming the `MoveResult` returned by `newGame`:
 
-{% highlight fsharp %}
+```fsharp
 /// inject logging into the API
 let injectLogging api =
    
@@ -486,7 +486,7 @@ let injectLogging api =
     { api with
         newGame = fun () -> api.newGame() |> transformMoveResult
         }
-{% endhighlight fsharp %}
+```
 
 So there you go. Logging is a bit trickier than before, but still possible.
 

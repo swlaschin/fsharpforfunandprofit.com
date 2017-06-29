@@ -30,20 +30,20 @@ For example, should the "Remove" method be available at the interface level or n
 
 Let's say the "Remove" method *is* available at the interface level, then the interface would look like this:
 
-{% highlight csharp %}
+```csharp
 interface ICartState
 {
     ICartState Add(Product product);
     ICartState Remove(Product product);
     ICartState Pay(decimal amount);
 }
-{% endhighlight csharp %}
+```
 
 ![Cart State - Approach 1](CartState-Approach1.png)
 
 But what should the empty state implementation do with the methods that are not relevant?  It can either throw an exception or ignore them, as shown below.
 
-{% highlight csharp %}
+```csharp
 class CartStateEmpty : ICartState
 {
     public ICartState Add(Product product)
@@ -61,7 +61,7 @@ class CartStateEmpty : ICartState
         // throw not implemented exception or ignore
     }
 }
-{% endhighlight csharp %}
+```
 
 Throwing an exception seems a bit drastic, and ignoring the call seems even worse. Is there another approach? 
 
@@ -74,7 +74,7 @@ The next approach is that the base interface should only have genuinely common c
 
 So the code for the shopping cart would look something like this:
 
-{% highlight csharp %}
+```csharp
 interface ICartState
 {
     // nothing in common between the states
@@ -101,13 +101,13 @@ class CartStatePaid : ICartState
 {
     public decimal GetAmountPaid() {} // implementation 
 }
-{% endhighlight csharp %}
+```
 
 This is much cleaner, but now the question is: how does the client know which state the cart is in?
 
 Typically, the caller would have to try downcasting the object to each state in turn. The client code would look something like this:
 
-{% highlight csharp %}
+```csharp
 private class CientWithDowncasting
 {
     public ICartState AddProduct(ICartState currentState, Product product)
@@ -128,7 +128,7 @@ private class CientWithDowncasting
         return currentState;
     }
 }
-{% endhighlight csharp %}
+```
 
 But this approach is not only ugly, it's all error prone, as the client has to do all the work.  
 
@@ -145,27 +145,27 @@ The idea behind it is that the caller does not know the type of the state, but t
 
 To use this approach, first we implement a visitor interface as follows:
 
-{% highlight csharp %}
+```csharp
 interface ICartStateVisitor
 {
     ICartState VisitEmpty(CartStateEmpty empty);
     ICartState VisitActive(CartStateActive active);
     ICartState VisitPaid(CartStatePaid paid);
 }
-{% endhighlight csharp %}
+```
 
 Next we change the base interface to allow the visitor to call on the state:
 
-{% highlight csharp %}
+```csharp
 interface ICartState
 {
     ICartState Accept(ICartStateVisitor visitor);
 }
-{% endhighlight csharp %}
+```
 
 Finally, for each state, we implement the appropriate `VisitXXX` method:
 
-{% highlight csharp %}
+```csharp
 class CartStateEmpty : ICartState
 {
     public ICartState Accept(ICartStateVisitor visitor)
@@ -188,7 +188,7 @@ class CartStatePaid : ICartState
         return visitor.VisitPaid(this);
     }
 }
-{% endhighlight csharp %}
+```
 
 Now we are ready to use it -- and here is where our problems start! Because, for each different set of visitor behavior, we have to implement a custom class.
 
@@ -196,7 +196,7 @@ For example, when we want to add an item, we have to create an instance of `AddP
 
 Here's some code to show what I mean:
 
-{% highlight csharp %}
+```csharp
 class CientWithVisitor
 {
     class AddProductVisitor: ICartStateVisitor
@@ -227,7 +227,7 @@ class CientWithVisitor
         return currentState.Accept(visitor);
     }
 }
-{% endhighlight csharp %}
+```
 
 Phew! It does work, and it is polymorphic and type safe.  But it seems like an awful lot of scaffolding is needed just to do something straightforward. An interface, two new classes, and nine new methods!
 
@@ -247,7 +247,7 @@ The idea is that for each possible state, we pass in a lambda specifically desig
 
 Here is some example code:
 
-{% highlight csharp %}
+```csharp
 partial interface ICartState 
 {
 	ICartState Transition(
@@ -295,11 +295,11 @@ class CartStatePaid : ICartState
 		return cartStatePaid(this);
 	}
 }
-{% endhighlight csharp %}
+```
 
 And here is an example of how a client might call it in practice:
 
-{% highlight csharp %}
+```csharp
 public ICartState AddProduct(ICartState currentState, Product product)
 {
     return currentState.Transition(
@@ -326,7 +326,7 @@ public void Example()
         cartStatePaid => cartStatePaid
         );
 }
-{% endhighlight csharp %}
+```
 
 As you can see, this approach solves all the problems discussed earlier:
 

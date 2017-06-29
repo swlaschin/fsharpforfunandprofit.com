@@ -16,7 +16,7 @@ This means that your programs will be more type-safe, more self documenting, and
 
 Here are some examples of one-liner types in F#: 
 
-{% highlight fsharp %}
+```fsharp
 open System
 
 // some "record" types
@@ -28,7 +28,7 @@ type TimePeriod = Hour | Day | Week | Year
 type Temperature = C of int | F of int
 type Appointment = OneTime of DateTime 
                    | Recurring of DateTime list
-{% endhighlight %}
+```
 
 
 ## F# types and domain driven design
@@ -39,7 +39,7 @@ Furthermore, "value" objects in DDD should have structural equality, meaning tha
 
 To show how easy it is to create DDD types in F#, here are some example types that might be created for a simple "customer" domain. 
 
-{% highlight fsharp %}
+```fsharp
 type PersonalName = {FirstName:string; LastName:string}
 
 // Addresses
@@ -95,7 +95,7 @@ type CustomerAccount =
         | _ -> false
 
     override this.GetHashCode() = hash this.CustomerAccountId 
-{% endhighlight %}
+```
 
 This code fragment contains 17 type definitions in just a few lines, but with minimal complexity. How many lines of C# code would you need to do the same thing?
 

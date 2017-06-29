@@ -76,7 +76,7 @@ Before we start implementing, let's get some common code out of the way.
 
 First, we'll need some types to represent distances, angles, the pen state, and the pen colors.
 
-{% highlight fsharp %}
+```fsharp
 /// An alias for a float
 type Distance = float
 
@@ -91,18 +91,18 @@ type PenState = Up | Down
 
 /// Enumeration of available pen colors
 type PenColor = Black | Red | Blue
-{% endhighlight fsharp %}
+```
 
 and we'll also need a type to represent the position of the turtle:
 
-{% highlight fsharp %}
+```fsharp
 /// A structure to store the (x,y) coordinates
 type Position = {x:float; y:float}
-{% endhighlight fsharp %}
+```
 
 We'll also need a helper function to calculate a new position based on moving a certain distance at a certain angle:
 
-{% highlight fsharp %}
+```fsharp
 // round a float to two places to make it easier to read
 let round2 (flt:float) = Math.Round(flt,2)
 
@@ -118,23 +118,23 @@ let calcNewPosition (distance:Distance) (angle:Angle) currentPos =
     let y1 = y0 + (distance * sin angleInRads)
     // return a new Position
     {x=round2 x1; y=round2 y1}
-{% endhighlight fsharp %}
+```
 
 Let's also define the initial state of a turtle:
 
-{% highlight fsharp %}
+```fsharp
 /// Default initial state
 let initialPosition,initialColor,initialPenState = 
     {x=0.0; y=0.0}, Black, Down
-{% endhighlight fsharp %}
+```
 
 And a helper that pretends to draw a line on a canvas:
 
-{% highlight fsharp %}
+```fsharp
 let dummyDrawLine log oldPos newPos color =
     // for now just log it
     log (sprintf "...Draw line from (%0.1f,%0.1f) to (%0.1f,%0.1f) using %A" oldPos.x oldPos.y newPos.x newPos.y color)
-{% endhighlight fsharp %}
+```
     
 Now we're ready for the first implementation!
 
@@ -153,7 +153,7 @@ In this first design, we will use an object-oriented approach and represent the 
 
 And here's the complete code, which should be self-explanatory:
 
-{% highlight fsharp %}
+```fsharp
 type Turtle(log) =
 
     let mutable currentPosition = initialPosition 
@@ -189,13 +189,13 @@ type Turtle(log) =
     member this.SetColor(color) =
         log (sprintf "SetColor %A" color)
         currentColor <- color
-{% endhighlight fsharp %}
+```
 
 ### Calling the turtle object
 
 The client code instantiates the turtle and talks to it directly:
 
-{% highlight fsharp %}
+```fsharp
 /// Function to log a message
 let log message =
     printfn "%s" message 
@@ -209,11 +209,11 @@ let drawTriangle() =
     turtle.Move 100.0
     turtle.Turn 120.0<Degrees>
     // back home at (0,0) with angle 0
-{% endhighlight fsharp %}
+```
 
 The logged output of `drawTriangle()` is:
 
-{% highlight text %}
+```text
 Move 100.0
 ...Draw line from (0.0,0.0) to (100.0,0.0) using Black
 Turn 120.0
@@ -223,11 +223,11 @@ Turn 120.0
 Move 100.0
 ...Draw line from (50.0,86.6) to (0.0,0.0) using Black
 Turn 120.0
-{% endhighlight text %}
+```
 
 Similarly, here's the code to draw a polygon:
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let angleDegrees = angle * 1.0<Degrees>
@@ -241,7 +241,7 @@ let drawPolygon n =
     // repeat for all sides
     for i in [1..n] do
         drawOneSide()
-{% endhighlight fsharp %}
+```
 
 Note that `drawOneSide()` does not return anything -- all the code is imperative and stateful.  Compare this to the code in the next example, which takes a pure functional approach.
 
@@ -278,7 +278,7 @@ In this approach then, the client is responsible for keeping track of the curren
 
 Here's the definition of `TurtleState` and the values for the initial state:
 
-{% highlight fsharp %}
+```fsharp
 module Turtle = 
 
     type TurtleState = {
@@ -294,11 +294,11 @@ module Turtle =
         color = initialColor
         penState = initialPenState
     }                
-{% endhighlight fsharp %}
+```
 
 And here are the "api" functions, all of which take a state parameter and return a new state:
 
-{% highlight fsharp %}
+```fsharp
 module Turtle = 
     
     // [state type snipped]
@@ -331,7 +331,7 @@ module Turtle =
     let setColor log color state =
         log (sprintf "SetColor %A" color)
         {state with color = color}
-{% endhighlight fsharp %}
+```
 
 Note that the `state` is always the last parameter -- this makes it easier to use the "piping" idiom.
 
@@ -341,7 +341,7 @@ The client now has to pass in both the `log` function and the `state` to every f
 
 We can eliminate the need to pass in the log function by using partial application to create new versions of the functions with the logger baked in:
 
-{% highlight fsharp %}
+```fsharp
 /// Function to log a message
 let log message =
     printfn "%s" message 
@@ -352,11 +352,11 @@ let turn = Turtle.turn log
 let penDown = Turtle.penDown log
 let penUp = Turtle.penUp log
 let setColor = Turtle.setColor log
-{% endhighlight fsharp %}
+```
 
 With these simpler versions, the client can just pipe the state through in a natural way:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     Turtle.initialTurtleState
     |> move 100.0 
@@ -366,11 +366,11 @@ let drawTriangle() =
     |> move 100.0 
     |> turn 120.0<Degrees>
     // back home at (0,0) with angle 0
-{% endhighlight fsharp %}
+```
 
 When it comes to drawing a polygon, it's a little more complicated, as we have to "fold" the state through the repetitions for each side:
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let angleDegrees = angle * 1.0<Degrees>
@@ -384,7 +384,7 @@ let drawPolygon n =
     // repeat for all sides
     [1..n] 
     |> List.fold oneSide Turtle.initialTurtleState
-{% endhighlight fsharp %}
+```
 
 ### Advantages and disadvantages
 
@@ -421,13 +421,13 @@ these commands and turn them into method calls on the turtle (we'll use the OO a
 If the command is *not* valid, the API must indicate that to the client.  Since we are using an OO approach, we'll
 do this by throwing a `TurtleApiException` containing a string, like this.
 
-{% highlight fsharp %}
+```fsharp
 exception TurtleApiException of string
-{% endhighlight fsharp %}
+```
 
 Next we need some functions that validate the command text:
 
-{% highlight fsharp %}
+```fsharp
 // convert the distance parameter to a float, or throw an exception
 let validateDistance distanceStr =
     try
@@ -455,7 +455,7 @@ let validateColor colorStr =
     | _ -> 
         let msg = sprintf "Color '%s' is not recognized" colorStr
         raise (TurtleApiException msg)
-{% endhighlight fsharp %}
+```
 
 With these in place, we can create the API. 
 
@@ -464,7 +464,7 @@ match the first token to `"move"`, `"turn"`, etc.
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleApi() =
 
     let turtle = Turtle(log)
@@ -488,13 +488,13 @@ type TurtleApi() =
         | _ -> 
             let msg = sprintf "Instruction '%s' is not recognized" commandStr
             raise (TurtleApiException msg)
-{% endhighlight fsharp %}
+```
 
 ### Using the API
 
 Here's how `drawPolygon` is implemented using the `TurtleApi` class:
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let api = TurtleApi()
@@ -507,24 +507,24 @@ let drawPolygon n =
     // repeat for all sides
     for i in [1..n] do
         drawOneSide()
-{% endhighlight fsharp %}
+```
 
 You can see that the code is quite similar to the earlier OO version,
 with the direct call `turtle.Move 100.0` being replaced with the indirect API call `api.Exec "Move 100.0"`.
 
 Now if we trigger an error with a bad command such as `api.Exec "Move bad"`, like this:
 
-{% highlight fsharp %}
+```fsharp
 let triggerError() = 
     let api = TurtleApi()
     api.Exec "Move bad"
-{% endhighlight fsharp %}
+```
 
 then the expected exception is thrown:
 
-{% highlight text %}
+```text
 Exception of type 'TurtleApiException' was thrown.
-{% endhighlight text %}
+```
 
 ### Advantages and disadvantages
 
@@ -563,7 +563,7 @@ but instead will return a `Result` value with `Success` and `Failure` cases, whe
 
 Let's start by implementing the API class. This time it contains a `mutable` turtle state:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleApi() =
 
     let mutable state = initialTurtleState
@@ -571,28 +571,28 @@ type TurtleApi() =
     /// Update the mutable state value
     let updateState newState =
         state <- newState
-{% endhighlight fsharp %}
+```
 
 The validation functions no longer throw an exception, but return `Success` or `Failure`:
 
-{% highlight fsharp %}
+```fsharp
 let validateDistance distanceStr =
     try
         Success (float distanceStr)
     with
     | ex -> 
         Failure (InvalidDistance distanceStr)
-{% endhighlight fsharp %}
+```
 
 The error cases are documented in their own type:
 
-{% highlight fsharp %}
+```fsharp
 type ErrorMessage = 
     | InvalidDistance of string
     | InvalidAngle of string
     | InvalidColor of string
     | InvalidCommand of string
-{% endhighlight fsharp %}
+```
 
 Now because the validation functions now return a `Result<Distance>` rather than a "raw" distance, the `move` function needs to be lifted to
 the world of `Results`, as does the current state.
@@ -617,7 +617,7 @@ As an example, with these helper functions, we can turn the normal `move` functi
 * The state parameter is lifted into `Result` world using `returnR`
 * The `move` function is lifted into `Result` world using `lift2R`
 
-{% highlight fsharp %}
+```fsharp
 // lift current state to Result
 let stateR = returnR state
 
@@ -626,13 +626,13 @@ let distanceR = validateDistance distanceStr
 
 // call "move" lifted to the world of Results
 lift2R move distanceR stateR
-{% endhighlight fsharp %}
+```
 
 *(For more details on lifting functions to `Result` world, see the post on ["lifting" in general](/posts/elevated-world/#lift) )*
 
 Here's the complete code for `Exec`:
 
-{% highlight fsharp %}
+```fsharp
 /// Execute the command string, and return a Result
 /// Exec : commandStr:string -> Result<unit,ErrorMessage>
 member this.Exec (commandStr:string) = 
@@ -673,7 +673,7 @@ member this.Exec (commandStr:string) =
     mapR updateState newStateR
 
     // Return the final result (output of updateState)
-{% endhighlight fsharp %}
+```
 
 ### Using the API
 
@@ -682,7 +682,7 @@ from a call and abandon the rest of the steps.
 
 To make our lives easier, we'll use a `result` computation expression (or workflow) to chain the calls and preserve the imperative "feel" of the OO version.
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     let api = TurtleApi()
     result {
@@ -693,13 +693,13 @@ let drawTriangle() =
         do! api.Exec "Move 100"
         do! api.Exec "Turn 120"
         }
-{% endhighlight fsharp %}
+```
 
 *The source code for the `result` computation expression is available [here](https://github.com/swlaschin/13-ways-of-looking-at-a-turtle/blob/master/Common.fsx#L70).*
 
 Similarly, for the `drawPolygon` code, we can create a helper to draw one side and then call it `n` times inside a `result` expression.
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let api = TurtleApi()
@@ -715,7 +715,7 @@ let drawPolygon n =
         for i in [1..n] do
             do! drawOneSide() 
     }
-{% endhighlight fsharp %}
+```
 
 The code looks imperative, but is actually purely functional, as the returned `Result` values are being handled transparently by the `result` workflow.
 
@@ -750,19 +750,19 @@ storing the current state as a parameter in the recursive message processing loo
 Now because the `TurtleAgent` has a typed message queue, where all messages are the same type,
 we must combine all possible commands into a single discriminated union type (`TurtleCommand`).
 
-{% highlight fsharp %}
+```fsharp
 type TurtleCommand = 
     | Move of Distance 
     | Turn of Angle
     | PenUp
     | PenDown
     | SetColor of PenColor
-{% endhighlight fsharp %}
+```
 
 The agent implementation is similar to the previous ones, but rather than exposing the turtle functions directly,
 we now do pattern matching on the incoming command to decide which function to call:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleAgent() =
 
     /// Function to log a message
@@ -800,7 +800,7 @@ type TurtleAgent() =
     // expose the queue externally
     member this.Post(command) = 
         mailboxProc.Post command
-{% endhighlight fsharp %}
+```
 
 ### Sending a command to the Agent
 
@@ -808,34 +808,34 @@ The API calls the agent by constructing a `TurtleCommand` and posting it to the 
 
 This time, rather than using the previous approach of "lifting" the `move` command:
 
-{% highlight fsharp %}
+```fsharp
 let stateR = returnR state
 let distanceR = validateDistance distanceStr 
 lift2R move distanceR stateR
-{% endhighlight fsharp %}
+```
 
 we'll use the `result` computation expression instead, so the code above would have looked like this: 
 
-{% highlight fsharp %}
+```fsharp
 result {
     let! distance = validateDistance distanceStr 
     move distance state
     } 
-{% endhighlight fsharp %}
+```
 
 In the agent implementation, we are not calling a `move` command, but instead creating the `Move` case of the `Command` type, so the code looks like:
 
-{% highlight fsharp %}
+```fsharp
 result {
     let! distance = validateDistance distanceStr 
     let command = Move distance 
     turtleAgent.Post command
     } 
-{% endhighlight fsharp %}
+```
 
 Here's the complete code:
 
-{% highlight fsharp %}
+```fsharp
 member this.Exec (commandStr:string) = 
     let tokens = commandStr.Split(' ') |> List.ofArray |> List.map trimString
 
@@ -875,7 +875,7 @@ member this.Exec (commandStr:string) =
 
     // return any errors
     result
-{% endhighlight fsharp %}
+```
 
 ### Advantages and disadvantages of the Agent approach
 
@@ -915,14 +915,14 @@ The client injects the turtle implementation later, via the API's constructor.
 
 Here's the interface definition:
 
-{% highlight fsharp %}
+```fsharp
 type ITurtle =
     abstract Move : Distance -> unit
     abstract Turn : Angle -> unit
     abstract PenUp : unit -> unit
     abstract PenDown : unit -> unit
     abstract SetColor : PenColor -> unit
-{% endhighlight fsharp %}
+```
 
 Note that there are a lot of `unit`s in these functions. A `unit` in a function signature implies side effects, and indeed the `TurtleState` is not used anywhere,
 as this is a OO-based approach where the mutable state is encapsulated in the object.
@@ -930,7 +930,7 @@ as this is a OO-based approach where the mutable state is encapsulated in the ob
 Next, we need to change the API layer to use the interface by injecting it in the constructor for `TurtleApi`.
 Other than that, the rest of the API code is unchanged, as shown by the snippet below:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleApi(turtle: ITurtle) =
 
     // other code
@@ -945,7 +945,7 @@ type TurtleApi(turtle: ITurtle) =
             let angle = validateAngle angleStr
             turtle.Turn angle  
         // etc
-{% endhighlight fsharp %}
+```
 
 ### Creating some implementations of an OO interface
 
@@ -959,7 +959,7 @@ working code! Instead, we can create a "proxy" wrapper around the orginal `Turtl
 
 In some languages, creating proxy wrappers can be long-winded, but in F# you can use [object expressions](/posts/object-expressions/) to implement an interface quickly:
 
-{% highlight fsharp %}
+```fsharp
 let normalSize() = 
     let log = printfn "%s"
     let turtle = Turtle(log)
@@ -972,11 +972,11 @@ let normalSize() =
         member this.PenDown() = turtle.PenDown()
         member this.SetColor color = turtle.SetColor color
     }
-{% endhighlight fsharp %}
+```
 
 And to create the `halfSize` version, we do the same thing, but intercept the calls to `Move` and halve the distance parameter:
 
-{% highlight fsharp %}
+```fsharp
 let halfSize() = 
     let normalSize = normalSize() 
     
@@ -988,7 +988,7 @@ let halfSize() =
         member this.PenDown() = normalSize.PenDown()
         member this.SetColor color = normalSize.SetColor color
     }
-{% endhighlight fsharp %}
+```
 
 This is actually [the "decorator" pattern](https://en.wikipedia.org/wiki/Decorator_pattern) at work:
 we're wrapping `normalSize` in a proxy with an identical interface, then changing the behavior for some of the methods, while passing others though untouched.
@@ -1000,7 +1000,7 @@ Now let's look at the client code that injects the dependencies into the API.
 
 First, some code to draw a triangle, where a `TurtleApi` is passed in:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle(api:TurtleApi) = 
     api.Exec "Move 100"
     api.Exec "Turn 120"
@@ -1008,21 +1008,21 @@ let drawTriangle(api:TurtleApi) =
     api.Exec "Turn 120"
     api.Exec "Move 100"
     api.Exec "Turn 120"
-{% endhighlight fsharp %}
+```
 
 And now let's try drawing the triangle by instantiating the API object with the normal interface:
 
-{% highlight fsharp %}
+```fsharp
 let iTurtle = normalSize()   // an ITurtle type
 let api = TurtleApi(iTurtle)
 drawTriangle(api) 
-{% endhighlight fsharp %}
+```
 
 Obviously, in a real system, the dependency injection would occur away from the call site, using an IoC container or similar.
 
 If we run it, the output of `drawTriangle` is just as before:
 
-{% highlight text %}
+```text
 Move 100.0
 ...Draw line from (0.0,0.0) to (100.0,0.0) using Black
 Turn 120.0
@@ -1032,19 +1032,19 @@ Turn 120.0
 Move 100.0
 ...Draw line from (50.0,86.6) to (0.0,0.0) using Black
 Turn 120.0
-{% endhighlight text %}
+```
 
 And now with the half-size interface..
 
-{% highlight fsharp %}
+```fsharp
 let iTurtle = halfSize()
 let api = TurtleApi(iTurtle)
 drawTriangle(api) 
-{% endhighlight fsharp %}
+```
 
 ...the output is, as we hoped, half the size!
 
-{% highlight text %}
+```text
 Move 50.0
 ...Draw line from (0.0,0.0) to (50.0,0.0) using Black
 Turn 120.0
@@ -1054,7 +1054,7 @@ Turn 120.0
 Move 50.0
 ...Draw line from (25.0,43.3) to (0.0,0.0) using Black
 Turn 120.0
-{% endhighlight text %}
+```
 
 ### Designing an interface, functional style 
 
@@ -1064,7 +1064,7 @@ So let's create a alternative version of dependency injection, where this time t
 
 A record of functions is a normal record, but the types of the fields are function types. Here's the definition we'll use:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleFunctions = {
     move : Distance -> TurtleState -> TurtleState
     turn : Angle -> TurtleState -> TurtleState
@@ -1072,7 +1072,7 @@ type TurtleFunctions = {
     penDown : TurtleState -> TurtleState
     setColor : PenColor -> TurtleState -> TurtleState
     }
-{% endhighlight fsharp %}
+```
 
 Note that there are no `unit`s in these function signatures, unlike the OO version. Instead, the `TurtleState` is explicitly passed in and returned.
 
@@ -1081,11 +1081,11 @@ Also note that there is no logging either. The logging method will be baked in t
 The `TurtleApi` constructor now takes a `TurtleFunctions` record rather than an `ITurtle`, but as these functions are pure,
 the API needs to manage the state again with a `mutable` field.
 
-{% highlight fsharp %}
+```fsharp
 type TurtleApi(turtleFunctions: TurtleFunctions) =
 
     let mutable state = initialTurtleState
-{% endhighlight fsharp %}
+```
 
 The implementation of the main `Exec` method is very similar to what we have seen before, with these differences:
 
@@ -1094,7 +1094,7 @@ The implementation of the main `Exec` method is very similar to what we have see
 
 Here's the code:
 
-{% highlight fsharp %}
+```fsharp
 member this.Exec (commandStr:string) = 
     let tokens = commandStr.Split(' ') |> List.ofArray |> List.map trimString
 
@@ -1111,7 +1111,7 @@ member this.Exec (commandStr:string) =
         updateState newState
         }
     // etc
-{% endhighlight fsharp %}
+```
 
 ### Creating some implementations of a "record of functions"
 
@@ -1121,7 +1121,7 @@ Again, we'll have a `normalSize` implementation and a `halfSize` implementation.
 
 For `normalSize` we just need to use the functions from the original `Turtle` module, with the logging baked in using partial application:
 
-{% highlight fsharp %}
+```fsharp
 let normalSize() = 
     let log = printfn "%s"
     // return a record of functions
@@ -1132,18 +1132,18 @@ let normalSize() =
         penDown = Turtle.penDown log
         setColor = Turtle.setColor log 
     }
-{% endhighlight fsharp %}
+```
 
 And to create the `halfSize` version, we clone the record, and change just the `move` function:
 
-{% highlight fsharp %}
+```fsharp
 let halfSize() = 
     let normalSize = normalSize() 
     // return a reduced turtle
     { normalSize with
         move = fun dist -> normalSize.move (dist/2.0) 
     }
-{% endhighlight fsharp %}
+```
 
 What's nice about cloning records rather than proxying interfaces is that we don't have to reimplement every function in the record, just the ones we care about.
 
@@ -1152,11 +1152,11 @@ What's nice about cloning records rather than proxying interfaces is that we don
 The client code that injects the dependencies into the API is implemented just as you expect.  The API is a class with a constructor,
 and so the record of functions can be passed into the constructor in exactly the same way that the `ITurtle` interface was:
 
-{% highlight fsharp %}
+```fsharp
 let turtleFns = normalSize()  // a TurtleFunctions type
 let api = TurtleApi(turtleFns)
 drawTriangle(api) 
-{% endhighlight fsharp %}
+```
 
 As you can see, the client code in the `ITurtle` version and `TurtleFunctions` version looks identical! If it wasn't for the different types, you could not tell them apart.
 
@@ -1211,16 +1211,16 @@ The simplest way to manage dependencies is always just to pass in all dependenci
 
 In our case, the `Exec` method is the only function that needs to control the turtle, so we can pass them in there directly:
  
-{% highlight fsharp %}
+```fsharp
 member this.Exec move turn penUp penDown setColor (commandStr:string) = 
     ...
-{% endhighlight fsharp %}
+```
 
 To stress that point again: in this approach dependencies are always passed "just in time", to the function that needs them. No dependencies are used in the constructor and then used later.
 
 Here's a bigger snippet of the `Exec` method using those functions:
 
-{% highlight fsharp %}
+```fsharp
 member this.Exec move turn penUp penDown setColor (commandStr:string) = 
     ...
 
@@ -1237,13 +1237,13 @@ member this.Exec move turn penUp penDown setColor (commandStr:string) =
         updateState newState
         }
     ...            
-{% endhighlight fsharp %}
+```
 
 ### Using partial application to bake in an implementation
 
 To create a normal or half-size version of `Exec`, we just pass in different functions:
 
-{% highlight fsharp %}
+```fsharp
 let log = printfn "%s"
 let move = Turtle.move log 
 let turn = Turtle.turn log 
@@ -1265,7 +1265,7 @@ let halfSize() =
     api.Exec moveHalf turn penUp penDown setColor 
     // the return value is a function: 
     //     string -> Result<unit,ErrorMessage> 
-{% endhighlight fsharp %}
+```
 
 In both cases we are returning a *function* of type `string -> Result<unit,ErrorMessage>`.
 
@@ -1273,7 +1273,7 @@ In both cases we are returning a *function* of type `string -> Result<unit,Error
 
 So now when we want to draw something, we need only pass in *any* function of type `string -> Result<unit,ErrorMessage>`.  The `TurtleApi` is no longer needed or mentioned!
 
-{% highlight fsharp %}
+```fsharp
 // the API type is just a function
 type ApiFunction = string -> Result<unit,ErrorMessage>
 
@@ -1286,29 +1286,29 @@ let drawTriangle(api:ApiFunction) =
         do! api "Move 100"
         do! api "Turn 120"
         }
-{% endhighlight fsharp %}
+```
 
 And here is how the API would be used:
 
-{% highlight fsharp %}
+```fsharp
 let apiFn = normalSize()  // string -> Result<unit,ErrorMessage>
 drawTriangle(apiFn) 
 
 let apiFn = halfSize()
 drawTriangle(apiFn) 
-{% endhighlight fsharp %}
+```
 
 So, although we did have mutable state in the `TurtleApi`, the final "published" api is a function that hides that fact.  
 
 This approach of having the api be a single function makes it very easy to mock for testing!
 
-{% highlight fsharp %}
+```fsharp
 let mockApi s = 
     printfn "[MockAPI] %s" s
     Success ()
     
 drawTriangle(mockApi) 
-{% endhighlight fsharp %}
+```
 
 ### Approach 2 - passing a single function that handles all commands
 
@@ -1322,20 +1322,20 @@ The trick is to pass in just *one* function! But how can one function handle fiv
 
 We've seen this done before in the agent example, so let's revisit that type again:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleCommand = 
     | Move of Distance 
     | Turn of Angle
     | PenUp
     | PenDown
     | SetColor of PenColor
-{% endhighlight fsharp %}
+```
 
 All we need now is a function that handles each case of that type.
 
 Befor we do that though, let's look at the changes to the `Exec` method implementation:
 
-{% highlight fsharp %}
+```fsharp
 member this.Exec turtleFn (commandStr:string) = 
     ...
 
@@ -1354,7 +1354,7 @@ member this.Exec turtleFn (commandStr:string) =
         updateState newState
         }
     ...
-{% endhighlight fsharp %}
+```
 
 Note that a `command` object is being created and then the `turtleFn` parameter is being called with it.
 
@@ -1364,7 +1364,7 @@ And by the way, this code is very similar to the agent implementation, which use
 
 Let's create the two implementations using this approach:
 
-{% highlight fsharp %}
+```fsharp
 let log = printfn "%s"
 let move = Turtle.move log 
 let turn = Turtle.turn log 
@@ -1399,17 +1399,17 @@ let halfSize() =
     api.Exec turtleFn 
     // the return value is a function: 
     //     string -> Result<unit,ErrorMessage> 
-{% endhighlight fsharp %}
+```
 
 As before, in both cases we are returning a function of type `string -> Result<unit,ErrorMessage>`,. which we can pass into the `drawTriangle` function we defined earlier: 
 
-{% highlight fsharp %}
+```fsharp
 let api = normalSize()
 drawTriangle(api) 
 
 let api = halfSize()
 drawTriangle(api) 
-{% endhighlight fsharp %}
+```
 
 ### Advantages and disadvantages of using functions
 
@@ -1472,9 +1472,9 @@ We can then think of a turtle function as something that takes an input and retu
 
 In our case, using `TurtleState` as the state, the returned function will look like this:
 
-{% highlight fsharp %}
+```fsharp
 TurtleState -> 'a * TurtleState
-{% endhighlight fsharp %}
+```
 
 Finally, to make it easier to work with, we can treat the returned function as a thing in its own right, give it a name such as `TurtleStateComputation`:
 
@@ -1482,10 +1482,10 @@ Finally, to make it easier to work with, we can treat the returned function as a
 
 In the implementation, we would typically wrap the function with a [single case discriminated union](/posts/designing-with-types-single-case-dus/) like this:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleStateComputation<'a> = 
     TurtleStateComputation of (Turtle.TurtleState -> 'a * Turtle.TurtleState)
-{% endhighlight fsharp %}
+```
 
 So that is the basic idea behind the "state monad".  However, it's important to realize that a state monad consists of more than just this type -- you also need some functions ("return" and "bind") that obey some sensible laws.
 
@@ -1495,18 +1495,18 @@ We need some additional helper functions too. (I'm going to add a `T` for Turtle
 
 In particular, we need a way to feed some state into the `TurtleStateComputation` to "run" it:
 
-{% highlight fsharp %}
+```fsharp
 let runT turtle state = 
     // pattern match against the turtle
     // to extract the inner function
     let (TurtleStateComputation innerFn) = turtle 
     // run the inner function with the passed in state
     innerFn state
-{% endhighlight fsharp %}
+```
 
 Finally, we can create a `turtle` workflow, which is a computation expression that makes it easier to work with the `TurtleStateComputation` type:
 
-{% highlight fsharp %}
+```fsharp
 // define a computation expression builder
 type TurtleBuilder() =
     member this.Return(x) = returnT x
@@ -1514,13 +1514,13 @@ type TurtleBuilder() =
 
 // create an instance of the computation expression builder
 let turtle = TurtleBuilder()
-{% endhighlight fsharp %}
+```
 
 ### Using the Turtle workflow
 
 To use the `turtle` workflow, we first need to create "lifted" or "monadic" versions of the turtle functions:
 
-{% highlight fsharp %}
+```fsharp
 let move dist = 
     toUnitComputation (Turtle.move log dist)
 // val move : Distance -> TurtleStateComputation<unit>
@@ -1540,14 +1540,14 @@ let penUp =
 let setColor color = 
     toUnitComputation (Turtle.setColor log color)
 // val setColor : PenColor -> TurtleStateComputation<unit>
-{% endhighlight fsharp %}
+```
 
 The `toUnitComputation` helper function does the lifting. Don't worry about how it works, but the effect is that the original version of the `move` function (`Distance -> TurtleState -> TurtleState`)
 is reborn as a function returning a `TurtleStateComputation` (`Distance -> TurtleStateComputation<unit>`)
 
 Once we have these "monadic" versions, we can use them inside the `turtle` workflow like this:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     // define a set of instructions 
     let t = turtle {
@@ -1561,24 +1561,24 @@ let drawTriangle() =
 
     // finally, run them using the initial state as input
     runT t initialTurtleState 
-{% endhighlight fsharp %}
+```
 
 The first part of `drawTriangle` chains together six instructions, but importantly, does *not* run them.
 Only when the `runT` function is used at the end are the instructions actually executed.
 
 The `drawPolygon` example is a little more complicated. First we define a workflow for drawing one side:
 
-{% highlight fsharp %}
+```fsharp
 let oneSide = turtle {
     do! move 100.0 
     do! turn angleDegrees 
     }
-{% endhighlight fsharp %}
+```
 
 But then we need a way of combining all the sides into a single workflow. There are a couple of ways of doing this. I'll go with creating a pairwise combiner `chain`
 and then using `reduce` to combine all the sides into one operation.
 
-{% highlight fsharp %}
+```fsharp
 // chain two turtle operations in sequence
 let chain f g  = turtle {
     do! f
@@ -1590,11 +1590,11 @@ let sides = List.replicate n oneSide
 
 // chain all the sides into one operation
 let all = sides |> List.reduce chain 
-{% endhighlight fsharp %}
+```
 
 Here's the complete code for `drawPolygon`:
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let angleDegrees = angle * 1.0<Degrees>
@@ -1619,7 +1619,7 @@ let drawPolygon n =
 
     // finally, run them using the initial state
     runT all initialTurtleState 
-{% endhighlight fsharp %}
+```
 
 ### Advantages and disadvantages of the `turtle` workflow
 
@@ -1657,19 +1657,19 @@ And since all the commands are run at once, this approach means that there is no
 
 Here's the `TurtleCommand` definition again:
 
-{% highlight fsharp %}
+```fsharp
 type TurtleCommand = 
     | Move of Distance 
     | Turn of Angle
     | PenUp
     | PenDown
     | SetColor of PenColor
-{% endhighlight fsharp %}
+```
 
 To process a sequence of commands, we will need to fold over them, threading the state through,
 so we need a function that applies a single command to a state and returns a new state:
 
-{% highlight fsharp %}
+```fsharp
 /// Apply a command to the turtle state and return the new state 
 let applyCommand state command =
     match command with
@@ -1683,22 +1683,22 @@ let applyCommand state command =
         penDown state
     | SetColor color ->
         setColor color state
-{% endhighlight fsharp %}
+```
 
 And then, to run all the commands, we just use `fold`:
 
-{% highlight fsharp %}
+```fsharp
 /// Run list of commands in one go
 let run aListOfCommands = 
     aListOfCommands 
     |> List.fold applyCommand Turtle.initialTurtleState
-{% endhighlight fsharp %}
+```
 
 ### Running a batch of Commands
 
 To draw a triangle, say, we just create a list of the commands and then run them:
 
-{% highlight fsharp %}
+```fsharp
 let drawTriangle() = 
     // create the list of commands
     let commands = [
@@ -1711,13 +1711,13 @@ let drawTriangle() =
         ]
     // run them
     run commands
-{% endhighlight fsharp %}
+```
 
 Now, since the commands are just a collection, we can easily build bigger collections from smaller ones.
 
 Here's an example for `drawPolygon`, where `drawOneSide` returns a collection of commands, and that collection is duplicated for each side:
 
-{% highlight fsharp %}
+```fsharp
 let drawPolygon n = 
     let angle = 180.0 - (360.0/float n) 
     let angleDegrees = angle * 1.0<Degrees>
@@ -1734,7 +1734,7 @@ let drawPolygon n =
 
     // run the commands
     run commands
-{% endhighlight fsharp %}
+```
 
 
 ### Advantages and disadvantages of batch commands
