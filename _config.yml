@@ -42,6 +42,7 @@ port: 4000
 host: localhost
 
 # command line
+#  jekyll build --verbose > jekyll.log
 #  jekyll serve --no-watch --skip-initial-build
 
 #permalink: /:month-:day-:year/:title.html

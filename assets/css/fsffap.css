@@ -67,3 +67,16 @@ h1,h2,h3,h4
 #twitterMenu:hover {
    background-image: url('/assets/img/Twitter_logo_blue_25x20.png');
 }
+
+figure {
+    display: block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+/* to fix error in Rouge, fsharp.rb*/
+code span {
+    white-space: normal;
+}

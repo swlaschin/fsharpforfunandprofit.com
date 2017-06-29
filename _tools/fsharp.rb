@@ -49,7 +49,7 @@ module Rouge
         rule /false|true|[(][)]|\[\]/, Name::Builtin::Pseudo
         rule /#{upper_id}(?=\s*[.])/, Name::Namespace, :dotted
         rule upper_id, Name::Class
-        rule /[(][*](?![)])/, Comment, :comment
+        rule /[(][*](?![)])/, Comment::Multiline, :comment
         rule %r(//.*?$), Comment::Single
         rule id do |m|
           match = m[0]
