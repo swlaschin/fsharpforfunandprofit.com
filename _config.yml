@@ -8,13 +8,16 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
 
+
+
+
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
+
 title: F# for Fun and Profit
-email: contact@fsharpworks.com
 description: > # this means to ignore newlines until "baseurl:"
   Write an awesome description for your new site here. You can edit this
   line in _config.yml. It will appear in your document head meta (for
@@ -24,19 +27,38 @@ url: "http://fsharpforfunandprofit.com/" # the base hostname & protocol for your
 twitter_username: ScottWlaschin
 github_username:  swlaschin
 
-# Build settings
-markdown: kramdown
-theme: minima
-highlighter: rouge
-layouts_dir: _layouts
+# Where things are
+source:       .
+destination:  ./_site
+plugins_dir:  _plugins
+layouts_dir:  _layouts
+data_dir:     _data
+includes_dir: _includes
+collections:
+  posts:
+    output:   true
 
-plugins:
-  - jekyll-feed
+# Reading & Writing
+encoding: "utf-8"
 exclude:
   - Gemfile
   - Gemfile.lock
   - .git/
-  
+include:   [".htaccess"]
+keep_files: [".git", ".svn"]
+    
+# Build settings
+markdown: kramdown
+theme: minima
+highlighter: rouge
+
+#permalink: /:month-:day-:year/:title.html
+permalink: /posts/:title/
+
+# Plugins
+whitelist: []
+plugins:   []
+
 # Serve settings  
 port: 4000
 host: localhost
@@ -45,6 +67,13 @@ host: localhost
 #  jekyll build --verbose > jekyll.log
 #  jekyll serve --no-watch --skip-initial-build
 
-#permalink: /:month-:day-:year/:title.html
-permalink: /posts/:title/
-
+# Markdown Processor
+kramdown:
+  auto_ids:       true
+  entity_output:  as_char
+  toc_levels:     1..6
+  smart_quotes:   lsquo,rsquo,ldquo,rdquo
+  input:          GFM
+  hard_wrap:      false
+  footnote_nr:    1
+  parse_block_html: false  # turn on locally as needed

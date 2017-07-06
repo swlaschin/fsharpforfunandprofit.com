@@ -1,0 +1,13 @@
+# make sure ruby-dev is installed as well as ruby
+sudo apt-get install ruby-dev
+
+
+# install jekyll, kramdown rouge
+gem install kramdown rouge
+
+-- may need this for Rouge < 2.0.  Update path as needed.
+sudo cp _tools/fsharp.rb /var/lib/gems/2.4.0/gems/rouge-1.11.1/lib/rouge/lexers/
+
+# update from the gemfile.lock
+
+bundle install
