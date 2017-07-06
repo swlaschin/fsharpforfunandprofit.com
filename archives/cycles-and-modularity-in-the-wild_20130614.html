@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/> 	
+    <title>Cycles and modularity in the wild | F# for fun and profit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Comparing some real-world metrics of C# and F# projects" />
+	<meta name="keywords" content="" />
+    <meta name="author" content="" />
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <style type="text/css">
+        body
+        {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        }
+    </style>
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet"/>
+    <link href="/assets/pygments/default.css" rel="stylesheet" type="text/css" >	
+    <link href="/assets/css/fsffap.css" rel="stylesheet" type="text/css" >	
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/assets/ico/favicon.ico"/>
+    <!-- Google search: Put the following javascript before the closing </head> tag. -->
+<script>
+  (function() {
+    var cx = '005822461080256964871:ukp7bevhyrw';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+</head>
+<body>
+	<div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span
+                    class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </a><a class="brand" href="/">F# for fun and profit</a>
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li class=""><a href="/">Home</a></li>
+                        <li class=""><a href="/why-use-fsharp/">Why use F#?</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Help with F#<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li class=""><a href="/installing-and-using/">Installing and using F#</a></li>
+								<li class=""><a href="/learning-fsharp/">Learning F#</a></li>
+                                <li class="divider"></li>
+								<li class=""><a href="/series/thinking-functionally.html">Thinking Functionally</a></li>
+								<li class=""><a href="/series/expressions-and-syntax.html">Expressions and Syntax</a></li>
+								<li class=""><a href="/series/understanding-fsharp-types.html">Understanding F# types</a></li>
+                                <li class="divider"></li>
+								<li class=""><a href="/series/porting-from-csharp.html">Porting from C#</a></li>
+                                <li class="divider"></li>
+								<li class=""><a href="/troubleshooting-fsharp/">Troubleshooting F#</a></li>
+							</ul>
+						</li>
+                        <li class=""><a href="/site-contents/">Site Contents</a></li>
+                        <li class=""><a href="/search.html">Search</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="container">
+<div class="row">
+	
+<div class="span8">
+
+
+	<div>
+		<h5>
+		Part of the "Dependency cycles" series (<a href="#series-toc" title='The "Dependency cycles" series '>more</a>)
+		</h5>
+	</div>
+
+
+
+
+
+	<div class="page-header">
+	<h1>Cycles and modularity in the wild</h1>
+	
+	<div class="subtitle alignleft">Comparing some real-world metrics of C# and F# projects</div>
+	
+    <div class="alignright"> <a href="https://twitter.com/share" class="twitter-share-button" data-hashtags="fsharp">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
+    <div class="alignoff"></div>
+	</div>
+
+	
+	<p>This is a follow up post to two earlier posts on <a href="/posts/recipe-part3/">module organization</a> and <a href="/posts/cyclic-dependencies/">cyclic dependencies</a>.</p>
+
+<p>I thought it would be interesting to look at some real projects written in C# and F#, and see how they compare in modularity and number of cyclic dependencies.</p>
+
+<h2>The plan</h2>
+
+<p>My plan was to take ten or so projects written in C# and ten or so projects written in F#, and somehow compare them.</p>
+
+<p>I didn't want to spend too much time on this, and so rather than trying to analyze the source files, I thought I would cheat a little and analyze the compiled assemblies, using the <a href="http://www.mono-project.com/Cecil">Mono.Cecil</a> library.</p>
+
+<p>This also meant that I could get the binaries directly, using NuGet.</p>
+
+<p>The projects I picked were:</p>
+
+<p><em>C# projects</em></p>
+
+<ul>
+<li><a href="http://nuget.org/packages/Mono.Cecil/">Mono.Cecil</a>, which inspects programs and libraries in the ECMA CIL format.</li>
+<li><a href="http://nuget.org/packages/NUnit/">NUnit</a></li>
+<li><a href="http://nuget.org/packages/Microsoft.AspNet.SignalR/">SignalR</a> for real-time web functionality.</li>
+<li><a href="http://nuget.org/packages/Nancy/">NancyFx</a>, a web framework</li>
+<li><a href="http://nuget.org/packages/YamlDotNet.Core/">YamlDotNet</a>, for parsing and emitting YAML.</li>
+<li><a href="http://nuget.org/packages/SpecFlow/">SpecFlow</a>, a BDD tool.</li>
+<li><a href="http://nuget.org/packages/Newtonsoft.Json/">Json.NET</a>.</li>
+<li><a href="http://nuget.org/packages/EntityFramework/5.0.0">Entity Framework</a>.</li>
+<li><a href="http://nuget.org/packages/elmah/">ELMAH</a>, a logging framework for ASP.NET.</li>
+<li><a href="http://nuget.org/packages/Nuget.Core/">NuGet</a> itself.</li>
+</ul>
+
+
+<p><em>F# projects</em></p>
+
+<p>Unfortunately, there is not yet a wide variety of F# projects to choose from. I picked the following:</p>
+
+<ul>
+<li><a href="http://nuget.org/packages/FSharp.Core/">FSharp.Core</a>, the core F# library.</li>
+<li><a href="http://nuget.org/packages/FSPowerPack.Community/">FSPowerPack</a>.</li>
+<li><a href="http://nuget.org/packages/FsUnit/">FsUnit</a>, extensions for NUnit.</li>
+<li><a href="http://nuget.org/packages/canopy/">Canopy</a>, a wrapper around the Selenium test automation tool.</li>
+<li><a href="http://nuget.org/packages/FsSql/">FsSql</a>, a nice little ADO.NET wrapper.</li>
+<li><a href="http://nuget.org/packages/WebSharper/2.4.85.235">WebSharper</a>, the web framework.</li>
+<li><a href="http://nuget.org/packages/TickSpec/">TickSpec</a>, a BDD tool.</li>
+<li><a href="http://nuget.org/packages/FSharpx.Core/">FSharpx</a>, an F# library.</li>
+<li><a href="http://nuget.org/packages/FParsec/">FParsec</a>, a parser library.</li>
+<li><a href="http://nuget.org/packages/FsYaml/">FsYaml</a>, a YAML library built on FParsec.</li>
+<li><a href="http://storm.codeplex.com/releases/view/18871">Storm</a>, a tool for testing web services.</li>
+</ul>
+
+
+<p>I did choose SpecFlow and TickSpec as being directly comparable, and also YamlDotNet and FsYaml.</p>
+
+<p>But as you can see, most of the F# projects are not directly comparable to the C# ones. For example, there is no direct F# equivalent to Nancy, or Entity Framework.</p>
+
+<p>Nevertheless, I was hoping that I might observe some sort of pattern by comparing the projects. And I was right. Read on for the results!</p>
+
+<h2>What metrics to use?</h2>
+
+<p>I wanted to examine two things: "modularity" and "cyclic dependencies".</p>
+
+<p>First, what should be the unit of "modularity"?</p>
+
+<p>From a coding point of view, we generally work with files (<a href="http://stackoverflow.com/questions/3561145/what-is-a-smalltalk-image">Smalltalk being a notable exception</a>), and so it makes sense to think of the <em>file</em> as the unit of modularity. A file is used to group related items together, and if two chunks of code are in different files, they are somehow not as "related" as if they were in the same file.</p>
+
+<p>In C#, the best practice is to have one class per file. So 20 files means 20 classes.  Sometimes classes have nested classes, but with rare exceptions, the nested class is in the same file as the parent class.  This means that we can ignore them and just use top-level classes as our unit of modularity, as a proxy for files.</p>
+
+<p>In F#, the best practice is to have one <em>module</em> per file (or sometimes more). So 20 files means 20 modules. Behind the scenes, modules are turned into static classes, and any classes defined within the module are turned into nested classes. So again, this means that we can ignore nested classes and just use top-level classes as our unit of modularity.</p>
+
+<p>The C# and F# compilers generate many "hidden" types, for things such as LINQ, lambdas, etc. In some cases, I wanted to exclude these, and only include "authored" types, which have been coded for explicitly. The compiler generated classes generally contain a special character such as <code>&lt;</code> or <code>$</code>, so they are easy to detect. I didn't try to exclude the F# sum types from authored classes though.</p>
+
+<p>So my definition of a <em>top-level type</em> is: a type that is not nested and which is not compiler generated.</p>
+
+<p>The metrics I chose for modularity were:</p>
+
+<ul>
+<li><strong>The number of top-level types</strong> as defined above.</li>
+<li><strong>The number of authored types</strong> as defined above.</li>
+<li><strong>The number of all types</strong>. This number would include the compiler generated types as well.  Comparing this number to the top-level types gives us some idea of how representative the top-level types are.</li>
+<li><strong>The size of the project</strong>. Obviously, there will be more types in a larger project, so we need to make adjustments based on the size of the project. The size metric I picked was the number of instructions, rather than the physical size of the file. This eliminates issues with embedded resources, etc.</li>
+</ul>
+
+
+<h3>Dependencies</h3>
+
+<p>Once we have our units of modularity, we can look at dependencies between modules.</p>
+
+<p>For this analysis, I only want to include dependencies between types in the same assembly. In other words, dependencies on system types such as <code>String</code> or <code>List</code> do not count as a dependency.</p>
+
+<p>Let's say we have a top-level type <code>A</code> and another top-level type <code>B</code>. Then I say that a <em>dependency</em> exists from <code>A</code> to <code>B</code> if:</p>
+
+<ul>
+<li>Type <code>A</code> or any of its nested types inherits from (or implements) type <code>B</code> or any of its nested types.</li>
+<li>Type <code>A</code> or any of its nested types has a field, property or method that references type <code>B</code> or any of its nested types as a parameter or return value. This includes private members as well -- after all, it is still a dependency.</li>
+<li>Type <code>A</code> or any of its nested types has a method implementation that references type <code>B</code> or any of its nested types.</li>
+</ul>
+
+
+<p>This might not be a perfect definition.  But it is good enough for my purposes.</p>
+
+<p>In addition to all dependencies, I thought it might be useful to look at "public" or "published" dependencies. A <em>public dependency</em> from <code>A</code> to <code>B</code> exists if:</p>
+
+<ul>
+<li>Type <code>A</code> or any of its nested types inherits from (or implements) type <code>B</code> or any of its nested types.</li>
+<li>Type <code>A</code> or any of its nested types has a <em>public</em> field, property or method that references type <code>B</code> or any of its nested types as a parameter or return value.</li>
+<li>Finally, a public dependency is only counted if the source type itself is public.</li>
+</ul>
+
+
+<p>The metrics I chose for dependencies were:</p>
+
+<ul>
+<li><strong>The total number of dependencies</strong>. This is simply the sum of all dependencies of all types. Again, there will be more dependencies in a larger project, but we will also take the size of the project into account.</li>
+<li><strong>The number of types that have more than X dependencies</strong>. This gives us an idea of how many types are "too" complex.</li>
+</ul>
+
+
+<h3>Cyclic dependencies</h3>
+
+<p>Given this definition of dependency, then, a <em>cyclic dependency</em> occurs when two different top-level types depend on each other.</p>
+
+<p>Note what <em>not</em> included in this definition. If a nested type in a module depends on another nested type in the <em>same</em> module, then that is not a cyclic dependency.</p>
+
+<p>If there is a cyclic dependency, then there is a set of modules that are all linked together. For example, if <code>A</code> depends on <code>B</code>, <code>B</code> depends on <code>C</code>, and then say, <code>C</code> depends on <code>A</code>, then <code>A</code>, <code>B</code> and <code>C</code> are linked together. In graph theory, this is called a <em>strongly connected component</em>.</p>
+
+<p>The metrics I chose for cyclic dependencies were:</p>
+
+<ul>
+<li><strong>The number of cycles</strong>. That is, the number of strongly connected components which had more than one module in them.</li>
+<li><strong>The size of the largest component</strong>. This gives us an idea of how complex the dependencies are.</li>
+</ul>
+
+
+<p>I analyzed cyclic dependencies for all dependencies and also for public dependencies only.</p>
+
+<h2>Doing the experiment</h2>
+
+<p>First, I downloaded each of the project binaries using NuGet. Then I wrote a little F# script that did the following steps for each assembly:</p>
+
+<ol>
+<li>Analyzed the assembly using <a href="http://www.mono-project.com/Cecil">Mono.Cecil</a> and extracted all the types, including the nested types</li>
+<li>For each type, extracted the public and implementation references to other types, divided into internal (same assembly) and external (different assembly).</li>
+<li>Created a list of the "top level" types.</li>
+<li>Created a dependency list from each top level type to other top level types, based on the lower level dependencies.</li>
+</ol>
+
+
+<p>This dependency list was then used to extract various statistics, shown below. I also rendered the dependency graphs to SVG format (using <a href="http://www.graphviz.org/">graphViz</a>).</p>
+
+<p>For cycle detection, I used the <a href="http://quickgraph.codeplex.com/">QuickGraph library</a> to extract the strongly connected components, and then did some more processing and rendering.</p>
+
+<p>If you want the gory details, here is <a href="https://gist.github.com/swlaschin/5742974">a link to the script</a> that I used, and <a href="https://gist.github.com/swlaschin/5742994">here is the raw data</a>.</p>
+
+<p>It is important to recognize that this is <em>not</em> a proper statistical study, just a quick analysis. However the results are quite interesting, as we shall see.</p>
+
+<h2>Modularity</h2>
+
+<p>Let's look at the modularity first.</p>
+
+<p>Here are the modularity-related results for the C# projects:</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Code size</th><th>Top-level types</th><th>Authored types</th><th>All types</th><th>Code/Top</th><th>Code/Auth</th><th>Code/All</th><th>Auth/Top</th><th>All/Top</th></tr>
+</thead>
+<tbody>
+<tr><td>ef  </td><td>269521 </td><td>517    </td><td>568    </td><td>879    </td><td>521    </td><td>475    </td><td>307    </td><td>1.10   </td><td>1.70   </td></tr>
+<tr><td>jsonDotNet  </td><td>148829 </td><td>215    </td><td>232    </td><td>283    </td><td>692    </td><td>642    </td><td>526    </td><td>1.08   </td><td>1.32   </td></tr>
+<tr><td>nancy   </td><td>143445 </td><td>339    </td><td>366    </td><td>560    </td><td>423    </td><td>392    </td><td>256    </td><td>1.08   </td><td>1.65   </td></tr>
+<tr><td>cecil   </td><td>101121 </td><td>240    </td><td>245    </td><td>247    </td><td>421    </td><td>413    </td><td>409    </td><td>1.02   </td><td>1.03   </td></tr>
+<tr><td>nuget   </td><td>114856 </td><td>218    </td><td>239    </td><td>383    </td><td>527    </td><td>481    </td><td>300    </td><td>1.10   </td><td>1.76   </td></tr>
+<tr><td>signalR </td><td>65513  </td><td>193    </td><td>230    </td><td>312    </td><td>339    </td><td>285    </td><td>210    </td><td>1.19   </td><td>1.62   </td></tr>
+<tr><td>nunit   </td><td>45023  </td><td>173    </td><td>195    </td><td>197    </td><td>260    </td><td>231    </td><td>229    </td><td>1.13   </td><td>1.14   </td></tr>
+<tr><td>specFlow    </td><td>46065  </td><td>242    </td><td>287    </td><td>331    </td><td>190    </td><td>161    </td><td>139    </td><td>1.19   </td><td>1.37   </td></tr>
+<tr><td>elmah   </td><td>43855  </td><td>116    </td><td>140    </td><td>141    </td><td>378    </td><td>313    </td><td>311    </td><td>1.21   </td><td>1.22   </td></tr>
+<tr><td>yamlDotNet  </td><td>23499  </td><td>70 </td><td>73 </td><td>73 </td><td>336    </td><td>322    </td><td>322    </td><td>1.04   </td><td>1.04   </td></tr>
+<tr><td>TOTAL   </td><td>1001727    </td><td>2323   </td><td>2575   </td><td>3406   </td><td>431    </td><td>389    </td><td>294    </td><td>1.11   </td><td>1.47   </td></tr>
+</tbody>
+</table>
+
+
+<p>And here are the results for the F# projects:</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Code size</th><th>Top-level types</th><th>Authored types</th><th>All types</th><th>Code/Top</th><th>Code/Auth</th><th>Code/All</th><th>Auth/Top</th><th>All/Top</th></tr>
+</thead>
+<tbody>
+<tr><td>fsxCore </td><td>339596 </td><td>173    </td><td>407    </td><td>2024   </td><td>1963   </td><td>834    </td><td>168    </td><td>2.35   </td><td>11.70  </td></tr>
+<tr><td>fsCore  </td><td>226830 </td><td>154    </td><td>348    </td><td>1186   </td><td>1473   </td><td>652    </td><td>191    </td><td>2.26   </td><td>7.70   </td></tr>
+<tr><td>fsPowerPack </td><td>117581 </td><td>93 </td><td>162    </td><td>410    </td><td>1264   </td><td>726    </td><td>287    </td><td>1.74   </td><td>4.41   </td></tr>
+<tr><td>storm   </td><td>73595  </td><td>67 </td><td>78 </td><td>405    </td><td>1098   </td><td>944    </td><td>182    </td><td>1.16   </td><td>6.04   </td></tr>
+<tr><td>fsParsec    </td><td>67252  </td><td>8  </td><td>27 </td><td>245    </td><td>8407   </td><td>2491   </td><td>274    </td><td>3.38   </td><td>30.63  </td></tr>
+<tr><td>websharper  </td><td>47391  </td><td>52 </td><td>129    </td><td>285    </td><td>911    </td><td>367    </td><td>166    </td><td>2.48   </td><td>5.48   </td></tr>
+<tr><td>tickSpec    </td><td>30797  </td><td>34 </td><td>53 </td><td>170    </td><td>906    </td><td>581    </td><td>181    </td><td>1.56   </td><td>5.00   </td></tr>
+<tr><td>websharperHtml  </td><td>14787  </td><td>18 </td><td>28 </td><td>72 </td><td>822    </td><td>528    </td><td>205    </td><td>1.56   </td><td>4.00   </td></tr>
+<tr><td>canopy  </td><td>15105  </td><td>6  </td><td>17 </td><td>103    </td><td>2518   </td><td>889    </td><td>147    </td><td>2.83   </td><td>17.17  </td></tr>
+<tr><td>fsYaml  </td><td>15191  </td><td>7  </td><td>14 </td><td>160    </td><td>2170   </td><td>1085   </td><td>95 </td><td>2.00   </td><td>22.86  </td></tr>
+<tr><td>fsSql   </td><td>15434  </td><td>13 </td><td>22 </td><td>162    </td><td>1187   </td><td>702    </td><td>95 </td><td>1.69   </td><td>12.46  </td></tr>
+<tr><td>fsUnit  </td><td>1848   </td><td>2  </td><td>3  </td><td>7  </td><td>924    </td><td>616    </td><td>264    </td><td>1.50   </td><td>3.50   </td></tr>
+<tr><td>TOTAL   </td><td>965407 </td><td>627    </td><td>1288   </td><td>5229   </td><td>1540   </td><td>750    </td><td>185    </td><td>2.05   </td><td>8.34   </td></tr>
+</tbody>
+</table>
+
+
+<p>The columns are:</p>
+
+<ul>
+<li><strong>Code size</strong> is the number of CIL instructions from all methods, as reported by Cecil.</li>
+<li><strong>Top-level types</strong> is the total number of top-level types in the assembly, using the definition above.</li>
+<li><strong>Authored types</strong> is the total number of types in the assembly, including nested types, enums, and so on, but excluding compiler generated types.</li>
+<li><strong>All types</strong> is the total number of types in the assembly, including compiler generated types.</li>
+</ul>
+
+
+<p>I have extended these core metrics with some extra calculated columns:</p>
+
+<ul>
+<li><strong>Code/Top</strong> is the number of CIL instructions per top level type / module. This is a measure of how much code is associated with each unit of modularity. Generally, more is better, because you don't want to have to deal with multiple files if you don't have too. On the other hand, there is a trade off. Too many lines of code in a file makes reading the code impossible.  In both C# and F#, good practice is not to have more than 500-1000 lines of code per file, and with a few exceptions, that seems to be the case in the source code that I looked at.</li>
+<li><strong>Code/Auth</strong> is the number of CIL instructions per authored type.  This is a measure of how "big" each authored type is.</li>
+<li><strong>Code/All</strong> is the number of CIL instructions per type.  This is a measure of how "big" each type is.</li>
+<li><strong>Auth/Top</strong> is the ratio of all authored types to the top-level-types. It is a rough measure of how many authored types are in each unit of modularity.</li>
+<li><strong>All/Top</strong> is the ratio of all types to the top-level-types. It is a rough measure of how many types are in each unit of modularity.</li>
+</ul>
+
+
+<h3>Analysis</h3>
+
+<p>The first thing I noticed is that, with a few exceptions, the code size is much bigger for the C# projects than for the F# projects.  Partly that is because I picked bigger projects, of course. But even for a somewhat comparable project like SpecFlow vs. TickSpec, the SpecFlow code size is bigger. It may well be that SpecFlow does a lot more than TickSpec, of course, but it also may be a result of using more generic code in F#. There is not enough information to know either way right now -- it would be interesting to do a true side by side comparison.</p>
+
+<p>Next, the number of top-level types. I said earlier that this should correspond to the number of files in a project. Does it?</p>
+
+<p>I didn't get all the sources for all the projects to do a thorough check, but I did a couple of spot checks. For example, for Nancy, there are 339 top level classes, which implies that there should be about 339 files. In fact, there are actually 322 .cs files, so not a bad estimate.</p>
+
+<p>On the other hand, for SpecFlow there are 242 top level types, but only 171 .cs files, so a bit of an overestimate there. And for Cecil, the same thing: 240 top level classes but only 128 .cs files.</p>
+
+<p>For the FSharpX project, there are 173 top level classes, which implies there should be about 173 files. In fact, there are actually only 78 .fs files, so it is a serious over-estimate by a factor of more than 2.  And if we look at Storm, there are 67 top level classes. In fact, there are actually only 35 .fs files, so again it is an over-estimate by a factor of 2.</p>
+
+<p>So it looks like the number of top level classes is always an over-estimate of the number of files, but much more so for F# than for C#. It would be worth doing some more detailed analysis in this area.</p>
+
+<h3>Ratio of code size to number of top-level types</h3>
+
+<p>The "Code/Top" ratio is consistently bigger for F# code than for C# code. Overall, the average top-level type in C# is converted into 431 instructions. But for F# that number is 1540 instructions, over three times as many.</p>
+
+<p>I expect that this is because F# code is more concise than C# code. I would guess that 500 lines of F# code in a single module would create many more CIL instructions than 500 lines of C# code in a class.</p>
+
+<p>If we visually plot "Code size" vs. "Top-level types", we get this chart:</p>
+
+<p><img src="/assets/img/Metrics_CodeSize_TopLevel.png" alt="" /></p>
+
+<p>What's surprising to me is how linear this chart is. The C# projects seem to have a consistent ratio of about 2.3 top-level types per 1000 instructions, even across different project sizes.
+And the F# projects are consistent too, having a ratio of about 0.6 top-level types per 1000 instructions.</p>
+
+<p>The message I get from all this is that, for a given size of project, the F# version will have fewer modules, and presumably less complexity as a result.</p>
+
+<h3>Ratio of code size to number of all types</h3>
+
+<p>On the other hand, if we compare the ratio of code to all types, including compiler generated ones, we get a very different result.</p>
+
+<p>Here's the corresponding chart of "Code size" vs. "All types":</p>
+
+<p><img src="/assets/img/Metrics_CodeSize_AllTypes.png" alt="" /></p>
+
+<p>Again, this is surprisingly linear. The total number of types (including compiler generated ones) seems to depend closely on the size of the project.</p>
+
+<p>The "size" of a type is somewhat smaller for F# code than for C# code.  The average type in C# is converted into 294 instructions. But for F# that number is 185 instructions.</p>
+
+<p>I'm not sure why this is. Is it because the F# types are more fine-grained, or could it be because the F# compiler generates many more little types than the C# compiler? Without doing a more subtle analysis, I can't tell.</p>
+
+<h3>Ratio of top-level types to authored types</h3>
+
+<p>Having compared the type counts to the code size, let's now compare them to each other:</p>
+
+<p><img src="/assets/img/Metrics_TopLevel_AuthTypes.png" alt="" /></p>
+
+<p>This really brings out the difference. For each unit of modularity in C# there are an average of 1.11 authored types. But in F# the average is 2.05, and for some projects a lot more than that.</p>
+
+<p>To me, this implies that the F# types are more fine-grained than the C# types.</p>
+
+<p>Of course, creating nested types is trivial in F#, and quite uncommon in C#, so you could argue that this is not a fair comparison. But surely the ability to create <a href="/posts/conciseness-type-definitions/">a dozen types in as many lines</a> of F# has some effect on the quality of the design?  This is harder to do in C#, but there is nothing to stop you. So might this not mean that there is a temptation in C# to not be as fine-grained as you could potentially be?</p>
+
+<h2>Dependencies</h2>
+
+<p>Now let's look at the dependency relationships between the top level classes.</p>
+
+<p>Here are the results for the C# projects:</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Top Level Types </th><th>Total Dep. Count   </th><th>Dep/Top    </th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.  </th><th>Ten or more dep.</th><th>Diagram</th></tr>
+</thead>
+<tbody>
+<tr><td>ef  </td><td>517    </td><td>2462   </td><td>4.8    </td><td>78%    </td><td>52%    </td><td>32%    </td><td>14%    </td>        <td><a href='/assets/svg/ef.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/ef.all.dot'>dotfile</a>                  </td></tr>
+<tr><td>jsonDotNet  </td><td>215    </td><td>913    </td><td>4.2    </td><td>69%    </td><td>42%    </td><td>30%    </td><td>14%    </td><td><a href='/assets/svg/jsonDotNet.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/jsonDotNet.all.dot'>dotfile</a>    </td></tr>
+<tr><td>nancy   </td><td>339    </td><td>1132   </td><td>3.3    </td><td>78%    </td><td>41%    </td><td>22%    </td><td>6% </td>        <td><a href='/assets/svg/nancy.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nancy.all.dot'>dotfile</a>            </td></tr>
+<tr><td>cecil   </td><td>240    </td><td>1145   </td><td>4.8    </td><td>73%    </td><td>43%    </td><td>23%    </td><td>13%    </td>    <td><a href='/assets/svg/cecil.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/cecil.all.dot'>dotfile</a>        </td></tr>
+<tr><td>nuget   </td><td>218    </td><td>875    </td><td>4.0    </td><td>72%    </td><td>43%    </td><td>28%    </td><td>13%    </td>    <td><a href='/assets/svg/nuget.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nuget.all.dot'>dotfile</a>        </td></tr>
+<tr><td>signalR </td><td>193    </td><td>664    </td><td>3.4    </td><td>67%    </td><td>34%    </td><td>20%    </td><td>10%    </td>    <td><a href='/assets/svg/signalR.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/signalR.all.dot'>dotfile</a>          </td></tr>
+<tr><td>nunit   </td><td>173    </td><td>499    </td><td>2.9    </td><td>75%    </td><td>39%    </td><td>13%    </td><td>4% </td>        <td><a href='/assets/svg/nunit.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nunit.all.dot'>dotfile</a>             </td></tr>
+<tr><td>specFlow    </td><td>242    </td><td>578    </td><td>2.4    </td><td>64%    </td><td>25%    </td><td>17%    </td><td>5% </td>    <td><a href='/assets/svg/specFlow.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/specFlow.all.dot'>dotfile</a>       </td></tr>
+<tr><td>elmah   </td><td>116    </td><td>300    </td><td>2.6    </td><td>72%    </td><td>28%    </td><td>22%    </td><td>6% </td>        <td><a href='/assets/svg/elmah.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/elmah.all.dot'>dotfile</a>              </td></tr>
+<tr><td>yamlDotNet  </td><td>70 </td><td>228    </td><td>3.3    </td><td>83%    </td><td>30%    </td><td>11%    </td><td>4% </td>        <td><a href='/assets/svg/yamlDotNet.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/yamlDotNet.all.dot'>dotfile</a>        </td></tr>
+<tr><td>TOTAL   </td><td>2323   </td><td>8796   </td><td>3.8    </td><td>73%    </td><td>40%    </td><td>24%    </td><td>10%    </td><td>         </td></tr>
+</tbody>
+</table>
+
+
+<p>And here are the results for the F# projects:</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Top Level Types </th><th>Total Dep. Count   </th><th>Dep/Top    </th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.  </th><th>Ten or more dep.</th><th>Diagram</th></tr>
+</thead>
+<tbody>
+<tr><td>fsxCore </td><td>173    </td><td>76 </td><td>0.4    </td><td>30%    </td><td>4% </td><td>1% </td><td>0% </td>            <td><a href='/assets/svg/fsxCore.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsxCore.all.dot'>dotfile</a>       </td></tr>
+<tr><td>fsCore  </td><td>154    </td><td>287    </td><td>1.9    </td><td>55%    </td><td>26%    </td><td>14%    </td><td>3% </td><td><a href='/assets/svg/fsCore.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsCore.all.dot'>dotfile</a>          </td></tr>
+<tr><td>fsPowerPack </td><td>93 </td><td>68 </td><td>0.7    </td><td>38%    </td><td>13%    </td><td>2% </td><td>0% </td>        <td><a href='/assets/svg/fsPowerPack.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsPowerPack.all.dot'>dotfile</a>    </td></tr>
+<tr><td>storm   </td><td>67 </td><td>195    </td><td>2.9    </td><td>72%    </td><td>40%    </td><td>18%    </td><td>4% </td>    <td><a href='/assets/svg/storm.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/storm.all.dot'>dotfile</a>        </td></tr>
+<tr><td>fsParsec    </td><td>8  </td><td>9  </td><td>1.1    </td><td>63%    </td><td>25%    </td><td>0% </td><td>0% </td>        <td><a href='/assets/svg/fsParsec.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsParsec.all.dot'>dotfile</a>       </td></tr>
+<tr><td>websharper  </td><td>52 </td><td>18 </td><td>0.3    </td><td>31%    </td><td>0% </td><td>0% </td><td>0% </td>            <td><a href='/assets/svg/websharper.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/websharper.all.dot'>dotfile</a>      </td></tr>
+<tr><td>tickSpec    </td><td>34 </td><td>48 </td><td>1.4    </td><td>50%    </td><td>15%    </td><td>9% </td><td>3% </td>        <td><a href='/assets/svg/tickSpec.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/tickSpec.all.dot'>dotfile</a>       </td></tr>
+<tr><td>websharperHtml  </td><td>18 </td><td>37 </td><td>2.1    </td><td>78%    </td><td>39%    </td><td>6% </td><td>0% </td>    <td><a href='/assets/svg/websharperHtml.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/websharperHtml.all.dot'>dotfile</a>    </td></tr>
+<tr><td>canopy  </td><td>6  </td><td>8  </td><td>1.3    </td><td>50%    </td><td>33%    </td><td>0% </td><td>0% </td>            <td><a href='/assets/svg/canopy.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/canopy.all.dot'>dotfile</a>          </td></tr>
+<tr><td>fsYaml  </td><td>7  </td><td>10 </td><td>1.4    </td><td>71%    </td><td>14%    </td><td>0% </td><td>0% </td>            <td><a href='/assets/svg/fsYaml.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsYaml.all.dot'>dotfile</a>            </td></tr>
+<tr><td>fsSql   </td><td>13 </td><td>14 </td><td>1.1    </td><td>54%    </td><td>8% </td><td>8% </td><td>0% </td>                <td><a href='/assets/svg/fsSql.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsSql.all.dot'>dotfile</a>        </td></tr>
+<tr><td>fsUnit  </td><td>2  </td><td>0  </td><td>0.0    </td><td>0% </td><td>0% </td><td>0% </td><td>0% </td>                    <td><a href='/assets/svg/fsUnit.all.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsUnit.all.dot'>dotfile</a>     </td></tr>
+<tr><td>TOTAL   </td><td>627    </td><td>770    </td><td>1.2    </td><td>46%    </td><td>17%    </td><td>7% </td><td>1% </td><td>   </td></tr>
+</tbody>
+</table>
+
+
+<p>The columns are:</p>
+
+<ul>
+<li><strong>Top-level types</strong> is the total number of top-level types in the assembly, as before.</li>
+<li><strong>Total dep. count</strong> is the total number of dependencies between top level types.</li>
+<li><strong>Dep/Top</strong> is the number of dependencies per top level type / module only. This is a measure of how many dependencies the average top level type/module has.</li>
+<li><strong>One or more dep</strong> is the number of top level types that have dependencies on one or more other top level types.</li>
+<li><strong>Three or more dep</strong>. Similar to above, but with dependencies on three or more other top level types.</li>
+<li><strong>Five or more dep</strong>. Similar to above.</li>
+<li><strong>Ten or more dep</strong>. Similar to above. Top level types with this many dependencies will be harder to understand and maintain. So this is measure of how complex the project is.</li>
+</ul>
+
+
+<p>The <strong>diagram</strong> column contains a link to a SVG file, generated from the dependencies, and also the <a href="http://www.graphviz.org/">DOT file</a> that was used to generate the SVG. See below for a discussion of these diagrams.</p>
+
+<h3>Analysis</h3>
+
+<p>These results are very interesting. For C#, the number of total dependencies increases with project size. Each top-level type depends on 3-4 others, on average.</p>
+
+<p>On the other hand, the number of total dependencies in an F# project does not seem to vary too much with project size at all. Excluding Storm, each F# module depends on no more than 1-2 others, on average.
+And the largest project (FSharpX) has a lower ratio than many of the smaller projects. The Storm project is an exception, presumably because it has user interface code (the menu screens have dependencies on many other types).</p>
+
+<p>Here's a chart of the relationship between code size and the number of dependencies:</p>
+
+<p><img src="/assets/img/Metrics_CodeSize_Dependencies.png" alt="" /></p>
+
+<p>The disparity between C# and F# projects is very clear.  The C# dependencies seem to grow linearly with project size, while the F# dependencies seem to be flat.</p>
+
+<h3>Distribution of dependencies</h3>
+
+<p>The average number of dependencies per top level type is interesting, but it doesn't help us understand the variability. Are there many modules with lots of dependencies? Or does each one just have a few?</p>
+
+<p>This might make a difference in maintainability, perhaps. I would assume that a module with only one or two dependencies would be easier to understand in the context of the application that one with tens of dependencies.</p>
+
+<p>Rather than doing a sophisticated statistical analysis, I thought I would keep it simple and just count how many top level types had one or more dependencies, three or more dependencies, and so on.</p>
+
+<p>Here are the same results, displayed visually:</p>
+
+<p><img src="/assets/img/Metrics_CS_DependencyPercent.png" alt="" /></p>
+
+<p><img src="/assets/img/Metrics_FS_DependencyPercent.png" alt="" /></p>
+
+<p>So, what can we deduce from these numbers?</p>
+
+<ul>
+<li><p>First, in the F# projects, more than half of the modules have no outside dependencies <em>at all</em>. This is a bit surprising. You might think that it is because most of them are library projects, rather than applications, but then, so are most of the C# projects too.</p></li>
+<li><p>Second, the modules in the F# projects consistently have fewer dependencies than the classes in the C# projects.</p></li>
+<li><p>Finally, in the F# projects, modules with a high number of dependencies are quite rare -- less than 2% overall. But in the C# projects, 10% of classes have more than 10 dependencies on other classes.</p></li>
+</ul>
+
+
+<h3>The dependency diagrams</h3>
+
+<p>It might be useful to look at the dependency diagrams now.  These are SVG files, so you should be able to view them in your browser.</p>
+
+<p>Note that most of these diagrams are very big -- so after you open them you will need to zoom out quite a bit in order to see anything!</p>
+
+<p>Let's start by comparing the diagrams for <a href="/assets/svg/specFlow.all.dot.svg">SpecFlow</a> and <a href="/assets/svg/tickSpec.all.dot.svg">TickSpec</a>.</p>
+
+<p>Each diagram lists all the top-level types found in the project. If there is a dependency from one type to another, it is shown by an arrow.
+The dependencies point from left to right where possible, so any arrows going from right to left implies that there is a cyclic dependency.</p>
+
+<p>The layout is done automatically by graphviz, but in general, the types are organized into columns or "ranks". For example, the SpecFlow diagram has 12 ranks, and the TickSpec diagram has five.</p>
+
+<p>As you can see, there are generally a lot of tangled lines in a typical dependency diagram! How tangled the diagram looks is a sort of visual measure of the code complexity.
+For instance, if I was tasked to maintain the SpecFlow project, I wouldn't really feel comfortable until I had understood all the relationships between the classes. And the more complex the project, the longer it takes to come up to speed.</p>
+
+<h3>OO vs functional design revealed?</h3>
+
+<p>The TickSpec diagram is a lot simpler than the SpecFlow one. Is that because TickSpec perhaps doesn't do as much as SpecFlow?</p>
+
+<p>The answer is no, I don't think that it has anything to do with the size of the feature set at all, but rather because the code is organized differently.</p>
+
+<p>Looking at the SpecFlow classes (<a href="/assets/svg/specFlow.all.dot">dotfile</a>), we can see it follows good OOD and TDD practices by creating interfaces. There's a <code>TestRunnerManager</code> and an <code>ITestRunnerManager</code>, for example. And there are many other patterns that commonly crop up in OOD: "listener" classes and interfaces, "provider" classes and interfaces, "comparer" classes and interfaces, and so on.</p>
+
+<p>But if we look at the TickSpec diagram (<a href="/assets/svg/tickSpec.all.dot">dotfile</a>) there are no interfaces at all. And no "listeners", "providers" or "comparers" either. There might well be a need for such things in the code, but either they are not exposed outside their module, or more likely, the role they play is fulfilled by functions rather than types.</p>
+
+<p>I'm not picking on the SpecFlow code, by the way. It seems well designed, and is a very useful library, but I think it does highlight some of the differences between OO design and functional design.</p>
+
+<h3>YamlDotNet compared with FParsec</h3>
+
+<p>Let's also compare the diagrams for <a href="/assets/svg/yamlDotNet.all.dot.svg">YamlDotNet</a> and <a href="/assets/svg/fsParsec.all.dot.svg">FParsec</a>.</p>
+
+<p>The FParsec diagram is tiny. There's more code in FParsec than in Yaml.Net, but there are only 9 dependencies in FParsec (you can even count them by hand!) compared with 228 in YamlDotNet.</p>
+
+<p>Again, YamlDotNet might do more than FParsec in some ways, and it might not be fair to compare a hand-crafted parser with a generic combinator parser. But even so, you can't help feeling that there is something about F# which reduces the complexity of a project.</p>
+
+<h2>Cyclic dependencies</h2>
+
+<p>Finally, we can turn our attention to the oh-so-evil cyclic dependencies. (If you want to know why they are bad, <a href="/posts/cyclic-dependencies/">read this post</a> ).</p>
+
+<p>Here are the cyclic dependency results for the C# projects.</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Top-level types</th><th>Max comp. size</th><th>Cycle count</th><th>Max comp. size (public)</th><th>Cycle count (public)</th><th>Diagram</th></tr>
+</thead>
+<tbody>
+
+<tr><td>ef  </td><td>517    </td><td>278    </td><td>2  </td><td>7  </td><td>1  </td>    <td><a href='/assets/svg/ef.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/ef.all.cycles.dot'>dotfile</a>       </td>     </tr>
+<tr><td>jsonDotNet  </td><td>215    </td><td>83 </td><td>3  </td><td>11 </td><td>1  </td><td><a href='/assets/svg/jsonDotNet.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/jsonDotNet.all.cycles.dot'>dotfile</a></td></tr>
+<tr><td>nancy   </td><td>339    </td><td>21 </td><td>6  </td><td>2  </td><td>2  </td>    <td><a href='/assets/svg/nancy.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nancy.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>cecil   </td><td>240    </td><td>123    </td><td>2  </td><td>50 </td><td>1  </td><td><a href='/assets/svg/cecil.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/cecil.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>nuget   </td><td>218    </td><td>10 </td><td>4  </td><td>1  </td><td>0  </td>    <td><a href='/assets/svg/nuget.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nuget.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>signalR </td><td>193    </td><td>7  </td><td>3  </td><td>5  </td><td>1  </td>    <td><a href='/assets/svg/signalR.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/signalR.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>nunit   </td><td>173    </td><td>78 </td><td>2  </td><td>48 </td><td>1  </td>    <td><a href='/assets/svg/nunit.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/nunit.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>specFlow    </td><td>242    </td><td>3  </td><td>5  </td><td>2  </td><td>1  </td><td><a href='/assets/svg/specFlow.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/specFlow.all.cycles.dot'>dotfile</a>   </td> </tr>
+<tr><td>elmah   </td><td>116    </td><td>5  </td><td>2  </td><td>2  </td><td>1  </td>    <td><a href='/assets/svg/elmah.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/elmah.all.cycles.dot'>dotfile</a>     </td> </tr>
+<tr><td>yamlDotNet  </td><td>70 </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td>    <td>   </td></tr>
+
+
+</tbody>                                                     
+</table>
+
+
+<p>And here are the results for the F# projects:</p>
+
+<table class="table table-striped table-condensed">
+<thead>
+<tr><th>Project</th><th>Top-level types</th><th>Max comp. size</th><th>Cycle count</th><th>Max comp. size (public)</th><th>Cycle count (public)</th><th>Diagram</th></tr>
+</thead>
+<tbody>
+<tr><td>fsxCore </td><td>173    </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td>   </td></tr>
+<tr><td>fsCore  </td><td>154    </td><td>3  </td><td>2  </td><td>1  </td><td>0  </td><td><a href='/assets/svg/fsCore.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsCore.all.cycles.dot'>dotfile</a>  </td></tr>
+<tr><td>fsPowerPack </td><td>93 </td><td>2  </td><td>1  </td><td>1  </td><td>0  </td><td><a href='/assets/svg/fsPowerPack.all.cycles.dot.svg'>svg</a>;&nbsp;<a href='/assets/svg/fsPowerPack.all.cycles.dot'>dotfile</a>    </td></tr>
+<tr><td>storm   </td><td>67 </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td></td></tr>
+<tr><td>fsParsec    </td><td>8  </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td>   </td></tr>
+<tr><td>websharper  </td><td>52 </td><td>1  </td><td>0  </td><td>0  </td><td>0  </td><td></td></tr>
+<tr><td>tickSpec    </td><td>34 </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td></td></tr>
+<tr><td>websharperHtml  </td><td>18 </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td    </td></tr>
+<tr><td>canopy  </td><td>6  </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td>   </td></tr>
+<tr><td>fsYaml  </td><td>7  </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td>   </td></tr>
+<tr><td>fsSql   </td><td>13 </td><td>1  </td><td>0  </td><td>1  </td><td>0  </td><td>   </td></tr>
+<tr><td>fsUnit  </td><td>2  </td><td>0  </td><td>0  </td><td>0  </td><td>0  </td><td>   </td></tr>
+</tbody>
+</table>
+
+
+<p>The columns are:</p>
+
+<ul>
+<li><strong>Top-level types</strong> is the total number of top-level types in the assembly, as before.</li>
+<li><strong>Max comp. size</strong> is the number of modules in the largest cyclic component.  This is a measure of how complex the cycle is. If there are only two mutually dependent types, then the cycle is a lot less complex than, say, 278 mutually dependent types.</li>
+<li><strong>Cycle count</strong> is the number of cycles altogether. Ideally it would be zero. But larger is not necessarily worse. Better to have 10 small cycles than one giant one, I think.</li>
+<li><strong>Max comp. size (public)</strong> is as above, but using only public dependencies.</li>
+<li><strong>Cycle count (public)</strong> is as above, but using only public dependencies.  I thought it would be interesting to see what effect it would have to limit the analysis to public dependencies only.</li>
+<li>The <strong>diagram</strong> column contains a link to a SVG file, generated from the dependencies in the cycles only, and also the <a href="http://www.graphviz.org/">DOT file</a> that was used to generate the SVG. See below for an analysis.</li>
+</ul>
+
+
+<h3>Analysis</h3>
+
+<p>If we are looking for cycles in the F# code, we will be sorely disappointed. Only two of the F# projects have cycles at all, and those are tiny. For example in FSharp.Core there is a mutual dependency between two types right next to each other in the same file, <a href="https://github.com/fsharp/fsharp/blob/master/src/fsharp/FSharp.Core/quotations.fs#L146">here</a>.</p>
+
+<p>On the other hand, almost all the C# projects have one or more cycles. Entity Framework and Cecil are the worst offenders, with complex cycles involving half of the classes in the entire project! Surprisingly, NuGet has very few, which makes me think that perhaps someone is using a code analysis tool such as NDepend.</p>
+
+<p>Why the difference between C# and F#?</p>
+
+<ul>
+<li>In C#, there is nothing stopping you from creating cycles -- a perfect example of accidental complexity. In fact, you have to make <a href="http://programmers.stackexchange.com/questions/60549/how-strictly-do-you-follow-the-no-dependency-cycle-rule-ndepend">a special effort</a> to avoid them.</li>
+<li>In F#, of course, it is the other way around. You can't easily create cycles at all.</li>
+</ul>
+
+
+<h2>Summary</h2>
+
+<p>I started this analysis from curiosity -- was there any meaningful difference in the organization of C# and F# projects?</p>
+
+<p>I was quite surprised that the distinction was so clear. Given these metrics, you could certainly predict which language the assembly was written in.</p>
+
+<ul>
+<li><strong>Project complexity</strong>. For a given number of instructions, a C# project is likely to have many more top level types (and hence files) than an F# one -- more than double, it seems.</li>
+<li><strong>Fine-grained types</strong>. For a given number of modules, a C# project is likely to have fewer authored types than an F# one, implying that the types are not as fine-grained as they could be.</li>
+<li><strong>Dependencies</strong>. In a C# project, the number of dependencies between classes increases linearly with the size of the project. In an F# project, the number of dependencies is much smaller and stays  relatively flat.</li>
+<li><strong>Cycles</strong>. In a C# project, cycles occur easily unless care is taken to avoid them. In an F# project, cycles are extremely rare, and if present, are very small.</li>
+</ul>
+
+
+<p>I don't claim that this analysis is perfect (and I hope haven't made a terrible mistake in the analysis code!) but I think that it could be a useful starting point for further investigation.</p>
+
+
+			
+	<div class="post-footer">
+		<hr>
+		
+		
+	<ul class="pager">
+		
+		<li class="previous">
+		<a href="/posts/removing-cyclic-dependencies/" title="Refactoring to remove cyclic dependencies">&larr; 2. Refactoring to remove cyclic dependencies</a>
+		</li>
+		
+
+		
+
+	</ul>
+	
+
+
+
+
+		<div>
+			<br>
+			<div style="float:left">Posted by <a href="/about/">scottw</a> on 28 May 2013 </div>
+			
+		</div>
+		<div style="clear: both;"></div>
+	</div >
+	
+	
+	<div class="well">
+	    <a name="series-toc"></a>
+		<h4>The "Dependency cycles" series</h4>
+		
+		
+			
+			<div><a href="/posts/cyclic-dependencies/" title="Cyclic dependencies are evil">1. Cyclic dependencies are evil</a></div>
+			
+			
+		
+		
+			
+			<div><a href="/posts/removing-cyclic-dependencies/" title="Refactoring to remove cyclic dependencies">2. Refactoring to remove cyclic dependencies</a></div>
+			
+			
+		
+		
+			
+			<div>3. Cycles and modularity in the wild</div>
+			
+			
+		
+	</div>
+
+
+
+	
+	<h4>Comments</h4>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+	if (window.location.host == 'localhost:4000'){disqus_developer = 1}else{disqus_developer = 0} // developer mode is on
+
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'fforfunandprofit'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+<div class="span2 sidebar">
+<!--Sidebar content-->
+
+<h6>Series</h6>
+
+<div><a href="/series/why-use-fsharp.html">Why use F#?</a></div>
+
+<div><a href="/series/thinking-functionally.html">Thinking functionally</a></div>
+
+<div><a href="/series/expressions-and-syntax.html">Expressions and syntax</a></div>
+
+<div><a href="/series/understanding-fsharp-types.html">Understanding F# types</a></div>
+
+<div><a href="/series/object-oriented-programming-in-fsharp.html">Object-oriented programming in F#</a></div>
+
+<div><a href="/series/porting-from-csharp.html">Porting from C#</a></div>
+
+<div><a href="/series/designing-with-types.html">Designing with types</a></div>
+
+<div><a href="/series/computation-expressions.html">Computation Expressions</a></div>
+
+<div><a href="/series/a-recipe-for-a-functional-app.html">A recipe for a functional app</a></div>
+
+<div><a href="/series/dependency-cycles.html">Dependency cycles</a></div>
+
+
+<h6>Recent Posts</h6>
+
+<div><a href="/posts/cycles-and-modularity-in-the-wild/" title="Cycles and modularity in the wild">Cycles and modularity in the wild</a></div>
+
+<div><a href="/posts/removing-cyclic-dependencies/" title="Refactoring to remove cyclic dependencies">Refactoring to remove cyclic dependencies</a></div>
+
+<div><a href="/posts/cyclic-dependencies/" title="Cyclic dependencies are evil">Cyclic dependencies are evil</a></div>
+
+<div><a href="/posts/recipe-part3/" title="Organizing modules in a project">Organizing modules in a project</a></div>
+
+<div><a href="/posts/why-i-wont-be-writing-a-monad-tutorial/" title="Why I won't be writing a monad tutorial">Why I won't be writing a monad tutorial</a></div>
+
+<div><a href="/posts/recipe-part2/" title="Railway oriented programming">Railway oriented programming</a></div>
+
+<div class="archive"><a href="/archives/">&raquo; Archives</a></div>
+
+<h6>Categories</h6>
+
+<span><a href="/category/FvsC/">F# vs C#</a> &bull; </span>
+
+<span><a href="/category/Conciseness/">Conciseness</a> &bull; </span>
+
+<span><a href="/category/Types/">Types</a> &bull; </span>
+
+<span><a href="/category/Folds/">Folds</a> &bull; </span>
+
+<span><a href="/category/Functions/">Functions</a> &bull; </span>
+
+<span><a href="/category/Patterns/">Patterns</a> &bull; </span>
+
+<span><a href="/category/Convenience/">Convenience</a> &bull; </span>
+
+<span><a href="/category/PartialApplication/">Partial Application</a> &bull; </span>
+
+<span><a href="/category/Correctness/">Correctness</a> &bull; </span>
+
+<span><a href="/category/Immutability/">Immutability</a> &bull; </span>
+
+<span><a href="/category/WorkedExamples/">Worked Examples</a> &bull; </span>
+
+<span><a href="/category/Concurrency/">Concurrency</a> &bull; </span>
+
+<span><a href="/category/Completeness/">Completeness</a> &bull; </span>
+
+<span><a href="/category/Currying/">Currying</a> &bull; </span>
+
+<span><a href="/category/Combinators/">Combinators</a> &bull; </span>
+
+<span><a href="/category/Modules/">Modules</a> &bull; </span>
+
+<span><a href="/category/Object-oriented/">Object-oriented</a> &bull; </span>
+
+<span><a href="/category/Classes/">Classes</a> &bull; </span>
+
+<span><a href="/category/Interfaces/">Interfaces</a> &bull; </span>
+
+<span><a href="/category/DDD/">DDD</a> &bull; </span>
+
+<span><a href="/category/Design/">Design</a> &bull; </span>
+
+
+<h6>More</h6>
+<div><a href="http://feeds.feedburner.com/Fsharpforfunandprofit?format=xml"><img src="/assets/img/feed-icon-14x14.png"> RSS Posts</a></div>
+<div><a href="/about/">About</a></div>
+<div><a href="/installing-and-using/">Installing and using F#</a></div>
+<div><a href="/learning-fsharp/">Learning F#</a></div>
+<div><a href="/troubleshooting-fsharp/">Troubleshooting F#</a></div>
+
+</div>
+
+		
+	
+</div>
+</div>
+        <!-- <div>By <a href="https://plus.google.com/u/0/100895328363063979573/" rel="author">Scott Wlaschin</a></div> -->
+		
+		<div class="row">
+			<div class="span8" >
+				<div class="footer">
+				<hr/>
+				        <p class="pull-right"><a href="#">Back to top</a></p>
+        
+Text (c) 2012-2013 by fsharpforfunandprofit.com. Code examples licensed under <a rel="license" href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+
+        
+		</div>
+				</div>
+			</div>
+		</div>
+	</div> <!-- /container -->
+
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-25384426-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
+
+
+
+
+      
