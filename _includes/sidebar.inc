@@ -4,7 +4,7 @@
 <div><a href="https://www.gitbook.com/book/swlaschin/fsharpforfunandprofit/">Reading offline? Download the ebook of this site</a></div>
 
 <h6>Share the love</h6>
-<div><a href="https://www.dropbox.com/sh/odx680qh5srur2n/AACc8tZ6-eDI09YK0-Y5F4hNa?dl=0"><img src="/assets/img/IHeartFsharp160.png"></></div>
+<div><a href="https://www.dropbox.com/sh/odx680qh5srur2n/AACc8tZ6-eDI09YK0-Y5F4hNa?dl=0"><img src="/assets/img/IHeartFsharp160.png"></a></div>
 
 <h6>Slides/Videos</h6>
 <div><a href="/fppatterns/">Functional Design Patterns</a></div>
