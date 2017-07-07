@@ -67,6 +67,8 @@ host: localhost
 #  jekyll build --verbose > jekyll.log
 #  jekyll serve --no-watch --skip-initial-build
 
+category_dir: category
+
 # Markdown Processor
 kramdown:
   auto_ids:       true

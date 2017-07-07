@@ -392,7 +392,7 @@ module SiteMap =
 
 
 // ========================================
-// Do all
+// Generate all content
 // ========================================
 
 open PostMetadata
