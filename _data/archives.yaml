@@ -1,0 +1,1050 @@
+- year: 2016
+  month: 12
+  monthName: December
+  posts:
+    - slug: dependency-injection-1
+      url: /posts/dependency-injection-1/
+      title: "Functional approaches to dependency injection"
+      date: "05 Dec 2016"
+      description: "Part one of a series, starting with partial application."
+
+
+- year: 2016
+  month: 4
+  monthName: April
+  posts:
+    - slug: happy-fsharp-day-2
+      url: /posts/happy-fsharp-day-2/
+      title: "Happy F# Day!"
+      date: "12 Apr 2016"
+      description: "Growing and getting better each year"
+
+
+- year: 2015
+  month: 12
+  monthName: December
+  posts:
+    - slug: 13-ways-of-looking-at-a-turtle-3
+      url: /posts/13-ways-of-looking-at-a-turtle-3/
+      title: "Thirteen ways of looking at a turtle - addendum"
+      date: "06 Dec 2015"
+      description: "Bonus ways: An Abstract Data Turtle and a Capability-based Turtle."
+
+    - slug: 13-ways-of-looking-at-a-turtle-2
+      url: /posts/13-ways-of-looking-at-a-turtle-2/
+      title: "Thirteen ways of looking at a turtle (part 2)"
+      date: "05 Dec 2015"
+      description: "Continuing with examples of event sourcing, FRP, monadic control flow, and an interpreter."
+
+    - slug: 13-ways-of-looking-at-a-turtle
+      url: /posts/13-ways-of-looking-at-a-turtle/
+      title: "Thirteen ways of looking at a turtle"
+      date: "05 Dec 2015"
+      description: "Examples of an API, dependency injection, a state monad, and more!"
+
+
+- year: 2015
+  month: 11
+  monthName: November
+  posts:
+    - slug: understanding-parser-combinators-4
+      url: /posts/understanding-parser-combinators-4/
+      title: "Writing a JSON parser from scratch"
+      date: "13 Nov 2015"
+      description: "In 250 lines of code"
+
+    - slug: understanding-parser-combinators-3
+      url: /posts/understanding-parser-combinators-3/
+      title: "Improving the parser library"
+      date: "12 Nov 2015"
+      description: "Adding more informative errors"
+
+    - slug: understanding-parser-combinators-2
+      url: /posts/understanding-parser-combinators-2/
+      title: "Building a useful set of parser combinators"
+      date: "11 Nov 2015"
+      description: "15 or so combinators that can be combined to parse almost anything"
+
+    - slug: understanding-parser-combinators
+      url: /posts/understanding-parser-combinators/
+      title: "Understanding Parser Combinators"
+      date: "10 Nov 2015"
+      description: "Building a parser combinator library from scratch"
+
+
+- year: 2015
+  month: 8
+  monthName: August
+  posts:
+    - slug: recursive-types-and-folds-3b
+      url: /posts/recursive-types-and-folds-3b/
+      title: "Trees in the real world"
+      date: "25 Aug 2015"
+      description: "Examples using databases, JSON and error handling"
+
+    - slug: recursive-types-and-folds-3
+      url: /posts/recursive-types-and-folds-3/
+      title: "Generic recursive types"
+      date: "24 Aug 2015"
+      description: "Implementing a domain in three ways"
+
+    - slug: recursive-types-and-folds-2b
+      url: /posts/recursive-types-and-folds-2b/
+      title: "Understanding Folds"
+      date: "23 Aug 2015"
+      description: "Recursion vs. iteration"
+
+    - slug: recursive-types-and-folds-2
+      url: /posts/recursive-types-and-folds-2/
+      title: "Introducing Folds"
+      date: "22 Aug 2015"
+      description: "Threading state through a recursive data structure"
+
+    - slug: recursive-types-and-folds-1b
+      url: /posts/recursive-types-and-folds-1b/
+      title: "Catamorphism examples"
+      date: "21 Aug 2015"
+      description: "Applying the rules to other domains"
+
+    - slug: recursive-types-and-folds
+      url: /posts/recursive-types-and-folds/
+      title: "Introduction to recursive types"
+      date: "20 Aug 2015"
+      description: "Don't fear the catamorphism..."
+
+    - slug: list-module-functions
+      url: /posts/list-module-functions/
+      title: "Choosing between collection functions"
+      date: "14 Aug 2015"
+      description: "A guide for the perplexed"
+
+    - slug: type-size-and-design
+      url: /posts/type-size-and-design/
+      title: "Algebraic type sizes and domain modelling"
+      date: "13 Aug 2015"
+      description: "Comprehending cardinality for fun and profit"
+
+    - slug: elevated-world-7
+      url: /posts/elevated-world-7/
+      title: "Map and Bind and Apply, a summary"
+      date: "08 Aug 2015"
+      description: ""
+
+    - slug: elevated-world-6
+      url: /posts/elevated-world-6/
+      title: "Reinventing the Reader monad"
+      date: "07 Aug 2015"
+      description: "Or, designing your own elevated world"
+
+    - slug: elevated-world-5
+      url: /posts/elevated-world-5/
+      title: "Using map, apply, bind and sequence in practice"
+      date: "06 Aug 2015"
+      description: "A real-world example that uses all the techniques"
+
+    - slug: elevated-world-4
+      url: /posts/elevated-world-4/
+      title: "Understanding traverse and sequence"
+      date: "05 Aug 2015"
+      description: "Mixing lists and elevated values"
+
+    - slug: elevated-world-3
+      url: /posts/elevated-world-3/
+      title: "Using the core functions in practice"
+      date: "04 Aug 2015"
+      description: "Working with independent and dependent data"
+
+    - slug: elevated-world-2
+      url: /posts/elevated-world-2/
+      title: "Understanding bind"
+      date: "03 Aug 2015"
+      description: "Or, how to compose world-crossing functions"
+
+    - slug: elevated-world
+      url: /posts/elevated-world/
+      title: "Understanding map and apply"
+      date: "02 Aug 2015"
+      description: "A toolset for working with elevated worlds"
+
+
+- year: 2015
+  month: 7
+  monthName: July
+  posts:
+    - slug: typesafe-performance-with-compiler-directives
+      url: /posts/typesafe-performance-with-compiler-directives/
+      title: "Swapping type-safety for high performance using compiler directives"
+      date: "21 Jul 2015"
+      description: "An experiment in how to have your cake and eat it too"
+
+    - slug: introvert-vs-extrovert
+      url: /posts/introvert-vs-extrovert/
+      title: "Introvert and extrovert programming languages"
+      date: "18 Jul 2015"
+      description: "Late night thoughts on language personality types"
+
+    - slug: fsharp-decompiled
+      url: /posts/fsharp-decompiled/
+      title: "F# decompiled into C#"
+      date: "15 Jul 2015"
+      description: "Or, what C# code do you have to write to get the same functionality as F#?"
+
+    - slug: monadster-3
+      url: /posts/monadster-3/
+      title: "Refactoring the Monadster"
+      date: "09 Jul 2015"
+      description: "Dr Frankenfunctor and the Monadster, part 3"
+
+    - slug: monadster-2
+      url: /posts/monadster-2/
+      title: "Completing the body of the Monadster"
+      date: "08 Jul 2015"
+      description: "Dr Frankenfunctor and the Monadster, part 2"
+
+    - slug: monadster
+      url: /posts/monadster/
+      title: "Dr Frankenfunctor and the Monadster"
+      date: "07 Jul 2015"
+      description: "Or, how a 19th century scientist nearly invented the state monad"
+
+
+- year: 2015
+  month: 6
+  monthName: June
+  posts:
+    - slug: no-uml-diagrams
+      url: /posts/no-uml-diagrams/
+      title: "We don't need no stinking UML diagrams"
+      date: "30 Jun 2015"
+      description: "A comparison of code vs UML"
+
+
+- year: 2015
+  month: 4
+  monthName: April
+  posts:
+    - slug: happy-fsharp-day
+      url: /posts/happy-fsharp-day/
+      title: "Happy F# Day!"
+      date: "12 Apr 2015"
+      description: "Celebrating the 5th anniversary of F# in Visual Studio"
+
+
+- year: 2015
+  month: 2
+  monthName: February
+  posts:
+    - slug: enterprise-tic-tac-toe-2
+      url: /posts/enterprise-tic-tac-toe-2/
+      title: "Enterprise Tic-Tac-Toe, part 2"
+      date: "16 Feb 2015"
+      description: "In which I throw away the previous design, and switch to a capability-centric approach"
+
+    - slug: enterprise-tic-tac-toe
+      url: /posts/enterprise-tic-tac-toe/
+      title: "Enterprise Tic-Tac-Toe"
+      date: "12 Feb 2015"
+      description: "A walkthrough of the design decisions in a purely functional implementation"
+
+
+- year: 2015
+  month: 1
+  monthName: January
+  posts:
+    - slug: is-your-language-unreasonable
+      url: /posts/is-your-language-unreasonable/
+      title: "Is your programming language unreasonable?"
+      date: "26 Jan 2015"
+      description: "or, why predictability is important"
+
+    - slug: capability-based-security-3
+      url: /posts/capability-based-security-3/
+      title: "Using types as access tokens"
+      date: "20 Jan 2015"
+      description: "A functional approach to authorization, part 3"
+
+    - slug: capability-based-security-2
+      url: /posts/capability-based-security-2/
+      title: "Constraining capabilities based on identity and role"
+      date: "19 Jan 2015"
+      description: "A functional approach to authorization, part 2"
+
+    - slug: capability-based-security
+      url: /posts/capability-based-security/
+      title: "A functional approach to authorization"
+      date: "18 Jan 2015"
+      description: "Capability based security and more"
+
+
+- year: 2014
+  month: 12
+  monthName: December
+  posts:
+    - slug: property-based-testing-2
+      url: /posts/property-based-testing-2/
+      title: "Choosing properties for property-based testing"
+      date: "12 Dec 2014"
+      description: "Or, I want to use FsCheck and Quickcheck, but I can never think of any properties to use"
+
+    - slug: property-based-testing
+      url: /posts/property-based-testing/
+      title: "An introduction to property-based testing"
+      date: "01 Dec 2014"
+      description: "Or, why you should be using FsCheck and QuickCheck"
+
+
+- year: 2014
+  month: 10
+  monthName: October
+  posts:
+    - slug: calculator-complete-v2
+      url: /posts/calculator-complete-v2/
+      title: "Calculator Walkthrough: Part 4"
+      date: "16 Oct 2014"
+      description: "Designing using a state machine"
+
+    - slug: calculator-complete-v1
+      url: /posts/calculator-complete-v1/
+      title: "Calculator Walkthrough: Part 3"
+      date: "15 Oct 2014"
+      description: "Adding the services and user interface, and dealing with disaster"
+
+    - slug: calculator-implementation
+      url: /posts/calculator-implementation/
+      title: "Calculator Walkthrough: Part 2"
+      date: "14 Oct 2014"
+      description: "Testing the design with a trial implementation"
+
+    - slug: calculator-design
+      url: /posts/calculator-design/
+      title: "Calculator Walkthrough: Part 1"
+      date: "13 Oct 2014"
+      description: "The type-first approach to designing a Calculator"
+
+
+- year: 2014
+  month: 4
+  monthName: April
+  posts:
+    - slug: low-risk-ways-to-use-fsharp-at-work-5
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-5/
+      title: "Other interesting ways of using F# at work"
+      date: "24 Apr 2014"
+      description: "Twenty six low-risk ways to use F# at work (part 5)"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-4
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-4/
+      title: "Using F# for database related tasks"
+      date: "23 Apr 2014"
+      description: "Twenty six low-risk ways to use F# at work (part 4)"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-3
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-3/
+      title: "Using F# for testing"
+      date: "22 Apr 2014"
+      description: "Twenty six low-risk ways to use F# at work (part 3)"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work-2
+      url: /posts/low-risk-ways-to-use-fsharp-at-work-2/
+      title: "Using F# for development and devops scripts"
+      date: "21 Apr 2014"
+      description: "Twenty six low-risk ways to use F# at work (part 2)"
+
+    - slug: low-risk-ways-to-use-fsharp-at-work
+      url: /posts/low-risk-ways-to-use-fsharp-at-work/
+      title: "Twenty six low-risk ways to use F# at work"
+      date: "20 Apr 2014"
+      description: "You can start right now -- no permission needed"
+
+    - slug: roslyn-vs-fsharp-compiler
+      url: /posts/roslyn-vs-fsharp-compiler/
+      title: "Analysis of Roslyn vs. the F# compiler"
+      date: "12 Apr 2014"
+      description: "Lines of code, dependency analysis and more"
+
+
+- year: 2014
+  month: 1
+  monthName: January
+  posts:
+    - slug: roman-numeral-kata
+      url: /posts/roman-numeral-kata/
+      title: "Commentary on 'Roman Numerals Kata with Commentary'"
+      date: "12 Jan 2014"
+      description: "My approach to the Roman Numerals Kata"
+
+
+- year: 2013
+  month: 10
+  monthName: October
+  posts:
+    - slug: monoids-part3
+      url: /posts/monoids-part3/
+      title: "Working with non-monoids"
+      date: "25 Oct 2013"
+      description: "Monoids without tears - Part 3"
+
+    - slug: monoids-part2
+      url: /posts/monoids-part2/
+      title: "Monoids in practice"
+      date: "24 Oct 2013"
+      description: "Monoids without tears - Part 2"
+
+    - slug: book-announcement
+      url: /posts/book-announcement/
+      title: "'Understanding Functional Programming' book announcement"
+      date: "23 Oct 2013"
+      description: ""
+
+    - slug: monoids-without-tears
+      url: /posts/monoids-without-tears/
+      title: "Monoids without tears"
+      date: "23 Oct 2013"
+      description: "A mostly mathless discussion of a common functional pattern"
+
+
+- year: 2013
+  month: 6
+  monthName: June
+  posts:
+    - slug: railway-oriented-programming-carbonated
+      url: /posts/railway-oriented-programming-carbonated/
+      title: "Railway oriented programming: Carbonated edition"
+      date: "22 Jun 2013"
+      description: "Three ways to implement FizzBuzz"
+
+
+- year: 2013
+  month: 5
+  monthName: May
+  posts:
+    - slug: cycles-and-modularity-in-the-wild
+      url: /posts/cycles-and-modularity-in-the-wild/
+      title: "Cycles and modularity in the wild"
+      date: "28 May 2013"
+      description: "Comparing some real-world metrics of C# and F# projects"
+
+    - slug: cyclic-dependencies
+      url: /posts/cyclic-dependencies/
+      title: "Cyclic dependencies are evil"
+      date: "27 May 2013"
+      description: "Cyclic dependencies: Part 1"
+
+    - slug: removing-cyclic-dependencies
+      url: /posts/removing-cyclic-dependencies/
+      title: "Refactoring to remove cyclic dependencies"
+      date: "27 May 2013"
+      description: "Cyclic dependencies: Part 2"
+
+    - slug: recipe-part3
+      url: /posts/recipe-part3/
+      title: "Organizing modules in a project"
+      date: "26 May 2013"
+      description: "A recipe for a functional app, Part 3"
+
+    - slug: why-i-wont-be-writing-a-monad-tutorial
+      url: /posts/why-i-wont-be-writing-a-monad-tutorial/
+      title: "Why I won't be writing a monad tutorial"
+      date: "14 May 2013"
+      description: ""
+
+    - slug: recipe-part2
+      url: /posts/recipe-part2/
+      title: "Railway oriented programming"
+      date: "11 May 2013"
+      description: "A recipe for a functional app, part 2"
+
+    - slug: recipe-part1
+      url: /posts/recipe-part1/
+      title: "How to design and code a complete program"
+      date: "10 May 2013"
+      description: "A recipe for a functional app, part 1"
+
+
+- year: 2013
+  month: 4
+  monthName: April
+  posts:
+    - slug: ten-reasons-not-to-use-a-functional-programming-language
+      url: /posts/ten-reasons-not-to-use-a-functional-programming-language/
+      title: "Ten reasons not to use a statically typed functional programming language"
+      date: "12 Apr 2013"
+      description: "A rant against something I don't get"
+
+
+- year: 2013
+  month: 1
+  monthName: January
+  posts:
+    - slug: computation-expressions-builder-part6
+      url: /posts/computation-expressions-builder-part6/
+      title: "Implementing a builder: The rest of the standard methods"
+      date: "30 Jan 2013"
+      description: "Implementing While, Using, and exception handling"
+
+    - slug: computation-expressions-builder-part5
+      url: /posts/computation-expressions-builder-part5/
+      title: "Implementing a builder: Adding laziness"
+      date: "29 Jan 2013"
+      description: "Delaying a workflow externally"
+
+    - slug: computation-expressions-builder-part4
+      url: /posts/computation-expressions-builder-part4/
+      title: "Implementing a builder: Overloading"
+      date: "28 Jan 2013"
+      description: "Stupid method tricks"
+
+    - slug: computation-expressions-builder-part3
+      url: /posts/computation-expressions-builder-part3/
+      title: "Implementing a builder: Delay and Run"
+      date: "27 Jan 2013"
+      description: "Controlling when functions execute"
+
+    - slug: computation-expressions-builder-part2
+      url: /posts/computation-expressions-builder-part2/
+      title: "Implementing a builder: Combine"
+      date: "26 Jan 2013"
+      description: "How to return multiple values at once"
+
+    - slug: computation-expressions-builder-part1
+      url: /posts/computation-expressions-builder-part1/
+      title: "Implementing a builder: Zero and Yield"
+      date: "25 Jan 2013"
+      description: "Getting started with the basic builder methods"
+
+    - slug: computation-expressions-wrapper-types-part2
+      url: /posts/computation-expressions-wrapper-types-part2/
+      title: "More on wrapper types"
+      date: "24 Jan 2013"
+      description: "We discover that even lists can be wrapper types"
+
+    - slug: computation-expressions-wrapper-types
+      url: /posts/computation-expressions-wrapper-types/
+      title: "Computation expressions and wrapper types"
+      date: "23 Jan 2013"
+      description: "Using types to assist the workflow"
+
+    - slug: computation-expressions-bind
+      url: /posts/computation-expressions-bind/
+      title: "Introducing 'bind'"
+      date: "22 Jan 2013"
+      description: "Steps towards creating our own 'let!'"
+
+    - slug: computation-expressions-continuations
+      url: /posts/computation-expressions-continuations/
+      title: "Understanding continuations"
+      date: "21 Jan 2013"
+      description: "How 'let' works behind the scenes"
+
+    - slug: computation-expressions-intro
+      url: /posts/computation-expressions-intro/
+      title: "Computation expressions: Introduction"
+      date: "20 Jan 2013"
+      description: "Unwrapping the enigma..."
+
+    - slug: designing-with-types-conclusion
+      url: /posts/designing-with-types-conclusion/
+      title: "Designing with types: Conclusion"
+      date: "19 Jan 2013"
+      description: "A before and after comparison"
+
+    - slug: designing-with-types-non-strings
+      url: /posts/designing-with-types-non-strings/
+      title: "Designing with types: Non-string types"
+      date: "18 Jan 2013"
+      description: "Working with integers and dates safely"
+
+    - slug: designing-with-types-more-semantic-types
+      url: /posts/designing-with-types-more-semantic-types/
+      title: "Designing with types: Constrained strings"
+      date: "17 Jan 2013"
+      description: "Adding more semantic information to a primitive type"
+
+    - slug: designing-with-types-representing-states
+      url: /posts/designing-with-types-representing-states/
+      title: "Designing with types: Making state explicit"
+      date: "16 Jan 2013"
+      description: "Using state machines to ensure correctness"
+
+    - slug: designing-with-types-discovering-the-domain
+      url: /posts/designing-with-types-discovering-the-domain/
+      title: "Designing with types: Discovering new concepts"
+      date: "15 Jan 2013"
+      description: "Gaining deeper insight into the domain"
+
+    - slug: designing-with-types-making-illegal-states-unrepresentable
+      url: /posts/designing-with-types-making-illegal-states-unrepresentable/
+      title: "Designing with types: Making illegal states unrepresentable"
+      date: "14 Jan 2013"
+      description: "Encoding business logic in types"
+
+    - slug: designing-with-types-single-case-dus
+      url: /posts/designing-with-types-single-case-dus/
+      title: "Designing with types: Single case union types"
+      date: "13 Jan 2013"
+      description: "Adding meaning to primitive types"
+
+    - slug: designing-with-types-intro
+      url: /posts/designing-with-types-intro/
+      title: "Designing with types: Introduction"
+      date: "12 Jan 2013"
+      description: "Making design more transparent and improving correctness"
+
+
+- year: 2012
+  month: 8
+  monthName: August
+  posts:
+    - slug: porting-to-csharp-getting-started
+      url: /posts/porting-to-csharp-getting-started/
+      title: "Getting started with direct porting"
+      date: "02 Aug 2012"
+      description: "F# equivalents to C#"
+
+    - slug: porting-to-csharp-intro
+      url: /posts/porting-to-csharp-intro/
+      title: "Porting from C# to F#: Introduction"
+      date: "01 Aug 2012"
+      description: "Three approaches to porting existing C# code to F#"
+
+
+- year: 2012
+  month: 7
+  monthName: July
+  posts:
+    - slug: object-expressions
+      url: /posts/object-expressions/
+      title: "Object expressions"
+      date: "17 Jul 2012"
+      description: ""
+
+    - slug: interfaces
+      url: /posts/interfaces/
+      title: "Interfaces"
+      date: "16 Jul 2012"
+      description: ""
+
+    - slug: inheritance
+      url: /posts/inheritance/
+      title: "Inheritance and abstract classes"
+      date: "15 Jul 2012"
+      description: ""
+
+    - slug: classes
+      url: /posts/classes/
+      title: "Classes"
+      date: "14 Jul 2012"
+      description: ""
+
+    - slug: object-oriented-intro
+      url: /posts/object-oriented-intro/
+      title: "Object-oriented programming in F#: Introduction"
+      date: "13 Jul 2012"
+      description: ""
+
+    - slug: printf
+      url: /posts/printf/
+      title: "Formatted text using printf"
+      date: "12 Jul 2012"
+      description: "Tips and techniques for printing and logging"
+
+    - slug: cli-types
+      url: /posts/cli-types/
+      title: "Built-in .NET types"
+      date: "10 Jul 2012"
+      description: "Ints, strings, bools, etc"
+
+    - slug: units-of-measure
+      url: /posts/units-of-measure/
+      title: "Units of measure"
+      date: "10 Jul 2012"
+      description: "Type safety for numerics"
+
+    - slug: enum-types
+      url: /posts/enum-types/
+      title: "Enum types"
+      date: "09 Jul 2012"
+      description: "Not the same as a union type"
+
+    - slug: type-inference
+      url: /posts/type-inference/
+      title: "Understanding type inference"
+      date: "09 Jul 2012"
+      description: "Behind the magic curtain"
+
+    - slug: stack-based-calculator
+      url: /posts/stack-based-calculator/
+      title: "Worked example: A stack based calculator"
+      date: "07 Jul 2012"
+      description: "Using combinators to build functionality"
+
+
+- year: 2012
+  month: 6
+  monthName: June
+  posts:
+    - slug: roman-numerals
+      url: /posts/roman-numerals/
+      title: "Worked example: Roman numerals"
+      date: "30 Jun 2012"
+      description: "More pattern matching in practice"
+
+    - slug: pattern-matching-command-line
+      url: /posts/pattern-matching-command-line/
+      title: "Worked example: Parsing command line arguments"
+      date: "29 Jun 2012"
+      description: "Pattern matching in practice"
+
+    - slug: match-expression
+      url: /posts/match-expression/
+      title: "Match expressions"
+      date: "28 Jun 2012"
+      description: "The workhorse of F#"
+
+    - slug: the-option-type
+      url: /posts/the-option-type/
+      title: "The Option type"
+      date: "07 Jun 2012"
+      description: "And why it is not null or nullable"
+
+    - slug: discriminated-unions
+      url: /posts/discriminated-unions/
+      title: "Discriminated Unions"
+      date: "06 Jun 2012"
+      description: "Adding types together"
+
+    - slug: records
+      url: /posts/records/
+      title: "Records"
+      date: "05 Jun 2012"
+      description: "Extending tuples with labels"
+
+    - slug: tuples
+      url: /posts/tuples/
+      title: "Tuples"
+      date: "04 Jun 2012"
+      description: "Multiplying types together"
+
+    - slug: type-abbreviations
+      url: /posts/type-abbreviations/
+      title: "Type abbreviations"
+      date: "03 Jun 2012"
+      description: "Also known as aliases"
+
+    - slug: overview-of-types-in-fsharp
+      url: /posts/overview-of-types-in-fsharp/
+      title: "Overview of types in F#"
+      date: "02 Jun 2012"
+      description: "A look at the big picture"
+
+    - slug: types-intro
+      url: /posts/types-intro/
+      title: "Understanding F# types: Introduction"
+      date: "01 Jun 2012"
+      description: "A new world of types"
+
+
+- year: 2012
+  month: 5
+  monthName: May
+  posts:
+    - slug: exceptions
+      url: /posts/exceptions/
+      title: "Exceptions"
+      date: "21 May 2012"
+      description: "Syntax for throwing and catching"
+
+    - slug: control-flow-expressions
+      url: /posts/control-flow-expressions/
+      title: "Control flow expressions"
+      date: "20 May 2012"
+      description: "And how to avoid using them"
+
+    - slug: naming-conventions
+      url: /posts/naming-conventions/
+      title: "Parameter and value naming conventions"
+      date: "19 May 2012"
+      description: "a, f, x and friends"
+
+    - slug: fsharp-syntax
+      url: /posts/fsharp-syntax/
+      title: "F# syntax: indentation and verbosity"
+      date: "18 May 2012"
+      description: "Understanding the offside rule"
+
+    - slug: let-use-do
+      url: /posts/let-use-do/
+      title: "Binding with let, use, and do"
+      date: "17 May 2012"
+      description: "How to use them"
+
+    - slug: understanding-fsharp-expressions
+      url: /posts/understanding-fsharp-expressions/
+      title: "Overview of F# expressions"
+      date: "17 May 2012"
+      description: "Control flows, lets, dos, and more"
+
+    - slug: expressions-vs-statements
+      url: /posts/expressions-vs-statements/
+      title: "Expressions vs. statements"
+      date: "16 May 2012"
+      description: "Why expressions are safer and make better building blocks"
+
+    - slug: expressions-intro
+      url: /posts/expressions-intro/
+      title: "Expressions and syntax: Introduction"
+      date: "15 May 2012"
+      description: "How to code in F#"
+
+    - slug: type-extensions
+      url: /posts/type-extensions/
+      title: "Attaching functions to types"
+      date: "11 May 2012"
+      description: "Creating methods the F# way"
+
+    - slug: organizing-functions
+      url: /posts/organizing-functions/
+      title: "Organizing functions"
+      date: "10 May 2012"
+      description: "Nested functions and modules"
+
+    - slug: function-signatures
+      url: /posts/function-signatures/
+      title: "Function signatures"
+      date: "09 May 2012"
+      description: "A function signature can give you some idea of what it does"
+
+    - slug: defining-functions
+      url: /posts/defining-functions/
+      title: "Defining functions"
+      date: "08 May 2012"
+      description: "Lambdas and more"
+
+    - slug: function-composition
+      url: /posts/function-composition/
+      title: "Function associativity and composition"
+      date: "07 May 2012"
+      description: "Building new functions from existing ones"
+
+    - slug: partial-application
+      url: /posts/partial-application/
+      title: "Partial application"
+      date: "06 May 2012"
+      description: "Baking-in some of the parameters of a function"
+
+    - slug: currying
+      url: /posts/currying/
+      title: "Currying"
+      date: "05 May 2012"
+      description: "Breaking multi-parameter functions into smaller one-parameter functions"
+
+    - slug: how-types-work-with-functions
+      url: /posts/how-types-work-with-functions/
+      title: "How types work with functions"
+      date: "04 May 2012"
+      description: "Understanding the type notation"
+
+    - slug: function-values-and-simple-values
+      url: /posts/function-values-and-simple-values/
+      title: "Function Values and Simple Values"
+      date: "03 May 2012"
+      description: "Binding not assignment"
+
+    - slug: mathematical-functions
+      url: /posts/mathematical-functions/
+      title: "Mathematical functions"
+      date: "02 May 2012"
+      description: "The impetus behind functional programming"
+
+    - slug: thinking-functionally-intro
+      url: /posts/thinking-functionally-intro/
+      title: "Thinking Functionally: Introduction"
+      date: "01 May 2012"
+      description: "A look at the basics of functional programming"
+
+
+- year: 2012
+  month: 4
+  monthName: April
+  posts:
+    - slug: why-use-fsharp-conclusion
+      url: /posts/why-use-fsharp-conclusion/
+      title: "Why use F#: Conclusion"
+      date: "30 Apr 2012"
+      description: ""
+
+    - slug: completeness-anything-csharp-can-do
+      url: /posts/completeness-anything-csharp-can-do/
+      title: "Anything C# can do..."
+      date: "29 Apr 2012"
+      description: "A whirlwind tour of object-oriented code in F#"
+
+    - slug: completeness-seamless-dotnet-interop
+      url: /posts/completeness-seamless-dotnet-interop/
+      title: "Seamless interoperation with .NET libraries"
+      date: "28 Apr 2012"
+      description: "Some convenient features for working with .NET libraries"
+
+    - slug: completeness-intro
+      url: /posts/completeness-intro/
+      title: "Completeness"
+      date: "27 Apr 2012"
+      description: "F# is part of the whole .NET ecosystem"
+
+    - slug: concurrency-reactive
+      url: /posts/concurrency-reactive/
+      title: "Functional Reactive Programming"
+      date: "26 Apr 2012"
+      description: "Turning events into streams"
+
+    - slug: concurrency-actor-model
+      url: /posts/concurrency-actor-model/
+      title: "Messages and Agents"
+      date: "25 Apr 2012"
+      description: "Making it easier to think about concurrency"
+
+    - slug: concurrency-async-and-parallel
+      url: /posts/concurrency-async-and-parallel/
+      title: "Asynchronous programming"
+      date: "24 Apr 2012"
+      description: "Encapsulating a background task with the Async class"
+
+    - slug: concurrency-intro
+      url: /posts/concurrency-intro/
+      title: "Concurrency"
+      date: "23 Apr 2012"
+      description: "The next major revolution in how we write software?"
+
+    - slug: designing-for-correctness
+      url: /posts/designing-for-correctness/
+      title: "Worked example: Designing for correctness"
+      date: "22 Apr 2012"
+      description: "How to make illegal states unrepresentable"
+
+    - slug: correctness-type-checking
+      url: /posts/correctness-type-checking/
+      title: "Using the type system to ensure correct code"
+      date: "21 Apr 2012"
+      description: "In F# the type system is your friend, not your enemy"
+
+    - slug: correctness-exhaustive-pattern-matching
+      url: /posts/correctness-exhaustive-pattern-matching/
+      title: "Exhaustive pattern matching"
+      date: "20 Apr 2012"
+      description: "A powerful technique to ensure correctness"
+
+    - slug: correctness-immutability
+      url: /posts/correctness-immutability/
+      title: "Immutability"
+      date: "19 Apr 2012"
+      description: "Making your code predictable"
+
+    - slug: correctness-intro
+      url: /posts/correctness-intro/
+      title: "Correctness"
+      date: "18 Apr 2012"
+      description: "How to write 'compile time unit tests'"
+
+    - slug: convenience-active-patterns
+      url: /posts/convenience-active-patterns/
+      title: "Active patterns"
+      date: "17 Apr 2012"
+      description: "Dynamic patterns for powerful matching"
+
+    - slug: convenience-partial-application
+      url: /posts/convenience-partial-application/
+      title: "Partial Application"
+      date: "16 Apr 2012"
+      description: "How to fix some of a function's parameters"
+
+    - slug: convenience-functions-as-interfaces
+      url: /posts/convenience-functions-as-interfaces/
+      title: "Functions as interfaces"
+      date: "15 Apr 2012"
+      description: "OO design patterns can be trivial when functions are used"
+
+    - slug: convenience-types
+      url: /posts/convenience-types/
+      title: "Out-of-the-box behavior for types"
+      date: "14 Apr 2012"
+      description: "Immutability and built-in equality with no coding"
+
+    - slug: convenience-intro
+      url: /posts/convenience-intro/
+      title: "Convenience"
+      date: "13 Apr 2012"
+      description: "Features that reduce programming drudgery and boilerplate code"
+
+    - slug: conciseness-pattern-matching
+      url: /posts/conciseness-pattern-matching/
+      title: "Pattern matching for conciseness"
+      date: "12 Apr 2012"
+      description: "Pattern matching can match and bind in a single step"
+
+    - slug: conciseness-functions-as-building-blocks
+      url: /posts/conciseness-functions-as-building-blocks/
+      title: "Using functions as building blocks"
+      date: "11 Apr 2012"
+      description: "Function composition and mini-languages make code more readable"
+
+    - slug: conciseness-extracting-boilerplate
+      url: /posts/conciseness-extracting-boilerplate/
+      title: "Using functions to extract boilerplate code"
+      date: "10 Apr 2012"
+      description: "The functional approach to the DRY principle"
+
+    - slug: conciseness-type-definitions
+      url: /posts/conciseness-type-definitions/
+      title: "Low overhead type definitions"
+      date: "09 Apr 2012"
+      description: "No penalty for making new types"
+
+    - slug: conciseness-type-inference
+      url: /posts/conciseness-type-inference/
+      title: "Type inference"
+      date: "08 Apr 2012"
+      description: "How to avoid getting distracted by complex type syntax"
+
+    - slug: conciseness-intro
+      url: /posts/conciseness-intro/
+      title: "Conciseness"
+      date: "07 Apr 2012"
+      description: "Why is conciseness important?"
+
+    - slug: key-concepts
+      url: /posts/key-concepts/
+      title: "Four Key Concepts"
+      date: "06 Apr 2012"
+      description: "The concepts that differentiate F# from a standard imperative language"
+
+    - slug: fvsc-download
+      url: /posts/fvsc-download/
+      title: "Comparing F# with C#: Downloading a web page"
+      date: "05 Apr 2012"
+      description: "In which we see that F# excels at callbacks, and we are introduced to the 'use' keyword"
+
+    - slug: fvsc-quicksort
+      url: /posts/fvsc-quicksort/
+      title: "Comparing F# with C#: Sorting"
+      date: "04 Apr 2012"
+      description: "In which we see that F# is more declarative than C#, and we are introduced to pattern matching."
+
+    - slug: fvsc-sum-of-squares
+      url: /posts/fvsc-sum-of-squares/
+      title: "Comparing F# with C#: A simple sum"
+      date: "03 Apr 2012"
+      description: "In which we attempt to sum the squares from 1 to N without using a loop"
+
+    - slug: fsharp-in-60-seconds
+      url: /posts/fsharp-in-60-seconds/
+      title: "F# syntax in 60 seconds"
+      date: "02 Apr 2012"
+      description: "A very quick overview on how to read F# code"
+
+    - slug: why-use-fsharp-intro
+      url: /posts/why-use-fsharp-intro/
+      title: "Introduction to the 'Why use F#' series"
+      date: "01 Apr 2012"
+      description: "An overview of the benefits of F#"
+
+

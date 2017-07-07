@@ -9,16 +9,15 @@ layout: default
 
 		<h1>{{ page.title | escape }}</h1>
 
-		{% for year in site.years %}
-		{% for month in year %}
+		{% for entry in site.data.archives %}
 		<div class="row">
 		<div class="span2">
-			<h2 class="page-header">{{ month.first.date | date: "%B" }} {{ year.first.first.date | date: "%Y" }}</h2>
+			<h2 class="page-header">{{ entry.monthName }} {{ entry.year }}</h2>
 		</div>
 		<div class="span6">
-		{% for post in month %}
+		{% for post in entry.posts  %}
 		<div class="postIndexItem">
-			<div class="date">{{ post.date | date_to_string }}</div>
+			<div class="date">{{ post.date }}</div>
 			<div class="title"><a href="{{ post.url }}/" title="{{ page.title | escape }}">{{ post.title | escape }}</a></div>
 			<div class="description">{{post.description}}</div>
 		</div>	
@@ -26,7 +25,6 @@ layout: default
 		</div>
 		</div>
 		
-		{% endfor %}
 		{% endfor %} 
 
     </div>
