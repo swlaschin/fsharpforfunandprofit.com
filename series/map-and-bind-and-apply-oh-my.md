@@ -2,6 +2,7 @@
 layout: series_index
 title: "Understanding Map and Apply and Bind"
 seriesIndexId: "Map and Bind and Apply, Oh my!"
+seriesIndexOrder : 11
 permalink: /series/map-and-bind-and-apply-oh-my.html
 ---
 

@@ -152,13 +152,13 @@
       prevTitle: "Pattern matching for conciseness"
       prevOrder: "12"
       nextUrl: /posts/convenience-types/
-      nextTitle: "'Out-of-the-box behavior for types'"
+      nextTitle: "Out-of-the-box behavior for types"
       nextOrder: "14"
 
     - slug: convenience-types
       seriesOrder: 14
       url: /posts/convenience-types/
-      title: "'Out-of-the-box behavior for types'"
+      title: "Out-of-the-box behavior for types"
       description: "Immutability and built-in equality with no coding"
       prevUrl: /posts/convenience-intro/
       prevTitle: "Convenience"
@@ -173,7 +173,7 @@
       title: "Functions as interfaces"
       description: "OO design patterns can be trivial when functions are used"
       prevUrl: /posts/convenience-types/
-      prevTitle: "'Out-of-the-box behavior for types'"
+      prevTitle: "Out-of-the-box behavior for types"
       prevOrder: "14"
       nextUrl: /posts/convenience-partial-application/
       nextTitle: "Partial Application"

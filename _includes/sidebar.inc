@@ -19,7 +19,7 @@
 <div><a href="/csharp/">F# for C# Programmers</a></div>
 
 <h6>Series</h6>
-{% for series in site.data.series | sort %}
+{% for series in site.data.seriesIndex | sort %}
 <div><a href="{{ series.permalink }}">{{ series.title | escape}}</a></div>
 {% endfor %}
 

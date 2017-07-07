@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'expressions and syntax' series"
 seriesIndexId: "Expressions and syntax"
+seriesIndexOrder : 3
 permalink: /series/expressions-and-syntax.html	
 ---
 

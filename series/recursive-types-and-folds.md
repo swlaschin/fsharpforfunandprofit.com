@@ -2,6 +2,7 @@
 layout: series_index
 title: "Recursive types and folds"
 seriesIndexId: "Recursive types and folds"
+seriesIndexOrder : 15
 permalink: /series/recursive-types-and-folds.html
 ---
 

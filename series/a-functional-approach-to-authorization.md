@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'functional approach to authorization' series"
 seriesIndexId: "A functional approach to authorization"
+seriesIndexOrder : 16
 permalink: /series/a-functional-approach-to-authorization.html
 ---
 

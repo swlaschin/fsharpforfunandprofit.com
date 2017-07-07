@@ -2,6 +2,7 @@
 layout: series_index
 title: "Understanding Parser Combinators"
 seriesIndexId: "Understanding Parser Combinators"
+seriesIndexOrder : 14
 permalink: /series/understanding-parser-combinators.html
 ---
 

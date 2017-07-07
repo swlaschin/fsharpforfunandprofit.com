@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'porting from C#' series"
 seriesIndexId: "Porting from C#"
+seriesIndexOrder : 18
 permalink: /series/porting-from-csharp.html
 ---
 

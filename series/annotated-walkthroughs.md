@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Annotated walkthroughs' series"
 seriesIndexId: "Annotated walkthroughs"
+seriesIndexOrder : 7
 permalink: /series/annotated-walkthroughs.html
 ---
 

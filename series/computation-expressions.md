@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Computation Expressions' series"
 seriesIndexId: "Computation Expressions"
+seriesIndexOrder : 10
 permalink: /series/computation-expressions.html
 ---
 

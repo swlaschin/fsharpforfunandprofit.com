@@ -1,6 +1,7 @@
 ---
 layout: page
 title: "Shopping cart example in C#"
+permalink: /csharp/union-types-in-csharp.html
 categories: [csharp]
 ---
 

@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'dependency cycle' series"
 seriesIndexId: "Dependency cycles"
+seriesIndexOrder : 11
 permalink: /series/dependency-cycles.html
 ---
 

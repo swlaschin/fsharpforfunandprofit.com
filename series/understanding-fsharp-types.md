@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Understanding F# types' series"
 seriesIndexId: "Understanding F# types"
+seriesIndexOrder : 4
 permalink: /series/understanding-fsharp-types.html
 ---
 

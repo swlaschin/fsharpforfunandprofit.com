@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'thinking functionally' series"
 seriesIndexId: "Thinking functionally"
+seriesIndexOrder : 2
 permalink: /series/thinking-functionally.html
 ---
 

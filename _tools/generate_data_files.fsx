@@ -6,6 +6,10 @@ open System.Collections.Generic
 
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
 
+let postsDir = "_posts"
+let seriesDir = "series"
+let dataDir = "_data"
+
 // ========================================
 // String Utilities
 // ========================================
@@ -44,6 +48,13 @@ module StringUtilities =
         | true,value-> value
         | _ -> defaultVal 
 
+    let strToBool defaultVal str =
+        match Boolean.TryParse(str) with
+        | true,value-> value
+        | _ -> defaultVal 
+    // strToBool false "true"
+    // strToBool false ""
+
 
 module Logging =
     let log level msg = printfn "%s %s" level msg
@@ -64,10 +75,12 @@ module PostMetadata =
         Title: string
         Description: string
         SeriesId : string      // series posts only
-        SeriesOrder: int 
+        SeriesOrder: int       // " "
         SeriesIndexId : string // series index page only
+        SeriesIndexOrder : int // " "
         Permalink : string
         Categories: string list
+        IsDraft: bool
         }
 
     let extractYamlHeaderDictionary path =
@@ -94,6 +107,35 @@ module PostMetadata =
         // yamlToList "[a,  b]"
         // yamlToList """[ "a",  "b"]"""
 
+    let constructPermalink slug path = 
+        let root = IO.Path.GetFullPath(rootDir)
+        let local = 
+            IO.Path.GetFullPath(path)
+                .Replace(root,"")
+                .Replace("\\","/")
+                .Replace("index.md","") 
+                .Replace(".md",".html") 
+        if local.Contains(postsDir) then
+            sprintf "/posts/%s/" slug
+        else
+            local
+    (*
+    let path = @"../_posts\2012-04-01-why-use-fsharp-intro.md"
+    constructPermalink "xxwhy-use-fsharp-intro" path 
+
+    let path = @"../series\handling-state.md"
+    constructPermalink "" path 
+
+    let path = @"../about\index.md"
+    constructPermalink "" path 
+
+    *)
+
+    let permalink lookup slug path = 
+        match lookup "Permalink" with 
+        | ""  -> constructPermalink slug path 
+        | link -> link
+
     let createPostMetadata slug date path =
         let dict = extractYamlHeaderDictionary path
         let lookup = lookupDictValue dict
@@ -106,8 +148,10 @@ module PostMetadata =
             SeriesId = lookup "SeriesId" 
             SeriesOrder = lookup "SeriesOrder" |> strToInt 0
             SeriesIndexId = lookup "SeriesIndexId" 
-            Permalink = lookup "Permalink" 
+            SeriesIndexOrder = lookup "SeriesIndexOrder" |> strToInt 0
+            Permalink = permalink lookup slug path 
             Categories =  lookup "Categories" |> yamlToList 
+            IsDraft = lookup "Draft" |> strToBool false
         }
 
     // dated Post
@@ -124,7 +168,7 @@ module PostMetadata =
     // non-dated Page
     let extractPageMetadata path =
         let slug = IO.Path.GetFileNameWithoutExtension path 
-        let dt = DateTime(1980,1,1)
+        let dt = IO.File.GetLastWriteTime(path)
         createPostMetadata slug dt path |> Some
 
     (*
@@ -147,20 +191,22 @@ module PostMetadata =
 
 
     let extractAllPostMetadata root =
-        let postsDir = IO.Path.Combine(root,"_posts")
+        let postsDir = IO.Path.Combine(root,postsDir)
         IO.Directory.EnumerateFiles(postsDir) 
         |> Seq.choose extractPostMetadata 
+        |> Seq.filter (fun p -> not p.IsDraft)
 
     let extractAllPageMetadata root =
-        let seriesDir = IO.Path.Combine(root,"series")
-        IO.Directory.EnumerateFiles(seriesDir) 
+        IO.Directory.EnumerateFiles(root,"*.md",IO.SearchOption.AllDirectories) 
+        |> Seq.filter (fun p -> p.Contains(postsDir) |> not)
         |> Seq.choose extractPageMetadata 
-
+        |> Seq.filter (fun p -> not p.IsDraft)
     (*
     // test
     open PostMetadata
     let root = @".."
     extractAllPostMetadata root |> Seq.take 5 |> Seq.toList
+    extractAllPageMetadata root |> Seq.take 5 |> Seq.toList
     *)
 
 
@@ -181,7 +227,7 @@ module Series =
             pages
             |> Seq.tryFind (fun page -> page.SeriesIndexId = seriesId)
             |> Option.map (fun p -> p.Permalink)
-            |> defaultArg <| ""
+            |> defaultArg <| "" 
 
         posts
         |> Seq.groupBy (fun meta -> meta.SeriesId)
@@ -199,8 +245,8 @@ module Series =
     let getNextPost post posts =
         posts |> List.tryFind (fun p -> p.SeriesOrder = (post.SeriesOrder+1))
 
-    let emitSeriesFile path seriesList =
-        let fileName = IO.Path.Combine(path,"series.yaml")
+    let emitSeriesFile rootDir seriesList =
+        let fileName = IO.Path.Combine(rootDir,dataDir,"series.yaml")
         use writer = new IO.StreamWriter(path=fileName)
         for series in seriesList do
             writer.WriteLine("\"{0}\":",series.SeriesTitle)
@@ -210,19 +256,19 @@ module Series =
             for post in series.Posts do
                 writer.WriteLine("    - slug: {0}",post.Slug)
                 writer.WriteLine("      seriesOrder: {0}",post.SeriesOrder)
-                writer.WriteLine("      url: /posts/{0}/",post.Slug)
+                writer.WriteLine("      url: {0}",post.Permalink)
                 writer.WriteLine("      title: \"{0}\"",post.Title)
                 writer.WriteLine("      description: \"{0}\"",post.Description)
                 match getPrevPost post series.Posts with
                 | None -> ()
                 | Some prevPost ->
-                    writer.WriteLine("      prevUrl: /posts/{0}/",prevPost.Slug)
+                    writer.WriteLine("      prevUrl: {0}",prevPost.Permalink)
                     writer.WriteLine("      prevTitle: \"{0}\"",prevPost.Title)
                     writer.WriteLine("      prevOrder: \"{0}\"",prevPost.SeriesOrder)
                 match getNextPost post series.Posts with
                 | None -> ()
                 | Some nextPost ->
-                    writer.WriteLine("      nextUrl: /posts/{0}/",nextPost.Slug)
+                    writer.WriteLine("      nextUrl: {0}",nextPost.Permalink)
                     writer.WriteLine("      nextTitle: \"{0}\"",nextPost.Title)
                     writer.WriteLine("      nextOrder: \"{0}\"",nextPost.SeriesOrder)
                 writer.WriteLine() // end post
@@ -232,11 +278,32 @@ module Series =
     // test
     open PostMetadata
     open Series 
-    let root = @".."
-    let posts = extractAllPostMetadata root 
-    let seriesPages = extractAllPageMetadata root 
+    let rootDir = ".."
+    let posts = extractAllPostMetadata rootDir
+    let seriesPages = extractAllPageMetadata rootDir
     let series = collectSeries posts seriesPages 
-    series |> emitSeriesFile @"../_data"
+    series |> emitSeriesFile rootDir
+    *)
+
+    let emitSeriesIndexFile rootDir (allPages:PostMetadata seq) =
+        let fileName = IO.Path.Combine(rootDir,dataDir,"seriesIndex.yaml")
+        use writer = new IO.StreamWriter(path=fileName)
+        let seriesPages = 
+            allPages
+            |> Seq.filter (fun p -> p.SeriesIndexId <> "") 
+            |> Seq.sortBy (fun p -> p.SeriesIndexOrder) 
+        for series in seriesPages do
+            writer.WriteLine("- title: {0}",series.SeriesIndexId)
+            writer.WriteLine("  permalink: {0}",series.Permalink)
+            writer.WriteLine() // end series
+
+    (*
+    // test
+    open PostMetadata
+    open Series 
+    let rootDir = ".."
+    let seriesPages = extractAllPageMetadata rootDir
+    seriesPages |> emitSeriesIndexFile rootDir
     *)
 
 
@@ -246,8 +313,8 @@ module Series =
 module Archives =
     open PostMetadata
 
-    let emitArchivesFile path posts =
-        let fileName = IO.Path.Combine(path,"archives.yaml")
+    let emitArchivesFile rootDir posts =
+        let fileName = IO.Path.Combine(rootDir,dataDir,"archives.yaml")
         use writer = new IO.StreamWriter(path=fileName)
         
         let sortByDescendingYearMonth = Seq.sortByDescending (fun ((year,month),_) -> (year,month) )
@@ -257,7 +324,7 @@ module Archives =
             posts 
             |> Seq.groupBy (fun p -> p.Date.Year, p.Date.Month)
             |> sortByDescendingYearMonth 
-            |> Seq.map (fun ((year,month),posts) -> (year,month),posts |> sortByDescendingPostDate  )
+            |> Seq.map (fun ((year,month),posts) -> (year,month),posts |> sortByDescendingPostDate )
 
 
         for (year,month),posts in postsByYearMonth do
@@ -279,7 +346,66 @@ module Archives =
     // test
     open PostMetadata
     open Archives
-    let root = @".."
-    let posts = extractAllPostMetadata root 
-    posts |> emitArchivesFile @"../_data"
+    let rootDir = ".."
+    let posts = extractAllPostMetadata rootDir 
+    posts |> emitArchivesFile rootDir 
     *)
+
+// ========================================
+// Generate SiteMap 
+// ========================================
+module SiteMap =
+    open PostMetadata
+
+    let emitSiteMapFile rootDir allPosts allPages =
+        let fileName = IO.Path.Combine(rootDir,"sitemap.xml")
+        use writer = new IO.StreamWriter(path=fileName)
+        
+        let header = """<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+"""
+        let urlTemplate = """<url>
+<loc>https://fsharpforfunandprofit.com{0}</loc>
+<lastmod>{1}</lastmod>
+</url>""" 
+        let footer = """</urlset>"""
+
+        let emitUrl metadata = 
+            let dateStr = metadata.Date.ToString("yyyy-MM-dd")
+            writer.WriteLine(urlTemplate,metadata.Permalink,dateStr)
+
+        writer.WriteLine(header)
+        allPages |> Seq.iter emitUrl
+        allPosts |> Seq.iter emitUrl
+        writer.WriteLine(footer)            
+    (*
+    // test
+    open PostMetadata
+    open SiteMap 
+    let rootDir = ".."
+    let posts = extractAllPostMetadata rootDir
+    let pages = extractAllPageMetadata rootDir
+    emitSiteMapFile rootDir posts pages 
+    *)
+
+
+// ========================================
+// Do all
+// ========================================
+
+open PostMetadata
+open Series 
+open Archives
+open SiteMap
+
+let rootDir = ".."
+let posts = extractAllPostMetadata rootDir
+let pages = extractAllPageMetadata rootDir
+let series = collectSeries posts pages 
+
+series |> emitSeriesFile rootDir 
+pages |> emitSeriesIndexFile rootDir
+posts |> emitArchivesFile rootDir 
+emitSiteMapFile rootDir posts pages 

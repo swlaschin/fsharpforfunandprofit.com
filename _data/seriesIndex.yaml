@@ -1,0 +1,54 @@
+- title: Why use F#?
+  permalink: /series/why-use-fsharp.html
+
+- title: Thinking functionally
+  permalink: /series/thinking-functionally.html
+
+- title: Expressions and syntax
+  permalink: /series/expressions-and-syntax.html
+
+- title: Understanding F# types
+  permalink: /series/understanding-fsharp-types.html
+
+- title: Designing with types
+  permalink: /series/designing-with-types.html
+
+- title: Low-risk ways to use F# at work
+  permalink: /series/low-risk-ways-to-use-fsharp-at-work.html
+
+- title: Annotated walkthroughs
+  permalink: /series/annotated-walkthroughs.html
+
+- title: A recipe for a functional app
+  permalink: /series/a-recipe-for-a-functional-app.html
+
+- title: Computation Expressions
+  permalink: /series/computation-expressions.html
+
+- title: Dependency cycles
+  permalink: /series/dependency-cycles.html
+
+- title: Map and Bind and Apply, Oh my!
+  permalink: /series/map-and-bind-and-apply-oh-my.html
+
+- title: Understanding monoids
+  permalink: /series/understanding-monoids.html
+
+- title: Understanding Parser Combinators
+  permalink: /series/understanding-parser-combinators.html
+
+- title: Recursive types and folds
+  permalink: /series/recursive-types-and-folds.html
+
+- title: A functional approach to authorization
+  permalink: /series/a-functional-approach-to-authorization.html
+
+- title: Handling State
+  permalink: /series/handling-state.html
+
+- title: Object-oriented programming in F#
+  permalink: /series/object-oriented-programming-in-fsharp.html
+
+- title: Porting from C#
+  permalink: /series/porting-from-csharp.html
+

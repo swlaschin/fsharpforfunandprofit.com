@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'designing with types' series"
 seriesIndexId: "Designing with types"
+seriesIndexOrder : 5
 permalink: /series/designing-with-types.html
 ---
 

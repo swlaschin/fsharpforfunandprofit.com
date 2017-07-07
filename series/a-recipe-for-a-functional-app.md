@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'recipe for a functional app' series"
 seriesIndexId: "A recipe for a functional app"
+seriesIndexOrder : 8
 permalink: /series/a-recipe-for-a-functional-app.html
 ---
 

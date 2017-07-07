@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Handling State' series"
 seriesIndexId: "Handling State"
+seriesIndexOrder : 16
 permalink: /series/handling-state.html
 ---
 

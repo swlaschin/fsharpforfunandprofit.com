@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Understanding monoids' series"
 seriesIndexId: "Understanding monoids"
+seriesIndexOrder : 12
 permalink: /series/understanding-monoids.html
 ---
 

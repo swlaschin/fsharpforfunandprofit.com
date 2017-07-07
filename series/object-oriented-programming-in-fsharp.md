@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'object-oriented programming in F#' series"
 seriesIndexId: "Object-oriented programming in F#"
+seriesIndexOrder : 17
 permalink: /series/object-oriented-programming-in-fsharp.html
 ---
 

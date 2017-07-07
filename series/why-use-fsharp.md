@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Why use F#' series"
 seriesIndexId: "Why use F#?"
+seriesIndexOrder : 1
 permalink: /series/why-use-fsharp.html
 ---
 

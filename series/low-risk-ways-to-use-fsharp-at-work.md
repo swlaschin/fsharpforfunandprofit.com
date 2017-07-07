@@ -2,6 +2,7 @@
 layout: series_index
 title: "Low-risk ways to use F# at work"
 seriesIndexId: "Low-risk ways to use F# at work"
+seriesIndexOrder : 6
 permalink: /series/low-risk-ways-to-use-fsharp-at-work.html
 ---
 
