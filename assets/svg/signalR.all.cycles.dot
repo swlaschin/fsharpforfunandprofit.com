@@ -1,0 +1,20 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "Microsoft.AspNet.SignalR.ConnectionConfiguration" -> { rank=none; "Microsoft.AspNet.SignalR.GlobalHost" }
+   "Microsoft.AspNet.SignalR.DefaultDependencyResolver" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.HubPipeline"; "Microsoft.AspNet.SignalR.Infrastructure.PerformanceCounterManager" }
+   "Microsoft.AspNet.SignalR.GlobalHost" -> { rank=none; "Microsoft.AspNet.SignalR.DefaultDependencyResolver" }
+   "Microsoft.AspNet.SignalR.HubConfiguration" -> { rank=none; "Microsoft.AspNet.SignalR.ConnectionConfiguration" }
+   "Microsoft.AspNet.SignalR.Hubs.HubConnectionContext" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.IHubPipelineInvoker" }
+   "Microsoft.AspNet.SignalR.Hubs.HubDispatcher" -> { rank=none; "Microsoft.AspNet.SignalR.HubConfiguration" }
+   "Microsoft.AspNet.SignalR.Hubs.HubPipeline" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.HubDispatcher" }
+   "Microsoft.AspNet.SignalR.Hubs.IHub" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.HubConnectionContext" }
+   "Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.IHub"; "Microsoft.AspNet.SignalR.Hubs.MethodDescriptor" }
+   "Microsoft.AspNet.SignalR.Hubs.IHubPipelineInvoker" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.IHub"; "Microsoft.AspNet.SignalR.Hubs.IHubIncomingInvokerContext" }
+   "Microsoft.AspNet.SignalR.Hubs.MethodDescriptor" -> { rank=none; "Microsoft.AspNet.SignalR.Hubs.IHub" }
+   "Microsoft.AspNet.SignalR.Infrastructure.PerformanceCounterManager" -> { rank=none; "Microsoft.AspNet.SignalR.DefaultDependencyResolver" }
+   "Microsoft.AspNet.SignalR.Transports.HttpRequestLifeTime" -> { rank=none; "Microsoft.AspNet.SignalR.Transports.TransportDisconnectBase" }
+   "Microsoft.AspNet.SignalR.Transports.TransportDisconnectBase" -> { rank=none; "Microsoft.AspNet.SignalR.Transports.HttpRequestLifeTime" }
+   }

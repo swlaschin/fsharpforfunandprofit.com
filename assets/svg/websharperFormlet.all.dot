@@ -1,0 +1,13 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "IntelliFactory.WebSharper.Formlet.Controls" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body"; "IntelliFactory.WebSharper.Formlet.Data"; "IntelliFactory.WebSharper.Formlet.Formlet"; "IntelliFactory.WebSharper.Formlet.Utils" }
+   "IntelliFactory.WebSharper.Formlet.Data" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body" }
+   "IntelliFactory.WebSharper.Formlet.Enhance" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body"; "IntelliFactory.WebSharper.Formlet.Controls"; "IntelliFactory.WebSharper.Formlet.Data"; "IntelliFactory.WebSharper.Formlet.Formlet"; "IntelliFactory.WebSharper.Formlet.FormletBuilder"; "IntelliFactory.WebSharper.Formlet.Layout"; "IntelliFactory.WebSharper.Formlet.LayoutProvider"; "IntelliFactory.WebSharper.Formlet.Utils" }
+   "IntelliFactory.WebSharper.Formlet.Formlet" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body"; "IntelliFactory.WebSharper.Formlet.Data"; "IntelliFactory.WebSharper.Formlet.FormletBuilder"; "IntelliFactory.WebSharper.Formlet.Layout"; "IntelliFactory.WebSharper.Formlet.LayoutProvider" }
+   "IntelliFactory.WebSharper.Formlet.FormletBuilder" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body"; "IntelliFactory.WebSharper.Formlet.Data" }
+   "IntelliFactory.WebSharper.Formlet.LayoutManager" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body" }
+   "IntelliFactory.WebSharper.Formlet.LayoutProvider" -> { rank=none; "IntelliFactory.WebSharper.Formlet.Body"; "IntelliFactory.WebSharper.Formlet.Layout"; "IntelliFactory.WebSharper.Formlet.Utils" }
+   }

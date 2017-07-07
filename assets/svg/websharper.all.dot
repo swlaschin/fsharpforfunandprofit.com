@@ -1,0 +1,22 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "IntelliFactory.WebSharper.ArrayModuleProxy" -> { rank=none; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.AsyncBuilderProxy" -> { rank=none; "IntelliFactory.WebSharper.Concurrency" }
+   "IntelliFactory.WebSharper.AsyncProxy" -> { rank=none; "IntelliFactory.WebSharper.Concurrency" }
+   "IntelliFactory.WebSharper.CommonExtensionsProxy" -> { rank=none; "IntelliFactory.WebSharper.Pervasives" }
+   "IntelliFactory.WebSharper.Enumerator" -> { rank=none; "IntelliFactory.WebSharper.JavaScript" }
+   "IntelliFactory.WebSharper.IEnumerableProxy`1" -> { rank=none; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.IntrinsicFunctionProxy" -> { rank=none; "IntelliFactory.WebSharper.Pervasives" }
+   "IntelliFactory.WebSharper.Json" -> { rank=none; "IntelliFactory.WebSharper.JavaScript" }
+   "IntelliFactory.WebSharper.ListModuleProxy" -> { rank=none; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.ListProxy`1" -> { rank=none; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.OperatorsProxy" -> { rank=none; "IntelliFactory.WebSharper.Pervasives" }
+   "IntelliFactory.WebSharper.Remoting" -> { rank=none; "IntelliFactory.WebSharper.Json" }
+   "IntelliFactory.WebSharper.RuntimeHelpersProxy" -> { rank=none; "IntelliFactory.WebSharper.Enumerable"; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.SeqModuleProxy" -> { rank=none; "IntelliFactory.WebSharper.Enumerable"; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.StringProxy" -> { rank=none; "IntelliFactory.WebSharper.Enumerator" }
+   "IntelliFactory.WebSharper.UncheckedProxy" -> { rank=none; "IntelliFactory.WebSharper.JavaScript" }
+   }

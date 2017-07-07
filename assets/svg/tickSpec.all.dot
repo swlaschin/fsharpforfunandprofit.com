@@ -1,0 +1,23 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "TickSpec.AfterScenarioAttribute" -> { rank=none; "TickSpec.EventAttribute" }
+   "TickSpec.AfterStepAttribute" -> { rank=none; "TickSpec.EventAttribute" }
+   "TickSpec.BeforeScenarioAttribute" -> { rank=none; "TickSpec.EventAttribute" }
+   "TickSpec.BeforeStepAttribute" -> { rank=none; "TickSpec.EventAttribute" }
+   "TickSpec.BlockParser" -> { rank=none; "TickSpec.LineParser"; "TickSpec.LineSource"; "TickSpec.Seq"; "TickSpec.StepException"; "TickSpec.StepType"; "TickSpec.Table" }
+   "TickSpec.Feature" -> { rank=none; "TickSpec.Scenario" }
+   "TickSpec.FeatureParser" -> { rank=none; "TickSpec.BlockParser"; "TickSpec.FeatureSource"; "TickSpec.LineParser"; "TickSpec.LineSource"; "TickSpec.List"; "TickSpec.ScenarioSource"; "TickSpec.StepType"; "TickSpec.Table" }
+   "TickSpec.GivenAttribute" -> { rank=none; "TickSpec.StepAttribute" }
+   "TickSpec.LineParser" -> { rank=none; "TickSpec.StepType" }
+   "TickSpec.LineSource" -> { rank=none; "TickSpec.Table" }
+   "TickSpec.Scenario" -> { rank=none; "TickSpec.Action" }
+   "TickSpec.ScenarioGen" -> { rank=none; "TickSpec.LineSource"; "TickSpec.ServiceProvider"; "TickSpec.Table" }
+   "TickSpec.ScenarioRun" -> { rank=none; "TickSpec.LineSource"; "TickSpec.ServiceProvider"; "TickSpec.Table" }
+   "TickSpec.StepArgumentTransformation" -> { rank=none; "TickSpec.ParserAttribute" }
+   "TickSpec.StepDefinitions" -> { rank=none; "TickSpec.AfterScenarioAttribute"; "TickSpec.AfterStepAttribute"; "TickSpec.BeforeScenarioAttribute"; "TickSpec.BeforeStepAttribute"; "TickSpec.Dict"; "TickSpec.EventAttribute"; "TickSpec.Feature"; "TickSpec.FeatureGen"; "TickSpec.FeatureParser"; "TickSpec.FeatureSource"; "TickSpec.ParserAttribute"; "TickSpec.Scenario"; "TickSpec.ScenarioSource"; "TickSpec.StepAttribute"; "TickSpec.StepType"; "TickSpec.TextReader" }
+   "TickSpec.ThenAttribute" -> { rank=none; "TickSpec.StepAttribute" }
+   "TickSpec.WhenAttribute" -> { rank=none; "TickSpec.StepAttribute" }
+   }

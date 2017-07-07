@@ -1,0 +1,10 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "IntelliFactory.WebSharper.Core.Plugins.Configuration" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.IPlugin" }
+   "IntelliFactory.WebSharper.Core.Plugins.IPlugin" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.IEnvironment"; "IntelliFactory.WebSharper.Core.Plugins.Result" }
+   "IntelliFactory.WebSharper.Core.Plugins.PluginsCollection" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.PluginElement" }
+   "IntelliFactory.WebSharper.Core.Plugins.PluginsSection" -> { rank=none; "IntelliFactory.WebSharper.Core.Plugins.PluginsCollection" }
+   }

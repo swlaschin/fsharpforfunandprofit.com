@@ -1,0 +1,8 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "TechTalk.SpecFlow.Infrastructure.IStepErrorHandler" -> { rank=none; "TechTalk.SpecFlow.Infrastructure.TestExecutionEngine" }
+   "TechTalk.SpecFlow.Infrastructure.TestExecutionEngine" -> { rank=none; "TechTalk.SpecFlow.Infrastructure.IStepErrorHandler" }
+   }

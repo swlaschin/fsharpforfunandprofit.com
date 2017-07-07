@@ -1,0 +1,13 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "System.Data.Entity.Infrastructure.DbCollectionEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbEntityEntry"; "System.Data.Entity.Infrastructure.DbMemberEntry" }
+   "System.Data.Entity.Infrastructure.DbComplexPropertyEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbPropertyEntry" }
+   "System.Data.Entity.Infrastructure.DbEntityEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbCollectionEntry"; "System.Data.Entity.Infrastructure.DbComplexPropertyEntry"; "System.Data.Entity.Infrastructure.DbMemberEntry"; "System.Data.Entity.Infrastructure.DbPropertyEntry"; "System.Data.Entity.Infrastructure.DbReferenceEntry"; "System.Data.Entity.Validation.DbEntityValidationResult" }
+   "System.Data.Entity.Infrastructure.DbMemberEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbEntityEntry" }
+   "System.Data.Entity.Infrastructure.DbPropertyEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbComplexPropertyEntry"; "System.Data.Entity.Infrastructure.DbEntityEntry"; "System.Data.Entity.Infrastructure.DbMemberEntry" }
+   "System.Data.Entity.Infrastructure.DbReferenceEntry" -> { rank=none; "System.Data.Entity.Infrastructure.DbEntityEntry"; "System.Data.Entity.Infrastructure.DbMemberEntry" }
+   "System.Data.Entity.Validation.DbEntityValidationResult" -> { rank=none; "System.Data.Entity.Infrastructure.DbEntityEntry" }
+   }

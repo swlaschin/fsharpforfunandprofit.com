@@ -1,0 +1,11 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FParsec.CharParsers" -> { rank=none; "FParsec.Error"; "FParsec.Primitives"; "FParsec.StaticMapping" }
+   "FParsec.Error" -> { rank=none; "FParsec.InternalsModule" }
+   "FParsec.Primitives" -> { rank=none; "FParsec.Error" }
+   "FParsec.RangeModule" -> { rank=none; "FParsec.Range" }
+   "FParsec.StaticMapping" -> { rank=none; "FParsec.Emit"; "FParsec.Range"; "FParsec.RangeModule" }
+   }

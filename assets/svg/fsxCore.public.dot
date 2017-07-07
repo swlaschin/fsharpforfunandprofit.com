@@ -1,0 +1,11 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FSharp.Control.AsyncSeqExtensions" -> { rank=none; "FSharp.Control.AsyncSeq" }
+   "FSharpx.Collections.ByteStringModule" -> { rank=none; "FSharpx.Collections.ByteString" }
+   "FSharpx.DataStructures.BKTree" -> { rank=none; "FSharpx.Collections.ByteString" }
+   "FSharpx.RegexModule" -> { rank=none; "FSharpx.ActiveMatch" }
+   "FSharpx.Undo" -> { rank=none; "FSharpx.State" }
+   }

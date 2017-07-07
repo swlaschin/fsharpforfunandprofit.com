@@ -1,0 +1,13 @@
+digraph G {
+    page="40,60"; 
+    ratio=auto;
+    rankdir=LR;
+    fontsize=10;
+   "FsSqlImpl.DictDataRecord" -> { rank=none; "FsSqlImpl.Entry"; "Option" }
+   "FsSqlOOWrapper" -> { rank=none; "SqlModule" }
+   "FsSqlOperators" -> { rank=none; "SqlModule" }
+   "List" -> { rank=none; "Seq" }
+   "Seq" -> { rank=none; "FsSqlImpl.DictDataRecord" }
+   "SqlModule" -> { rank=none; "FsSql.Async"; "FsSqlImpl.DataReaderWrapper"; "FsSqlImpl.DbCommandWrapper"; "FsSqlPrelude"; "Option"; "Seq" }
+   "Tx" -> { rank=none; "FsSqlPrelude"; "SqlModule" }
+   }
