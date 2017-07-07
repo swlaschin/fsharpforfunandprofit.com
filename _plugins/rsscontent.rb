@@ -7,7 +7,7 @@ module Jekyll
   
   
   # Converts all relative links to absolute links
-  module Filters
+  module RssFilters
     
 	def rss_absolute(string)
         string.gsub("href=\"/","href=\"http://fsharpforfunandprofit.com/")
@@ -16,3 +16,5 @@ module Jekyll
   end
   
 end
+
+Liquid::Template.register_filter(Jekyll::RssFilters)

@@ -36,7 +36,6 @@
 
 <h6>More</h6>
 <div><a href="https://twitter.com/ScottWlaschin" class="twitter-follow-button" data-size="small" data-show-count="false" data-lang="en">Follow @ScottWlaschin</a></div>
-<div><a href="http://feeds.feedburner.com/Fsharpforfunandprofit?format=xml"><img src="/assets/img/feed-icon-14x14.png"> RSS Posts</a></div>
 <div><a href="/about/">About</a></div>
 <div><a href="/installing-and-using/">Installing and using F#</a></div>
 <div><a href="/learning-fsharp/">Learning F#</a></div>

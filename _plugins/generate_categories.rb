@@ -125,7 +125,7 @@ module Jekyll
   
   
   # Adds some extra filters used during the category creation process.
-  module Filters
+  module CategoryFilters
     
 	def category_filename(string)
 		string.gsub(/([^a-zA-Z0-9_.-]+)/n,'')
@@ -174,3 +174,5 @@ module Jekyll
   end
   
 end
+
+Liquid::Template.register_filter(Jekyll::CategoryFilters)
