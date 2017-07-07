@@ -1,6 +1,7 @@
 ---
 layout: page
 title: "The 'domain driven design in F#' series"
+permalink: /series/domain-driven-design-in-fsharp.html	
 ---
 
 This is a placeholder for a series I haven't written yet. Please check back later!

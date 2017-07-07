@@ -2,6 +2,7 @@
 layout: series_index
 title: "Low-risk ways to use F# at work"
 seriesIndexId: "Low-risk ways to use F# at work"
+permalink: /series/low-risk-ways-to-use-fsharp-at-work.html
 ---
 
 So you're all excited about functional programming, and you've been learning F# in your spare time,

@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Understanding F# types' series"
 seriesIndexId: "Understanding F# types"
+permalink: /series/understanding-fsharp-types.html
 ---
 
 F# is not just about functions; the powerful type system is another key ingredient.  And just as with functions, understanding the type system is critical to being fluent and comfortable in the language. 

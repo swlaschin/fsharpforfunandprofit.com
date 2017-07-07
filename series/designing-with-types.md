@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'designing with types' series"
 seriesIndexId: "Designing with types"
+permalink: /series/designing-with-types.html
 ---
 
 In this series, we'll look at some of the ways we can use types as part of the design process. 

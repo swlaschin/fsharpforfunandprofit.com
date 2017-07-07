@@ -2,6 +2,7 @@
 layout: series_index
 title: "Understanding Map and Apply and Bind"
 seriesIndexId: "Map and Bind and Apply, Oh my!"
+permalink: /series/map-and-bind-and-apply-oh-my.html
 ---
 
 In this series of posts, I'll attempt to describe some of the core functions for dealing with generic data types (such as `Option` and `List`).

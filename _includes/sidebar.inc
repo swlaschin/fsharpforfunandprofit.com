@@ -19,8 +19,8 @@
 <div><a href="/csharp/">F# for C# Programmers</a></div>
 
 <h6>Series</h6>
-{% for seriesId in site.seriesPages | sort %}
-<div><a href="/series/{{ seriesId[0] | series_filename }}.html">{{ seriesId[0] | escape}}</a></div>
+{% for series in site.data.series | sort %}
+<div><a href="{{ series.permalink }}">{{ series.title | escape}}</a></div>
 {% endfor %}
 
 <h6>Recent Posts</h6>

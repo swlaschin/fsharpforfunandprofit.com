@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'Understanding monoids' series"
 seriesIndexId: "Understanding monoids"
+permalink: /series/understanding-monoids.html
 ---
 
 In this series, we'll look at a very common "pattern" known as a *monoid*. 

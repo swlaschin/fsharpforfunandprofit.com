@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Out-of-the-box behavior for types'
+title: "Out-of-the-box behavior for types"
 description: "Immutability and built-in equality with no coding"
 nav: why-use-fsharp
 seriesId: "Why use F#?"

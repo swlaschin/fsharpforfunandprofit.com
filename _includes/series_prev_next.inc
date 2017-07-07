@@ -1,18 +1,25 @@
-{% if page.seriesOrder %}
+{% if page.seriesId %}
+	{% for otherpage in site.data.series[page.seriesId].posts %}
+		{% if page.url == otherpage.url %}
 	<ul class="pager">
-		{% if page.previousInSeries %}
+
+		{% if otherpage.prevUrl %}
 		<li class="previous">
-		<a href="{{ page.previousInSeries.url }}/" title="{{ page.previousInSeries.title | escape }}">&larr; {{ page.previousInSeries.seriesOrder }}. {{ page.previousInSeries.title | escape }}</a>
+		<a href="{{ otherpage.prevUrl }}" title="{{ otherpage.prevTitle | escape }}">&larr; {{ otherpage.prevOrder }}. {{ otherpage.prevTitle | escape }}</a>
 		</li>
 		{% endif %}
 
-		{% if page.nextInSeries %}
+		{% if otherpage.nextUrl %}
 		<li class="next">
-		<a href="{{ page.nextInSeries.url }}/" title="{{ page.nextInSeries.title | escape }}">{{ page.nextInSeries.seriesOrder }}. {{ page.nextInSeries.title | escape }} &rarr; </a>
+		<a href="{{ otherpage.nextUrl }}" title="{{ otherpage.nextTitle | escape }}">{{ otherpage.nextOrder }}. {{ otherpage.nextTitle | escape }} &rarr; </a>
 		</li>
 		{% endif %}
 
 	</ul>
+
+		{% endif %}
+	{% endfor %}
+
 	
 {% endif %}
 

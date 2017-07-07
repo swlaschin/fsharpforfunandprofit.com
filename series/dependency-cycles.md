@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'dependency cycle' series"
 seriesIndexId: "Dependency cycles"
+permalink: /series/dependency-cycles.html
 ---
 
 One of the most common complaints about F# is that it requires code to be in *dependency order*. That is, you cannot use forward references to code that hasn't been seen by the compiler yet.  

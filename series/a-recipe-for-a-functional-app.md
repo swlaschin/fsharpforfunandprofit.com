@@ -2,6 +2,7 @@
 layout: series_index
 title: "The 'recipe for a functional app' series"
 seriesIndexId: "A recipe for a functional app"
+permalink: /series/a-recipe-for-a-functional-app.html
 ---
 
 **"I think I understand functional programming at the micro level, and I have written toy programs, but how do I actually go about writing a complete application, with real data, real error handling, and so on?"**

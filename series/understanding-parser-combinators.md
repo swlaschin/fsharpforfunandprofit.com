@@ -2,6 +2,7 @@
 layout: series_index
 title: "Understanding Parser Combinators"
 seriesIndexId: "Understanding Parser Combinators"
+permalink: /series/understanding-parser-combinators.html
 ---
 
 In this series, we'll look at how so-called "applicative parsers" work. In order to understand something, there's nothing

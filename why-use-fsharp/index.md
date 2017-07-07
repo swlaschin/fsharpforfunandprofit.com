@@ -10,7 +10,8 @@ image: "/assets/img/four-concepts2.png"
 Although F# is great for specialist areas such as scientific or data analysis, it is also an excellent choice for enterprise development. Here are five good reasons why you should consider using F# for  your next project. 
 
 <div class="row">  
-    <div class="span4" style="float:right;">
+<div class="span4" style="float:right;">
+
 <h2><img src="/assets/img/glyphicons/glyphicons_030_pencil.png" class="bs-icon"> Conciseness</h2>
 
 <p>
@@ -23,9 +24,9 @@ You almost never have to specify the type of an object, thanks to a powerful <a 
 And, compared with C#, it generally takes <a href="/posts/fvsc-download/">fewer lines of code</a> to solve the same problem.
 </p>
 
-	</div>
+</div>
 
-    <div class="span4" style="float:left;">
+<div class="span4" style="float:left;" markdown="1">
 
 ```fsharp
 // one-liners
@@ -48,12 +49,12 @@ let jdoe = {First="John";Last="Doe"}
 let worker = Worker jdoe
 ```
 
-	</div>
-    
+</div>
 </div>
 
 <div class="row">  
-    <div class="span4" style="float:right;">
+
+<div class="span4" style="float:right;">
 <h2><img src="/assets/img/glyphicons/glyphicons_343_thumbs_up.png" class="bs-icon"> Convenience</h2>
 
 <p>
@@ -63,10 +64,10 @@ Many common programming tasks are much simpler in F#.  This includes things like
 And because functions are first class objects, it is very easy to create powerful and reusable code by creating functions that have <a href="/posts/conciseness-extracting-boilerplate/">other functions as parameters</a>, or that <a href="/posts/conciseness-functions-as-building-blocks/">combine existing functions</a> to create new functionality. 
 </p>
 
-
-	</div>
+</div>
     
-    <div class="span4" style="float:left;">
+<div class="span4" style="float:left;" markdown="1">
+
 ```fsharp
 // automatic equality and comparison
 type Person = {First:string; Last:string}
@@ -82,12 +83,11 @@ let add2times3 = (+) 2 >> (*) 3
 let result = add2times3 5
 ```
 
-	</div>
-
+</div>
 </div>
 
 <div class="row">  
-    <div class="span4" style="float:right;">
+<div class="span4" style="float:right;">
 <h2><img src="/assets/img/glyphicons/glyphicons_150_check.png" class="bs-icon"> Correctness</h2>
 
 <p>
@@ -100,9 +100,9 @@ Values are <a href="/posts/correctness-immutability/">immutable by default</a>, 
 In addition, you can often encode business logic using the <a href="/posts/correctness-exhaustive-pattern-matching/">type system</a> itself in such a way that it is actually <a href="/posts/designing-for-correctness/">impossible to write incorrect code</a> or mix up <a href="/posts/units-of-measure/">units of measure</a>, greatly reducing the need for unit tests.   
 </p>
 
-	</div>
+</div>
 
-    <div class="span4" style="float:left;">
+<div class="span4" style="float:left;" markdown="1">
 ```fsharp
 // strict type checking
 printfn "print string %s" 123 //compile error
@@ -123,12 +123,12 @@ emptyShoppingCart.remove   // compile error!
 let distance = 10<m> + 10<ft> // error!
 ```
 
-	</div>
+</div>
 </div>
 
 
 <div class="row">  
-    <div class="span4" style="float:right;">
+<div class="span4" style="float:right;">
 <h2><img src="/assets/img/glyphicons/glyphicons_054_clock.png" class="bs-icon"> Concurrency</h2>
 
 <p>
@@ -137,9 +137,9 @@ F# has a number of built-in libraries to help when more than one thing at a time
 <p>
 And of course, because data structures are immutable by default, sharing state and avoiding locks is much easier.
 </p>
-	</div>
+</div>
 
-    <div class="span4" style="float:left;">
+    <div class="span4" style="float:left;" markdown="1">
 ```fsharp
 // easy async logic with "async" keyword
 let! result = async {something}
@@ -155,7 +155,7 @@ MailboxProcessor.Start(fun inbox-> async{
 	})
 ```
 
-	</div>
+</div>
 </div>	
 
 <div class="row">  
@@ -172,9 +172,9 @@ Of course, F# is <a href="/posts/completeness-seamless-dotnet-interop/">part of 
 Finally, it is well integrated with Visual Studio, which means you get a great IDE with IntelliSense support, a debugger, and many plug-ins for unit tests, source control, and other development tasks. Or on Linux, you can use the MonoDevelop IDE instead.
 </p>
 
-	</div>
+</div>
 
-    <div class="span4" style="float:left;">
+<div class="span4" style="float:left;" markdown="1">
 ```fsharp
 // impure code when needed
 let mutable counter = 0
@@ -200,14 +200,15 @@ form.Click.Add (fun args-> printfn "clicked!")
 form.Show()
 ```
 
-	</div>
+</div>
 	
 </div>
 
 The following series of posts demonstrates each of these F# benefits, using standalone snippets of F# code (and often with C# code for comparison).  
 
 <div class="well">
-	{% for page in (site.seriesPages["Why use F#?"]) %}
-	<div><a href="{{ page.url }}/" title="{{ page.title | escape }}">{{ page.seriesOrder }}. {{ page.title | escape }}</a></div>
+    {% for post in site.data.series["Why use F#?"].posts %}
+	<div><a href="{{ post.url }}/" title="{{ post.title | escape }}">{{ post.seriesOrder }}. {{ post.title | escape }}</a></div>
 	{% endfor %}
 </div>
+
