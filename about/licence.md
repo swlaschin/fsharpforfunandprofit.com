@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "License"
-permalink: /about/license.html
+permalink: /about/licence.html
 ---
 
 All code on this site is released under the free MIT License as follows:
