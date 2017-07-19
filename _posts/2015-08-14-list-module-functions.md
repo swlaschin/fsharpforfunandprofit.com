@@ -112,6 +112,7 @@ and `ResizeArray` and `IDictionary` are also often used.
     you can use the BCL <a href="https://msdn.microsoft.com/en-us/library/s4ys34ea.aspx">IDictionary</a>.
     The constructor is <a href="https://msdn.microsoft.com/en-us/library/ee353774.aspx"><code>dict</code></a> in F#.</p>
     <p>Note that mutation methods such as <code>Add</code> are present, but will cause a runtime error if called.</p>
+</td>	
 </tr>
 </table>
 
