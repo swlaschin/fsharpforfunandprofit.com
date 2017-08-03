@@ -33,7 +33,7 @@ And for more F# videos, visit the [Community for F#](http://c4fsharp.net/#online
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/113588389"><img alt="Video from NDC London 2014" src="../fppatterns/ndclondon2014.jpg"></img></a>
+    <a href="https://vimeo.com/113588389"><img alt="Video from NDC London 2014" src="../fppatterns/ndclondon2014.jpg"></a>
 	</div>
     
 </div>
@@ -62,7 +62,7 @@ And for more F# videos, visit the [Community for F#](http://c4fsharp.net/#online
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://skillsmatter.com/skillscasts/4971-domain-driven-design-with-scott-wlaschin"><img alt="Video from F#unctional Londoners Meetup, March 13, 2014" src="../ddd/fsharplondon.jpg"></img></a>
+    <a href="https://skillsmatter.com/skillscasts/4971-domain-driven-design-with-scott-wlaschin"><img alt="Video from F#unctional Londoners Meetup, March 13, 2014" src="../ddd/fsharplondon.jpg"></a>
 	</div>
     
 </div>
@@ -92,7 +92,7 @@ using a fun and easy-to-understand railway analogy.</blockquote>
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/113707214"><img alt="Video from NDC London 2014" src="../rop/rop_ndc_london14.png"></img></a>
+    <a href="https://vimeo.com/113707214"><img alt="Video from NDC London 2014" src="../rop/rop_ndc_london14.png"></a>
 	</div>
     
 </div>
@@ -130,7 +130,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="../pbt/fpx.jpg"></img></a>
+    <a href="https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="../pbt/fpx.jpg"></a>
 	</div>
     
 </div>
@@ -165,7 +165,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/162054542"><img alt="Video from NDC London 2016, Jan 14, 2016" src="../monadster/ndclondon.jpg"></img></a>
+    <a href="https://vimeo.com/162054542"><img alt="Video from NDC London 2016, Jan 14, 2016" src="../monadster/ndclondon.jpg"></a>
 	</div>
     
 </div>
@@ -199,7 +199,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/131196782"><img alt="Video from NDC Oslo, Jun 17, 2015" src="../ettt/fpx.jpg"></img></a>
+    <a href="https://vimeo.com/131196782"><img alt="Video from NDC Oslo, Jun 17, 2015" src="../ettt/fpx.jpg"></a>
 	</div>
     
 </div>
@@ -243,7 +243,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/162209391"><img alt="Video from NDC London, Jan 15, 2016" src="../cap/ndclondon16.jpg"></img></a>
+    <a href="https://vimeo.com/162209391"><img alt="Video from NDC London, Jan 15, 2016" src="../cap/ndclondon16.jpg"></a>
 	</div>
     
 </div>
@@ -281,7 +281,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://vimeo.com/171704565"><img alt="Video from NDC Oslo, Jun 9, 2016" src="../parser/ndcvideo.jpg"></img></a>
+    <a href="https://vimeo.com/171704565"><img alt="Video from NDC Oslo, Jun 9, 2016" src="../parser/ndcvideo.jpg"></a>
 	</div>
     
 </div>
@@ -321,7 +321,7 @@ This talk is based on my blog posts on this topic:
 	</div>
 
     <div class="span4" style="float:left;">
-    <a href="https://youtu.be/AG3KuqDbmhM"><img alt="Video from NDC London, Jan 18, 2017" src="../turtle/ndclondon17.jpg"></img></a>
+    <a href="https://youtu.be/AG3KuqDbmhM"><img alt="Video from NDC London, Jan 18, 2017" src="../turtle/ndclondon17.jpg"></a>
 	</div>
     
 </div>
