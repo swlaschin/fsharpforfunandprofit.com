@@ -321,7 +321,13 @@ let add x y =
     x + y
 ```
 
-can be written as a one-parameter function that returns a lambda, like this:
+which has the signature:
+
+```fsharp
+val add : x:int -> y:int -> int
+```
+
+can be written as an equivalent one-parameter function that returns a lambda, like this:
 
 ```fsharp
 let add x = 
@@ -334,6 +340,22 @@ or as a function that returns an inner function, like this:
 let add x = 
     let innerFn y = x + y
     innerFn // return innerFn 
+```
+
+In the second case, when an inner function is used, the signature looks slightly different:
+
+```fsharp
+val add : x:int -> (int -> int)
+```
+
+but the parentheses around the last parameter can be ignored. The signature, for all practical purposes, is the same as the original one:
+
+```fsharp
+// original (automatic currying of two parameter function)
+val add : x:int -> y:int -> int
+
+// explicit currying with inner function
+val add : x:int -> (int -> int)
 ```
 
 ### Rewriting with an inner function
@@ -364,12 +386,11 @@ The type signature for this implementation looks like this:
 
 ```fsharp
 val pchar :
-    char -> string -> Result<char * string>
+    charToMatch:char -> (string -> Result<char * string>)
 ```
 
-It's *exactly the same* as the previous version! 
-
-That is, both of the above implementations are identical in practice:
+Which is functionally equivalent to the previous version of `char -> string -> Result<char * string>`. 
+In other words, both of the implementations below are identical from the callers point of view:
 
 ```fsharp
 // two-parameter implementation
