@@ -226,7 +226,9 @@ Luckily, there is a trick that can convert any semigroup into a monoid (which I'
 Let's put all our examples into a table, so you can see them all together.
 
 <table class="table table-condensed table-striped">
-<col width=5em></col>
+<colgroup>
+<col width="5em">
+</colgroup>
 <tr>
 <th>Things</th>
 <th>Operation</th>

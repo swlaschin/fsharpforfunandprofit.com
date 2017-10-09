@@ -792,7 +792,7 @@ Check.Quick (``list is sorted (labelled)`` badSort )
 //  [0]
 ```
 
-For more on these operators, [see the FsCheck documentation under "And, Or and Labels"](https://fsharp.github.io/FsCheck/Properties.html).
+For more on these operators, [see the FsCheck documentation under "And, Or and Labels"](https://fscheck.github.io/FsCheck/Properties.html#And-Or-and-Labels).
 
 And now, back to the property-divising strategies.
 
@@ -1160,7 +1160,7 @@ The white stones mean the property has been satisfied, while black stones mean f
 I'm going to guess that it's something like "a set must have a yellow pyramid that's not touching the ground".
 
 Alright, I suppose Zendo wasn't really inspired by property-based testing, but it is a fun game, and it has even been known to make an
-appearance at [programming conferences](https://thestrangeloop.com/sessions/zendo-%E2%80%93-the-scientific-method-in-a-box).
+appearance at [programming conferences](http://blog.fogus.me/2014/10/23/games-of-interest-zendo/).
 
 If you want to learn more about Zendo, [the rules are here](http://www.looneylabs.com/rules/zendo).
 
