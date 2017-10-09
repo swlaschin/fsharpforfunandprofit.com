@@ -28,7 +28,10 @@ Slides from *NDC Oslo*, June 14, 2017
 
 ## Video
 
-Coming soon!
+Video from NDC Oslo, June 14, 2017 (Click image to view video) 
+
+[![Video from NDC Oslo, June 14, 2017](video.jpg)](https://www.youtube.com/watch?v=KPa8Yw_Navk)
+
 
 ## Related talks
 

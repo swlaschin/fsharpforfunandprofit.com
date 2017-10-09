@@ -10,6 +10,8 @@ categories: ["TDD"]
 
 *UPDATE: I did a talk on property-based testing based on these posts. [Slides and video here.](/pbt/)*
 
+*[Part 2 of this post](/posts/property-based-testing-2/) discusses how to choose properties for property-based testing*
+
 Let's start with a discussion that I hope never to have:
 
 ```text
