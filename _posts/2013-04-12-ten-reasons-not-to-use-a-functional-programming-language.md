@@ -183,11 +183,11 @@ void someMethod(SomeClass x)
 
 Haha! Just kidding! Of course I can't be bothered to put null-checking code everywhere. I'd never get any real work done.  
 
-But I've only ever had to deal with one bad crash caused by a NPE. And the business didn't lose too much money during the few weeks I spent looking for the problem. So I'm not sure why this is such a [big deal](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare). 
+I've never had any serious problems caused by a null. Well, OK, one. But the business didn't lose too much money during the outage. And I know that most of the staff appreciated the unexpected day off. So I'm not sure why this is such a [big deal](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare). 
 
 ## Reason 9: I like to use design patterns everywhere
 
-I first read about design patterns in the [Design Patterns book](http://www.amazon.com/First-Design-Patterns-Elisabeth-Freeman/dp/0596007124) (for some reason it's referred to as the Gang of Four book, but I'm not sure why), and since then I have been diligent in using them at all times for all problems. It certainly makes my code look serious and "enterprise-y", and it impresses my boss.
+I first read about design patterns in the [Design Patterns book](http://www.amazon.com/First-Design-Patterns-Elisabeth-Freeman/dp/0596007124) (for some reason it's referred to as the Gang of Four book, but I'm not sure why, since it has a girl on the front), and since then I have been diligent in using them at all times for all problems. It certainly makes my code look serious and "enterprise-y", and it impresses my boss.
 
 But I don't see any mention of patterns in functional design. How can you get useful stuff done without Strategy, AbstractFactory, Decorator, Proxy, and so on? 
 
