@@ -183,7 +183,7 @@ Again, not a great metric, but I think it is a reasonable way to get some idea o
 
 <table class="table table-striped table-condensed">
 <thead>
-<tr><th>Project</th><th>Code size</th><th>Total lines of code</th><th>Bytecode/ Total&nbsp;LOC</th><th>Useful lines</th><th>Bytecode/ Useful&nbsp;LOC</th></tr>
+<tr><th>Project</th><th>Code size</th><th>Total lines of code</th><th>Bytecode/ Total ;LOC</th><th>Useful lines</th><th>Bytecode/ Useful ;LOC</th></tr>
 </thead>
 <tbody>
 <tr><td>Roslyn (core)</td><td>426,558</td><td> 115,010</td><td> 3.7</td><td>49,977 </td><td> 8.5 </td></tr>
@@ -301,10 +301,10 @@ Here are the results:
 <tr><th>Project</th><th>Top Level Types	</th><th>Total Dep. Count	</th><th>Dep/Top	</th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.	</th><th>Ten or more dep.</th><th>Diagram</th></tr>
 </thead>
 <tbody>
-<tr><td>Roslyn (core)</td><td>611</td><td>1,757</td><td>2.9</td><td>52%</td><td>29%</td><td>15%</td><td>7%</td><td><a href='/assets/svg/roslyn.all.dot.svg'>svg</a>&nbsp<a href='/assets/svg/roslyn.all.dot'>dotfile</a>	</td></tr>
-<tr><td>Roslyn (C#)	</td><td>1,086</td><td>10,649</td><td>9.8</td><td>93%</td><td>77%</td><td>62%</td><td>19%</td><td><a href='/assets/svg/roslynCsharp.all.dot.svg'>svg</a>&nbsp<a href='/assets/svg/roslynCsharp.all.dot'>dotfile</a>	</td></tr>
+<tr><td>Roslyn (core)</td><td>611</td><td>1,757</td><td>2.9</td><td>52%</td><td>29%</td><td>15%</td><td>7%</td><td><a href='/assets/svg/roslyn.all.dot.svg'>svg</a> <a href='/assets/svg/roslyn.all.dot'>dotfile</a>	</td></tr>
+<tr><td>Roslyn (C#)	</td><td>1,086</td><td>10,649</td><td>9.8</td><td>93%</td><td>77%</td><td>62%</td><td>19%</td><td><a href='/assets/svg/roslynCsharp.all.dot.svg'>svg</a> <a href='/assets/svg/roslynCsharp.all.dot'>dotfile</a>	</td></tr>
 <tr><td colspan="10"></td></tr>
-<tr><td>F# compiler</td><td>180</td><td>779</td><td>4.3</td><td>64%</td><td>37%</td><td>29%</td><td>18%</td><td><a href='/assets/svg/fsharpCompiler.all.dot.svg'>svg</a>&nbsp<a href='/assets/svg/fsharpCompiler.all.dot'>dotfile</a>	</td></tr>
+<tr><td>F# compiler</td><td>180</td><td>779</td><td>4.3</td><td>64%</td><td>37%</td><td>29%</td><td>18%</td><td><a href='/assets/svg/fsharpCompiler.all.dot.svg'>svg</a> <a href='/assets/svg/fsharpCompiler.all.dot'>dotfile</a>	</td></tr>
 
 </tbody>
 </table>
@@ -410,10 +410,10 @@ Here are the cyclic dependency results for the three projects.
 <tr><th>Project</th><th>Top-level types</th><th>Cycle count</th><th>Partic.</th><th>Partic.%</th><th>Max comp. size</th><th>Diagram</th></tr>
 </thead>
 <tbody>
-<tr><td>Roslyn (core)</td><td>611</td><td>6</td><td>94</td><td>15%</td><td>71</td><td><a href='/assets/svg/roslyn.all.cycles.dot.svg'>svg</a>&nbsp<a href='/assets/svg/roslyn.all.cycles.dot'>dotfile</a>	</td></tr>
-<tr><td>Roslyn (C#)	</td><td>1,086</td><td>2</td><td>901</td><td>83%</td><td>899</td><td><a href='/assets/svg/roslynCsharp.all.cycles.dot.svg'>svg</a>&nbsp<a href='/assets/svg/roslynCsharp.all.cycles.dot'>dotfile</a>	</td></tr>
+<tr><td>Roslyn (core)</td><td>611</td><td>6</td><td>94</td><td>15%</td><td>71</td><td><a href='/assets/svg/roslyn.all.cycles.dot.svg'>svg</a> <a href='/assets/svg/roslyn.all.cycles.dot'>dotfile</a>	</td></tr>
+<tr><td>Roslyn (C#)	</td><td>1,086</td><td>2</td><td>901</td><td>83%</td><td>899</td><td><a href='/assets/svg/roslynCsharp.all.cycles.dot.svg'>svg</a> <a href='/assets/svg/roslynCsharp.all.cycles.dot'>dotfile</a>	</td></tr>
 <tr><td colspan="7"></td></tr>
-<tr><td>F# compiler</td><td>180</td><td>0</td><td>0</td><td>0%</td><td>0</td><td><a href='/assets/svg/fsharpCompiler.all.cycles.dot.svg'>svg</a>&nbsp<a href='/assets/svg/fsharpCompiler.all.cycles.dot'>dotfile</a>	</td></tr>
+<tr><td>F# compiler</td><td>180</td><td>0</td><td>0</td><td>0%</td><td>0</td><td><a href='/assets/svg/fsharpCompiler.all.cycles.dot.svg'>svg</a> <a href='/assets/svg/fsharpCompiler.all.cycles.dot'>dotfile</a>	</td></tr>
 
 </tbody>                                                     
 </table>
