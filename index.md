@@ -65,7 +65,7 @@ image: "/assets/img/four-concepts2.png"
 If you are completely new to F#, find out more about F# and how it is used at the [F# Foundation](http://fsharp.org/). To download and install F#, read the [installing and using F#](/installing-and-using/) page to get started.
 
 Next, before randomly dipping into the posts, you should read the ["why use F#?"](/why-use-fsharp/) page and then the whole ["why use F#"](/series/why-use-fsharp.html) series.
-After that the ["site contents"](/site-contents/) page provides suggestions for further reading on functions, types and more.
+After that the ["explore the site"](/site-contents/) page provides suggestions for further reading on functions, types and more.
 
 There is a page with some advice on [learning F#](/learning-fsharp/), and if you have problems trying to get your code to compile, the [troubleshooting F#](/troubleshooting-fsharp/) page might be helpful.
 
