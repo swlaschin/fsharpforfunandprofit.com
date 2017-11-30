@@ -3,6 +3,7 @@ layout: page
 title: "Designing with Capabilities"
 description:  Designing using capabilities and the principle of least authority
 hasComments: 1
+image: "/cap/cap427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "Designing with Capabilities". 
@@ -34,6 +35,12 @@ Also related are the talk and posts on designing Enterprise Tic-Tac-Toe:
 * [Enterprise Tic-Tac-Toe Part 2, In which I throw away the previous design](/posts/enterprise-tic-tac-toe-2/)
 * [Video and slides for my "Enterprise Tic-Tac-Toe" talk](/ettt/)
 
+## Video
+ 
+Video from NDC London, Jan 15, 2016 (Click image to view video) 
+
+[![Video from NDC London, Jan 15, 2016](cap427.jpg)](https://vimeo.com/162209391)
+
 ## Code
 
 The code used in the demos is [available on github](https://github.com/swlaschin/DesigningWithCapabilities).
@@ -58,13 +65,6 @@ These slides from DDD Europe, Feb 3, 2017 are more DDD focused
 <strong><a href="https://www.slideshare.net/ScottWlaschin/designing-with-capabilities-dddeu-2017" title="Designing with Capabilities (DDD-EU 2017)" target="_blank">Designing with Capabilities (DDD-EU 2017)</a> </strong> from <strong><a href="https://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
 </div>
 
-
-
-## Videos
- 
-Video from NDC London, Jan 15, 2016 (Click image to view video) 
-
-[![Video from NDC London, Jan 15, 2016](ndclondon16.jpg)](https://vimeo.com/162209391)
 
 
 

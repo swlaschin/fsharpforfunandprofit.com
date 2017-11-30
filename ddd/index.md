@@ -1,12 +1,12 @@
 ---
 layout: page
 title: "Domain Driven Design"
-description: Slides and video from my talk "Domain Driven Design with the F# Type System" 
+description: Slides and video from my talk "Domain Modeling Made Functional with the F# Type System" 
 hasComments: 1
-image: "/assets/img/ddd_slide.png"
+image: "/ddd/ddd427.jpg"
 ---
 
-This page contains links to the slides, video and code from my talk "Domain Driven Design with the F# Type System". 
+This page contains links to the slides, video and code from my talk "Domain Modeling Made Functional". 
 
 Here's the blurb for the talk:
 
@@ -25,7 +25,13 @@ I am also planning to upload some posts on these topics soon. Meanwhile, please 
 You should also read ["why type-first development matters"](http://tomasp.net/blog/type-first-development.aspx/) by Tomas Petricek
 and a great [series](http://gorodinski.com/blog/2013/02/17/domain-driven-design-with-fsharp-and-eventstore/) of [articles](http://gorodinski.com/blog/2013/04/23/domain-driven-design-with-fsharp-validation/) by Lev Gorodinski.
 
-###  Slides from F#unctional Londoners Meetup, March 13, 2014
+##  Video 
+ 
+(Click image to view video) 
+
+[![Video from NDC Oslo, June 2017](ddd427.jpg)](https://www.youtube.com/watch?v=Up7LcbGZFuo)
+
+##  Slides
  
  <iframe src="https://www.slideshare.net/slideshow/embed_code/32418451" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/ScottWlaschin/domain-driven-design-with-the-f-type-system-functional-londoners-2014" title="Domain Driven Design with the F# type System -- F#unctional Londoners 2014" target="_blank">Domain Driven Design with the F# type System -- F#unctional Londoners 2014</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my Slideshare</a></strong> </div>
  
@@ -35,14 +41,13 @@ The slides are also available from the links below:
 * F#unctional Londoners 2014 version ([Speakerdeck](https://speakerdeck.com/swlaschin/domain-driven-design-with-the-f-number-type-system-f-number-unctional-londoners-2014)) with 
 added sections on why OO, not FP is scary, and designing with states and transitions.
 
- 
-###  Video from F#unctional Londoners Meetup, March 13, 2014
- 
-(Click image to view video) 
+## Book
 
-[![Video from F#unctional Londoners Meetup, March 13, 2014](fsharplondon.jpg)](https://skillsmatter.com/skillscasts/4971-domain-driven-design-with-scott-wlaschin)
- 
-###  Getting the code
+I have a book all about this topic -- you can find more details on the [books page](/books/).
+
+[![Domain Modeling Made Functional](/books/domain-modeling-made-functional-320.jpg)](/books/)
+
+##  Getting the code
 
 If you want to follow along with the code, then:
 

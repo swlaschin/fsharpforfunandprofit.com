@@ -3,7 +3,7 @@ layout: page
 title: "Railway Oriented Programming"
 description: Slides and videos explaining a functional approach to error handling
 hasComments: 1
-image: "/assets/img/Recipe_Railway_Transparent.png"
+image: "/rop/rop427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "Railway Oriented Programming". 
@@ -24,6 +24,16 @@ I am also planning to upload some posts on these topics soon. Meanwhile, please 
 If you want to to see some real code, I have created 
 [this project on Github that compares normal C# with F# using the ROP approach](https://github.com/swlaschin/Railway-Oriented-Programming-Example)
 
+## Videos
+ 
+I presented on this topic at NDC London 2014 (click image to view video)  
+
+[![Video from NDC London 2014](rop427.jpg)](https://vimeo.com/113707214)
+
+Other videos of this talk are available are from [NDC Oslo 2014](http://vimeo.com/97344498)
+and [Functional Programming eXchange, 2014](https://skillsmatter.com/skillscasts/4964-railway-oriented-programming)
+
+
 ## Slides 
 
 Slides from Functional Programming eXchange, March 14, 2014
@@ -31,15 +41,6 @@ Slides from Functional Programming eXchange, March 14, 2014
 <iframe src="//www.slideshare.net/slideshow/embed_code/32242318" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/ScottWlaschin/railway-oriented-programming" title="Railway Oriented Programming" target="_blank">Railway Oriented Programming</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> </div>
 
 The powerpoint slides are also available from [Github](https://github.com/swlaschin/RailwayOrientedProgramming). Feel free to borrow from them!
-
-## Videos
- 
-I presented on this topic at NDC London 2014 (click image to view video)  
-
-[![Video from NDC London 2014](rop_ndc_london14.png)](https://vimeo.com/113707214)
-
-Other videos of this talk are available are from [NDC Oslo 2014](http://vimeo.com/97344498)
-and [Functional Programming eXchange, 2014](https://skillsmatter.com/skillscasts/4964-railway-oriented-programming)
 
 <a name="monads"></a>
 <br><br>

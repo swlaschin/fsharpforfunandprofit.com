@@ -5,18 +5,19 @@ layout: default
 <div class="container">
 <div class="row">
 	
-<div class="span8">
+<div class="col-md-9">
 
 {% include series_toc_header.inc %}
 
 {% unless page.hideHeader %}
 	<div class="page-header">
-	<h1>{{ page.title | escape }}</h1>
-	{% if page.description %}
-	<div class="subtitle alignleft">{{ page.description | escape }}</div>
-	{% endif %}
-    <div class="alignright"> {% include twitter_tweet.inc %}</div>
-    <div class="alignoff"></div>
+		<h1>{{ page.title | escape }}</h1>
+		{% if page.description %}
+		<div class="subtitle ">{{ page.description | escape }}</div>
+		{% endif %}
+		<div class="postdate alignleft">{{ page.date | date_to_string }}</div>	
+		<div class="alignright"> {% include twitter_tweet.inc %}</div>
+		<div class="alignoff"></div>
 	</div>
 {% endunless  %}
 	
@@ -30,7 +31,9 @@ layout: default
 
 		<div>
 			<br>
-			<div style="float:left">Posted by <a href="/about/">scottw</a> on {{ page.date | date_to_string }}</div>
+			<div style="float:left">Written by <a href="/about/">ScottW</a>. 
+				Follow me on <a href="https://twitter.com/ScottWlaschin"><img src="/assets/img/Twitter_logo_blue_25x20.png" style="vertical-align: middle;"> Twitter</a>. 
+			</div>
 			{% if page.categories.size > 0 %}<div class="categories" style="float:right">Filed under: {{ page.categories | category_links }}</div>{% endif %}
 		</div>
 		<div style="clear: both;"></div>
@@ -39,14 +42,14 @@ layout: default
 	{% include series_toc.inc %}
 	
 	{% include disqus.inc %}
-</div>
+</div>  <!-- content -->
 
 
-<div class="span2 sidebar">
+<div class="col-md-3 sidebar">
 {% include sidebar.inc %}
-</div>
+</div> <!-- sidebar -->
 
 		
 	
-</div>
-</div>
+</div> <!-- row -->
+</div> <!-- container  -->

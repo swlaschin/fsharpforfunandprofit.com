@@ -3,7 +3,7 @@ layout: page
 title: "An introduction to property based testing"
 description: The lazy programmer's guide to writing 1000's of tests 
 hasComments: 1
-image: "/pbt/pbt_cover.png"
+image: "/pbt/pbt427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "An introduction to property based testing". 
@@ -25,6 +25,12 @@ This talk is based on my blog posts on this topic:
 * [An introduction to property-based testing](/posts/property-based-testing/)
 * [Choosing properties for property-based testing](/posts/property-based-testing-2/)
 
+## Video
+ 
+(Click image to view video) 
+
+[![Video from Functional Programming eXchange, Jun 11, 2015](pbt427.jpg)](https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing)
+
 ## Slides 
 
 Slides from Functional Programming eXchange, Jun 11, 2015
@@ -35,11 +41,6 @@ Slides from Functional Programming eXchange, Jun 11, 2015
 <strong><a href="https://www.slideshare.net/ScottWlaschin/an-introduction-to-property-based-testing" title="An introduction to property based testing" target="_blank">An introduction to property based testing</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
 </div>
 
-## Videos
- 
-(Click image to view video) 
-
-[![Video from Functional Programming eXchange, Jun 11, 2015](fpx.jpg)](https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing)
 
 
 <a name="more"></a>

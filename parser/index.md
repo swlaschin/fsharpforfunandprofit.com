@@ -3,7 +3,7 @@ layout: page
 title: "Understanding parser combinators"
 description: Building a parser combinator library and then writing a JSON parser from scratch
 hasComments: 1
-image: "/parser/cover.png"
+image: "/parser/parser427.png"
 ---
 
 This page contains links to the slides and code from my talk "Understanding parser combinators". 
@@ -23,15 +23,20 @@ This talk is based on my blog posts on this topic:
 
 * [Understanding parser combinators](/series/understanding-parser-combinators.html)
 
-## Slides 
-
-Slides from NDC Oslo, Jun 9, 2016
-
-<script async class="speakerdeck-embed" data-id="427339c11d2e4d5f898216d2fb383d68" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
-
 ## Videos
 
 Video from NDC Oslo, Jun 9, 2016 (Click image to view video) 
 
-[![Video from NDC Oslo, Jun 9, 2016](ndcvideo.jpg)](https://vimeo.com/171704565)
+[![Video from NDC Oslo, Jun 9, 2016](parser427.jpg)](https://vimeo.com/171704565)
+
+
+## Slides 
+
+Slides from NDC Oslo, Jun 9, 2016
+
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/18PTe3gSh1LwF4" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
+
+<div style="margin-bottom:5px">
+<strong> <a href="//www.slideshare.net/ScottWlaschin/understanding-parser-combinators" title="Understanding parser combinators" target="_blank">Understanding parser combinators</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong>.
+</div>
 

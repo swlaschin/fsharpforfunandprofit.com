@@ -3,7 +3,7 @@ layout: page
 title: "Functional Programming Design Patterns"
 description: Slides and video from my talk
 hasComments: 1
-image: "/assets/img/fppatterns_slide.png"
+image: "/fppatterns/fppatterns427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "Functional Programming Design Patterns". 
@@ -18,6 +18,16 @@ Here's the blurb:
 > This talk will provide an overview of some of these, and present some 
 > demonstrations of FP design in practice.
 
+## Videos
+ 
+Below is the video recorded at NDC London 2014 (click image to view video). It's an hour long and I whiz through as fast as I can!
+
+[![Video from NDC London 2014](fppatterns427.jpg)](https://vimeo.com/113588389)
+
+I did the same talk at the London F# Meetup in January, 2015. This time, there were questions during the talk, and I went a bit slower. As a result, it's about two hours long!
+
+[![Video from F#unctional Londoners, Jan 15, 2015](skillsmatter427.jpg)](https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin)
+
 ## Slides 
 
 Here are the slides that I used at NDC London 2014:
@@ -25,16 +35,6 @@ Here are the slides that I used at NDC London 2014:
 <iframe src="//www.slideshare.net/slideshow/embed_code/42373281" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
 
 There's also a [longer version of the slides](http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014) as well.
-
-## Videos
- 
-Below is the video recorded at NDC London 2014 (click image to view video). It's an hour long and I whiz through as fast as I can!
-
-[![Video from NDC London 2014](ndclondon2014.jpg)](https://vimeo.com/113588389)
-
-I did the same talk at the London F# Meetup in January, 2015. This time, there were questions during the talk, and I went a bit slower. As a result, it's about two hours long!
-
-[![Video from F#unctional Londoners, Jan 15, 2015](skillsmatter_2015_01.jpg)](https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin)
 
 ## Twitterstorm!
 

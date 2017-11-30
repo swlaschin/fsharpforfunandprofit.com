@@ -2,6 +2,7 @@
 layout: page
 title: "Dr Frankenfunctor and the Monadster"
 hasComments: 1
+image: "/monadster/monadster427.jpg"
 ---
 
 This page contains links to the slides and video from my talk "Dr Frankenfunctor and the Monadster". 
@@ -21,6 +22,11 @@ Here's the blurb for the talk:
 > <br><br>
 > SAFETY NOTE: The techniques demonstrated are perfectly harmless and can even be used at your workplace -- no lightning bolts required.
 
+## Video
+
+Video from *NDC London 2016*, Jan 14, 2016 (Click image to view video) 
+
+[![Video from NDC London 2016, Jan 14, 2016](monadster427.jpg)](https://vimeo.com/162054542)
 
 ## Slides 
 
@@ -31,17 +37,6 @@ Slides from *Leetspeak 2015*, Stockholm, Oct 10, 2015
 <div style="margin-bottom:5px"> 
 <strong><a href="https://www.slideshare.net/ScottWlaschin/dr-frankenfunctor-and-the-monadster" title="Dr Frankenfunctor and the Monadster" target="_blank">Dr Frankenfunctor and the Monadster</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
 </div>
-
-## Video
-
-Video from *NDC London 2016*, Jan 14, 2016 (Click image to view video) 
-
-[![Video from NDC London 2016, Jan 14, 2016](ndclondon.jpg)](https://vimeo.com/162054542)
-
- 
-Video from *Leetspeak 2015*, Stockholm, Oct 10, 2015 (Click image to view video) 
-
-[![Video from Leetspeak 2015, Stockholm, Oct 10, 2015](leetspeak2015.jpg)](https://vimeo.com/142347199)
 
 ## Related posts
 

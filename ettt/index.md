@@ -3,6 +3,7 @@ layout: page
 title: "Enterprise Tic-Tac-Toe"
 description:  In which I ridiculously over-engineer a simple game to make it "enterprise-ready" 
 hasComments: 1
+image: "/ettt/ettt427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "Enterprise Tic-Tac-Toe". 
@@ -33,6 +34,12 @@ Also related are my posts and talks on capability based security and DDD:
 * More on Domain Driven Design:
   * [Video and slides for my "Domain Driven Design with the F# Type System" talk](/ddd/)
 
+## Videos
+ 
+Video from NDC Oslo, Jun 17, 2015 (Click image to view video) 
+
+[![Video from NDC Oslo, Jun 17, 2015](ettt427.jpg)](https://vimeo.com/131196782)
+
 
 ## Slides 
 
@@ -43,11 +50,4 @@ Slides from NDC Oslo, Jun 17, 2015
 <div style="margin-bottom:5px"> 
 <strong><a href="https://www.slideshare.net/ScottWlaschin/enterprise-tictactoe" title="Enterprise Tic-Tac-Toe" target="_blank">Enterprise Tic-Tac-Toe</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
 </div>
-
-## Videos
- 
-Video from NDC Oslo, Jun 17, 2015 (Click image to view video) 
-
-[![Video from NDC Oslo, Jun 17, 2015](fpx.jpg)](https://vimeo.com/131196782)
-
 
