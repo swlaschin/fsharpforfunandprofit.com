@@ -6,7 +6,7 @@ description: "This site shows you ways that F# can help in day-to-day developmen
 hideHeader: 1
 hasIcons: 1
 hasNoCode: 1
-image: "/assets/img/four-concepts2.png"
+image: "/assets/img/twitter-home.jpg"
 ---
 
 <div class="row">  
