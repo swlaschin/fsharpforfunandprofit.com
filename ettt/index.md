@@ -38,7 +38,7 @@ Also related are my posts and talks on capability based security and DDD:
  
 Video from NDC Oslo, Jun 17, 2015 (Click image to view video) 
 
-[![Video from NDC Oslo, Jun 17, 2015](ettt427.jpg)](https://vimeo.com/131196782)
+[![Video from NDC Oslo, Jun 17, 2015](ettt427.jpg)](https://goo.gl/YE4pW2)
 
 
 ## Slides 

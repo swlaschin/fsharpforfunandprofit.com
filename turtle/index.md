@@ -28,7 +28,7 @@ This talk is based on my blog posts on this topic:
  
 Video from NDC London, Jan 18, 2017. Apologies for the orange color cast!
 
-[![NDC London, Jan 18, 2017](turtle427.jpg)](https://www.youtube.com/watch?v=AG3KuqDbmhM)
+[![NDC London, Jan 18, 2017](turtle427.jpg)](https://goo.gl/2BN161)
 
 
 ## Slides 

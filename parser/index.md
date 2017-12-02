@@ -27,7 +27,7 @@ This talk is based on my blog posts on this topic:
 
 Video from NDC Oslo, Jun 9, 2016 (Click image to view video) 
 
-[![Video from NDC Oslo, Jun 9, 2016](parser427.jpg)](https://vimeo.com/171704565)
+[![Video from NDC Oslo, Jun 9, 2016](parser427.jpg)](https://goo.gl/Cxa7NR)
 
 
 ## Slides 

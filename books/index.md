@@ -13,12 +13,17 @@ image: "/books/domain-modeling-made-functional-320.jpg"
 
 ## Downloadable ebook of this site
 
-Reading offline? Download the ebook of this site [here](https://www.gitbook.com/book/swlaschin/fsharpforfunandprofit/). Available in EPUB, MOBI and PDF formats.
+Reading offline? I have compiled all the pages of this site into an ebook using [GitBook](https://goo.gl/XHLBgC).
+Available in ePub, Mobi/Kindle and PDF formats.
+
+<a class="btn btn-primary" href="https://goo.gl/UVMgfs">Download PDF</a>
+<a class="btn btn-primary" href="https://goo.gl/xadJJt">Download ePub</a>
+<a class="btn btn-primary" href="https://goo.gl/gXFDNF">Download Mobi/Kindle</a>
 
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://www.gitbook.com/book/swlaschin/fsharpforfunandprofit/"><img alt="Gitbook" src="gitbook-200.jpg"></a>
+<a href="https://goo.gl/XHLBgC"><img alt="Gitbook" src="gitbook-200.jpg"></a>
 </div>
     
 </div>
@@ -36,13 +41,21 @@ This book is a mix of Domain Driven Design, modeling with types, and an intro to
 
 It does have some chapters on stuff I haven't blogged about (yet) such how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
 
-You can get it [from the Pragmatic Programmers site](https://pragprog.com/book/swdddf/domain-modeling-made-functional)
-or order on [Amazon US](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549) or [Amazon UK](https://www.amazon.co.uk/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549). Also available from most other suppliers.
+You can get it [from the Pragmatic Programmers site](https://goo.gl/oviuHT)
+or order on [Amazon US](https://goo.gl/rNZZc6) or [Amazon UK](https://goo.gl/aUH1kN). Also available from most other suppliers.
+
+<a class="btn btn-primary" href="https://goo.gl/oviuHT">Buy from Pragmatic Programmers site</a>
+
+<a class="btn btn-primary" href="https://goo.gl/iR36WC">Amazon US <img src="/assets/img/US-flag.gif"></a>
+<a class="btn btn-primary" href="https://goo.gl/JYkL8j">Amazon UK <img src="/assets/img/UK-flag.gif"></a>
+
+<a class="btn btn-primary" href="https://goo.gl/zA1mhH">Amazon CA <img src="/assets/img/CA-flag.gif"></a>
+<a class="btn btn-primary" href="https://goo.gl/LV3xEg">Amazon DE <img src="/assets/img/DE-flag.gif"></a>
 
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://pragprog.com/book/swdddf/domain-modeling-made-functional"><img alt="Domain Modeling Made Functional" src="domain-modeling-made-functional-200.jpg"></a>
+<a href="https://goo.gl/oviuHT"><img alt="Domain Modeling Made Functional" src="domain-modeling-made-functional-200.jpg"></a>
 </div>
     
 </div>

@@ -27,9 +27,9 @@ This talk is based on my blog posts on this topic:
 
 ## Video
  
-(Click image to view video) 
+(Click image to view video - free registration required) 
 
-[![Video from Functional Programming eXchange, Jun 11, 2015](pbt427.jpg)](https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing)
+[![Video from Functional Programming eXchange, Jun 11, 2015](pbt427.jpg)](https://goo.gl/p2kfWH)
 
 ## Slides 
 

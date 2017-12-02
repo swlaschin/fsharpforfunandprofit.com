@@ -39,7 +39,7 @@ Also related are the talk and posts on designing Enterprise Tic-Tac-Toe:
  
 Video from NDC London, Jan 15, 2016 (Click image to view video) 
 
-[![Video from NDC London, Jan 15, 2016](cap427.jpg)](https://vimeo.com/162209391)
+[![Video from NDC London, Jan 15, 2016](cap427.jpg)](https://goo.gl/hmzGFn)
 
 ## Code
 

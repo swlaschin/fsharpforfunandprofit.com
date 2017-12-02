@@ -29,7 +29,7 @@ and a great [series](http://gorodinski.com/blog/2013/02/17/domain-driven-design-
  
 (Click image to view video) 
 
-[![Video from NDC Oslo, June 2017](ddd427.jpg)](https://www.youtube.com/watch?v=Up7LcbGZFuo)
+[![Video from NDC Oslo, June 2017](ddd427.jpg)](https://goo.gl/kxVAWt)
 
 ##  Slides
  

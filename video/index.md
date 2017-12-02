@@ -36,7 +36,7 @@ demonstrations of FP design in practice.
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/113588389"><img alt="Video from NDC London 2014" src="fppatterns320.jpg"></a>
+<a href="https://goo.gl/aptvwN"><img alt="Video from NDC London 2014" src="fppatterns320.jpg"></a>
 </div>
     
 </div>
@@ -65,7 +65,7 @@ with some simple real world examples in F#. No jargon, no maths, and no prior F#
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://www.youtube.com/watch?v=Up7LcbGZFuo"><img alt="Video from NDC Oslo, June 2017" src="ddd320.jpg"></a>
+<a href="https://goo.gl/kxVAWt"><img alt="Video from NDC Oslo, June 2017" src="ddd320.jpg"></a>
 </div>
     
 </div>
@@ -92,7 +92,7 @@ using a fun and easy-to-understand railway analogy.
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/113707214"><img alt="Video from NDC London 2014" src="rop320.jpg"></a>
+<a href="https://goo.gl/Lv5ZAo"><img alt="Video from NDC London 2014" src="rop320.jpg"></a>
 </div>
     
 </div>
@@ -124,7 +124,7 @@ This talk is based on my blog posts on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://skillsmatter.com/skillscasts/6432-the-lazy-programmers-guide-to-writing-1000s-of-tests-an-introduction-to-property-based-testing"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="pbt320.jpg"></a>
+<a href="https://goo.gl/p2kfWH"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="pbt320.jpg"></a>
 </div>
     
 </div>
@@ -151,7 +151,7 @@ This talk is based on my blog post on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/162054542"><img alt="Video from NDC London 2016, Jan 14, 2016" src="monadster320.jpg"></a>
+<a href="https://goo.gl/8TwY8C"><img alt="Video from NDC London 2016, Jan 14, 2016" src="monadster320.jpg"></a>
 </div>
     
 </div>
@@ -181,7 +181,7 @@ This talk is based on my blog posts on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/131196782"><img alt="Video from NDC Oslo, Jun 17, 2015" src="ettt320.jpg"></a>
+<a href="https://goo.gl/YE4pW2"><img alt="Video from NDC Oslo, Jun 17, 2015" src="ettt320.jpg"></a>
 </div>
 
 </div>
@@ -218,7 +218,7 @@ This talk is based on my blog posts on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/162209391"><img alt="Video from NDC London, Jan 15, 2016" src="cap320.jpg"></a>
+<a href="https://goo.gl/hmzGFn"><img alt="Video from NDC London, Jan 15, 2016" src="cap320.jpg"></a>
 </div>
     
 </div>
@@ -249,7 +249,7 @@ This talk is based on my blog posts on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://vimeo.com/171704565"><img alt="Video from NDC Oslo, Jun 9, 2016" src="parser320.jpg"></a>
+<a href="https://goo.gl/Cxa7NR"><img alt="Video from NDC Oslo, Jun 9, 2016" src="parser320.jpg"></a>
 </div>
     
 </div>
@@ -279,7 +279,7 @@ This talk is based on my blog posts on this topic:
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://youtu.be/AG3KuqDbmhM"><img alt="Video from NDC London, Jan 18, 2017" src="turtle320.jpg"></a>
+<a href="https://goo.gl/2BN161"><img alt="Video from NDC London, Jan 18, 2017" src="turtle320.jpg"></a>
 </div>
 
 </div>
@@ -303,7 +303,7 @@ Along the way, there will be many examples showing the same code written in C# a
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://www.youtube.com/watch?v=KPa8Yw_Navk"><img alt="Video from NDC Oslo, June 14, 2017" src="csharp320.jpg"></a>
+<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC Oslo, June 14, 2017" src="csharp320.jpg"></a>
 </div>
 
 </div>

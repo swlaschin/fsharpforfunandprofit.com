@@ -22,7 +22,7 @@ Here's the blurb:
  
 Below is the video recorded at NDC London 2014 (click image to view video). It's an hour long and I whiz through as fast as I can!
 
-[![Video from NDC London 2014](fppatterns427.jpg)](https://vimeo.com/113588389)
+[![Video from NDC London 2014](fppatterns427.jpg)](https://goo.gl/aptvwN)
 
 I did the same talk at the London F# Meetup in January, 2015. This time, there were questions during the talk, and I went a bit slower. As a result, it's about two hours long!
 

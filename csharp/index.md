@@ -19,7 +19,7 @@ Here's the blurb for the talk:
 
 Video from NDC Oslo, June 14, 2017 (Click image to view video) 
 
-[![Video from NDC Oslo, June 14, 2017](csharp427.jpg)](https://www.youtube.com/watch?v=KPa8Yw_Navk)
+[![Video from NDC Oslo, June 14, 2017](csharp427.jpg)](https://goo.gl/LdQNGD)
 
 ## Slides 
 

@@ -26,7 +26,7 @@ Here's the blurb for the talk:
 
 Video from *NDC London 2016*, Jan 14, 2016 (Click image to view video) 
 
-[![Video from NDC London 2016, Jan 14, 2016](monadster427.jpg)](https://vimeo.com/162054542)
+[![Video from NDC London 2016, Jan 14, 2016](monadster427.jpg)](https://goo.gl/8TwY8C)
 
 ## Slides 
 

@@ -28,7 +28,7 @@ If you want to to see some real code, I have created
  
 I presented on this topic at NDC London 2014 (click image to view video)  
 
-[![Video from NDC London 2014](rop427.jpg)](https://vimeo.com/113707214)
+[![Video from NDC London 2014](rop427.jpg)](https://goo.gl/Lv5ZAo)
 
 Other videos of this talk are available are from [NDC Oslo 2014](http://vimeo.com/97344498)
 and [Functional Programming eXchange, 2014](https://skillsmatter.com/skillscasts/4964-railway-oriented-programming)
