@@ -7,6 +7,7 @@ image: "/fppatterns/fppatterns427.jpg"
 ---
 
 This page contains links to the slides and code from my talk "Functional Programming Design Patterns". 
+**Over [100,000 views on YouTube](https://www.youtube.com/watch?v=E8I19uA-wGY)!**
 
 Here's the blurb:
 
@@ -17,6 +18,7 @@ Here's the blurb:
 > <br><br>
 > This talk will provide an overview of some of these, and present some 
 > demonstrations of FP design in practice.
+
 
 ## Videos
  

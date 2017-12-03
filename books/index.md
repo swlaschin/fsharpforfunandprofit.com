@@ -4,6 +4,7 @@ title: "Books"
 description: Support this site by buying a book
 hasComments: 1
 image: "/books/domain-modeling-made-functional-320.jpg"
+isBookPage: 1
 ---
 
 

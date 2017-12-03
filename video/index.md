@@ -29,7 +29,7 @@ such as the Strategy pattern and Decorator pattern, and design principles such a
 The functional programming community has design patterns and principles as well. 
 
 This talk provides an overview of some of these, and presents some 
-demonstrations of FP design in practice.
+demonstrations of FP design in practice. **Over [100,000 views on YouTube](https://www.youtube.com/watch?v=E8I19uA-wGY)!**
 
 <a href="../fppatterns/">Slides and more information</a>
 
