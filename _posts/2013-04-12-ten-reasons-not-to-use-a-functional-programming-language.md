@@ -23,7 +23,7 @@ I don't jump on the latest bandwagon just because all the "cool kids" are doing 
 
 To me, functional programming just hasn't been around long enough to convince me that it is here to stay.
 
-Yes, I suppose some pedants will claim that [ML](http://en.wikipedia.org/wiki/ML_\(programming_language\)) and [Haskell](http://en.wikipedia.org/wiki/Haskell_\(programming_language\)) have been around almost as long as old favorites like Java and PHP, but I only heard of Haskell recently, so that argument doesn't wash with me.
+Yes, I suppose some pedants will claim that [ML (from 1973)](http://en.wikipedia.org/wiki/ML_(programming_language)) and [Haskell (from 1990)](http://en.wikipedia.org/wiki/Haskell_(programming_language)) have been around almost as long as old favorites like Java and PHP, but I only heard of Haskell recently, so that argument doesn't wash with me.
 
 And look at the baby of the bunch, [F#](http://fsharp.org/). It's only seven years old, for Pete's sake!  Sure, that may be a long time to a geologist, but in internet time, seven years is just the blink of an eye. 
 
@@ -201,7 +201,7 @@ Here's some more code for calculating the sum of squares. This is *way* too hard
 ss=: +/ @: *:
 ```
 
-Oops, sorry! My mistake. That was [J code](http://en.wikipedia.org/wiki/J_\(programming_language\)).
+Oops, sorry! My mistake. That was [J code](http://en.wikipedia.org/wiki/J_(programming_language)).
 
 But I do hear that functional programs use strange symbols like `<*>` and `>>=` and obscure concepts called "monads" and "functors". 
 
