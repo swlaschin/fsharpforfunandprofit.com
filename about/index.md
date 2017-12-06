@@ -19,9 +19,9 @@ My approach is unapologetically .NET centric and non-academic. For example:
 
 ## About Me 
 
-I am a developer and architect running [a small consultancy](). I have over 20 years experience in a wide variety of areas from high-level UX/HCI to low-level database implementations.
+I am a developer and architect working with the [**fsharpWorks** consultancy](https://fsharpworks.com/). I have over 20 years experience in a wide variety of areas from high-level UX/HCI to low-level database implementations.
 
-Although I currently use C# in my day job, I have written serious code in many languages, my favorites being Smalltalk. Python, and more recently, F# (hence this site).
+I have written serious code in many languages, my favorites being Smalltalk. Python, and more recently, F# (hence this site).
 
 
 ## FAQ 

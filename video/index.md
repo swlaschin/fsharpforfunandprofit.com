@@ -103,126 +103,22 @@ using a fun and easy-to-understand railway analogy.
 
 <div class="col-sm-8" style="float:right;" markdown="1">
 
-## Property-based testing
+## F# for C# Programmers
 
-We are all familiar with example-based testing, as typified by TDD and BDD. 
-Property-based testing takes a very different approach, where a single test is run hundreds of times with randomly generated inputs. 
+Curious about F# and want to understand how is it different from C#? 
 
-Property-based testing is a great way to find edge cases, and also helps you to 
-understand and document the behaviour of your code under all conditions. 
+In this talk, we'll look at the basics of coding in F#, and how functional programming differs from object-oriented programming.
+Along the way, there will be many examples showing the same code written in C# and F# so that you can see for yourself how the two languages differ in style and approach.
 
-This talk will introduce property-based testing and show how it works, 
-and why you should consider adding it to your arsenal of testing tools.  
-
-<a href="../pbt/">Slides and more information</a>
-
-This talk is based on my blog posts on this topic:
-
-* <a href="/posts/property-based-testing/">An introduction to property-based testing</a>
-* <a href="/posts/property-based-testing-2/">Choosing properties for property-based testing</a>
+<a href="../csharp/">Slides and more information</a>
 
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/p2kfWH"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="pbt320.jpg"></a>
-</div>
-    
-</div>
-
-------
-
-<div class="row video">  
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-## Dr Frankenfunctor and the Monadster
-
-You've got a pile of assorted functions lying around. Each one is useful and reliable, but they just don't fit together properly. 
-How can you assemble them into a complete system that can stand on its own two feet and terrorize the local villagers?
-
-In this session, I'll show how functional programming can transform all sorts of existing code into shapes that are plug-compatible and which can be bolted together effortlessly.
-
-<a href="../monadster/">Slides and more information</a>
-
-This talk is based on my blog post on this topic:
-
-* <a href="/posts/monadster/">Dr Frankenfunctor and the Monadster</a>
-
-</div>
-
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/8TwY8C"><img alt="Video from NDC London 2016, Jan 14, 2016" src="monadster320.jpg"></a>
-</div>
-    
-</div>
-
-------
-
-<div class="row video">  
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-## Enterprise Tic-Tac-Toe<
-
-Follow along as I ridiculously over-engineer a simple game to demonstrate how 
-functional programming can be used to create a real-world "enterprise-ready" application.
-
-Topics covered include: encoding business rules into types, data hiding with parametric polymorphism, 
-using functions for capability-based security, exposing a REST API with 
-HATEAOS, the functional approach to logging, actors, scalability and more. 
-
-<a href="../ettt/">Slides and more information</a>
-
-This talk is based on my blog posts on this topic:
-
-* <a href="/posts/enterprise-tic-tac-toe/">Enterprise Tic-Tac-Toe</a>
-* <a href="/posts/enterprise-tic-tac-toe-2/">Enterprise Tic-Tac-Toe Part 2, In which I throw away the previous design</a>
-
-</div>
-
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/YE4pW2"><img alt="Video from NDC Oslo, Jun 17, 2015" src="ettt320.jpg"></a>
+<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC Oslo, June 14, 2017" src="csharp320.jpg"></a>
 </div>
 
 </div>
-
-
-------
-
-<div class="row video">  
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-## Designing with Capabilities
-
-We all want to produce modular and robust code that is easy to test and refactor, 
-and we have design principles such as SOLID that help us do that.
-
-In this talk I'll look at a very different approach to design using "capabilities" 
-and the principle of least authority. I'll show how using these design techniques 
-throughout your core domain (and not just at your API boundary) also 
-leads to well-designed and modular code.
-
-I'll demonstrate how to design and use a capability based approach, 
-how capabilities can be quickly combined and restricted easily, 
-and how capabilities are a natural fit with a REST API that uses HATEAOS.
-
-<a href="../cap/">Slides and more information</a>
-
-This talk is based on my blog posts on this topic:
-
-* <a href="/posts/capability-based-security/">A functional approach to authorization</a>
-* <a href="/posts/capability-based-security-2/">Constraining capabilities based on identity and role</a>
-* <a href="/posts/capability-based-security-3/">Using types as access tokens</a>
-
-</div>
-
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/hmzGFn"><img alt="Video from NDC London, Jan 15, 2016" src="cap320.jpg"></a>
-</div>
-    
-</div>
-
 
 ------
 
@@ -284,6 +180,37 @@ This talk is based on my blog posts on this topic:
 
 </div>
 
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## Property-based testing
+
+We are all familiar with example-based testing, as typified by TDD and BDD. 
+Property-based testing takes a very different approach, where a single test is run hundreds of times with randomly generated inputs. 
+
+Property-based testing is a great way to find edge cases, and also helps you to 
+understand and document the behaviour of your code under all conditions. 
+
+This talk will introduce property-based testing and show how it works, 
+and why you should consider adding it to your arsenal of testing tools.  
+
+<a href="../pbt/">Slides and more information</a>
+
+This talk is based on my blog posts on this topic:
+
+* <a href="/posts/property-based-testing/">An introduction to property-based testing</a>
+* <a href="/posts/property-based-testing-2/">Choosing properties for property-based testing</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://goo.gl/p2kfWH"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="pbt320.jpg"></a>
+</div>
+    
+</div>
 
 ------
 
@@ -291,20 +218,114 @@ This talk is based on my blog posts on this topic:
 
 <div class="col-sm-8" style="float:right;" markdown="1">
 
-## F# for C# Programmers
+## Dr Frankenfunctor and the Monadster
 
-Curious about F# and want to understand how is it different from C#? 
+You've got a pile of assorted functions lying around. Each one is useful and reliable, but they just don't fit together properly. 
+How can you assemble them into a complete system that can stand on its own two feet and terrorize the local villagers?
 
-In this talk, we'll look at the basics of coding in F#, and how functional programming differs from object-oriented programming.
-Along the way, there will be many examples showing the same code written in C# and F# so that you can see for yourself how the two languages differ in style and approach.
+In this session, I'll show how functional programming can transform all sorts of existing code into shapes that are plug-compatible and which can be bolted together effortlessly.
 
-<a href="../csharp/">Slides and more information</a>
+<a href="../monadster/">Slides and more information</a>
+
+This talk is based on my blog post on this topic:
+
+* <a href="/posts/monadster/">Dr Frankenfunctor and the Monadster</a>
 
 </div>
 
 <div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC Oslo, June 14, 2017" src="csharp320.jpg"></a>
+<a href="https://goo.gl/8TwY8C"><img alt="Video from NDC London 2016, Jan 14, 2016" src="monadster320.jpg"></a>
+</div>
+    
+</div>
+
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## Enterprise Tic-Tac-Toe
+
+Follow along as I ridiculously over-engineer a simple game to demonstrate how 
+functional programming can be used to create a real-world "enterprise-ready" application.
+
+Topics covered include: encoding business rules into types, data hiding with parametric polymorphism, 
+using functions for capability-based security, exposing a REST API with 
+HATEAOS, the functional approach to logging, actors, scalability and more. 
+
+<a href="../ettt/">Slides and more information</a>
+
+This talk is based on my blog posts on this topic:
+
+* <a href="/posts/enterprise-tic-tac-toe/">Enterprise Tic-Tac-Toe</a>
+* <a href="/posts/enterprise-tic-tac-toe-2/">Enterprise Tic-Tac-Toe Part 2, In which I throw away the previous design</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://goo.gl/YE4pW2"><img alt="Video from NDC Oslo, Jun 17, 2015" src="ettt320.jpg"></a>
 </div>
 
 </div>
+
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## Designing with Capabilities
+
+We all want to produce modular and robust code that is easy to test and refactor, 
+and we have design principles such as SOLID that help us do that.
+
+In this talk I'll look at a very different approach to design using "capabilities" 
+and the principle of least authority. I'll show how using these design techniques 
+throughout your core domain (and not just at your API boundary) also 
+leads to well-designed and modular code.
+
+I'll demonstrate how to design and use a capability based approach, 
+how capabilities can be quickly combined and restricted easily, 
+and how capabilities are a natural fit with a REST API that uses HATEAOS.
+
+<a href="../cap/">Slides and more information</a>
+
+This talk is based on my blog posts on this topic:
+
+* <a href="/posts/capability-based-security/">A functional approach to authorization</a>
+* <a href="/posts/capability-based-security-2/">Constraining capabilities based on identity and role</a>
+* <a href="/posts/capability-based-security-3/">Using types as access tokens</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://goo.gl/hmzGFn"><img alt="Video from NDC London, Jan 15, 2016" src="cap320.jpg"></a>
+</div>
+    
+</div>
+
+
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## Code Review/Refactor Live
+
+In this live session for [Community for F#](http://c4fsharp.net/), I refactor some ugly code into something a bit cleaner and functional, to give viewers an insight into basic F# coding practices, and also show how to avoid some common code smells.
+
+[GitHub repository with code samples is here](https://github.com/swlaschin/RefactoringFSharp).
+
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://goo.gl/6L5Sbd"><img alt="Code Review/Refactor Live" src="refactoring320.jpg"></a>
+</div>
+    
+</div>
+
+
 
