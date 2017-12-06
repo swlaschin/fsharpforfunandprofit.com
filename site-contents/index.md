@@ -125,3 +125,10 @@ F# for C# Developers:
 * [We don't need no stinking UML diagrams](/posts/no-uml-diagrams/) or, why in many cases, using UML for class diagrams is not necessary.
 * [Introvert and extrovert programming languages](/posts/introvert-vs-extrovert/)
 * [Swapping type-safety for high performance using compiler directives](/posts/typesafe-performance-with-compiler-directives/)
+
+## Support This Site 
+
+{% include donate.inc %}
+
+
+

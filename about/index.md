@@ -5,7 +5,7 @@ description:
 hasComments: 1
 ---
 
-## About this site ###
+## About This Site 
 
 The goal of this site is to introduce .NET developers to the joys of functional programming, and F# in particular.
 
@@ -17,14 +17,14 @@ My approach is unapologetically .NET centric and non-academic. For example:
 * I will draw analogies and examples from object-oriented concepts such as design patterns.
 * I will avoid many of the more sophisticated concepts (monads, lazy vs. eager evaluation, etc) and focus on concepts that are most useful to newcomers from the OO world: algebraic types, pattern matching, higher-order functions, etc.  
 
-## About me ###
+## About Me 
 
-I am a developer and architect at a UK non-software company. I have over 20 years experience in a wide variety of areas from high-level UX/HCI to low-level database implementations.
+I am a developer and architect running [a small consultancy](). I have over 20 years experience in a wide variety of areas from high-level UX/HCI to low-level database implementations.
 
 Although I currently use C# in my day job, I have written serious code in many languages, my favorites being Smalltalk. Python, and more recently, F# (hence this site).
 
 
-## FAQ ###
+## FAQ 
 
 **Most of the code examples use functional style rather than object-oriented style. F# can do both. Why the emphasis on functional? Don't you like OOP?** 
 
@@ -49,7 +49,7 @@ I do highlight the most important bits on the [contents page](/site-contents/) a
 
 
 
-## Forbidden Words ###
+## Forbidden Words 
 
 Many innocent people might visit this site, so to avoid causing offence, certain obnoxious words and phrases are strongly discouraged. 
 
@@ -61,7 +61,7 @@ Repeated use of these words will result in banning. You will be exiled and force
 ** Seriously! As I make clear on the home page, this site is not targeted at mathematicians or Haskell programmers. It is targeted at the vast numbers of C#, VB and Python programmers who are coming to functional programming for the first time. F# is a fantastically accessible language for the average enterprise programmer, but mathematical jargon puts a lot of people off ([*"a monad is a monoid in the category of endofunctors, what's the problem?"*](http://james-iry.blogspot.co.uk/2009/05/brief-incomplete-and-mostly-wrong.html)), and I think it is much better to explain F# with concepts from within its native environment, rather than using terminology that originated elsewhere and is often not applicable. For example, treating F# computation expressions like Haskell monads can often make things more confusing. Doing this also helps to bypass the ["how can you get anything done in language X? It doesn't even have y."](http://en.wikipedia.org/wiki/Paul_Graham_(computer_programmer)#Blub) debate and focus on what F# can do well.
 </sub>
 
-## Feedback ###
+## Feedback 
 
 Please help me improve this site. I am happy to receive any constructive criticism or comments.  
 
@@ -69,7 +69,11 @@ If you have comments or suggestions about this site as whole, please leave a com
 
 If you'd like to get occasional updates about the site, please [subscribe to the newsletter](\subscribe.html).
 
-## Acknowledgements ###
+## Support This Site 
+
+{% include donate.inc %}
+
+## Acknowledgements 
 
 First of all, many thanks to Don Syme and the rest of the F# team who have created a great language which integrates so well with .NET. Thanks to them, there is a hope that a fully functional language might finally hit the mainstream.
 
