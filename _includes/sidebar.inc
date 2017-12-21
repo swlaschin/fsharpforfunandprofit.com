@@ -33,7 +33,7 @@ Or buy my proper book: <br>
 
 <h6>Recent Posts</h6>
 {% for post in site.posts limit:3 %}
-<div><a href="{{ post.url }}/" title="{{ post.title | escape }}">{{ post.title | escape }}</a></div>
+<div><a href="{{ post.url }}" title="{{ post.title | escape }}">{{ post.title | escape }}</a></div>
 {% endfor %}
 <div class="archive"><a href="/archives/">&raquo; Archives</a></div>
 

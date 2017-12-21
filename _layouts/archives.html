@@ -18,7 +18,7 @@ layout: default
 		{% for post in entry.posts  %}
 		<div class="postIndexItem">
 			<div class="date">{{ post.date }}</div>
-			<div class="title"><a href="{{ post.url }}/" title="{{ page.title | escape }}">{{ post.title | escape }}</a></div>
+			<div class="title"><a href="{{ post.url }}" title="{{ page.title | escape }}">{{ post.title | escape }}</a></div>
 			<div class="description">{{post.description}}</div>
 		</div>	
 		{% endfor %}
