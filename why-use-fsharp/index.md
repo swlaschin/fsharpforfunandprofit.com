@@ -49,10 +49,10 @@ let worker = Worker jdoe
 
 <div class="row whyuse" > 
 <div class="col-md-6" style="float:right;" markdown="1">
-<h2><img src="/assets/img/glyphicons/glyphicons_343_thumbs_up.png" class="bs-icon"> Convenience</h2>
 
+## <img src="/assets/img/glyphicons/glyphicons_343_thumbs_up.png" class="bs-icon"> Convenience
 
-Many common programming tasks are much simpler in F#.  This includes things like creating and using [/posts/conciseness-type-definitions/](complex type definitions), doing [list processing](/posts/conciseness-extracting-boilerplate/), [/posts/convenience-types/](comparison and equality), [state machines](/posts/designing-with-types-representing-states/), and much more. 
+Many common programming tasks are much simpler in F#.  This includes things like creating and using [complex type definitions](/posts/conciseness-type-definitions/), doing [list processing](/posts/conciseness-extracting-boilerplate/), [comparison and equality]([/posts/convenience-types/), [state machines](/posts/designing-with-types-representing-states/), and much more. 
 
 And because functions are first class objects, it is very easy to create powerful and reusable code by creating functions that have <a href="/posts/conciseness-extracting-boilerplate/">other functions as parameters</a>, or that <a href="/posts/conciseness-functions-as-building-blocks/">combine existing functions</a> to create new functionality. 
 
@@ -80,6 +80,7 @@ let result = add2times3 5
 
 <div class="row whyuse" > 
 <div class="col-md-6" style="float:right;" markdown="1">
+
 <h2><img src="/assets/img/glyphicons/glyphicons_150_check.png" class="bs-icon"> Correctness</h2>
 
 
@@ -119,6 +120,7 @@ let distance = 10<m> + 10<ft> // error!
 
 <div class="row whyuse" > 
 <div class="col-md-6" style="float:right;" markdown="1">
+
 <h2><img src="/assets/img/glyphicons/glyphicons_054_clock.png" class="bs-icon"> Concurrency</h2>
 
 

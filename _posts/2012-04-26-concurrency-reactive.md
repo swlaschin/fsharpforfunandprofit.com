@@ -16,7 +16,7 @@ But as we know, event handling, like concurrency in general, can be tricky to im
 
 Even you can successfully implement these requirements, the code tends to be spaghetti like and hard to understand, even with the best intentions.
 
-Is there a approach that can make event handling easier? 
+Is there an approach that can make event handling easier? 
 
 We saw in the previous post on message queues that one of the advantages of that approach was that the requests were "serialized" making it conceptually easier to deal with.
  
