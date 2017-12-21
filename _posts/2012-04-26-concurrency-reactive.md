@@ -14,7 +14,7 @@ And events are the basis of one of the most common OO design patterns: the "Obse
 
 But as we know, event handling, like concurrency in general, can be tricky to implement.  Simple event logic is straightforward, but what about logic like "do something if two events happen in a row but do something different if only one event happens" or "do something if two events happen at roughly the same time". And how easy is it to combine these requirements in other, more complex ways?
 
-Even you can successfully implement these requirements, the code tends to be spaghetti like and hard to understand, even with the best intentions.
+Even if you can successfully implement these requirements, the code tends to be spaghetti like and hard to understand, even with the best intentions.
 
 Is there an approach that can make event handling easier? 
 
