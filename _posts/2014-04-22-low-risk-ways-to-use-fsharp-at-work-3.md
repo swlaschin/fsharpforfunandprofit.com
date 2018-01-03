@@ -327,31 +327,35 @@ let ``When ToLower(), expect lowercase letters``() =
 
 *The above code is [available on github](http://github.com/swlaschin/low-risk-ways-to-use-fsharp-at-work/blob/master/TestsInFsharp/TestWithFsUnit.fs).*
  
-A very different approach is used by [Unquote](http://code.google.com/p/unquote/).
-The Unquote approach is to wrap any F# expression in [F# quotations](http://msdn.microsoft.com/en-us/library/dd233212.aspx) and then evaluate it.
+A very different approach is used by [Unquote](https://github.com/SwensenSoftware/unquote).
+The Unquote approach is to wrap any F# expression in [F# quotations](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/code-quotations) and then evaluate it.
 If a test expression throws an exception, the test will fail and print not just the exception, but each step up to the point of the exception.
 This information could potentially give you much more insight in why the assert fails.
 
 Here's a very simple example:
  
 ```fsharp
+open Swensen.Unquote
+
 [<Test>]
 let ``When 2 is added to 2 expect 4``() = 
     test <@ 2 + 2 = 4 @>
 ``` 
 
-There are also a number of shortcut operators such as `=?` and `>?` that allow you to write your tests even more simply -- no asserts anywhere!
+There are also a number of shortcut operators such as `=!` and `>!` that allow you to write your tests even more simply -- no asserts anywhere!
 
 ```fsharp
+open Swensen.Unquote
+
 [<Test>]
 let ``2 + 2 is 4``() = 
    let result = 2 + 2
-   result =? 4
+   result =! 4
 
 [<Test>]
 let ``2 + 2 is bigger than 5``() = 
    let result = 2 + 2
-   result >? 5
+   result >! 5
 ``` 
 <a name="test-fscheck"></a>
 
