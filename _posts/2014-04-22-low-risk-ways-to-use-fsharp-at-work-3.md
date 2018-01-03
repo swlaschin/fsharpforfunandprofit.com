@@ -410,13 +410,15 @@ With this in place we create tests that:
 1. Use the `Check.Quick` function to generate hundreds of random test cases and send them into that property checker.
 
 ```fsharp
+open FsCheck
+
 [<Test>]
 let ``Test that roman numerals have no more than one V``() = 
     let property num = 
         // convert the number to roman and check the property
         arabicToRoman num |> ``has max rep of one V``
 
-    Check.QuickThrowOnFailure (testWithRange property)
+    Check.QuickThrowOnFailure property
 
 [<Test>]
 let ``Test that roman numerals have no more than three Xs``() = 
@@ -424,7 +426,7 @@ let ``Test that roman numerals have no more than three Xs``() =
         // convert the number to roman and check the property
         arabicToRoman num |> ``has max rep of three Xs``
 
-    Check.QuickThrowOnFailure (testWithRange property)
+    Check.QuickThrowOnFailure property
 ```
 
 Here are the results of the test. You can see that 100 random numbers have been tested, not just one.
