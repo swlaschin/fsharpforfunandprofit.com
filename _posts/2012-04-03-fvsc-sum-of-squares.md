@@ -37,20 +37,17 @@ Next, here's a C# implementation using the classic (non-functional) style of a C
 ```csharp
 public static class SumOfSquaresHelper
 {
-   public static int Square(int i)
-   {
-      return i * i;
-   }
+    public static int Square(int i) => i * i;
 
-   public static int SumOfSquares(int n)
-   {
-      int sum = 0;
-      for (int i = 1; i <= n; i++)
-      {
-         sum += Square(i);
-      }
-      return sum;
-   }
+    public static int SumOfSquares(int n)
+    {
+        int sum = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            sum += Square(i);
+        }
+        return sum;
+    }
 }
 ```
 
@@ -64,7 +61,7 @@ Let's take each of these in turn.
 
 ### Less code
 
-The most obvious difference is that there is a lot more C# code. 13 C# lines compared with 3 F# lines (ignoring comments). The C# code has lots of "noise", things like curly braces, semicolons, etc. And in C# the functions cannot stand alone, but need to be added to some class ("SumOfSquaresHelper"). F# uses whitespace instead of parentheses, needs no line terminator, and the functions can stand alone. 
+The most obvious difference is that there is a lot more C# code. 10 C# lines compared with 3 F# lines (ignoring comments). The C# code has lots of "noise", things like curly braces, semicolons, etc. And in C# the functions cannot stand alone, but need to be added to some class ("SumOfSquaresHelper"). F# uses whitespace instead of parentheses, needs no line terminator, and the functions can stand alone. 
 
 In F# it is common for entire functions to be written on one line, as the "square" function is. The `sumOfSquares` function could also have been written on one line. In C# this is normally frowned upon as bad practice.
 
@@ -113,7 +110,7 @@ The type checking is very strict! If you try using a list of floats (`[1.0..n]`)
 
 ### Interactive development
 
-Finally, F# has an interactive window where you can test the code immediately and play around with it. In C# there is no easy way to do this. 
+Finally, F# has an interactive window where you can test the code immediately and play around with it. 
 
 For example, I can write my square function and immediately test it:
 
@@ -144,12 +141,10 @@ So here is another C# version -- a line-for-line translation of the F# code.
 ```csharp
 public static class FunctionalSumOfSquaresHelper
 {
-   public static int SumOfSquares(int n)
-   {
-      return Enumerable.Range(1, n)
-         .Select(i => i * i)
-         .Sum();
-   }
+    public static int SumOfSquares(int n) =>
+        Enumerable.Range(1, n)
+           .Select(i => i * i)
+           .Sum();    
 }
 ```
 
