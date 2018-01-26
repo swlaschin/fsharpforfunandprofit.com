@@ -283,7 +283,7 @@ type Product = {SKU:string; Price: float} with
         (this.Price * float qty) - discount
 
     // tuple style
-    member this.TupleTotal(qty,discount) = 
+    member this.TupleTotal (qty, discount) = 
         (this.Price * float qty) - discount
 ```
 
@@ -292,7 +292,7 @@ And here's some test code:
 ```fsharp
 let product = {SKU="ABC"; Price=2.0}
 let total1 = product.CurriedTotal 10 1.0 
-let total2 = product.TupleTotal(10,1.0)
+let total2 = product.TupleTotal (10, 1.0)
 ```
 
 No difference so far.
@@ -318,8 +318,8 @@ The tuple-style approach supports named parameters:
 
 ```fsharp
 let product = {SKU="ABC"; Price=2.0}
-let total3 = product.TupleTotal(qty=10,discount=1.0)
-let total4 = product.TupleTotal(discount=1.0, qty=10)
+let total3 = product.TupleTotal (qty=10, discount=1.0)
+let total4 = product.TupleTotal (discount=1.0, qty=10)
 ```
 
 As you can see, when names are used, the parameter order can be changed.  
@@ -339,7 +339,7 @@ Here's an example:
 type Product = {SKU:string; Price: float} with
 
     // optional discount
-    member this.TupleTotal2(qty,?discount) = 
+    member this.TupleTotal2 (qty,?discount) = 
         let extPrice = this.Price * float qty
         match discount with
         | None -> extPrice
@@ -352,10 +352,10 @@ And here's a test:
 let product = {SKU="ABC"; Price=2.0}
 
 // discount not specified
-let total1 = product.TupleTotal2(10)
+let total1 = product.TupleTotal2 (10)
 
 // discount specified
-let total2 = product.TupleTotal2(10,1.0) 
+let total2 = product.TupleTotal2 (10,1.0) 
 ```
 
 This explicit matching of the `None` and `Some` can be tedious, and there is a slightly more elegant solution for handling optional parameters.
@@ -369,7 +369,7 @@ Let's see the same code rewritten to use `defaultArg`
 type Product = {SKU:string; Price: float} with
 
     // optional discount
-    member this.TupleTotal2(qty,?discount) = 
+    member this.TupleTotal2 (qty,?discount) = 
         let extPrice = this.Price * float qty
         let discount = defaultArg discount 0.0
         //return
@@ -393,12 +393,12 @@ Here's an example, with yet another variant on the `TupleTotal` method!
 type Product = {SKU:string; Price: float} with
 
     // no discount
-    member this.TupleTotal3(qty) = 
+    member this.TupleTotal3 (qty) = 
         printfn "using non-discount method"
         this.Price * float qty
 
     // with discount
-    member this.TupleTotal3(qty, discount) = 
+    member this.TupleTotal3 (qty, discount) = 
         printfn "using discount method"
         (this.Price * float qty) - discount
 ```
@@ -413,10 +413,10 @@ And here's a test:
 let product = {SKU="ABC"; Price=2.0}
 
 // discount not specified
-let total1 = product.TupleTotal3(10) 
+let total1 = product.TupleTotal3 (10) 
 
 // discount specified
-let total2 = product.TupleTotal3(10,1.0) 
+let total2 = product.TupleTotal3 (10, 1.0) 
 ```
 
 <a id="downsides-of-methods"></a>
