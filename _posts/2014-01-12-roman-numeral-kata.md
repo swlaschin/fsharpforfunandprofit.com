@@ -6,7 +6,7 @@ categories: ["Worked Examples"]
 ---
 
 I recently watched a video called ["Roman Numerals Kata with Commentary"](http://blog.coreyhaines.com/2012/12/roman-numerals-kata-with-commentary.html). 
-In it, Corey Haines demonstrates how to implement the [Arabic to Roman Numerals Kata](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) in Ruby using a TDD approach.  
+In it, Corey Haines demonstrates how to implement the [Arabic to Roman Numerals Kata](http://codingdojo.org/kata/RomanNumerals/) in Ruby using a TDD approach.  
 
 *This video annoyed me intensely.*
 
@@ -24,13 +24,13 @@ In standard TDD fashion, the video starts with implementing a initial failing ca
 
 This was the first thing that irritated me -- diving into code without really understanding the requirements. 
 
-A [programming kata](http://en.wikipedia.org/wiki/Kata_(programming\)) is so called because the goal is to practice your skills as a developer. 
+A [programming kata](http://en.wikipedia.org/wiki/Kata_(programming)) is so called because the goal is to practice your skills as a developer. 
 But for me, coding skills are just one aspect of a being a software developer, and not always the most important. 
 
 If there is anything that needs practicing by most developers, it is listening to and understanding the needs of the customer (a.k.a. requirements).
 We should never forget that our goal is to deliver value, not just to write code.
 
-In this case, even though there is a [wiki page](http://codingdojo.org/cgi-bin/wiki.pl?KataRomanNumerals) for the kata, the requirements are still somewhat fuzzy,
+In this case, even though there is a [page](http://codingdojo.org/kata/RomanNumerals/) for the kata, the requirements are still somewhat fuzzy,
 and so I view this as an excellent opportunity to drill down into them, and maybe learn something new.
 
 ## Becoming a domain expert
@@ -103,7 +103,7 @@ Indeed, part of our job as a developer is to help clarify things and eliminate a
 ## The requirements for this kata
 
 > *"Programmers are not to be measured by their ingenuity and their logic but by the completeness of their case analysis."*
-> -- *Alan Perlis, [Epigrams](http://www.cs.yale.edu/quotes.html)*
+> -- *Alan Perlis, [Epigrams](http://cpsc.yale.edu/epigrams-programming)*
 
 I think we would all agree that having unambiguous and testable requirements is a critical step towards having a successful project. 
 
@@ -232,7 +232,7 @@ Most property-based testing tools are modelled after [Haskell's QuickCheck](http
 which is a tool that automatically generates "interesting" inputs for you, in order to find edge cases as quickly as possible.
 These inputs would include things like nulls, negative numbers, empty lists, strings with non-ascii characters in them, and so on.
 
-An equivalent to QuickCheck is available for most languages now, including [FsCheck](https://github.com/fsharp/FsCheck) for F#.
+An equivalent to QuickCheck is available for most languages now, including [FsCheck](https://fscheck.github.io/FsCheck/) for F#.
 
 The advantage of property-based testing is that it forces you to think about the requirements in general terms, rather than as lots of special cases.
 
