@@ -126,6 +126,33 @@ Along the way, there will be many examples showing the same code written in C# a
 
 <div class="col-sm-8" style="float:right;" markdown="1">
 
+## The Power of Composition
+
+Composition is a fundamental principle of functional programming, but how is it different from an object-oriented approach, and how do you use it in practice? 
+
+In this talk for beginners, we'll start by going over the basic concepts of functional programming, and then look at some different ways that composition can be used to build large things from small things. 
+
+After that, we'll see how composition is used in practice, beginning with a simple FizzBuzz example, and ending with a complete (object-free!) web application.
+
+<a href="../composition/">Slides and more information</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+COMING SOON!
+<!--
+<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC London, Jan 17, 2018" src="composition320.jpg"></a>
+-->
+</div>
+
+</div>
+
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
 ## Understanding parser combinators
 
 Traditionally, writing parsers has been hard, involving arcane tools like Lex and Yacc.

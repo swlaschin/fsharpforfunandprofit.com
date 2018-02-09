@@ -2,4 +2,4 @@
 /_site
 /sys$command
 /.sass-cache/
-
+*.log
