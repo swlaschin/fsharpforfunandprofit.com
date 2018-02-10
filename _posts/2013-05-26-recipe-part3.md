@@ -96,7 +96,7 @@ And just above it is the code for the use cases in the application.  The code in
 
 And then just above that is the "UI layer" and then the "DB layer" and so on, until you get to the top.
 
-What's nice about this approach is that, if you are a newcomer to a code base, you always know where to start. The first few files will always be the "bottom layer" of an application and the last few files will always be the "top layer". No folders needed!
+What's nice about this approach is that, if you are a newcomer to a code base, you always know where to start. The first few files will always be the "bottom layer" of an application and the last few files will always be the "top layer".
 
 ## Putting code in modules, not classes
 
@@ -235,15 +235,15 @@ For our recipe we will use a mixture of approaches, with the following guideline
 
 Of course, there are many ways to organize types, but these guidelines act as a good default starting point.
 
-### Dude, where are my folders?
+### Dude, what about folders?
 
-A common complaint is that F# projects do not support a folder structure, which supposedly makes it hard to organize large projects. 
+F# tooling, such as that in Visual Studio, supports folders for when you have more complicated projects. However, they're not the same kinds of folders that you would expect if you're coming from C#.
 
-If you are doing a pure object-oriented design, then this is a legitimate complaint.  But as you can see from the discussion above, having a linear list of modules is very helpful (if not strictly necessary) to ensure that the dependencies are maintained correctly. Yes, in theory, the files could be scattered about and the compiler might be able to figure out the correct compilation order, but in practice, it's not easy for the compiler to determine this order. 
+Folders in F# tools must conform to file ordering semantics, just like files. For some projects, top-down ordering is not always as straightforward as the, "each file depends upon the one above it" idiom. There may actually be groups of files which reside in the same "level" of the dependency order, and these files may be related to overall functionality. This is where folders come in.
 
-Even more importantly, it's not easy for a *human* to determine the correct order either, and so it would make maintenance more painful than it needed to be.
+A concrete example of this is in the [F# tools for Visual Studio itself](https://github.com/Microsoft/visualfsharp/tree/master/vsintegration/src/FSharp.Editor). In this project, the top-down stack of dependencies is actually quite small, despite there being a moderate amount of files. The "Completion" folder contains multiple files which are about providing completion (IntelliSense) in Visual Studio. There are multiple kinds of completion in Visual Studio, and logic which can be shared across some of them - but that shared logic would not be applicable for anything else.
 
-In reality, even for large projects, not having folders is not as much of a problem as you might think. There are a number of large F# projects which successfully work within this limitation, such as the F# compiler itself. See the post on [cycles and modularity in the wild](/posts/cycles-and-modularity-in-the-wild/) for more.
+To learn more about ordering with F# and its effects on a codebase, see the post on [cycles and modularity in the wild](/posts/cycles-and-modularity-in-the-wild/).
 
 ### Help, I have mutual dependencies between my types
 
