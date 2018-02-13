@@ -19,13 +19,9 @@ Here's the blurb for the talk:
 
 ## Videos
 
-Coming soon!
-
-<!-- 
 Video from NDC London, Jan 17, 2018 (Click image to view video) 
 
-[![Video from NDC London, Jan 17, 2018](composition427.jpg)](https://goo.gl/YE4pW2)
---> 
+[![Video from NDC London, Jan 17, 2018](composition427.jpg)](https://vimeo.com/254635723)
 
 
 ## Slides 

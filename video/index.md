@@ -139,10 +139,7 @@ After that, we'll see how composition is used in practice, beginning with a simp
 </div>
 
 <div class="col-sm-4" style="float:left;">
-COMING SOON!
-<!--
-<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC London, Jan 17, 2018" src="composition320.jpg"></a>
--->
+<a href="https://vimeo.com/254635723"><img alt="Video from NDC London, Jan 17, 2018" src="composition320.jpg"></a>
 </div>
 
 </div>
