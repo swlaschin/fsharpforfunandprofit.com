@@ -202,7 +202,7 @@ type Shape =        // define a "union" of alternative structures
     | Circle of radius:int 
     | Rectangle of height:int * width:int
     | Point of x:int * y:int 
-    | Polygon of pointList:(int * int) list
+    | Polygon of pointList:(int * int) List
 
 let draw shape =    // define a function "draw" with a shape param
   match shape with
