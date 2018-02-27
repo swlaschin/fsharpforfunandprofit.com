@@ -5,6 +5,7 @@ description: Support this site by buying a book
 hasComments: 1
 image: "/books/domain-modeling-made-functional-320.jpg"
 isBookPage: 1
+nav: books
 ---
 
 
@@ -22,13 +23,17 @@ It does have some chapters on stuff I haven't blogged about (yet) such how to de
 You can get it [from the Pragmatic Programmers site](https://goo.gl/oviuHT)
 or order on [Amazon US](https://goo.gl/rNZZc6) or [Amazon UK](https://goo.gl/aUH1kN). Also available from most other suppliers around the world such as [the Book Depository](https://www.bookdepository.com/Domain-Modeling-Made-Functional-Scott-Wlaschin/9781680502541).
 
-<a class="btn btn-primary" href="https://goo.gl/oviuHT">Buy from Pragmatic Programmers site</a>
+<a class="btn btn-primary" href="https://goo.gl/oviuHT">Buy from Pragmatic Programmers site (eBook and paper)</a>
 
 <a class="btn btn-primary" href="https://goo.gl/iR36WC">Amazon US <img src="/assets/img/US-flag.gif"></a>
 <a class="btn btn-primary" href="https://goo.gl/JYkL8j">Amazon UK <img src="/assets/img/UK-flag.gif"></a>
 
 <a class="btn btn-primary" href="https://goo.gl/zA1mhH">Amazon CA <img src="/assets/img/CA-flag.gif"></a>
 <a class="btn btn-primary" href="https://goo.gl/LV3xEg">Amazon DE <img src="/assets/img/DE-flag.gif"></a>
+
+<a class="btn btn-primary" href="https://www.bookdepository.com/Domain-Modeling-Made-Functional-Scott-Wlaschin/9781680502541">The Book Depository (Free delivery worldwide) <img src="/assets/img/globe-icon-inverse.png"></a>
+
+
 
 If you enjoy the book, I'd be grateful if you could leave a review on [the Goodreads page](https://www.goodreads.com/book/show/34921689-domain-modeling-made-functional).
 
