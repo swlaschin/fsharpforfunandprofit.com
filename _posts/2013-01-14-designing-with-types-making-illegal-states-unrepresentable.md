@@ -139,7 +139,6 @@ let newContact = updatePostalAddress contact newPostalAddress
 *WARNING: I am using `option.Value` to extract the contents of an option in this code. 
 This is ok when playing around interactively but is extremely bad practice in production code! You should always use matching to handle both cases of an option.*
 
-{% include book_page_ddd.inc %}
 
 ## Why bother to make these complicated types? 
 
@@ -160,3 +159,4 @@ Finally, if the logic is represented by a type, any changes to the business rule
 
 In the next post, we'll dig deeper into the last point. As you try to represent business logic using types, you may suddenly find that can gain a whole new insight into the domain.
 
+{% include book_page_ddd_img.inc %}

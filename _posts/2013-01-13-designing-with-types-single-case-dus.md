@@ -121,7 +121,6 @@ type Contact =
 
 Another nice thing about the union type is that the implementation can be encapsulated with module signatures, as we'll discuss below.
 
-{% include book_page_ddd.inc %}
 
 ## Naming the "case" of a single case union
 
@@ -277,6 +276,9 @@ let createEmail = CreateEmailAddressWithContinuations success failure
 createEmail "x@example.com"
 createEmail "example.com"
 ```
+
+{% include book_page_ddd.inc %}
+
 
 ## Creating modules for wrapper types ###
 

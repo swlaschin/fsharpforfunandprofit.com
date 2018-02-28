@@ -143,7 +143,7 @@ let areEqual = (s50' = s100')  // compiler error
 
 This kind of thing will make working with dictionaries and lists harder.
 
-{% include book_page_ddd.inc %}
+{% include book_page_pdf.inc %}
 
 ### Refactoring
 

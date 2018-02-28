@@ -144,7 +144,6 @@ For example, what should happen if we try to verify an already verified email?
 What happens if we try to remove an item from an empty shopping cart? 
 What happens if white tries to play when the state is "BlackToPlay"? And so on.
 
-{% include book_page_ddd.inc %}
 
 ## How to implement simple state machines in F# ##
 
@@ -353,6 +352,9 @@ module EmailContactInfo =
             // ignore
             printfn "sending password reset"
 ```
+
+{% include book_page_ddd.inc %}
+
 
 ## Using explicit cases to replace case/switch statements ##
 
