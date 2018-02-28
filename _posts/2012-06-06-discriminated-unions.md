@@ -105,6 +105,8 @@ type IntOrBool = Int32 of Int32 | Boolean of Boolean
 
 This "duplicate naming" style is actually quite common, because it documents exactly what the component types are.
 
+{% include book_page_pdf.inc %}
+
 ## Constructing a value of a union type
 
 To create a value of a union type, you use a "constructor" that refers to only one of the possible union cases. The constructor then follows the form of the definition, using the case label as if it were a function. In the `IntOrBool` example, you would write:

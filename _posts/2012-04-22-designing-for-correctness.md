@@ -222,6 +222,9 @@ type Cart with
    member this.Display = displayCart this 
 ```
 
+{% include book_page_ddd.inc %}
+
+
 ## Testing the design ##
 
 Let's exercise this code now:

@@ -135,6 +135,8 @@ Furthermore, many people claim that designing code interactively enforces good d
 and therefore, code that is suitable for interactive evaluation will also be code that is easy to test. Conversely, code that cannot be
 tested interactively will probably be hard to test as well.
 
+{% include book_page_pdf.inc %}
+
 ### The C# code revisited
 
 My original example was written using "old-style" C#.  C# has incorporated a lot of functional features, and it is possible to rewrite the example in a more compact way using the LINQ extensions. 

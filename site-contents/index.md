@@ -51,7 +51,6 @@ Types can be used to represent the domain in a fine-grained, self documenting wa
 * [Talk: Enterprise Tic-Tac-Toe](/ettt/). Follow along as I ridiculously over-engineer a simple game to demonstrate how functional programming can be used to create a real-world “enterprise-ready” application.  
 * [Talk: Designing with Capabilities](/cap/) demonstrates a very different approach to design using "capabilities" and the principle of least authority. I’ll show how using these design techniques throughout your core domain (and not just at your API boundary) also leads to well-designed and modular code. 
 
-
 ## Functional Patterns
 
 These talks and posts explain some core patterns in functional programming -- concepts such as "map", "bind", monads and more.
@@ -65,6 +64,8 @@ These talks and posts explain some core patterns in functional programming -- co
 * [Map, bind, apply, lift, sequence and traverse](/series/map-and-bind-and-apply-oh-my.html): A series describing some of the core functions for dealing with generic data types. 
 * [Fold and recursive types](/series/recursive-types-and-folds.html): A look at recursive types, catamorphisms, tail recursion, the difference between left and right folds, and more.
 * [The "A functional approach to authorization" Series](/series/a-functional-approach-to-authorization.html). How to handle the common security challenge of authorization using "capabilities". Also available as a [talk](/cap/).
+
+{% include book_page_pdf.inc %}
 
 ## Testing
 

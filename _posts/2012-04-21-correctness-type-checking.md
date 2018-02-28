@@ -172,3 +172,5 @@ let x = {CustomerAccountId = 1}
 x = x       // error!
 x.CustomerAccountId = x.CustomerAccountId // no error
 ```
+
+{% include book_page_ddd_img.inc %}

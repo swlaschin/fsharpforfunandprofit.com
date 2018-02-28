@@ -42,6 +42,8 @@ Slides from Functional Programming eXchange, March 14, 2014
 
 The powerpoint slides are also available from [Github](https://github.com/swlaschin/RailwayOrientedProgramming). Feel free to borrow from them!
 
+{% include book_page_explain.inc %}
+
 <a name="monads"></a>
 <br><br>
 <br><br>

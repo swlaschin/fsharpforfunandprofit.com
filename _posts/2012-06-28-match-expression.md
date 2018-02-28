@@ -160,6 +160,8 @@ let x =
 
 You cannot mix and match the types in the expression.
 
+{% include book_page_pdf.inc %}
+
 ### You can use match expressions anywhere
 
 Since they are normal expressions, match expressions can appear anywhere an expression can be used.

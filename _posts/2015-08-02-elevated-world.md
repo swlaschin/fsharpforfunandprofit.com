@@ -109,6 +109,7 @@ Here's a list of shortcuts to the various functions:
 <a id="part1"></a>
 <hr>
 
+{% include book_page_pdf.inc %}
 
 ## Part 1: Lifting to the elevated world 
 

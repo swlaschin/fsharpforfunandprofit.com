@@ -158,6 +158,7 @@ If you think about it, this type signature is exactly what we would expect.
 
 Note that this function is completely generic -- it will work with *any* switch function and *any* types. All it cares about is the "shape" of the `switchFunction`, not the actual types involved.
 
+
 ### Other ways of writing the bind function
 
 Just as an aside, there are some other ways of writing functions like this.
@@ -183,6 +184,8 @@ let bind switchFunction =
 ```
 
 You might see all three styles in other code, but I personally prefer to use the second style (`let bind switchFunction twoTrackInput = `), because I think that having explicit parameters makes the code more readable for non-experts. 
+
+{% include book_page_explain.inc %}
 
 ## Example: Combining some validation functions
 
@@ -1090,6 +1093,8 @@ In most of our functions, the transformation only applies to the success track. 
 
 This implies that the failure track must be *same type* all the way through. In this post we have just used `string`, but in the next post we'll change the failure type to be something more useful.
 
+{% include book_page_pdf.inc %}
+
 ## Summary and guidelines
 
 At the beginning of this series, I promised to give you a simple recipe that you could follow.
@@ -1159,4 +1164,6 @@ I presented on this topic at NDC Oslo 2014 (click image to view video)
 And here are the slides I used:
 
 <iframe src="//www.slideshare.net/slideshow/embed_code/32242318" width="627" height="556" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/ScottWlaschin/railway-oriented-programming" title="Railway Oriented Programming" target="_blank">Railway Oriented Programming</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slideshare page</a></strong> </div>
+    
+{% include book_page_ddd_img.inc %}
     

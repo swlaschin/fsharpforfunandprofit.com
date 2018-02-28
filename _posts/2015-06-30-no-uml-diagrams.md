@@ -115,6 +115,7 @@ type EnrollStudent = Student -> Seminar -> Enrollment option
 
 Because the function returns an `option`, it is immediately clear that enrollment might fail (e.g student is not eligible to enroll, or is enrolling twice by mistake).
 
+{% include book_page_ddd.inc %}
 
 ## Order and customer
 

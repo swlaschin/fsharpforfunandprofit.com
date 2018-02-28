@@ -144,6 +144,8 @@ For example, what should happen if we try to verify an already verified email?
 What happens if we try to remove an item from an empty shopping cart? 
 What happens if white tries to play when the state is "BlackToPlay"? And so on.
 
+{% include book_page_ddd.inc %}
+
 ## How to implement simple state machines in F# ##
 
 You are probably familiar with complex state machines, such as those used in language parsers and regular expressions.  Those kinds of state machines are generated from rule sets or grammars, and are quite complicated.

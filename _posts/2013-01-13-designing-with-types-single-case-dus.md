@@ -121,6 +121,8 @@ type Contact =
 
 Another nice thing about the union type is that the implementation can be encapsulated with module signatures, as we'll discuss below.
 
+{% include book_page_ddd.inc %}
+
 ## Naming the "case" of a single case union
 
 In the examples above we used the same name for the case as we did for the type:

@@ -139,6 +139,8 @@ let newContact = updatePostalAddress contact newPostalAddress
 *WARNING: I am using `option.Value` to extract the contents of an option in this code. 
 This is ok when playing around interactively but is extremely bad practice in production code! You should always use matching to handle both cases of an option.*
 
+{% include book_page_ddd.inc %}
+
 ## Why bother to make these complicated types? 
 
 At this point, you might be saying that we have made things unnecessarily complicated. I would answer with these points:

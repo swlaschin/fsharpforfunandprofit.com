@@ -404,6 +404,9 @@ type Contact =
 
 ```
 
+{% include book_page_ddd_img.inc %}
+
+
 ## Conclusion ##
 
 Phew!  The new code is much, much longer than the original code. Granted, it has a lot of supporting functions that were not needed in the original version, but even so it seems like a lot of extra work. So was it worth it?
@@ -440,3 +443,4 @@ Finally, beware! Getting comfortable with this style of type-based design will h
 *If you liked this series, here is a slide deck that covers many of the same topics. There is [a video as well (here)](/ddd/)*
 
 <iframe src="//www.slideshare.net/slideshow/embed_code/32418451" width="627" height="556" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/ScottWlaschin/domain-driven-design-with-the-f-type-system-functional-londoners-2014" title="Domain Driven Design with the F# type System -- F#unctional Londoners 2014" target="_blank">Domain Driven Design with the F# type System -- F#unctional Londoners 2014</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slideshare page</a></strong> </div>
+

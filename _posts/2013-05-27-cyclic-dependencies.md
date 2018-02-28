@@ -112,6 +112,8 @@ Another quote from Brian's (excellent) comment:
 
 > I'm evangelizing an unpopular position here, but my experience is that everything in the world is better when you're forced to consider and manage "dependency order among software components" at every level of the system. The specific UI/tooling for F# may not yet be ideal, but I think the principle is right. This is a burden you want. It *is* more work. "Unit testing" is also more work, but we've gotten to the point where the consensus is that work is "worth it" in that it saves you time in the long run. I feel the same way about 'ordering'. There are dependencies among the classes and methods in your system. You ignore those dependencies at your own peril. A system that forces you to consider this dependency graph (roughly, the topological sort of components) is likely to steer you into developing software with cleaner architectures, better system layering, and fewer needless dependencies.
 
+{% include book_page_explain.inc %}
+
 ## Detecting and removing circular dependencies 
 
 Ok, we're agreed that circular dependencies are bad. So how do we detect them and then get rid of them?

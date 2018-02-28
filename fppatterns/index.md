@@ -38,6 +38,8 @@ Here are the slides that I used at NDC London 2014:
 
 There's also a [longer version of the slides](http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014) as well.
 
+{% include book_page_explain.inc %}
+
 ## Twitterstorm!
 
 After I did this talk at BuildStuff 2014, one particular slide got retweeted a lot.

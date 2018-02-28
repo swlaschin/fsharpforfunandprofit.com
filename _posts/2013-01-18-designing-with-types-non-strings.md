@@ -126,6 +126,8 @@ module ShoppingCartWithTypedQty =
 
 You might think this is overkill for such a trivial problem. But if you want to avoid being in the DailyWTF, it might be worth considering.
 
+{% include book_page_ddd.inc %}
+
 ## Constraints on dates
 
 Not all systems can handle all possible dates. Some systems can only store dates going back to 1/1/1980, and some systems can only go into the future up to 2038 (I like to use 1/1/2038 as a max date to avoid US/UK issues with month/day order).

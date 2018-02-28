@@ -143,6 +143,8 @@ let areEqual = (s50' = s100')  // compiler error
 
 This kind of thing will make working with dictionaries and lists harder.
 
+{% include book_page_ddd.inc %}
+
 ### Refactoring
 
 At this point we can exploit F#'s support for interfaces, and create a common interface that all wrapped strings have to support, and also some standard functions:
@@ -479,3 +481,5 @@ I won't create a solution here (and you will probably be using something like Ra
 
 Many people have asked for more information on how to ensure that constrained types such as `EmailAddress` are only created through a special constructor that does the validation.
 So I have created a [gist here](https://gist.github.com/swlaschin/54cfff886669ccab895a) that has some detailed examples of other ways of doing it.
+
+{% include book_page_ddd_img.inc %}

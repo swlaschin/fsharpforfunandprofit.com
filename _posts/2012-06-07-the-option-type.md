@@ -119,6 +119,7 @@ let o2 = Some 42
 let areEqual = (o1=o2)
 ```
 
+{% include book_page_pdf.inc %}
 
 ### Option representation
 

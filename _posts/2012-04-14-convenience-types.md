@@ -157,3 +157,4 @@ List.max hand |> printfn "high card is %A"
 List.min hand |> printfn "low card is %A"
 ```
 
+{% include book_page_ddd_img.inc %}

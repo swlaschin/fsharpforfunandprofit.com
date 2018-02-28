@@ -151,9 +151,11 @@ let printReport contactInfo =
 
 These changes have a number of benefits.
 
-First, from a modelling point of view, the new types represent the domain much better, and are more adaptable to changing requitements.  
+First, from a modelling point of view, the new types represent the domain much better, and are more adaptable to changing requirements.  
 
 And from a development point of view, changing the type to be a union means that any new cases that we add (or remove) will break the code in a very obvious way, and it will be much harder to accidentally forget to handle all the cases.
+
+{% include book_page_ddd.inc %}
 
 ## Back to the business rule with 15 possible combinations 
 
