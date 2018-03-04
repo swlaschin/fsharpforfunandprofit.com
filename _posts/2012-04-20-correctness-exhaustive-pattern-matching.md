@@ -18,15 +18,15 @@ void HandleState(State state)
 {
     switch (state)
     {
-        case State.Inactive: // code for Inactive
-            break;
-        case State.Draft: // code for Draft
-            break;
-        case State.New: // code for New
-            break;
-        case State.Discontinued: // code for Discontinued
-            break;
-    }
+    case State.Inactive: 
+        ... 
+    case State.Draft:  
+        ... 
+    case State.New: 
+        ... 
+    case State.Discontinued:  
+        ... 
+    } 
 }
 ```
 
@@ -38,13 +38,22 @@ Here's the F# equivalent:
 type State = New | Draft | Published | Inactive | Discontinued
 let handleState state = 
    match state with
-   | Inactive -> () // code for Inactive
-   | Draft -> () // code for Draft
-   | New -> () // code for New
-   | Discontinued -> () // code for Discontinued
+   | Inactive -> 
+      ... 
+   | Draft -> 
+      ... 
+   | New -> 
+      ... 
+   | Discontinued -> 
+      ... 
 ```
    
-Now try running this code. What does the compiler tell you?
+Now try running this code. What does the compiler tell you? It will say something like:
+
+```
+Incomplete pattern matches on this expression. 
+For example, the value 'Published' may indicate a case not covered by the pattern(s)
+```
 
 The fact that exhaustive matching is always done means that certain common errors will be detected by the compiler immediately:
 
@@ -61,7 +70,7 @@ We'll start with an extremely common scenario where the caller should always che
 ```csharp
 if (myObject != null)
 {
-  // do something
+  // do something 
 }
 ```
 

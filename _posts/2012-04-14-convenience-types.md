@@ -59,7 +59,9 @@ type USAddress =
    {Street:string; City:string; State:string; Zip:string}
 type UKAddress = 
    {Street:string; Town:string; PostCode:string}
-type Address = US of USAddress | UK of UKAddress
+type Address = 
+   | US of USAddress 
+   | UK of UKAddress
 type Person = 
    {Name:string; Address:Address}
 
@@ -81,7 +83,12 @@ Alice is {Name = "Alice";
  Address = US {Street = "123 Main";
                City = "LA";
                State = "CA";
-               Zip = "91201";};}
+               Zip = "91201" };}
+               
+Bob is {Name = "Bob";
+ Address = UK {Street = "221b Baker St";
+               Town = "London";
+               PostCode = "NW1 6XE";};}
 ```
 
 ## Most F# types have built-in structural equality
