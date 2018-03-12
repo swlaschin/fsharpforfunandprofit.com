@@ -69,9 +69,6 @@ If you have comments or suggestions about this site as whole, please leave a com
 
 If you'd like to get occasional updates about the site, please [subscribe to the newsletter](\subscribe.html).
 
-## Support This Site 
-
-{% include donate.inc %}
 
 ## Acknowledgements 
 
@@ -79,7 +76,7 @@ First of all, many thanks to Don Syme and the rest of the F# team who have creat
 
 Second, thank you to all the F# enthusiasts who have written books, blogs, and contributed to [StackOverflow](http://stackoverflow.com/questions/tagged/f%23) and hubfs.net (a.k.a. [fpish](http://fpish.net)). I have learned a lot from you all.
 
-Many thanks to those who have sent me corrections for the many typos on the site, with special thanks to André van Meulebrouck. 
+Many thanks to those who have sent me corrections for the many typos on the site, with special thanks to AndrÃ© van Meulebrouck. 
 
 And finally, special thanks to *you* and all the people who read this site. I hope you enjoy it. Thanks for reading!
 
