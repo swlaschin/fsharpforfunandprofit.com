@@ -95,15 +95,15 @@ public class Squarer
 And here's some similar code, but without curly braces. 
 
 ```fsharp
-type Squarer() =  
+module Squarer =  
 
-    let Square input = 
+    let square input = 
         let result = input * input
         result
 
-    let PrintSquare input = 
-        let result = Square input
-        printf "Input=%i. Result=%i" input result
+    let printSquare input = 
+        let result = square input
+        printfn "Input=%i. Result=%i" input result
 ```
 
 Look at the difference! I don't know about you, but I find the second example a bit disturbing, as if something important is missing. 
@@ -119,7 +119,7 @@ Well, as it happens, I *like* to see type declarations. I feel uncomfortable if 
 Here's a function signature for some ML-ish code. There are no type declarations needed and all types are inferred automatically.
 
 ```fsharp
-let GroupBy source keySelector = 
+let groupBy source keySelector = 
     ... 
 ```
 
