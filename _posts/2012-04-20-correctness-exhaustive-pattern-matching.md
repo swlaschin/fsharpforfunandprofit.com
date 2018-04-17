@@ -269,7 +269,7 @@ let printFirstLineOfFile filePath =
 		   
 You can see that this code must explicitly handle the `Success` and `Failure` cases, and then for the failure case, it explicitly handles the different reasons. If you want to see what happens if it does not handle one of the cases, try commenting out the line that handles `UnauthorizedAccess` and see what the compiler says.
 
-Now it is not required that you always handle all possible cases explicitly. In the example below, the function uses the underscore wildcard to treat all the failure reasons as one. This can considered bad practice if we want to get the benefits of the strictness, but at least it is clearly done.
+Now it is not required that you always handle all possible cases explicitly. In the example below, the function uses the underscore wildcard to treat all the failure reasons as one. This can be considered bad practice if we want to get the benefits of the strictness, but at least it is clearly done.
 
 ```fsharp
 /// get the length of the text in the file
