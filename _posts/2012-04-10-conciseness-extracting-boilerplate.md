@@ -219,7 +219,7 @@ public static NameAndSize MaxNameAndSize(IList<NameAndSize> list)
 
 ```
 
-Doing this in LINQ seems hard to do efficiently (that is, in one pass), and has come up as a [Stack Overflow question](http://stackoverflow.com/questions/1101841/linq-how-to-perform-max-on-a-property-of-all-objects-in-a-collection-and-ret). Jon Skeet event wrote an [article about it](http://codeblog.jonskeet.uk/2005/10/02/a-short-case-study-in-linq-efficiency/).
+Doing this in LINQ seems hard to do efficiently (that is, in one pass), and has come up as a [Stack Overflow question](http://stackoverflow.com/questions/1101841/linq-how-to-perform-max-on-a-property-of-all-objects-in-a-collection-and-ret). Jon Skeet even wrote an [article about it](http://codeblog.jonskeet.uk/2005/10/02/a-short-case-study-in-linq-efficiency/).
 
 Again, fold to the rescue!
 
