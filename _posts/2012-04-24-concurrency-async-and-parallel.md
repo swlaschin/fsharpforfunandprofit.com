@@ -310,7 +310,7 @@ sites                     // start with the list of sites
 #time                     // turn timer off
 ```
 
-Make a note of the time taken, and let's if we can improve on it!
+Make a note of the time taken, and let's see if we can improve on it!
 
 Obviously the example above is inefficient -- only one web site at a time is visited. The program would be faster if we could visit them all at the same time.
 
