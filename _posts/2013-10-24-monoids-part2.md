@@ -11,7 +11,7 @@ In the [previous post](/posts/monoids-without-tears/), we looked at the definiti
 
 First, let's revisit the definition:
 
-* You start with a bunch of things, *and* some way of combining them two at a time. 
+* You start with a bunch of things, *and* some way of combining them two at a time.
 * **Rule 1 (Closure)**: The result of combining two things is always another one of the things.
 * **Rule 2 (Associativity)**: When combining more than two things, which pairwise combination you do first doesn't matter.
 * **Rule 3 (Identity element)**: There is a special thing called "zero" such that when you combine any thing with "zero" you get the original thing back.
@@ -27,7 +27,7 @@ let sum = s1 + s2  // sum is a string
 
 // associativity
 let s3 = "x"
-let s4a = (s1+s2) + s3  
+let s4a = (s1+s2) + s3
 let s4b = s1 + (s2+s3)
 assert (s4a = s4b)
 
@@ -38,7 +38,7 @@ assert ("" + s1 = s1)
 
 But now let's try to apply this to a more complicated object.
 
-Say that we have have an `OrderLine`, a little structure that represents a line in a sales order, say.
+Say that we have an `OrderLine`, a little structure that represents a line in a sales order, say.
 
 ```fsharp
 type OrderLine = {
@@ -53,7 +53,7 @@ And then perhaps we might want to find the total for an order, that is, we want 
 The standard imperative approach would be to create a local `total` variable, and then loop through the lines, summing as we go, like this:
 
 ```fsharp
-let calculateOrderTotal lines = 
+let calculateOrderTotal lines =
     let mutable total = 0.0
     for line in lines do
         total <- total + line.Total
@@ -63,15 +63,15 @@ let calculateOrderTotal lines =
 Let's try it:
 
 ```fsharp
-module OrdersUsingImperativeLoop = 
+module OrdersUsingImperativeLoop =
 
     type OrderLine = {
         ProductCode: string
         Qty: int
         Total: float
         }
- 
-    let calculateOrderTotal lines = 
+
+    let calculateOrderTotal lines =
         let mutable total = 0.0
         for line in lines do
             total <- total + line.Total
@@ -82,37 +82,37 @@ module OrdersUsingImperativeLoop =
         {ProductCode="BBB"; Qty=1; Total=1.99}
         {ProductCode="CCC"; Qty=3; Total=3.99}
         ]
-            
-    orderLines 
-    |> calculateOrderTotal 
+
+    orderLines
+    |> calculateOrderTotal
     |> printfn "Total is %g"
 ```
 
 But of course, being an experienced functional programmer, you would sneer at this, and use `fold` in `calculateOrderTotal` instead, like this:
 
 ```fsharp
-module OrdersUsingFold = 
+module OrdersUsingFold =
 
     type OrderLine = {
         ProductCode: string
         Qty: int
         Total: float
         }
- 
-    let calculateOrderTotal lines = 
-        let accumulateTotal total line = 
+
+    let calculateOrderTotal lines =
+        let accumulateTotal total line =
             total + line.Total
-        lines 
-        |> List.fold accumulateTotal 0.0 
+        lines
+        |> List.fold accumulateTotal 0.0
 
     let orderLines = [
         {ProductCode="AAA"; Qty=2; Total=19.98}
         {ProductCode="BBB"; Qty=1; Total=1.99}
         {ProductCode="CCC"; Qty=3; Total=3.99}
         ]
-            
-    orderLines 
-    |> calculateOrderTotal 
+
+    orderLines
+    |> calculateOrderTotal
     |> printfn "Total is %g"
 ```
 
@@ -155,14 +155,14 @@ Let's give this a little test:
 
 ```fsharp
 // utility method to print an OrderLine
-let printLine {ProductCode=p; Qty=q;Total=t} = 
-    printfn "%-10s %5i %6g" p q t 
+let printLine {ProductCode=p; Qty=q;Total=t} =
+    printfn "%-10s %5i %6g" p q t
 
 let orderLine1 = {ProductCode="AAA"; Qty=2; Total=19.98}
 let orderLine2 = {ProductCode="BBB"; Qty=1; Total=1.99}
 
 //add two lines to make a third
-let orderLine3 = addLine orderLine1 orderLine2 
+let orderLine3 = addLine orderLine1 orderLine2
 orderLine3 |> printLine // and print it
 ```
 
@@ -183,9 +183,9 @@ let orderLines = [
     {ProductCode="CCC"; Qty=3; Total=3.99}
     ]
 
-orderLines 
+orderLines
 |> List.reduce addLine
-|> printLine 
+|> printLine
 ```
 
 With the result:
@@ -200,17 +200,17 @@ But note that we now have more information than just the total; we also have the
 For example, we can easily reuse the `printLine` function to make a simple receipt printing function that includes the total, like this:
 
 ```fsharp
-let printReceipt lines = 
-    lines 
+let printReceipt lines =
+    lines
     |> List.iter printLine
 
     printfn "-----------------------"
-    
-    lines 
+
+    lines
     |> List.reduce addLine
     |> printLine
 
-orderLines 
+orderLines
 |> printReceipt
 ```
 
@@ -224,14 +224,14 @@ CCC            3   3.99
 TOTAL          6  25.96
 ```
 
-More importantly, we can now use the incremental nature of monoids to keep a running subtotal that we update every time a new line is added. 
+More importantly, we can now use the incremental nature of monoids to keep a running subtotal that we update every time a new line is added.
 
 Here's an example:
 
 ```fsharp
-let subtotal = orderLines |> List.reduce addLine 
+let subtotal = orderLines |> List.reduce addLine
 let newLine = {ProductCode="DDD"; Qty=1; Total=29.98}
-let newSubtotal = subtotal |> addLine newLine 
+let newSubtotal = subtotal |> addLine newLine
 newSubtotal |> printLine
 ```
 
@@ -240,12 +240,12 @@ We could even define a custom operator such as `++` so that we can add lines tog
 ```fsharp
 let (++) a b = addLine a b  // custom operator
 
-let newSubtotal = subtotal ++ newLine 
+let newSubtotal = subtotal ++ newLine
 ```
-    
+
 You can see that using the monoid pattern opens up a whole new way of thinking. You can apply this "add" approach to almost any kind of object.
 
-For example, what would a product "plus" a product look like? Or a customer "plus" a customer? Let your imagination run wild! 
+For example, what would a product "plus" a product look like? Or a customer "plus" a customer? Let your imagination run wild!
 
 ### Are we there yet?
 
@@ -268,7 +268,7 @@ let addLine orderLine1 orderLine2 =
     | "", _ -> orderLine2
     | _, "" -> orderLine1
     // anything else is as before
-    | _ -> 
+    | _ ->
         {
         ProductCode = "TOTAL"
         Qty = orderLine1.Qty + orderLine2.Qty
@@ -290,7 +290,7 @@ This does seem a bit hacky, so I wouldn't recommend this technique in general. T
 
 ## Introducing a special total type
 
-In the example above, the `OrderLine` type was very simple and it was easy to overload the fields for the total. 
+In the example above, the `OrderLine` type was very simple and it was easy to overload the fields for the total.
 
 But what would happen if the `OrderLine` type was more complicated?  For example, if it had a `Price` field as well, like this:
 
@@ -311,7 +311,7 @@ let addLine orderLine1 orderLine2 =
     {
     ProductCode = "TOTAL"
     Qty = orderLine1.Qty + orderLine2.Qty
-    Price = 0 // or use average price? 
+    Price = 0 // or use average price?
     Total = orderLine1.Total + orderLine2.Total
     }
 ```
@@ -339,7 +339,7 @@ type TotalLine = {
     OrderTotal: float
     }
 
-type OrderLine = 
+type OrderLine =
     | Product of ProductLine
     | Total of TotalLine
 ```
@@ -352,7 +352,7 @@ Unfortunately, the addition logic is more complicated now, as we have to handle 
 
 ```fsharp
 let addLine orderLine1 orderLine2 =
-    let totalLine = 
+    let totalLine =
         match orderLine1,orderLine2 with
         | Product p1, Product p2 ->
             {Qty = p1.Qty + p2.Qty;
@@ -370,17 +370,17 @@ let addLine orderLine1 orderLine2 =
 ```
 
 Note that we cannot just return the `TotalLine` value. We have to wrap in the `Total` case to make a proper `OrderLine`.
-If we didn't do that, then our `addLine` would have the signature `OrderLine -> OrderLine -> TotalLine`, which is not correct. 
+If we didn't do that, then our `addLine` would have the signature `OrderLine -> OrderLine -> TotalLine`, which is not correct.
 We have to have the signature `OrderLine -> OrderLine -> OrderLine` -- nothing else will do!
 
 Now that we have two cases, we need to handle both of them in the `printLine` function:
 
 ```fsharp
 let printLine =  function
-    | Product {ProductCode=p; Qty=q; Price=pr; LineTotal=t} -> 
-        printfn "%-10s %5i @%4g each %6g" p q pr t 
-    | Total {Qty=q; OrderTotal=t} -> 
-        printfn "%-10s %5i            %6g" "TOTAL" q t 
+    | Product {ProductCode=p; Qty=q; Price=pr; LineTotal=t} ->
+        printfn "%-10s %5i @%4g each %6g" p q pr t
+    | Total {Qty=q; OrderTotal=t} ->
+        printfn "%-10s %5i            %6g" "TOTAL" q t
 ```
 
 But once we have done this, we can now use addition just as before:
@@ -388,11 +388,11 @@ But once we have done this, we can now use addition just as before:
 ```fsharp
 let orderLine1 = Product {ProductCode="AAA"; Qty=2; Price=9.99; LineTotal=19.98}
 let orderLine2 = Product {ProductCode="BBB"; Qty=1; Price=1.99; LineTotal=1.99}
-let orderLine3 = addLine orderLine1 orderLine2 
+let orderLine3 = addLine orderLine1 orderLine2
 
-orderLine1 |> printLine 
-orderLine2 |> printLine 
-orderLine3 |> printLine 
+orderLine1 |> printLine
+orderLine2 |> printLine
+orderLine3 |> printLine
 ```
 
 ### Identity again
@@ -414,7 +414,7 @@ type TotalLine = {
     OrderTotal: float
     }
 
-type OrderLine = 
+type OrderLine =
     | Product of ProductLine
     | Total of TotalLine
     | EmptyOrder
@@ -468,8 +468,8 @@ The way you do this is by attaching two static members, `+` and `Zero` to your t
 
 ```fsharp
 type OrderLine with
-    static member (+) (x,y) = addLine x y 
-    static member Zero = EmptyOrder   // a property 
+    static member (+) (x,y) = addLine x y
+    static member Zero = EmptyOrder   // a property
 ```
 
 Once this has been done, you can use `List.sum` and it will work as expected.
@@ -477,15 +477,15 @@ Once this has been done, you can use `List.sum` and it will work as expected.
 ```fsharp
 let lines1 = [productLine]
 // using fold with explicit op and zero
-lines1 |> List.fold addLine zero |> printfn "%A"  
+lines1 |> List.fold addLine zero |> printfn "%A"
 // using sum with implicit op and zero
-lines1 |> List.sum |> printfn "%A"  
+lines1 |> List.sum |> printfn "%A"
 
 let emptyList: OrderLine list = []
 // using fold with explicit op and zero
-emptyList |> List.fold addLine zero |> printfn "%A"  
+emptyList |> List.fold addLine zero |> printfn "%A"
 // using sum with implicit op and zero
-emptyList |> List.sum |> printfn "%A"  
+emptyList |> List.sum |> printfn "%A"
 ```
 
 Note that for this to work you mustn't already have a method or case called `Zero`.  If I had used the name `Zero` instead of `EmptyOrder` for the third case it would not have worked.
@@ -496,30 +496,30 @@ It's a bit too clever and non-obvious for my taste.
 If you *do* want to use this trick, your `Zero` member cannot be an extension method -- it must be defined with the type.
 
 For example, in the code below, I'm trying to define the empty string as the "zero" for strings.
- 
+
 `List.fold` works because `String.Zero` is visible as an extension method in this code right here,
 but `List.sum` fails because the extension method is not visible to it.
- 
+
 ```fsharp
 module StringMonoid =
 
     // define extension method
     type System.String with
-        static member Zero = "" 
+        static member Zero = ""
 
     // OK.
-    ["a";"b";"c"] 
-    |> List.reduce (+)    
+    ["a";"b";"c"]
+    |> List.reduce (+)
     |> printfn "Using reduce: %s"
 
     // OK. String.Zero is visible as an extension method
-    ["a";"b";"c"] 
+    ["a";"b";"c"]
     |> List.fold (+) System.String.Zero
     |> printfn "Using fold: %s"
 
     // Error. String.Zero is NOT visible to List.sum
-    ["a";"b";"c"] 
-    |> List.sum          
+    ["a";"b";"c"]
+    |> List.sum
     |> printfn "Using sum: %s"
 ```
 
@@ -534,7 +534,7 @@ open System
 
 type Customer = {
     Name:string // and many more string fields!
-    LastActive:DateTime 
+    LastActive:DateTime
     TotalSpend:float }
 ```
 
@@ -548,9 +548,9 @@ So rather than trying to aggregate `Customer`, let's define a separate class `Cu
 // create a type to track customer statistics
 type CustomerStats = {
     // number of customers contributing to these stats
-    Count:int 
+    Count:int
     // total number of days since last activity
-    TotalInactiveDays:int 
+    TotalInactiveDays:int
     // total amount of money spent
     TotalSpend:float }
 ```
@@ -572,7 +572,7 @@ let (++) a b = add a b
 As always, the inputs and output of the `add` function must be the same type.
 We must have `CustomerStats -> CustomerStats -> CustomerStats`, not `Customer -> Customer -> CustomerStats` or any other variant.
 
-Ok, so far so good. 
+Ok, so far so good.
 
 Now let's say we have a collection of customers, and we want to get the aggregated stats for them, how should we do this?
 
@@ -593,7 +593,7 @@ let c3 = {Name="Charlie"; LastActive=DateTime(2011,3,3); TotalSpend=42.0}
 let customers = [c1;c2;c3]
 
 // aggregate the stats
-customers 
+customers
 |> List.map toStats
 |> List.reduce add
 |> printfn "result = %A"
@@ -605,11 +605,11 @@ It might seem a bit strange, but it does make sense, because if there was just o
 
 The second thing to note is how the final aggregation is done. First we use `map` to convert the source type to a type that is a monoid, and then we use `reduce` to aggregate all the stats.
 
-Hmmm.... `map` followed by `reduce`. Does that sound familiar to you?  
+Hmmm.... `map` followed by `reduce`. Does that sound familiar to you?
 
 Yes indeed, Google's famous MapReduce algorithm was inspired by this concept (although the details are somewhat different).
 
-Before we move on, here are some simple exercises for you to check your understanding. 
+Before we move on, here are some simple exercises for you to check your understanding.
 
 * What is the "zero" for `CustomerStats`?  Test your code by using `List.fold` on an empty list.
 * Write a simple `OrderStats` class and use it to aggregate the `OrderLine` type that we introduced at the beginning of this post.
@@ -618,20 +618,20 @@ Before we move on, here are some simple exercises for you to check your understa
 
 ## Monoid Homomorphisms
 
-We've now got all the tools we need to understand something called a *monoid homomorphism*. 
+We've now got all the tools we need to understand something called a *monoid homomorphism*.
 
 I know what you're thinking... Ugh! Not just one, but two strange math words at once!
 
 But I hope that the word "monoid" is not so intimidating now.
 And "homomorphism" is another math word that is simpler than it sounds. It's just greek for "same shape" and it describes a mapping or function that keeps the "shape" the same.
 
-What does that mean in practice? 
+What does that mean in practice?
 
 Well, we have seen that all monoids have a certain common structure.
 That is, even though the underlying objects can be quite different (integers, strings, lists, `CustomerStats`, etc.) the "monoidness" of them is the same.
 As George W. Bush once said, once you've seen one monoid, you've seen them all.
 
-So a *monoid* homomorphism is a transformation that preserves an essential "monoidness", even if the "before" and "after" objects are quite different.  
+So a *monoid* homomorphism is a transformation that preserves an essential "monoidness", even if the "before" and "after" objects are quite different.
 
 In this section, we'll look at a simple monoid homomorphism. It's the "hello world", the "fibonacci series", of monoid homomorphisms -- word counting.
 
@@ -690,27 +690,27 @@ Instead of adding all the text together and then counting, get the word count fo
 
 The second approach relies on the fact that integers (the counts) are themselves a monoid, and you can add them up to get the desired result.
 
-So the `wordCount` function has transformed an aggregation over "pages" into an aggregation over "counts". 
+So the `wordCount` function has transformed an aggregation over "pages" into an aggregation over "counts".
 
-The big question now: is `wordCount` a monoid homomorphism? 
+The big question now: is `wordCount` a monoid homomorphism?
 
 Well, pages (text) and counts (integers) are both monoids, so it certainly transforms one monoid into another.
 
 But the more subtle condition is: does it preserve the "shape"?  That is, does the adding of the counts give the same answer as the adding of the pages?
 
-In this case, the answer is yes. So `wordCount` *is* a monoid homomorphism! 
+In this case, the answer is yes. So `wordCount` *is* a monoid homomorphism!
 
 You might think that this is obvious, and that all mappings like this must be monoid homomorphisms, but we'll see an example later where this is not true.
 
 ### The benefits of chunkability
 
-The advantage of the monoid homomorphism approach is that it is *"chunkable"*. 
+The advantage of the monoid homomorphism approach is that it is *"chunkable"*.
 
 Each map and word count is independent of the others,
 so we can do them separately and then add up the answers afterwards.
 For many algorithms, working on small chunks of data is much more efficient than working on large chunks, so if we can, we should exploit this whenever possible.
 
-As a direct consequence of this chunkability,  we get some of the benefits that we touched on in the previous post. 
+As a direct consequence of this chunkability,  we get some of the benefits that we touched on in the previous post.
 
 First, it is *incremental*. That is, as we add text to the last page, we don't have to recalculate the word counts for all the previous pages, which might save some time.
 
@@ -719,13 +719,13 @@ The chunkability into small pieces has a much greater effect on performance than
 
 ### Comparing word count implementations
 
-We're now ready to create some code that will demonstrate these two different techniques. 
+We're now ready to create some code that will demonstrate these two different techniques.
 
 Let's start with the basic definitions from above, except that I will change the word count to use regular expressions instead of `split`.
 
 ```fsharp
-module WordCountTest = 
-    open System 
+module WordCountTest =
+    open System
 
     type Text = Text of string
 
@@ -739,30 +739,30 @@ module WordCountTest =
 Next, we'll create a page with 1000 words in it, and a document with 1000 pages.
 
 ```fsharp
-module WordCountTest = 
-    
+module WordCountTest =
+
     // code as above
 
-    let page() = 
+    let page() =
         List.replicate 1000 "hello "
         |> List.reduce (+)
         |> Text
 
-    let document() = 
-        page() |> List.replicate 1000 
+    let document() =
+        page() |> List.replicate 1000
 ```
 
 We'll want to time the code to see if there is any difference between the implementations. Here's a little helper function.
 
 ```fsharp
-module WordCountTest = 
-    
+module WordCountTest =
+
     // code as above
 
-    let time f msg = 
+    let time f msg =
         let stopwatch = Diagnostics.Stopwatch()
         stopwatch.Start()
-        f() 
+        f()
         stopwatch.Stop()
         printfn "Time taken for %s was %ims" msg stopwatch.ElapsedMilliseconds
 ```
@@ -770,12 +770,12 @@ module WordCountTest =
 Ok, let's implement the first approach. We'll add all the pages together using `addText` and then do a word count on the entire million word document.
 
 ```fsharp
-module WordCountTest = 
-    
+module WordCountTest =
+
     // code as above
-        
-    let wordCountViaAddText() = 
-        document() 
+
+    let wordCountViaAddText() =
+        document()
         |> List.reduce addText
         |> wordCount
         |> printfn "The word count is %i"
@@ -786,12 +786,12 @@ module WordCountTest =
 For the second approach, we'll do `wordCount` on each page first, and then add all the results together (using `reduce` of course).
 
 ```fsharp
-module WordCountTest = 
-    
+module WordCountTest =
+
     // code as above
-        
-    let wordCountViaMap() = 
-        document() 
+
+    let wordCountViaMap() =
+        document()
         |> List.map wordCount
         |> List.reduce (+)
         |> printfn "The word count is %i"
@@ -819,12 +819,12 @@ Finally, let's see what difference parallelism makes. We'll use the built-in `Ar
 which means we'll need to convert the list into an array first.
 
 ```fsharp
-module WordCountTest = 
+module WordCountTest =
 
     // code as above
 
-    let wordCountViaParallelAddCounts() = 
-        document() 
+    let wordCountViaParallelAddCounts() =
+        document()
         |> List.toArray
         |> Array.Parallel.map wordCount
         |> Array.reduce (+)
@@ -833,7 +833,7 @@ module WordCountTest =
     time wordCountViaParallelAddCounts "parallel map then reduce"
 ```
 
-I hope that you are following along with the implementations, and that you understand what is going on. 
+I hope that you are following along with the implementations, and that you understand what is going on.
 
 ### Analyzing the results
 
@@ -856,7 +856,7 @@ But even with these caveats, the fundamental point is still valid: by swapping t
 
 And with a little bit of hashing and caching, we would also get the benefits of incremental aggregation -- only recalculating the minimum needed as pages change.
 
-Note that the parallel map didn't make that much difference in this case, even though it did use all four cores. 
+Note that the parallel map didn't make that much difference in this case, even though it did use all four cores.
 Yes, we did add some minor expense with `toArray` but even in the best case, you might only get a small speed up on a multicore machine.
 To reiterate, what really made the most difference was the divide and conquer strategy inherent in the map/reduce approach.
 
@@ -870,9 +870,9 @@ For this example, rather than using counting words, we're going to return the mo
 Here's the basic code.
 
 ```fsharp
-module FrequentWordTest = 
+module FrequentWordTest =
 
-    open System 
+    open System
     open System.Text.RegularExpressions
 
     type Text = Text of string
@@ -906,26 +906,26 @@ But we do want to create *different* pages. We'll create one containing nothing 
 and a third containing "foobar". (Not a very interesting book IMHO!)
 
 ```fsharp
-module FrequentWordTest = 
+module FrequentWordTest =
 
-    // code as above 
+    // code as above
 
-    let page1() = 
+    let page1() =
         List.replicate 1000 "hello world "
         |> List.reduce (+)
         |> Text
 
-    let page2() = 
+    let page2() =
         List.replicate 1000 "goodbye world "
         |> List.reduce (+)
         |> Text
 
-    let page3() = 
+    let page3() =
         List.replicate 1000 "foobar "
         |> List.reduce (+)
         |> Text
 
-    let document() = 
+    let document() =
         [page1(); page2(); page3()]
 ```
 
@@ -940,18 +940,18 @@ The second approach will do `mostFrequentWord` separately on each page and then 
 ![mostFrequentWord via adding counts](/assets/img/monoid_non_h2.jpg)
 
 Here's the code:
-        
-```fsharp
-module FrequentWordTest = 
 
-    // code as above 
-    
-    document() 
+```fsharp
+module FrequentWordTest =
+
+    // code as above
+
+    document()
     |> List.reduce addText
     |> mostFrequentWord
     |> printfn "Using add first, the most frequent word is %s"
 
-    document() 
+    document()
     |> List.map mostFrequentWord
     |> List.reduce (+)
     |> printfn "Using map reduce, the most frequent word is %s"
@@ -975,7 +975,7 @@ In other words, it is not a proper monoid homomorphism.
 
 ### Definition of a monoid homomorphism
 
-Let's look at these two different examples again to understand what the distinction is between them.  
+Let's look at these two different examples again to understand what the distinction is between them.
 
 In the word count example, we got the *same* final result whether we added the blocks and then did the word count,
 or whether we did the word counts and then added them together. Here's a diagram:
@@ -1018,7 +1018,7 @@ we are sadly forced to add all the text together first, and we can't benefit fro
 
 ## Next steps
 
-So far, we have only dealt with things that are proper monoids.  But what if the thing you want to work with is *not* a monoid? What then? 
+So far, we have only dealt with things that are proper monoids.  But what if the thing you want to work with is *not* a monoid? What then?
 
 In the next post in this series, I'll give you some tips on converting almost anything into a monoid.
 
@@ -1031,7 +1031,7 @@ See you then!
 
 If you are interested in using monoids for data aggregation, there are lots of good discussions in the following links:
 
-* Twitter's [Algebird library](https://blog.twitter.com/2012/scalding-080-and-algebird) 
+* Twitter's [Algebird library](https://blog.twitter.com/2012/scalding-080-and-algebird)
 * Most [probabilistic data structures](http://highlyscalable.wordpress.com/2012/05/01/probabilistic-structures-web-analytics-data-mining/) are monoids.
 * [Gaussian distributions form a monoid](http://izbicki.me/blog/gausian-distributions-are-monoids).
 * Google's [MapReduce Programming Model](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.5859&rep=rep1&type=pdf) (PDF).
@@ -1042,4 +1042,3 @@ If you are interested in using monoids for data aggregation, there are lots of g
 If you want to get a bit more technical, here is a detailed study of monoids and semigroups, using graphics diagrams as the domain:
 
 * [Monoids: Theme and Variations](http://www.cis.upenn.edu/~byorgey/pub/monoid-pearl.pdf) (PDF).
-

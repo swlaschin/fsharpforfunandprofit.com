@@ -23,29 +23,29 @@ Here's a list of shortcuts to the various functions mentioned in this series:
   * [The `apply` function](/posts/elevated-world/#apply)
   * [The `liftN` family of functions](/posts/elevated-world/#lift)
   * [The `zip` function and ZipList world](/posts/elevated-world/#zip)
-* **Part 2: How to compose world-crossing functions**    
+* **Part 2: How to compose world-crossing functions**
   * [The `bind` function](/posts/elevated-world-2/#bind)
   * [List is not a monad. Option is not a monad.](/posts/elevated-world-2/#not-a-monad)
-* **Part 3: Using the core functions in practice**  
+* **Part 3: Using the core functions in practice**
   * [Independent and dependent data](/posts/elevated-world-3/#dependent)
   * [Example: Validation using applicative style and monadic style](/posts/elevated-world-3/#validation)
   * [Lifting to a consistent world](/posts/elevated-world-3/#consistent)
   * [Kleisli world](/posts/elevated-world-3/#kleisli)
-* **Part 4: Mixing lists and elevated values**    
+* **Part 4: Mixing lists and elevated values**
   * [Mixing lists and elevated values](/posts/elevated-world-4/#mixing)
   * [The `traverse`/`MapM` function](/posts/elevated-world-4/#traverse)
   * [The `sequence` function](/posts/elevated-world-4/#sequence)
   * ["Sequence" as a recipe for ad-hoc implementations](/posts/elevated-world-4/#adhoc)
   * [Readability vs. performance](/posts/elevated-world-4/#readability)
   * [Dude, where's my `filter`?](/posts/elevated-world-4/#filter)
-* **Part 5: A real-world example that uses all the techniques**    
+* **Part 5: A real-world example that uses all the techniques**
   * [Example: Downloading and processing a list of websites](/posts/elevated-world-5/#asynclist)
   * [Treating two worlds as one](/posts/elevated-world-5/#asyncresult)
-* **Part 6: Designing your own elevated world** 
+* **Part 6: Designing your own elevated world**
   * [Designing your own elevated world](/posts/elevated-world-6/#part6)
   * [Filtering out failures](/posts/elevated-world-6/#filtering)
   * [The Reader monad](/posts/elevated-world-6/#readermonad)
-* **Part 7: Summary** 
+* **Part 7: Summary**
   * [List of operators mentioned](/posts/elevated-world-7/#operators)
   * [Further reading](/posts/elevated-world-7/#further-reading)
 
@@ -85,20 +85,20 @@ Say that you have to download data from three websites and combine them. And say
 Now you have a choice:
 
 * **Do you want to fetch all the URLs in parallel?**
-  If so, treat the `GetURL`s as independent data and use the applicative style. 
+  If so, treat the `GetURL`s as independent data and use the applicative style.
 * **Do you want to fetch each URL one at a time, and skip the next in line if the previous one fails?**
   If so, treat the `GetURL`s as dependent data and use the monadic style. This linear approach will be slower overall
   than the "applicative" version above, but will also avoid unnecessary I/O.
 * **Does the URL for the next site depend on what you download from the previous site?**
-  In this case, you are *forced* to use "monadic" style, because each `GetURL` depends on the output of the previous one.  
-  
+  In this case, you are *forced* to use "monadic" style, because each `GetURL` depends on the output of the previous one.
+
 As you can see, the choice between applicative style and monadic style is not clear cut; it depends on what you want to do.
 
 We'll look at a real implementation of this example in the [final post of this series](/posts/elevated-world-5/#asynclist).
 
 **but...**
 
-It's important to say that just because you *choose* a style doesn't mean it will be implemented as you expect. 
+It's important to say that just because you *choose* a style doesn't mean it will be implemented as you expect.
 As we have seen, you can easily implement `apply` in terms of `bind`, so even if you use `<*>` in your code, the implementation may be proceeding monadically.
 
 In the example above, the implementation does not have to run the downloads in parallel. It could run them serially instead.
@@ -116,7 +116,7 @@ dynamically, based on the output of previous actions. This is more flexible, but
 
 ### Order of evaluation vs. dependency
 
-Sometimes *dependency* is confused with *order of evaluation*. 
+Sometimes *dependency* is confused with *order of evaluation*.
 
 Certainly, if one value depends on another then the first value must be evaluated before the second value.
 And in theory, if the values are completely independent (and have no side effects), then they can be evaluated in any order.
@@ -124,7 +124,7 @@ And in theory, if the values are completely independent (and have no side effect
 However, even if the values are completely independent, there can still be an *implicit* order in how they are evaluated.
 
 For example, even if the list of `GetURL`s is done in parallel,
-it's likely that the urls will begin to be fetched in the order in which they are listed, starting with the first one. 
+it's likely that the urls will begin to be fetched in the order in which they are listed, starting with the first one.
 
 And in the `List.apply` implemented in the previous post, we saw that `[f; g] apply [x; y]` resulted in `[f x; f y; g x; g y]` rather than `[f x; g x; f y; g y]`.
 That is, all the `f` values are first, then all the `g` values.
@@ -134,7 +134,7 @@ In general, then, there is a convention that values are evaluated in a left to r
 <a id="validation"></a>
 <hr>
 
-## Example: Validation using applicative style and monadic style 
+## Example: Validation using applicative style and monadic style
 
 To see how both the applicative style and monadic style can be used, let's look at an example using validation.
 
@@ -157,7 +157,7 @@ How would we do this?
 First we create a type to represent the success/failure of validation.
 
 ```fsharp
-type Result<'a> = 
+type Result<'a> =
     | Success of 'a
     | Failure of string list
 ```
@@ -173,7 +173,7 @@ let createCustomerId id =
     else
         Failure ["CustomerId must be positive"]
 // int -> Result<CustomerId>
-        
+
 let createEmailAddress str =
     if System.String.IsNullOrEmpty(str) then
         Failure ["Email must not be empty"]
@@ -181,7 +181,7 @@ let createEmailAddress str =
         Success (EmailAddress str)
     else
         Failure ["Email must contain @-sign"]
-// string -> Result<EmailAddress>        
+// string -> Result<EmailAddress>
 ```
 
 Notice that `createCustomerId` has type `int -> Result<CustomerId>`, and `createEmailAddress` has type `string -> Result<EmailAddress>`.
@@ -194,9 +194,9 @@ That means that both of these validation functions are world-crossing functions,
 Since we are dealing with world-crossing functions, we know that we will have to use functions like `apply` and `bind`, so let's define them for our `Result` type.
 
 ```fsharp
-module Result = 
+module Result =
 
-    let map f xResult = 
+    let map f xResult =
         match xResult with
         | Success x ->
             Success (f x)
@@ -205,11 +205,11 @@ module Result =
     // Signature: ('a -> 'b) -> Result<'a> -> Result<'b>
 
     // "return" is a keyword in F#, so abbreviate it
-    let retn x = 
+    let retn x =
         Success x
     // Signature: 'a -> Result<'a>
 
-    let apply fResult xResult = 
+    let apply fResult xResult =
         match fResult,xResult with
         | Success f, Success x ->
             Success (f x)
@@ -222,7 +222,7 @@ module Result =
             Failure (List.concat [errs1; errs2])
     // Signature: Result<('a -> 'b)> -> Result<'a> -> Result<'b>
 
-    let bind f xResult = 
+    let bind f xResult =
         match xResult with
         | Success x ->
             f x
@@ -249,13 +249,13 @@ See my [functional error handling](/rop/) talk for more details.*
 
 ### Validation using applicative style
 
-Now that we have have the domain and the toolset around `Result`, let's try using the applicative style to create a `CustomerInfo` record.
+Now that we have the domain and the toolset around `Result`, let's try using the applicative style to create a `CustomerInfo` record.
 
 The outputs of the validation are already elevated to `Result`, so we know we'll need to use some sort of "lifting" approach to work with them.
 
 First we'll create a function in the normal world that creates a `CustomerInfo` record given a normal `CustomerId` and a normal `EmailAddress`:
 ```fsharp
-let createCustomer customerId email = 
+let createCustomer customerId email =
     { id=customerId;  email=email }
 // CustomerId -> EmailAddress -> CustomerInfo
 ```
@@ -269,7 +269,7 @@ let (<!>) = Result.map
 let (<*>) = Result.apply
 
 // applicative version
-let createCustomerResultA id email = 
+let createCustomerResultA id email =
     let idResult = createCustomerId id
     let emailResult = createEmailAddress email
     createCustomer <!> idResult <*> emailResult
@@ -315,10 +315,10 @@ Here's the code:
 let (>>=) x f = Result.bind f x
 
 // monadic version
-let createCustomerResultM id email = 
+let createCustomerResultM id email =
     createCustomerId id >>= (fun customerId ->
     createEmailAddress email >>= (fun emailAddress ->
-    let customer = createCustomer customerId emailAddress 
+    let customer = createCustomer customerId emailAddress
     Success customer
     ))
 // int -> string -> Result<CustomerInfo>
@@ -346,12 +346,12 @@ The rest of the validation was short circuited after the `CustomerId` creation f
 
 ### Comparing the two styles
 
-This example has demonstrated  the difference between applicative and monadic style quite well, I think. 
+This example has demonstrated  the difference between applicative and monadic style quite well, I think.
 
 * The *applicative* example did all the validations up front, and then combined the results.
   The benefit was that we didn't lose any of the validation errors.
   The downside was we did work that we might not have needed to do.
-  
+
 ![](/assets/img/vgfp_applicative_style.png)
 
 * On the other hand, the monadic example did one validation at a time, chained together.
@@ -362,20 +362,20 @@ This example has demonstrated  the difference between applicative and monadic st
 
 ### Mixing the two styles
 
-Now there is nothing to say that we can't mix and match applicative and monadic styles. 
+Now there is nothing to say that we can't mix and match applicative and monadic styles.
 
 For example, we might build a `CustomerInfo` using applicative style, so that we don't lose any errors,
 but later on in the program, when a validation is followed by a database update,
 we probably want to use monadic style, so that the database update is skipped if the validation fails.
-  
+
 ### Using F# computation expressions
 
-Finally, let's build a computation expression for these `Result` types. 
+Finally, let's build a computation expression for these `Result` types.
 
 To do this, we just define a class with members called `Return` and `Bind`, and then we create an instance of that class, called `result`, say:
 
 ```fsharp
-module Result = 
+module Result =
 
     type ResultBuilder() =
         member this.Return x = retn x
@@ -388,13 +388,13 @@ We can then rewrite the `createCustomerResultM` function to look like this:
 
 ```fsharp
 let createCustomerResultCE id email = result {
-    let! customerId = createCustomerId id 
-    let! emailAddress = createEmailAddress email  
-    let customer = createCustomer customerId emailAddress 
+    let! customerId = createCustomerId id
+    let! emailAddress = createEmailAddress email
+    let customer = createCustomer customerId emailAddress
     return customer }
 ```
 
-This computation expression version looks almost like using an imperative language. 
+This computation expression version looks almost like using an imperative language.
 
 Note that F# computation expressions are always monadic, as is Haskell do-notation and Scala for-comprehensions.
 That's not generally a problem, because if you need applicative style it is very easy to write without any language support.
@@ -427,7 +427,7 @@ type CustomerInfo = {
 As before, we want to create a function in the normal world that we will later lift to the `Result` world.
 
 ```fsharp
-let createCustomer customerId name email = 
+let createCustomer customerId name email =
     { id=customerId; name=name; email=email }
 // CustomerId -> String -> EmailAddress -> CustomerInfo
 ```
@@ -438,28 +438,28 @@ Now we are ready to update the lifted `createCustomer` with the extra parameter:
 let (<!>) = Result.map
 let (<*>) = Result.apply
 
-let createCustomerResultA id name email = 
+let createCustomerResultA id name email =
     let idResult = createCustomerId id
     let emailResult = createEmailAddress email
     createCustomer <!> idResult <*> name <*> emailResult
-// ERROR                            ~~~~     
+// ERROR                            ~~~~
 ```
 
-But this won't compile!  In the series of parameters `idResult <*> name <*> emailResult` one of them is not like the others. 
+But this won't compile!  In the series of parameters `idResult <*> name <*> emailResult` one of them is not like the others.
 The problem is that `idResult` and `emailResult` are both Results, but `name` is still a string.
 
 The fix is just to lift `name` into the world of results (say `nameResult`) by using `return`, which for `Result` is just `Success`.
 Here is the corrected version of the function that does work:
 
 ```fsharp
-let createCustomerResultA id name email = 
+let createCustomerResultA id name email =
     let idResult = createCustomerId id
     let emailResult = createEmailAddress email
     let nameResult = Success name  // lift name to Result
     createCustomer <!> idResult <*> nameResult <*> emailResult
 ```
 
-### Making functions consistent 
+### Making functions consistent
 
 The same trick can be used with functions too.
 
@@ -479,7 +479,7 @@ In this model, an error-generating function is analogous to a railway switch (US
 The problem is that these functions cannot be glued together; they are all different shapes.
 
 The solution is to convert all of them to the *same* shape, in this case the two-track model with success and failure on different tracks.
-Let's call this *Two-Track world*! 
+Let's call this *Two-Track world*!
 
 ### Transforming functions using the toolset
 
@@ -552,4 +552,3 @@ In this post, we learned about "applicative" vs "monadic" style, and why the cho
 We also saw how to lift different kinds values and functions to a a consistent world so that the could be worked with easily.
 
 In the [next post](/posts/elevated-world-4/) we'll look at a common problem: working with lists of elevated values.
-
