@@ -628,7 +628,7 @@ even though they are both just "IO" from a computation point of view.
 
 Creating pure capabilities is possible but not very easy to do in F#, so I'm going to keep it out of scope for this post.
 
-**Question: What's your response to what (some person) wrote? And why didn't you cite (some paper)? **
+**Question: What's your response to what (some person) wrote? And why didn't you cite (some paper)?**
 
 This is a blog post, not an academic paper.  I'm not an expert in this area, but just doing some experiments of my own.
 
