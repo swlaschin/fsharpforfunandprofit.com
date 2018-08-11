@@ -261,7 +261,7 @@ It's not that hard, but it does requires some more explanation, so I have devote
 
 ## Example code
 
-Let's revisit at the code we have so far, but this time organized into modules.  
+Let's revisit the code we have so far, but this time organized into modules.  
 
 Each module below would typically become a separate file.  
 

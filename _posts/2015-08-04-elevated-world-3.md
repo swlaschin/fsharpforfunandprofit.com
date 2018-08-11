@@ -549,6 +549,6 @@ to using Two-Track world as my foundation for things like this.
 
 In this post, we learned about "applicative" vs "monadic" style, and why the choice could have an important effect on which actions are executed, and what results are returned.
 
-We also saw how to lift different kinds values and functions to a a consistent world so that the could be worked with easily.
+We also saw how to lift different kinds values and functions to a consistent world so that our functions can be composed more easily.
 
 In the [next post](/posts/elevated-world-4/) we'll look at a common problem: working with lists of elevated values.
