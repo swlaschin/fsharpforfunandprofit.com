@@ -3,7 +3,7 @@ layout: page
 title: "Books"
 description: Support this site by buying a book
 hasComments: 1
-image: "/books/domain-modeling-made-functional-320.jpg"
+image: "/books/domain-modeling-made-functional-twitter.jpg"
 isBookPage: 1
 nav: books
 ---

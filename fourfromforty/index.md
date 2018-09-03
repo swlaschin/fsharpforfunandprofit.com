@@ -19,19 +19,15 @@ Here's the blurb for the talk:
 
 ## Videos
 
-Coming soon!
+[Video from NDC Oslo, Jun 15, 2018](https://www.youtube.com/watch?v=0fpDlAEQio4)
 
-<!--
-Video from NDC Oslo, Jun 15, 2018 (Click image to view video) 
-
-[![Video from NDC Oslo, Jun 15, 2018](fourfromforty427.jpg)](https://vimeo.com/254635723)
--->
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0fpDlAEQio4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## Slides 
 
 Slides from NDC Oslo, Jun 15, 2018
 
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/gZiAo96dX0Wbet" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/gZiAo96dX0Wbet" width="560" height="460" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
 
 <div style="margin-bottom:5px"> 
 <strong><a href="https://www.slideshare.net/ScottWlaschin/four-languages-from-forty-years-ago" title="Four Languages From Forty Years Ago" target="_blank">Four Languages From Forty Years Ago</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 

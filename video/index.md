@@ -329,6 +329,31 @@ This talk is based on my blog posts on this topic:
     
 </div>
 
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## Four Languages From Forty Years Ago
+
+The 1970's were a golden age for new programming languages, but do they have any relevance to programming today? Can we still learn from them? 
+
+In this talk, we'll look at four languages designed over forty years ago -- SQL, Prolog, ML, and Smalltalk -- and discuss their philosophy and approach to programming, which is very different from most popular languages today. 
+
+We'll come away with some practical principles that are still very applicable to modern development. And you might discover your new favorite programming paradigm!
+
+<a href="../fourfromforty/">Slides and more information</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://www.youtube.com/watch?v=0fpDlAEQio4"><img alt="Video from NDC Oslo, Jun 15, 2018" src="fourfromforty320.jpg"></a>
+</div>
+    
+</div>
+
+
 
 ------
 
