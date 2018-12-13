@@ -39,7 +39,7 @@ type Employee =
   | Manager of Employee list
 
 // type inference
-let jdoe = {First="John";Last="Doe"}
+let jdoe = {First="John"; Last="Doe"}
 let worker = Worker jdoe
 ```
 
@@ -184,10 +184,10 @@ if i.IsEven then printfn "'%i' is even" i
 	
 // UI code
 open System.Windows.Forms 
-let form = new Form(Width= 400, Height = 300, 
+let form = new Form(Width = 400, Height = 300, 
    Visible = true, Text = "Hello World") 
 form.TopMost <- true
-form.Click.Add (fun args-> printfn "clicked!")
+form.Click.Add (fun args -> printfn "clicked!")
 form.Show()
 ```
 
