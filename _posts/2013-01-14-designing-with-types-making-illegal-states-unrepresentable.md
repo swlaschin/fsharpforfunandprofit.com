@@ -88,7 +88,7 @@ let contactOpt = contactFromEmail name "abc@example.com"
 ```     
 
 In this code, we have created a simple helper function `contactFromEmail` to create a new contact by passing in a name and email.
-However, the email might not be valid, so the function has to handle both cases, which it doesn't by returning a `Contact option`, not a `Contact`
+However, the email might not be valid, so the function has to handle both cases, which it does by returning a `Contact option`, not a `Contact`
 
 ### Updating a ContactInfo
 
