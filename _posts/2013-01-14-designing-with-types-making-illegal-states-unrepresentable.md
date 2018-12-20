@@ -8,7 +8,7 @@ seriesOrder: 3
 categories: [Types, DDD]
 ---
 
-In this post, we look at a key benefit of F#, which using the type system to "make illegal states unrepresentable" (a phrase borrowed from [Yaron Minsky](https://ocaml.janestreet.com/?q=node/85)).
+In this post, we look at a key benefit of F#, which using the type system to "make illegal states unrepresentable" (a phrase borrowed from [Yaron Minsky](https://blog.janestreet.com/effective-ml-revisited/)).
 
 Let's look at our `Contact` type. Thanks to the previous refactoring, it is quite simple:
 
