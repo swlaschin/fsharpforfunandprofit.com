@@ -206,8 +206,8 @@ most modern programming languages are introducing FP-friendly features that make
 * **Different defaults**, such as immutability by default and non-null by default. 
   Having these as the *default* makes maintenance and code comprehension much easier, because deviations from these defaults are explicitly signaled in the code.
 * **Making effects explicit** is emphasized by the functional programming community.
-  This includes such things as a `Result` type for explicit error handling, and moving I/O and other sources of impurity to the edges of the application.
-  (as seen in [functional core/imperative shell](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) and Onion Architecture approaches).
+  This includes such things as a `Result` type for explicit error handling, and moving I/O and other sources of impurity to the edges of the application
+  (as seen in the [functional core/imperative shell](https://www.destroyallsoftware.com/screencasts/catalog/functional-core-imperative-shell) and Onion Architecture approaches).
 * Finally, and most importantly, FP-influenced languages have **algebraic data types**. That is, not just records/structs, but
   also "choice" types (aka sum types or discriminated unions). In my opinion, these are essential for effective domain modeling.
   Of I course, I would say that, as [I wrote a book on the subject](https://fsharpforfunandprofit.com/books/), but I'm not alone in this view.
@@ -308,7 +308,7 @@ But if you're doing greenfield development (or if you are already on .NET) I bel
     or [WebSharper](http://websharper.com/).
   * You can build mobile apps with the [Fabulous library](https://www.jimbobbennett.io/fabulous-santa-tracker/) using an
     [Elm-like approach](https://compositional-it.com/blog/2017/09-21-safe-elmish/index.html).
-  * You can build desktop apps with XAML or WinForms or [Avalonia](http://avaloniaui.net/)
+  * You can build desktop apps with XAML or WinForms or [Avalonia](http://avaloniaui.net/).
   * You can create lightweight scripts, such as build- and deployment pipelines. [This video shows the benefits of doing your own scripting rather than being locked into a vendor's tool like VSTS/Octopus.](https://www.youtube.com/watch?v=_sZT0CpJ6Vo)
   * Another nice use for scripts is [browser UI testing](https://lefthandedgoat.github.io/canopy/).
   * And of course you can do [data science](https://fslab.org/).
