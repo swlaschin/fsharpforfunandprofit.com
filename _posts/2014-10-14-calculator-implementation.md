@@ -105,7 +105,7 @@ form.Show()
 
 Now let's start implementing the various parts of the calculation function. We'll start with the digits handling logic.
 
-To keep the main function clean, let's pass the reponsibility for all the work to a helper function `updateDisplayFromDigit`, like this:
+To keep the main function clean, let's pass the responsibility for all the work to a helper function `updateDisplayFromDigit`, like this:
 
 ```fsharp
 let createCalculate (services:CalculatorServices) :Calculate = 

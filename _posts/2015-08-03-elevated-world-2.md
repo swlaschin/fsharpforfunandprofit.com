@@ -334,11 +334,11 @@ Let's lift both of them to the elevated world, using `bind` on `f` and `return` 
 
 ![](/assets/img/vgfp_monad_law2_b.png)
 
-Now if we apply the elevated version of `f` to the elevated verson of `a` we get some value `E<b>`.
+Now if we apply the elevated version of `f` to the elevated version of `a` we get some value `E<b>`.
 
 ![](/assets/img/vgfp_monad_law2_c.png)
 
-On the other hand if we apply the normal version of `f` to the normal verson of `a` we *also* get some value `E<b>`.
+On the other hand if we apply the normal version of `f` to the normal version of `a` we *also* get some value `E<b>`.
 
 ![](/assets/img/vgfp_monad_law2_d.png)
 

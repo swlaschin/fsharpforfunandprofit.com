@@ -778,7 +778,7 @@ type TurtleAgent() =
 
     let mailboxProc = MailboxProcessor.Start(fun inbox ->
         let rec loop turtleState = async { 
-            // read a command message from teh queue
+            // read a command message from the queue
             let! command = inbox.Receive()
             // create a new state from handling the message
             let newState = 
@@ -954,8 +954,8 @@ Now let's create and test some implementations.
 The first implementation will be called `normalSize` and will be the original one. The second will be called `halfSize` and will reduce
 all the distances by half.
 
-For `normalSize` we could go back and retrofit the orginal `Turtle` class to support the `ITurtle` interface. But I hate having to change
-working code! Instead, we can create a "proxy" wrapper around the orginal `Turtle` class, where the proxy implements the new interface.
+For `normalSize` we could go back and retrofit the original `Turtle` class to support the `ITurtle` interface. But I hate having to change
+working code! Instead, we can create a "proxy" wrapper around the original `Turtle` class, where the proxy implements the new interface.
 
 In some languages, creating proxy wrappers can be long-winded, but in F# you can use [object expressions](/posts/object-expressions/) to implement an interface quickly:
 
@@ -1115,7 +1115,7 @@ member this.Exec (commandStr:string) =
 
 ### Creating some implementations of a "record of functions"
 
-Noe let's create some implementations.
+Now let's create some implementations.
 
 Again, we'll have a `normalSize` implementation and a `halfSize` implementation.
 
@@ -1333,7 +1333,7 @@ type TurtleCommand =
 
 All we need now is a function that handles each case of that type.
 
-Befor we do that though, let's look at the changes to the `Exec` method implementation:
+Before we do that though, let's look at the changes to the `Exec` method implementation:
 
 ```fsharp
 member this.Exec turtleFn (commandStr:string) = 
@@ -1456,7 +1456,7 @@ The core turtle functions that we defined at the very beginning follow the same 
 
 ![](/assets/img/turtle-monad-1.png)
 
-*(It's true that, so far. we have not had any useable output from the turtle functions, but in a later example we will see this output being used to make decisions.)*
+*(It's true that, so far. we have not had any usable output from the turtle functions, but in a later example we will see this output being used to make decisions.)*
 
 There is a standard way to deal with these kinds of functions -- the "state monad".
 

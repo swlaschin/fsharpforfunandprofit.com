@@ -14,7 +14,7 @@ In particular, the thoughtful use of types can make a design more transparent an
 This series will be focused on the "micro level" of design. That is, working at the lowest level of individual types and functions. 
 Higher level design approaches, and the associated decisions about using functional or object-oriented style, will be discussed in another series.
 
-Many of the suggestions are also feasable in C# or Java, but the lightweight nature of F# types means that it is much more likely that we will do this kind of refactoring.
+Many of the suggestions are also feasible in C# or Java, but the lightweight nature of F# types means that it is much more likely that we will do this kind of refactoring.
 
 ## A basic example ##
 

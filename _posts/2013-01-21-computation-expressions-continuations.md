@@ -69,7 +69,7 @@ public bool IsEven(int aNumber)
 
 You've seen this a million times, but there is a subtle point about this approach that you might not have considered: *the called function always decides what to do*.
 
-For example, the implemention of `Divide` has decided that it is going to throw an exception.  But what if I don't want an exception? Maybe I want a `nullable<int>`, or maybe I am going to display it on a screen as "#DIV/0". Why throw an exception that I am immediately going to have to catch?  In other words, why not let the *caller* decide what should happen, rather the callee.
+For example, the implementation of `Divide` has decided that it is going to throw an exception.  But what if I don't want an exception? Maybe I want a `nullable<int>`, or maybe I am going to display it on a screen as "#DIV/0". Why throw an exception that I am immediately going to have to catch?  In other words, why not let the *caller* decide what should happen, rather the callee.
 
 Similarly in the `IsEven` example, what am I going to do with the boolean return value? Branch on it? Or maybe print it in a report? I don't know, but again, rather than returning a boolean that the caller has to deal with, why not let the caller tell the callee what to do next?
 
@@ -285,7 +285,7 @@ There is obviously a big difference between the two styles.
 
 In the direct style, there is a hierarchy of functions. The top level function is a sort of "master controller" who calls one subroutine, and then another, deciding when to branch, when to loop, and generally coordinating the control flow explicitly. 
 
-In the contination passing style, though, there is no "master controller". Instead there is a sort of "pipeline", not of data but of control flow, where the "function in charge" changes as the execution logic flows through the pipe.  
+In the continuation passing style, though, there is no "master controller". Instead there is a sort of "pipeline", not of data but of control flow, where the "function in charge" changes as the execution logic flows through the pipe.  
 
 If you have ever attached a event handler to a button click in a GUI, or used a callback with [BeginInvoke](http://msdn.microsoft.com/en-us/library/2e08f6yc.aspx), then you have used this style without being aware of it. And in fact, this style will be key to understanding the `async` workflow, which I'll discuss later in this series.
 

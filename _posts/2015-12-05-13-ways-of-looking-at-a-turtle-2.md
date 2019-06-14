@@ -307,7 +307,7 @@ The complex logic is performed by one or more downstream "processors" (also some
 You can even think of these events as "commands" to the processors, and of course, the processors can generate new events for another processor to consume,
 so this approach can be extended into an architectural style where an application consists of a set of command handlers linked by an event store.
 
-This techique is often called ["stream processing"](http://www.confluent.io/blog/making-sense-of-stream-processing/).
+This technique is often called ["stream processing"](http://www.confluent.io/blog/making-sense-of-stream-processing/).
 However, Jessica Kerr once called this approach ["Functional Retroactive Programming"](https://twitter.com/jessitron/status/408554836578537472) -- I like that, so I'm going to steal that name!
 
 ![](/assets/img/turtle-stream-processor.png)

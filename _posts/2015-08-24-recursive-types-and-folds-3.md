@@ -739,7 +739,7 @@ let description gift =
 
 If you are confused by this plethora of designs, I don't blame you!
 
-But as it happens, the three different definitions are actually interchangable:
+But as it happens, the three different definitions are actually interchangeable:
 
 **The original version**
 

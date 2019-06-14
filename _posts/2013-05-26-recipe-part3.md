@@ -288,7 +288,7 @@ module CommonLibrary =
     let fail x = 
         Failure x
 
-    // appy either a success function or failure function
+    // apply either a success function or failure function
     let either successFunc failureFunc twoTrackInput =
         match twoTrackInput with
         | Success s -> successFunc s

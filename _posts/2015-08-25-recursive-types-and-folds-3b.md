@@ -401,7 +401,7 @@ This will be the basis of the pattern matching.
 
 ```fsharp
 /// Fold over the lines in a file asynchronously
-/// passing in the current line and line number tothe folder function.
+/// passing in the current line and line number to the folder function.
 ///
 /// Signature:
 ///   folder:('a -> int -> string -> 'a) -> 
@@ -1351,7 +1351,7 @@ type Result<'a> =
 ```
 
 I'm not going to explain how it works here.
-If you are not familar with this approach, please [read my post](/posts/recipe-part2/) or [watch my talk](/rop/) on the topic of functional error handling.
+If you are not familiar with this approach, please [read my post](/posts/recipe-part2/) or [watch my talk](/rop/) on the topic of functional error handling.
 
 Let's revisit all the steps from the previous section, and use `Result` rather than throwing exceptions.
 

@@ -601,7 +601,7 @@ To recap, here are the conditions where using simple state machines might be ben
 * You have a set of mutually exclusive states with transitions between them.
 * The transitions are triggered by external events. 
 * The states are exhaustive. That is, there are no other choices and you must always handle all cases.
-* Each state might have associated data that should not be accessable when the system is in another state.
+* Each state might have associated data that should not be accessible when the system is in another state.
 * There are static business rules that apply to the states.
 
 Let's look at some examples where these guidelines *don't* apply.
@@ -637,4 +637,4 @@ In these situations, you should consider using active patterns, or even a proper
 
 ## Summary
 
-In this post, we've seen that if you have data structures with explicit flags ("IsVerified") or status fields ("OrderStatus"), or implicit state (clued by an excessive number of nullable or option types), it is worth considering using a simple state machine to model the domain objects.  In most cases the extra complexity is compensated for by the explicit documention of the states and the elimination of errors due to not handling all possible cases.
+In this post, we've seen that if you have data structures with explicit flags ("IsVerified") or status fields ("OrderStatus"), or implicit state (clued by an excessive number of nullable or option types), it is worth considering using a simple state machine to model the domain objects.  In most cases the extra complexity is compensated for by the explicit documentation of the states and the elimination of errors due to not handling all possible cases.

@@ -272,7 +272,7 @@ let ``When upsert customer called with existing id, expect customer updated``() 
     // update customer
     let newId = db.Up_Customer_Upsert(Nullable custId,"Bob","y@example.com",Nullable()) 
     
-    // check id hasnt changed
+    // check id hasn't changed
     Assert.AreEqual(custId,newId)
 
     // check still only one customer

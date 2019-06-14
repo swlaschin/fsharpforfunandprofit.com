@@ -484,7 +484,7 @@ public bool Equals(Person obj)
 }
 ```
 
-The `LanguagePrimitives` namespace comes from the F# core library, and contains helper code for hashing, equality testing, comparision, etc.  
+The `LanguagePrimitives` namespace comes from the F# core library, and contains helper code for hashing, equality testing, comparison, etc.  
 
 *[Full source for Person.cs](https://github.com/swlaschin/fsharp-decompiled/blob/master/CsEquivalents/RecordTypeExamples/Person.cs)*
 
@@ -1353,7 +1353,7 @@ public abstract class PaymentMethod :
     }
 
     /// <summary>
-    ///  Implemented for all F# union types. Used in this case for equality and comparision
+    ///  Implemented for all F# union types. Used in this case for equality and comparison
     /// </summary>
     public int Tag
     {

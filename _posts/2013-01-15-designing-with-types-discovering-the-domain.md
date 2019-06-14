@@ -79,7 +79,7 @@ type ContactInformation =
     }
 ```     
 
-If you make this change, you also want to make sure that all the functions that process the contact infomation are updated to handle the new phone cases as well.
+If you make this change, you also want to make sure that all the functions that process the contact information are updated to handle the new phone cases as well.
 
 Certainly, you will be forced to fix any pattern matches that break. But in many cases, you would *not* be forced to handle the new cases.
 

@@ -457,7 +457,7 @@ let rec parseZeroOrMore parser input =
 With this helper function, we can easily define `many` now -- it's just a wrapper over `parseZeroOrMore`:
 
 ```fsharp
-/// match zero or more occurences of the specified parser
+/// match zero or more occurrences of the specified parser
 let many parser =
 
     let rec innerFn input =
@@ -523,7 +523,7 @@ We can also define the "one or more" combinator `many1`, using the following log
   * Then combine the first value and the remaining values.
 
 ```fsharp
-/// match one or more occurences of the specified parser
+/// match one or more occurrences of the specified parser
 let many1 parser =
     let rec innerFn input =
         // run parser with the input
@@ -754,7 +754,7 @@ run quotedInteger "1234"       // Failure "Expecting '"'. Got '1'"
 
 ## 7. Parsing lists with separators
 
-Another common requirement is parsing lists, seperated by something like commas or whitespace.
+Another common requirement is parsing lists, separated by something like commas or whitespace.
 
 To implement a "one or more" list, we need to:
 
@@ -894,8 +894,8 @@ And in this post we created the following additional combinators:
 * `applyP` allows us to lift multi-parameter functions into functions that work on Parsers.
 * `lift2` uses `applyP` to lift two-parameter functions into Parser World.
 * `sequence` converts a list of Parsers into a Parser containing a list.
-* `many` matches zero or more occurences of the specified parser.
-* `many1` matches one or more occurences of the specified parser.
+* `many` matches zero or more occurrences of the specified parser.
+* `many1` matches one or more occurrences of the specified parser.
 * `opt` matches an optional occurrence of the specified parser.
 * `.>>` keeps only the result of the left side parser.
 * `>>.` keeps only the result of the right side parser.
@@ -1055,7 +1055,7 @@ let rec sequence parserList =
     | head::tail ->
         consP head (sequence tail)
 
-/// (helper) match zero or more occurences of the specified parser
+/// (helper) match zero or more occurrences of the specified parser
 let rec parseZeroOrMore parser input =
     // run parser with the input
     let firstResult = run parser input
@@ -1072,7 +1072,7 @@ let rec parseZeroOrMore parser input =
         let values = firstValue::subsequentValues
         (values,remainingInput)
 
-/// matches zero or more occurences of the specified parser
+/// matches zero or more occurrences of the specified parser
 let many parser =
     let rec innerFn input =
         // parse the input -- wrap in Success as it always succeeds
@@ -1080,7 +1080,7 @@ let many parser =
 
     Parser innerFn
 
-/// matches one or more occurences of the specified parser
+/// matches one or more occurrences of the specified parser
 let many1 p =
     p      >>= (fun head ->
     many p >>= (fun tail ->

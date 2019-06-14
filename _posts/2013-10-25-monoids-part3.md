@@ -764,7 +764,7 @@ type ValidationFailure =
     | Success
 ```
 
-Does this type appear familar now? 
+Does this type appear familiar now? 
 
 Yes! It's the option type again! Can we never get away from the darn thing?
 

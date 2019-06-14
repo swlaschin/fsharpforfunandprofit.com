@@ -255,7 +255,7 @@ In this case, the requirement means that we need some kind of `OrderLine` such t
 
 Right now, no, because the addition operation always changes the product code to "TOTAL".  What we have right now is in fact a *semigroup*, not a monoid.
 
-As you can see, a semigroup is perfectly useable.  But a problem would arise if we had an empty list of lines and we wanted to total them. What should the result be?
+As you can see, a semigroup is perfectly usable.  But a problem would arise if we had an empty list of lines and we wanted to total them. What should the result be?
 
 One workaround would be to change the `addLine` function to ignore empty product codes. And then we could use an order line with an empty code as the zero element.
 
@@ -681,7 +681,7 @@ Well, one way is to add the separate pages together to make a complete text bloc
 
 ![Word count via adding pages](/assets/img/monoid_h1.jpg)
 
-But everytime we finish a new page, we have to add all the text together and do the word count all over again.
+But every time we finish a new page, we have to add all the text together and do the word count all over again.
 
 No doubt you can see that there is a better way of doing this.
 Instead of adding all the text together and then counting, get the word count for each page separately, and then add these counts up, like this:
@@ -1036,7 +1036,7 @@ If you are interested in using monoids for data aggregation, there are lots of g
 * [Gaussian distributions form a monoid](http://izbicki.me/blog/gausian-distributions-are-monoids).
 * Google's [MapReduce Programming Model](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.5859&rep=rep1&type=pdf) (PDF).
 * [Monoidify! Monoids as a Design Principle for Efficient MapReduce Algorithms](http://arxiv.org/abs/1304.7544) (PDF).
-* LinkedIn's [Hourglass libary for Hadoop](http://www.slideshare.net/matthewterencehayes/hourglass-27038297)
+* LinkedIn's [Hourglass library for Hadoop](http://www.slideshare.net/matthewterencehayes/hourglass-27038297)
 * From Stack Exchange: [What use are groups, monoids, and rings in database computations?](http://cs.stackexchange.com/questions/9648/what-use-are-groups-monoids-and-rings-in-database-computations)
 
 If you want to get a bit more technical, here is a detailed study of monoids and semigroups, using graphics diagrams as the domain:
