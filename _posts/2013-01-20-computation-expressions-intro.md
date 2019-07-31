@@ -312,7 +312,7 @@ req1.BeginGetResponse((fun r1 ->
 
 Lots of calls to `BeginGetResponse` and `EndGetResponse`, and the use of nested lambdas, makes this quite complicated to understand. The important code (in this case, just print statements) is obscured by the callback logic.
 
-In fact, managing this cascading approach is always a problem in code that requires a chain of callbacks; it has even been called the ["Pyramid of Doom"](http://raynos.github.com/presentation/shower/controlflow.htm?full#PyramidOfDoom) (although [none of the solutions are very elegant](http://adamghill.com/callbacks-considered-a-smell/), IMO).
+In fact, managing this cascading approach is always a problem in code that requires a chain of callbacks; it has even been called the ["Pyramid of Doom"](http://raynos.github.com/presentation/shower/controlflow.htm?full#PyramidOfDoom) (although [none of the solutions are very elegant](https://web.archive.org/web/20170609232359/http://adamghill.com/callbacks-considered-a-smell/), IMO).
 
 Of course, we would never write that kind of code in F#, because F# has the `async` computation expression built in, which both simplifies the logic and flattens the code.
 
