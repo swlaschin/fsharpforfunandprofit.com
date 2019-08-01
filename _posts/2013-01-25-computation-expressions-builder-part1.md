@@ -236,7 +236,7 @@ We get an error immediately:
 This value is not a function and cannot be applied
 ```
 
-Fair enough. If you think about it, it doesn't make sense to have nothing at all in a computation expression. After all, it's purpose is to chain expressions together.
+Fair enough. If you think about it, it doesn't make sense to have nothing at all in a computation expression. After all, its purpose is to chain expressions together.
 
 Next, what about a simple expression with no `let!` or `return`?
  
@@ -273,7 +273,7 @@ So which value *should* you use for `Zero`? It depends on the kind of workflow y
 Here are some guidelines that might help:
 
 * **Does the workflow have a concept of "success" or "failure"?** If so, use the "failure" value for `Zero`. For example, in our `trace` workflow, we use `None` to indicate failure, and so we can use `None` as the Zero value.
-* **Does the workflow have a concept of "sequential processing"?** That is, in your workflow you do one step and then another, with some processing behind the scenes.  In normal F# code, an expression that did return anything explicitly would evaluate to unit. So to parallel this case, your `Zero` should be the *wrapped* version of unit. For example, in a variant on an option-based workflow, we might use `Some ()` to mean `Zero` (and by the way, this would always be the same as `Return ()` as well).
+* **Does the workflow have a concept of "sequential processing"?** That is, in your workflow you do one step and then another, with some processing behind the scenes.  In normal F# code, an expression that did not return anything explicitly would evaluate to unit. So to parallel this case, your `Zero` should be the *wrapped* version of unit. For example, in a variant on an option-based workflow, we might use `Some ()` to mean `Zero` (and by the way, this would always be the same as `Return ()` as well).
 * **Is the workflow primarily concerned with manipulating data structures?** If so, `Zero` should be the "empty" data structure. For example, in a "list builder" workflow, we would use the empty list as the Zero value.
 
 The `Zero` value also has an important role to play when combining wrapped types. So stay tuned, and we'll revisit Zero in the next post.
