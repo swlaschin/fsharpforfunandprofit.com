@@ -111,7 +111,7 @@ Types:
 * [Option Types](/posts/the-option-type/) especially on why [None is not the same as null](/posts/the-option-type/#option-is-not-null).
 * [Record Types](/posts/records/).
 * [Tuple Types](/posts/tuples/).
-* [Discriminated Unions](/posts/the-option-type/).
+* [Discriminated Unions](/posts/discriminated-unions/).
 * [Algebraic type sizes and domain modelling](/posts/type-size-and-design/).
 
 F# for C# Developers:
