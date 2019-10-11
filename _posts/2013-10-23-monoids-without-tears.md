@@ -217,7 +217,7 @@ For example, if your domain consists only of strictly positive numbers, then und
 
 Another example might be the intersection of finite lists. It is closed and associative, but there is no (finite) list that when intersected with any other finite list, leaves it untouched.
 
-This kind of system still quite useful, and is called a "semigroup" by mathematicians, rather than a monoid.
+This kind of system is still quite useful, and is called a "semigroup" by mathematicians, rather than a monoid.
 Luckily, there is a trick that can convert any semigroup into a monoid (which I'll describe later).
 
 
