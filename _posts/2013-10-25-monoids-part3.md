@@ -25,7 +25,7 @@ We'll start with closure.
 In some cases you might want to add values together, but the type of the combined value is not the same as the type of the original values.
 How can you handle this?
 
-One way is to just to map from the original type to a new type that *is* closed. We saw this approach used with the `Customer` and `CustomerStats` example in the previous post.
+One way is to just map from the original type to a new type that *is* closed. We saw this approach used with the `Customer` and `CustomerStats` example in the previous post.
 In many cases, this is the easiest approach, because you don't have to mess with the design of the original types.
 
 On the other hand, sometimes you really don't want to use `map`, but instead want to design your type from the beginning so that it meets the closure requirement.
