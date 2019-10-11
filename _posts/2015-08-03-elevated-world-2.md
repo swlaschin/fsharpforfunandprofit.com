@@ -226,7 +226,7 @@ Because of this, `bind` is sometimes called a "programmable semicolon".
 
 Most functional programming languages have some kind of syntax support for `bind` that lets you avoid having to write a series of continuations or use explicit binds.
 
-In F# it is (one component) of computation expressions, so the following explicit chaining of `bind`:
+In F# it is (one component of) computation expressions, so the following explicit chaining of `bind`:
 
 ```fsharp
 initialExpression >>= (fun x ->
