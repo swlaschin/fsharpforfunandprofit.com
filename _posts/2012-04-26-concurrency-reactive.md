@@ -24,7 +24,7 @@ There is a similar approach that can be used with events. The idea is to turn a 
 Event streams then become quite like IEnumerables, and so the obvious next step
 is to treat them in much the the same way that LINQ handles collections, so that they can be filtered, mapped, split and combined.
 
-F# has built in support for this model, as well as for the more tradition approach.
+F# has built in support for this model, as well as for the more traditional approach.
 
 ## A simple event stream ##
 
