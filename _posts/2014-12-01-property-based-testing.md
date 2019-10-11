@@ -1223,7 +1223,7 @@ At the beginning of this post, I was dismissive of tests that used "magic" numbe
 
 However, I do think that example-based tests have a role that complements property-based tests. 
 
-An example-based test is often easier to understand because it is less abstract, and so provides a good entry point and documentation in conjuction with the properties.
+An example-based test is often easier to understand because it is less abstract, and so provides a good entry point and documentation in conjunction with the properties.
 
 Here's an example:
 

@@ -514,7 +514,7 @@ If we look at the type signature we see this, a function with two parameters:
 ![](/assets/img/vgfp_api_action2.png)
 
 But *another* way to interpret this function is as a function with *one* parameter that returns another function. The returned function has an `ApiClient` parameter
-and returns the final ouput.
+and returns the final output.
 
 ![](/assets/img/vgfp_api_action3.png)
 
@@ -827,7 +827,7 @@ Let's compare the two versions in a table:
 
 <table class="table table-condensed table-striped">
 <tr>
-<th>Earlier verson</th>
+<th>Earlier version</th>
 <th>Latest function</th>
 </tr>
 <tr>

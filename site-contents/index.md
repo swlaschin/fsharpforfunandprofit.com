@@ -80,7 +80,7 @@ These posts provide detailed worked examples with lots of code!
 * [Commentary on 'Roman Numerals Kata with Commentary'](/posts/roman-numeral-kata/). My approach to the Roman Numerals Kata.
 * [Worked example: Designing for correctness](/posts/designing-for-correctness/): How to make illegal states unrepresentable (a shopping cart example).
 * [Worked example: Stack based calculator](/posts/stack-based-calculator/): Using a simple stack to demonstrate the power of combinators.
-* [Worked example: Parsing commmand lines](/posts/pattern-matching-command-line/): Using pattern matching in conjunction with custom types.
+* [Worked example: Parsing command lines](/posts/pattern-matching-command-line/): Using pattern matching in conjunction with custom types.
 * [Worked example: Roman numerals](/posts/roman-numerals/): Another pattern matching example.
 * [Calculator Walkthrough](/posts/calculator-design/): The type-first approach to designing a Calculator.
 * [Enterprise Tic-Tac-Toe](/posts/enterprise-tic-tac-toe/): A walkthrough of the design decisions in a purely functional implementation

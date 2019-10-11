@@ -197,7 +197,7 @@ let parseCommandLine args =
     parseCommandLineRec args defaultOptions 
 ```
 
-In this case the helper function can stand on its own. But if you really want to hide it, you can put it as a nested subfunction in the defintion of `parseCommandLine` itself.
+In this case the helper function can stand on its own. But if you really want to hide it, you can put it as a nested subfunction in the definition of `parseCommandLine` itself.
 
 ```fsharp
 // create the "public" parse function

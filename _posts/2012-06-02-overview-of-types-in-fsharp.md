@@ -79,7 +79,7 @@ I will hold off explaining what **sum** and **product** mean in practice until w
 
 The key point is that an infinite number of new types can be made by combining existing types together using these "product" and "sum" methods in various ways. Collectively these are called "algebraic data types" or ADTs (not to be confused with *abstract data types*, also called ADTs). Algebraic data types can be used to model anything, including lists, trees, and other recursive types. 
 
-The sum or "union" types, in particular, are very valuable, and once you get used to them, you will find them indispensible! 
+The sum or "union" types, in particular, are very valuable, and once you get used to them, you will find them indispensable! 
 
 ## How types are defined 
 

@@ -779,7 +779,7 @@ Note that the result is `[11; 22; 33]` -- only three elements. If we had used th
 
 ### Interpreting "zip" as a "combiner"
 
-We saw above that `List.apply`, or rather `List.lift2`, could be intepreted as a combiner. Similarly, so can `zipList`. 
+We saw above that `List.apply`, or rather `List.lift2`, could be interpreted as a combiner. Similarly, so can `zipList`. 
 
 ```fsharp
 let add x y = x + y
@@ -833,7 +833,7 @@ module ZipSeq =
         let squareNumbers = Seq.initInfinite (fun i -> i * i)
         (retn addAndDivideByTwo) <*> numbers <*> squareNumbers 
 
-    // evaulate first 10 elements 
+    // evaluate first 10 elements 
     // and display result            
     triangularNumbers |> Seq.take 10 |> List.ofSeq |> printfn "%A"
     // Result =>

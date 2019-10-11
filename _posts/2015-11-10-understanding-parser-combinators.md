@@ -549,7 +549,7 @@ but that gives us a compiler error, as the output of `parseA` does not match the
 If you are familiar with [functional programming patterns](/fppatterns/), the need to chain a sequence of wrapped types together like this
 happens frequently, and the solution is a `bind` function.
 
-However, in this case, I won't implement `bind` but will instead go straight to an `andThen` implemention.
+However, in this case, I won't implement `bind` but will instead go straight to an `andThen` implementation.
 
 The implementation logic will be as follows:
 

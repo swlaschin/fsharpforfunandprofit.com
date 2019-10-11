@@ -502,7 +502,7 @@ When you combine this with the SQL Type Provider (discussed later) or CSV writer
 generate thousands of rows of random customers in a database or CSV file.
 Or you can use it with the JSON type provider to call a web service for testing validation logic, or load testing.
 
-*(Dont worry about not understanding the code -- this sample is just to show you how easy it is!)*
+*(Don't worry about not understanding the code -- this sample is just to show you how easy it is!)*
 
 ```fsharp
 // domain objects

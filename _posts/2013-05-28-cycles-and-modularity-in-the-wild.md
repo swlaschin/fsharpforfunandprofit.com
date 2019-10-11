@@ -655,7 +655,7 @@ As you can see, adding seven new data points (five C# and two F# projects) didn'
 * Added a comparison of Moq and Foq.
 * Added a comparison of my own two projects.
 
-The orginal post is still available [here](/archives/cycles-and-modularity-in-the-wild_20130614.html)
+The original post is still available [here](/archives/cycles-and-modularity-in-the-wild_20130614.html)
 
 
 

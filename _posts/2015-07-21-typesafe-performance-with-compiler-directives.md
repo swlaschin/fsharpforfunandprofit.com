@@ -287,7 +287,7 @@ So, can we get the best of both worlds? Type-safe wrapper types AND fast perform
 
 I think so, if you are willing to put up with some extra work during development and build.
 
-The trick is to have *both* the "wrapper type" implemention and the "type alias" implementation available to you, and then switch between them based on a compiler directive.
+The trick is to have *both* the "wrapper type" implementation and the "type alias" implementation available to you, and then switch between them based on a compiler directive.
 
 For this to work:
 

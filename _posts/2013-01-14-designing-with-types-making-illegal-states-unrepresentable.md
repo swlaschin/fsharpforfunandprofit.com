@@ -63,7 +63,7 @@ type Contact =
     }
 ```     
 
-This design meets the requirements perfectly. All three cases are explictly represented, and the fourth possible case (with no email or postal address at all) is not allowed.
+This design meets the requirements perfectly. All three cases are explicitly represented, and the fourth possible case (with no email or postal address at all) is not allowed.
 
 Note that for the "email and post" case, I just used a tuple type for now. It's perfectly adequate for what we need.
 

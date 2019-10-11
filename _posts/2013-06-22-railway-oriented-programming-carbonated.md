@@ -449,7 +449,7 @@ module RailwayCombinatorModule =
     /// convert a single value into a two-track result
     let fail x = Choice2Of2 x
 
-    // appy either a success function or failure function
+    // apply either a success function or failure function
     let either successFunc failureFunc twoTrackInput =
         match twoTrackInput with
         | Success s -> successFunc s
@@ -818,7 +818,7 @@ In my opinion, the imperative version is the worst design. Even though it was ea
 
 Of the two functional versions, I think the "railway oriented" version is cleaner, for this problem at least.
 
-By using the `Choice` type rather than a tuple or special record, we made the code more elegant thoughout.
+By using the `Choice` type rather than a tuple or special record, we made the code more elegant throughout.
 You can see the difference if you compare the pipeline version of `carbonate` with the railway oriented version of `carbonate`.
 
 In other situations, of course, the railway oriented approach might not work, and the pipeline approach might be better. I hope this post has given some useful insight into both.

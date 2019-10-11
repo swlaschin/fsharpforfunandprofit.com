@@ -604,7 +604,7 @@ The order of swapping is fixed:
 * The Traversable world starts higher and is swapped *down*.
 * The Applicative world starts lower and is swapped *up*.
 
-Note that if you aleady have an implementation of `traverse`, then `sequence` can be derived from it easily.
+Note that if you already have an implementation of `traverse`, then `sequence` can be derived from it easily.
 In fact, you can think of `sequence` as `traverse` with the `id` function baked in.
 
 ### Applicative vs Monadic versions of `sequence`

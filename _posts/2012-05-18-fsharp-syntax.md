@@ -97,7 +97,7 @@ New offside lines can never go forward further than the previous line on the sta
 ```fsharp
 let f = 
    let g = (         // let defines a new line at col 4
-  1+2)               // oops! Cant define new line less than 4
+  1+2)               // oops! Can't define new line less than 4
    g 
 ```
 

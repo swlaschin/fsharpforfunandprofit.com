@@ -22,7 +22,7 @@ But how do you make a new one of these things? How do they work behind the scene
 Unfortunately, many explanations seem to make things even more confusing.  There seems to be some sort of mental bridge that you have to cross. 
 Once you are on the other side, it is all obvious, but to someone on this side, it is baffling.
 
-If we turn for guidance to the [official MSDN documention](http://msdn.microsoft.com/en-us/library/dd233182.aspx), it is explicit, but quite unhelpful to a beginner. 
+If we turn for guidance to the [official MSDN documentation](http://msdn.microsoft.com/en-us/library/dd233182.aspx), it is explicit, but quite unhelpful to a beginner. 
 
 For example, it says that when you see the following code within a computation expression:
 

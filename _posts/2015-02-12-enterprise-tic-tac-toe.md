@@ -1079,7 +1079,7 @@ type TicTacToeForm<'GameState>(api:TicTacToeAPI<'GameState>) =
             // to the api
             // etc
         | GameWon player -> 
-            ?? // we aleady showed after the last move
+            ?? // we already showed after the last move
 ```
 
 As you can see, I'm planning to use the standard Form event handling approach -- each cell will have a "clicked" event handler associated with it. 

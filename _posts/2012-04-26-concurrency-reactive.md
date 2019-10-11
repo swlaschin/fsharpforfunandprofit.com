@@ -104,7 +104,7 @@ And again test it interactively:
 // create the timer and the corresponding observable
 let basicTimer2 , timerEventStream = createTimerAndObservable 1000
 
-// register that everytime something happens on the 
+// register that every time something happens on the 
 // event stream, print the time.
 timerEventStream 
 |> Observable.subscribe (fun _ -> printfn "tick %A" DateTime.Now)

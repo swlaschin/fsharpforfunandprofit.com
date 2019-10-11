@@ -444,7 +444,7 @@ let turn angle =
   
 This calls the original `turn` function with the logger and state, and then uses the recursive call (`ctf`) to convert the new state into the record of functions.
 
-For an optional function like `move`, it is a bit more complicated. An inner function `f` is defined, using the orginal `move`, and then either `f` is returned as `Some`,
+For an optional function like `move`, it is a bit more complicated. An inner function `f` is defined, using the original `move`, and then either `f` is returned as `Some`,
 or `None` is returned, depending on whether the `state.canMove` flag is set:
 
 ```fsharp

@@ -18,7 +18,7 @@ Zip: string;
 
 ```
 
-These are all defined as simple strings.  But really, are they just strings?  Is an email address interchangable with a zip code or a state abbreviation?
+These are all defined as simple strings.  But really, are they just strings?  Is an email address interchangeable with a zip code or a state abbreviation?
 
 In a domain driven design, they are indeed distinct things, not just strings. So we would ideally like to have lots of separate types for them so that they cannot accidentally be mixed up.
 
@@ -415,7 +415,7 @@ Now that we have the wrapper type, when should we construct them?
 Generally you only need to at service boundaries (for example, boundaries in a [hexagonal architecture](http://alistair.cockburn.us/Hexagonal+architecture))
 
 In this approach, wrapping is done in the UI layer, or when loading from a persistence layer, and once the wrapped type is created, it is passed in to the domain layer and manipulated "whole", as an opaque type. 
-It is suprisingly uncommon that you actually need the wrapped contents directly when working in the domain itself.
+It is surprisingly uncommon that you actually need the wrapped contents directly when working in the domain itself.
 
 As part of the construction, it is critical that the caller uses the provided constructor rather than doing its own validation logic. This ensures that "bad" values can never enter the domain.
 

@@ -272,7 +272,7 @@ let mySize2 = Medium
 
 Sometimes it is useful to create union types with only one case. This might be seem useless, because you don't seem to be adding value. But in fact, this a very useful practice that can enforce type safety*.
 
-<sub>* And in a future series we'll see that, in conjuction with module signatures, single case unions can also help with data hiding and capability based security.<sub>
+<sub>* And in a future series we'll see that, in conjunction with module signatures, single case unions can also help with data hiding and capability based security.<sub>
 
 For example, let's say that we have customer ids and order ids which are both represented by integers, but that they should never be assigned to each other.
 

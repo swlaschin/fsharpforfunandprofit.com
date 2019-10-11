@@ -492,7 +492,7 @@ class
 end
 ```
 
-Creating this artifical builder is overkill of course, but the signatures clearly show how the various methods fit together.
+Creating this artificial builder is overkill of course, but the signatures clearly show how the various methods fit together.
 
 ## Summary
 

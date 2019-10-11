@@ -429,7 +429,7 @@ let observer = Observer.printNameChanged
 let changeName = hook2 observer Customer.changeName 
 ```
 
-Note that the resulting `changeName` has *exactly the same signature* as the original `Customer.changeName` function, so it can be used interchangably with it anywhere.
+Note that the resulting `changeName` has *exactly the same signature* as the original `Customer.changeName` function, so it can be used interchangeably with it anywhere.
 
 ```fsharp
 let customer = {name="Alice"}
@@ -579,7 +579,7 @@ So, a lot of trouble just to create some values. This is another reason why mutu
 
 ### Parameterizing again
 
-To break the dependency, we can use the parameterization trick again. We can just create a parameterized vesion of `Employee`.
+To break the dependency, we can use the parameterization trick again. We can just create a parameterized version of `Employee`.
 
 ```fsharp
 module StructuralDependencyExample_ParameterizedClasses = 

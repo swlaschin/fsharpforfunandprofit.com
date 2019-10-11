@@ -15,7 +15,7 @@ seriesOrder: 1
 For generations, we have been captivated by the tragic story of Dr Frankenfunctor.
 The fascination with vital forces,
 the early experiments with electricity and galvanism,
-and finally the breakthough culminating in the bringing to life of a collection of dead body parts -- the Monadster.
+and finally the breakthrough culminating in the bringing to life of a collection of dead body parts -- the Monadster.
 
 But then, as we all know, the creature escaped and the free Monadster rampaged through computer science conferences,
 bringing fear to the hearts of even the most seasoned programmers.

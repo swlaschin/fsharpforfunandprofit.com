@@ -94,7 +94,7 @@ type WebClientWithTimeout(timeout:int<ms>) =
         result
 ```
 
-Notice that I'm using units of measure for the timeout value. I find that units of measure are invaluable to distiguish seconds from milliseconds.
+Notice that I'm using units of measure for the timeout value. I find that units of measure are invaluable to distinguish seconds from milliseconds.
 I once accidentally set a timeout to 2000 seconds rather than 2000 milliseconds and I don't want to make that mistake again!
 
 The next bit of code defines our domain types.  We want to be able to keep the url and the size together as we process them. We could use a tuple,
@@ -750,7 +750,7 @@ module AsyncResult =
 
 Notes:
 
-* The type alias is optional. We can use `Async<Result<'a>>` directly in the code and it wil work fine.  The point is that *conceptually* `AsyncResult` is a separate type.
+* The type alias is optional. We can use `Async<Result<'a>>` directly in the code and it will work fine.  The point is that *conceptually* `AsyncResult` is a separate type.
 * The `bind` implementation is new. The continuation function `f` is now crossing *two* worlds, and has the signature `'a -> Async<Result<'b>>`.
   * If the inner `Result` is successful, the continuation function `f` is evaluated with the result. The `return!` syntax means that the return value is already lifted.
   * If the inner `Result` is a failure, we have to lift the failure to an Async.
