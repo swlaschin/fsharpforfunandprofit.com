@@ -354,6 +354,31 @@ We'll come away with some practical principles that are still very applicable to
 </div>
 
 
+------
+
+<div class="row video">  
+
+<div class="col-sm-8" style="float:right;" markdown="1">
+
+## The Functional Programmer's Toolkit
+
+The functional programming community has a number of patterns with strange names such as monads, monoids, functors, and catamorphisms.
+
+In this beginner-friendly talk, we'll demystify these techniques and see how they all fit together into a small but versatile "tool kit". 
+
+We'll then see how the tools in this tool kit can be applied to a wide variety of programming problems, such as handling missing data, working with lists, and implementing the functional equivalent of dependency injection.
+
+<a href="../fptoolkit/">Slides and more information</a>
+
+</div>
+
+<div class="col-sm-4" style="float:left;">
+<a href="https://www.youtube.com/watch?v=bK-Tz-GLfOs"><img alt="Video from NDC Oslo, Jun 19, 2019" src="fptoolkit320.jpg"></a>
+</div>
+    
+</div>
+
+
 
 ------
 
