@@ -376,7 +376,7 @@ printfn "multiplied=%A" multiplied
 ### LINQ and the "list workflow"
 
 Does the `for element in collection do` look familiar? It is very close to the `from element in collection ...` syntax used by LINQ. 
-And indeed LINQ uses basically the same technique to convert from a query expression syntax like `from element in collection ...` to actual method calls behine the scenes. 
+And indeed LINQ uses basically the same technique to convert from a query expression syntax like `from element in collection ...` to actual method calls behind the scenes. 
 
 In F#, as we saw, the `bind` uses the `List.collect` function. The equivalent of `List.collect` in LINQ is the `SelectMany` extension method.
 And once you understand how `SelectMany`  works, you can implement the same kinds of queries yourself.  Jon Skeet has written a [helpful blog post](http://codeblog.jonskeet.uk/2010/12/27/reimplementing-linq-to-objects-part-9-selectmany/) explaining this.
