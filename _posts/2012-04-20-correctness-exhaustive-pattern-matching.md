@@ -291,9 +291,8 @@ First set up a good file and a bad file.
 ```fsharp
 /// write some text to a file
 let writeSomeText filePath someText = 
-    use writer = new System.IO.StreamWriter(filePath:string)
+    use writer = new System.IO.StreamWriter(path:string)
     writer.WriteLine(someText:string)
-    writer.Close()
 
 let goodFileName = "good.txt"
 let badFileName = "bad.txt"
