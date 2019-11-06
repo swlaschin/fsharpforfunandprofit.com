@@ -213,7 +213,7 @@ type FileErrorReason =
 let performActionOnFile action filePath =
    try
       //open file, do the action and return the result
-      use sr = new System.IO.StreamReader(filePath:string)
+      use sr = new System.IO.StreamReader(path:string)
       let result = action sr  //do the action to the reader
       Success (result)        // return a Success
    with      // catch some exceptions and convert them to errors
