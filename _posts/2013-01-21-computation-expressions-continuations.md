@@ -403,7 +403,7 @@ z)))
 
 You might be thinking: so what? Why bother to wrap the pipe into a function?
 
-The answer is that we can add *extra code* in the `pipeInto` function to do stuff "behine the scenes", just as in a computation expression.
+The answer is that we can add *extra code* in the `pipeInto` function to do stuff "behind the scenes", just as in a computation expression.
 
 ### The "logging" example revisited ###
 
