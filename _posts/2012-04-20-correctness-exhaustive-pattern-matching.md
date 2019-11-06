@@ -215,7 +215,6 @@ let performActionOnFile action filePath =
       //open file, do the action and return the result
       use sr = new System.IO.StreamReader(filePath:string)
       let result = action sr  //do the action to the reader
-      sr.Close()
       Success (result)        // return a Success
    with      // catch some exceptions and convert them to errors
       | :? System.IO.FileNotFoundException as ex 
