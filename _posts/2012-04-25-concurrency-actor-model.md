@@ -12,7 +12,7 @@ In this post, we'll look at the message-based (or actor-based) approach to concu
 
 In this approach, when one task wants to communicate with another, it sends it a message, rather than contacting it directly. The messages are put on a queue, and the receiving task (known as an "actor" or "agent") pulls the messages off the queue one at a time to process them.
 
-This message-based approach has been applied to many situations, from low-level network sockets (built on TCP/IP) to enterprise wide application integration systems (for example MSMQ or IBM WebSphere MQ).
+This message-based approach has been applied to many situations, from low-level network sockets (built on TCP/IP) to enterprise wide application integration systems (for example Kafka or IBM WebSphere MQ).
 
 From a software design point of view, a message-based approach has a number of benefits:
 
@@ -401,7 +401,7 @@ What a difference! This time the output is perfect.
 
 There is much more to say about this message based approach. In a future series, I hope to go into much more detail, including discussion of topics such as:
 
-* alternative implementations of message queues with MSMQ and TPL Dataflow.
+* alternative implementations of message queues with Kafka and TPL Dataflow.
 * cancellation and out of band messages.
 * error handling and retries, and handling exceptions in general.
 * how to scale up and down by creating or removing child agents.
