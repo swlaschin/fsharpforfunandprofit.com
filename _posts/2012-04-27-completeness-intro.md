@@ -14,7 +14,7 @@ Programming languages coming from the academic world tend to focus on elegance a
 
 F# is unusual in that it successfully bridges both worlds. Although all the examples so far have focused on F# as an elegant functional language, it does support an object-oriented paradigm as well, and can integrate easily with other .NET languages and tools. As a result, F# is not a isolated island, but benefits from being part of the whole .NET ecosystem.
 
-The other aspects that make F# "complete" are being an official .NET language (with all the support and documentation that that entails) and being designed to work in Visual Studio (which provides a nice editor with IntelliSense support, a debugger, and so on).  These benefits should be obvious and won't be discussed here.
+The other aspects that make F# "complete" are being an official .NET language (with all the support and documentation that that entails) and being designed to work in Visual Studio (which provides a nice editor with IntelliSense support, a debugger, and so on) and  [Visual Studio Code](http://ionide.io/).  These benefits should be obvious and won't be discussed here.
 
 So, in this last section, we'll focus on two particular areas:
 
