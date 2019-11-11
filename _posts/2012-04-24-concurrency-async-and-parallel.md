@@ -195,7 +195,7 @@ open System
 open System.Threading
 
 // create a cancellation source
-let cancellationSource = new CancellationTokenSource()
+use cancellationSource = new CancellationTokenSource()
 
 // start the task, but this time pass in a cancellation token
 Async.Start (testLoop,cancellationSource.Token)
