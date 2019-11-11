@@ -213,9 +213,8 @@ type FileErrorReason =
 let performActionOnFile action filePath =
    try
       //open file, do the action and return the result
-      use sr = new System.IO.StreamReader(filePath:string)
+      use sr = new System.IO.StreamReader(path:string)
       let result = action sr  //do the action to the reader
-      sr.Close()
       Success (result)        // return a Success
    with      // catch some exceptions and convert them to errors
       | :? System.IO.FileNotFoundException as ex 
@@ -292,9 +291,8 @@ First set up a good file and a bad file.
 ```fsharp
 /// write some text to a file
 let writeSomeText filePath someText = 
-    use writer = new System.IO.StreamWriter(filePath:string)
+    use writer = new System.IO.StreamWriter(path:string)
     writer.WriteLine(someText:string)
-    writer.Close()
 
 let goodFileName = "good.txt"
 let badFileName = "bad.txt"
