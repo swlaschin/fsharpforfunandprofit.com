@@ -155,7 +155,7 @@ Now let's use them:
 ```fsharp
 //test
 addTwoParams 1 2      // ok - uses spaces to separate args
-addTwoParams (1,2)    // error trying to pass a single tuple 
+addTwoParams (1,2)    // error trying to pass a single tuple
 //   => error FS0001: This expression was expected to have type
 //                    int but here has type 'a * 'b
 ```
@@ -171,21 +171,21 @@ To make a tuple, use a comma!  Here's how to do it correctly:
 addTuple (1,2)           // ok
 addConfusingTuple (1,2)  // ok
 
-let x = (1,2)                 
+let x = (1,2)
 addTuple x               // ok
 
-let y = 1,2              // it's the comma you need, 
-                         // not the parentheses!      
+let y = 1,2              // it's the comma you need,
+                         // not the parentheses!
 addTuple y               // ok
 addConfusingTuple y      // ok
 ```
 
-Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an obscure error.
+Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an error.
 
 ```fsharp
-addConfusingTuple 1 2    // error trying to pass two args 
-// => error FS0003: This value is not a function and 
-//                  cannot be applied
+addConfusingTuple 1 2    // error trying to pass two args
+// => error FS0001: This expression was expected to have type ''a * 'b'
+//                  but here has type 'int'
 ```
 
 In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then "`addConfusingTuple 1`" would be a partial application that returns another intermediate function. Trying to apply that intermediate function with "2" gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
