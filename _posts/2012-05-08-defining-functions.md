@@ -188,11 +188,9 @@ addConfusingTuple 1 2    // error trying to pass two args
 //                  but here has type 'int'
 ```
 
-In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then "`addConfusingTuple 1`" would be a partial application that returns another intermediate function. Trying to apply that intermediate function with "2" gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
-
 ### Why not use tuples as parameters? ###
 
-The discussion of the issues with tuples above shows that there's another way to define functions with more than one parameter: rather than passing them in separately, all the parameters can be combined into a single composite data structure. In the example below, the function takes a single parameter, which is a tuple containing three items. 
+The discussion of the issues with tuples above shows that there's another way to define functions with more than one parameter: rather than passing them in separately, all the parameters can be combined into a single composite data structure. In the example below, the function takes a single parameter, which is a tuple containing three items.
 
 ```fsharp
 let f (x,y,z) = x + y * z
@@ -202,7 +200,7 @@ let f (x,y,z) = x + y * z
 f (1,2,3)
 ```
 
-Note that the function signature is different from a true three parameter function. There is only one arrow, so only one parameter, and the stars indicate that this is a tuple of `(int*int*int)`. 
+Note that the function signature is different from a true three parameter function. There is only one arrow, so only one parameter, and the stars indicate that this is a tuple of `(int*int*int)`.
 
 When would we want to use tuple parameters instead of individual ones?  
 
