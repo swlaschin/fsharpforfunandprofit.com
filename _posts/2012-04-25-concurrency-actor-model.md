@@ -12,7 +12,7 @@ In this post, we'll look at the message-based (or actor-based) approach to concu
 
 In this approach, when one task wants to communicate with another, it sends it a message, rather than contacting it directly. The messages are put on a queue, and the receiving task (known as an "actor" or "agent") pulls the messages off the queue one at a time to process them.
 
-This message-based approach has been applied to many situations, from low-level network sockets (built on TCP/IP) to enterprise wide application integration systems (for example MSMQ or IBM WebSphere MQ).
+This message-based approach has been applied to many situations, from low-level network sockets (built on TCP/IP) to enterprise wide application integration systems (for example Kafka or IBM WebSphere MQ).
 
 From a software design point of view, a message-based approach has a number of benefits:
 
@@ -32,7 +32,7 @@ With these advantages, it is not surprising that when a team inside Ericsson wan
 F# has a built-in agent class called `MailboxProcessor`. These agents are very lightweight compared with threads - you can instantiate tens of thousands of them at the same time.
 
 These are similar to the agents in Erlang, but unlike the Erlang ones, they do *not* work across process boundaries, only in the same process.
-And unlike a heavyweight queueing system such as MSMQ, the messages are not persistent. If your app crashes, the messages are lost.
+And unlike a heavyweight queueing system such as Kafka, the messages are not persistent. If your app crashes, the messages are lost.
 
 But these are minor issues, and can be worked around. In a future series, I will go into alternative implementations of message queues.  The fundamental approach is the same in all cases.
 
@@ -40,14 +40,14 @@ Let's see a simple agent implementation in F#:
 
 ```fsharp
 
-let printerAgent = MailboxProcessor.Start(fun inbox-> 
+let printerAgent = MailboxProcessor.Start(fun inbox->
 
     // the message processing function
     let rec messageLoop() = async{
-        
+
         // read a message
         let! msg = inbox.Receive()
-        
+
         // process a message
         printfn "message is: %s" msg
 
@@ -68,9 +68,9 @@ Here's the example in use:
 
 ```fsharp
 // test it
-printerAgent.Post "hello" 
-printerAgent.Post "hello again" 
-printerAgent.Post "hello a third time" 
+printerAgent.Post "hello"
+printerAgent.Post "hello again"
+printerAgent.Post "hello a third time"
 ```
 
 In the rest of this post we'll look at two slightly more useful examples:
@@ -102,46 +102,46 @@ open System.Threading
 open System.Diagnostics
 
 // a utility function
-type Utility() = 
-    static let rand = new Random()
-    
-    static member RandomSleep() = 
+type Utility() =
+    static let rand = Random()
+
+    static member RandomSleep() =
         let ms = rand.Next(1,10)
         Thread.Sleep ms
 
 // an implementation of a shared counter using locks
-type LockedCounter () = 
+type LockedCounter () =
 
-    static let _lock = new Object()
+    static let _lock = Object()
 
     static let mutable count = 0
     static let mutable sum = 0
 
-    static let updateState i = 
+    static let updateState i =
         // increment the counters and...
         sum <- sum + i
         count <- count + 1
-        printfn "Count is: %i. Sum is: %i" count sum 
+        printfn "Count is: %i. Sum is: %i" count sum
 
         // ...emulate a short delay
         Utility.RandomSleep()
 
 
     // public interface to hide the state
-    static member Add i = 
+    static member Add i =
         // see how long a client has to wait
-        let stopwatch = new Stopwatch()
-        stopwatch.Start() 
+        let stopwatch = Stopwatch()
+        stopwatch.Start()
 
         // start lock. Same as C# lock{...}
         lock _lock (fun () ->
-        
+
             // see how long the wait was
             stopwatch.Stop()
             printfn "Client waited %i" stopwatch.ElapsedMilliseconds
 
             // do the core logic
-            updateState i 
+            updateState i
             )
         // release lock
 ```
@@ -166,7 +166,7 @@ Next, we'll create a task that will try to access the counter:
 ```fsharp
 let makeCountingTask addFunction taskId  = async {
     let name = sprintf "Task%i" taskId
-    for i in [1..3] do 
+    for i in [1..3] do
         addFunction i
     }
 
@@ -180,7 +180,7 @@ In this case, when there is no contention at all, the wait times are all 0.
 But what happens when we create 10 child tasks that all try to access the counter at once:
 
 ```fsharp
-let lockedExample5 = 
+let lockedExample5 =
     [1..10]
         |> List.map (fun i -> makeCountingTask LockedCounter.Add i)
         |> Async.Parallel
@@ -197,9 +197,9 @@ And if we add more and more tasks, the contention will increase, and the tasks w
 Let's see how a message queue might help us. Here's the message based version:
         
 ```fsharp
-type MessageBasedCounter () = 
+type MessageBasedCounter () =
 
-    static let updateState (count,sum) msg = 
+    static let updateState (count,sum) msg =
 
         // increment the counters and...
         let newSum = sum + msg
@@ -213,7 +213,7 @@ type MessageBasedCounter () =
         (newCount,newSum)
 
     // create the agent
-    static let agent = MailboxProcessor.Start(fun inbox -> 
+    static let agent = MailboxProcessor.Start(fun inbox ->
 
         // the message processing function
         let rec messageLoop oldState = async{
@@ -225,10 +225,10 @@ type MessageBasedCounter () =
             let newState = updateState oldState msg
 
             // loop to top
-            return! messageLoop newState 
+            return! messageLoop newState
             }
 
-        // start the loop 
+        // start the loop
         messageLoop (0,0)
         )
 
@@ -250,7 +250,7 @@ Let's test it in isolation:
 // test in isolation
 MessageBasedCounter.Add 4
 MessageBasedCounter.Add 5
-```        
+```
 
 Next, we'll reuse a task we defined earlier, but calling `MessageBasedCounter.Add` instead:
 
@@ -262,7 +262,7 @@ Async.RunSynchronously task
 Finally let's create 5 child tasks that try to access the counter at once.
 
 ```fsharp
-let messageExample5 = 
+let messageExample5 =
     [1..5]
         |> List.map (fun i -> makeCountingTask MessageBasedCounter.Add i)
         |> Async.Parallel
@@ -293,7 +293,7 @@ and pauses for a millisecond between each character. During that millisecond, an
 interleaving of messages.
 
 ```fsharp
-let slowConsoleWrite msg = 
+let slowConsoleWrite msg =
     msg |> String.iter (fun ch->
         System.Threading.Thread.Sleep(1)
         System.Console.Write ch
@@ -308,9 +308,9 @@ Next, we will create a simple task that loops a few times, writing its name each
 ```fsharp
 let makeTask logger taskId = async {
     let name = sprintf "Task%i" taskId
-    for i in [1..3] do 
+    for i in [1..3] do
         let msg = sprintf "-%s:Loop%i-" name i
-        logger msg 
+        logger msg
     }
 
 // test in isolation
@@ -334,8 +334,8 @@ unserializedLogger.Log "hello"
 Now let's combine all these into a real example. We will create five child tasks and run them in parallel, all trying to write to the slow console.
 
 ```fsharp
-let unserializedExample = 
-    let logger = new UnserializedLogger()
+let unserializedExample =
+    let logger = UnserializedLogger()
     [1..5]
         |> List.map (fun i -> makeTask logger.Log i)
         |> Async.Parallel
@@ -352,10 +352,10 @@ So what happens when we replace `UnserializedLogger` with a `SerializedLogger` c
 The agent inside `SerializedLogger` simply reads a message from its input queue and writes it to the slow console.  Again there is no code dealing with concurrency and no locks are used.
 
 ```fsharp
-type SerializedLogger() = 
+type SerializedLogger() =
 
     // create the mailbox processor
-    let agent = MailboxProcessor.Start(fun inbox -> 
+    let agent = MailboxProcessor.Start(fun inbox ->
 
         // the message processing function
         let rec messageLoop () = async{
@@ -385,14 +385,14 @@ serializedLogger.Log "hello"
 So now we can repeat the earlier unserialized example but using the `SerializedLogger` instead. Again, we create five child tasks and run them in parallel:
 
 ```fsharp
-let serializedExample = 
-    let logger = new SerializedLogger()
+let serializedExample =
+    let logger = SerializedLogger()
     [1..5]
         |> List.map (fun i -> makeTask logger.Log i)
         |> Async.Parallel
         |> Async.RunSynchronously
         |> ignore
-```		
+```
 
 What a difference! This time the output is perfect.  
 
@@ -401,7 +401,7 @@ What a difference! This time the output is perfect.
 
 There is much more to say about this message based approach. In a future series, I hope to go into much more detail, including discussion of topics such as:
 
-* alternative implementations of message queues with MSMQ and TPL Dataflow.
+* alternative implementations of message queues with Kafka and TPL Dataflow.
 * cancellation and out of band messages.
 * error handling and retries, and handling exceptions in general.
 * how to scale up and down by creating or removing child agents.
