@@ -11,7 +11,7 @@ categories: [Types]
 
 Before we dive into all the specific types, let's look at the big picture.
 
-##	What are types for? 
+## What are types for?
 
 If you are coming from an object-oriented design background, one of the paradigm shifts involved in "thinking functionally" is to change how you think about types.
 
@@ -26,7 +26,7 @@ So what is a type? Types are surprisingly hard to define. One definition from a 
 
 Ok, that definition is a bit technical. So let's turn it around -- what do we use types for in practice? In the context of F#, you can think of types as being used in two main ways:
 
-* 	Firstly, as an *annotation to a value* that allows certain checks to be made, especially at compile time. In other words, types allow you to have "compile time unit tests". 
+* 	Firstly, as an *annotation to a value* that allows certain checks to be made, especially at compile time. In other words, types allow you to have "compile time unit tests".
 * 	Second, as *domains* for functions to act upon.  That is, a type is a sort of data modeling tool that allows you to represent a real world domain in your code.
 
 These two definitions interact. The better the type definitions reflect the real-world domain, the better they will statically encode the business rules. And the better they statically encode the business rules, the better the "compile time unit tests" work.  In the ideal scenario, if your program compiles, then it really is correct!
@@ -43,7 +43,7 @@ Generally, the types in F# can be grouped into the following categories:
 If you are familiar with C#, you will know all the CLI types. They include:
 
 * 	Built-in value types (int, bool, etc).
-* 	Built-in reference types (string, etc). 
+* 	Built-in reference types (string, etc).
 * 	User-defined value types (enum and struct).
 * 	Classes and interfaces
 * 	Delegates
@@ -53,7 +53,7 @@ The F# specific types include:
 
 * 	[Function types](/posts/function-values-and-simple-values/) (not the same as delegates or C# lambdas)
 * 	[The unit type](/posts/how-types-work-with-functions/#unit-type)
-* 	[Tuples](/posts/tuples/) (now part of .NET 4.0)
+* 	[Tuples](/posts/tuples/)
 * 	[Records](/posts/records/)
 * 	[Discriminated Unions](/posts/discriminated-unions/)
 * 	[Option types](/posts/the-option-type/)
@@ -61,7 +61,7 @@ The F# specific types include:
 
 I strongly recommend that when creating new types you stick with the F# specific types rather than using classes. They have a number of advantages over the CLI types, such as:
 
-* 	They are immutable 
+* 	They are immutable
 * 	They cannot be null
 * 	They have built-in structural equality and comparison
 * 	They have built-in pretty printing
@@ -77,11 +77,11 @@ That is, in F# you can define new types almost as if you were doing algebra:
 
 I will hold off explaining what **sum** and **product** mean in practice until we get to the detailed discussion of tuples (products) and discriminated union (sum) types later in this series.
 
-The key point is that an infinite number of new types can be made by combining existing types together using these "product" and "sum" methods in various ways. Collectively these are called "algebraic data types" or ADTs (not to be confused with *abstract data types*, also called ADTs). Algebraic data types can be used to model anything, including lists, trees, and other recursive types. 
+The key point is that an infinite number of new types can be made by combining existing types together using these "product" and "sum" methods in various ways. Collectively these are called "algebraic data types" or ADTs (not to be confused with *abstract data types*, also called ADTs). Algebraic data types can be used to model anything, including lists, trees, and other recursive types.
 
-The sum or "union" types, in particular, are very valuable, and once you get used to them, you will find them indispensable! 
+The sum or "union" types, in particular, are very valuable, and once you get used to them, you will find them indispensable!
 
-## How types are defined 
+## How types are defined
 
 Every type definition is similar, even though the specific details may vary.  All type definitions start with a "`type`" keyword, followed by an identifier for the type, followed by any generic type parameters, followed by the definition. For example, here are some type definitions for a variety of types:
 
@@ -97,17 +97,17 @@ type MyClass(initX:int) =
    member this.Method() = printf "x=%i" x
 ```
 
-As we said in a [previous post](/posts/function-signatures/), there is a special syntax for defining new types that is different from the normal expression syntax. So do be aware of this difference. 
+As we said in a [previous post](/posts/function-signatures/), there is a special syntax for defining new types that is different from the normal expression syntax. So do be aware of this difference.
 
 Types can *only* be declared in namespaces or modules. But that doesn't mean you always have to create them at the top level -- you can create types in nested modules if you need to hide them.
 
 ```fsharp
 
-module sub = 
+module sub =
     // type declared in a module
     type A = int * int
 
-    module private helper = 
+    module private helper =
         // type declared in a submodule
         type B = B of string list
 
@@ -121,18 +121,18 @@ let b = sub.helper.B ["a";"b"]
 Types *cannot* be declared inside functions.
 
 ```fsharp
-let f x = 
+let f x =
     type A = int * int  //unexpected keyword "type"
     x * x
 ```
 
-## Constructing and deconstructing types 
+## Constructing and deconstructing types
 
 After a type is defined, instances of the type are created using a "constructor" expression that often looks quite similar to the type definition itself.
 
 ```fsharp
 let a = (1,1)
-let b = { FirstName="Bob"; LastName="Smith" } 
+let b = { FirstName="Bob"; LastName="Smith" }
 let c = Circle 99
 let c' = Rectangle (2,1)
 let d = Month
@@ -149,15 +149,15 @@ let a = (1,1)                                  // "construct"
 let (a1,a2) = a                                // "deconstruct"
 
 let b = { FirstName="Bob"; LastName="Smith" }  // "construct"
-let { FirstName = b1 } = b                     // "deconstruct" 
+let { FirstName = b1 } = b                     // "deconstruct"
 
 let c = Circle 99                              // "construct"
-match c with                                   
+match c with
 | Circle c1 -> printf "circle of radius %i" c1 // "deconstruct"
 | Rectangle (c2,c3) -> printf "%i %i" c2 c3    // "deconstruct"
 
 let c' = Rectangle (2,1)                       // "construct"
-match c' with                                   
+match c' with
 | Circle c1 -> printf "circle of radius %i" c1 // "deconstruct"
 | Rectangle (c2,c3) -> printf "%i %i" c2 c3    // "deconstruct"
 ```
@@ -331,4 +331,3 @@ Can have constructor.<br>
 </td>
 </tr>
 </table>
-
