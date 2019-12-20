@@ -81,7 +81,7 @@ A similar example can be found when implementing event sourcing, in the [command
 'state -> 'command -> 'event list
 ```
 
-If something goes wrong in executing the command, how does that affect the return value (the list of events created by the command) in practice? Of course you need to handle errors and log them, but do you actual need to return a `Result` from the function itself? It will make the code more complicated for not much benefit. 
+If something goes wrong in executing the command, how does that affect the return value (the list of events created by the command) in practice? Of course you need to handle errors and log them, but do you actually need to return a `Result` from the function itself? It will make the code more complicated for not much benefit. 
 
 ## #6 -- Be careful when using Result for I/O errors
 
