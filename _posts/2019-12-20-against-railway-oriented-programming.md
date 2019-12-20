@@ -15,7 +15,7 @@ To my surprise, this silly railway analogy really took off, and now there are ra
 
 I still think it's a good analogy, but I do think it is [often used thoughtlessly](https://twitter.com/scottwlaschin/status/997009818329198592), especially if it's a shiny new technique that you've just added to your toolbox.
 
-So, in this post, I'm going to lay out reasons why you *shouldn't* use Railway-Oriented Programming! Or to be more precise, why you shouldn't use the `Result` type everywhere (because ROP is just the plumbing that is used to connect `Result`-returning functions). The [Microsoft page on error management](https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/conventions#error-management) also has good advice.
+So, in this post, I'm going to lay out reasons why you *shouldn't* use Railway-Oriented Programming! Or to be more precise, why you shouldn't use the `Result` type everywhere (because ROP is just the plumbing that is used to connect `Result`-returning functions). The [Microsoft page on error management](https://docs.microsoft.com/en-us/dotnet/fsharp/style-guide/conventions#error-management) also has good advice, as does [this blog post](https://eiriktsarpalis.wordpress.com/2017/02/19/youre-better-off-using-exceptions/).
 
 ## #1 -- Don't use Result if you need diagnostics
 
