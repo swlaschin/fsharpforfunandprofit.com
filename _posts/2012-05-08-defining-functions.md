@@ -182,11 +182,13 @@ addConfusingTuple y      // ok
 
 Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an obscure error.
 
-```fsharp 
+```fsharp
 addConfusingTuple 1 2    // error trying to pass two args
 // => error FS0003: This value is not a function and
 //                  cannot be applied
 ```
+
+In this case, the compiler thinks that, since you are passing two arguments, `addConfusingTuple` must be curryable. So then "`addConfusingTuple 1`" would be a partial application that returns another intermediate function. Trying to apply that intermediate function with "2" gives an error, because there is no intermediate function! We saw this exact same error in the post on currying, when we discussed the issues that can occur from having too many parameters.
 
 ### Why not use tuples as parameters? ###
 
