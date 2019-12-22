@@ -180,12 +180,12 @@ addTuple y               // ok
 addConfusingTuple y      // ok
 ```
 
-Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an error.
+Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an obscure error.
 
-```fsharp
+```fsharp 
 addConfusingTuple 1 2    // error trying to pass two args
-// => error FS0001: This expression was expected to have type ''a * 'b'
-//                  but here has type 'int'
+// => error FS0003: This value is not a function and
+//                  cannot be applied
 ```
 
 ### Why not use tuples as parameters? ###
