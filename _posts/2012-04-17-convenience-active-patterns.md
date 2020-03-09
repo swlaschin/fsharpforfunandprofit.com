@@ -15,13 +15,13 @@ Here is an example of using active patterns to parse a string into an int or boo
 ```fsharp
 // create an active pattern
 let (|Int|_|) str =
-   match System.Int32.TryParse(str) with
+   match System.Int32.TryParse(str:string) with
    | (true,int) -> Some(int)
    | _ -> None
 
 // create an active pattern
 let (|Bool|_|) str =
-   match System.Boolean.TryParse(str) with
+   match System.Boolean.TryParse(str:string) with
    | (true,bool) -> Some(bool)
    | _ -> None
 ```   
