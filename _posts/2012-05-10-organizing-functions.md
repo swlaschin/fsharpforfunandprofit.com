@@ -209,7 +209,7 @@ Top level modules are defined slightly differently than the modules we have seen
 * There is no `=` sign
 * The contents of the module are *not* indented
 
-In general, there must be a top level module declaration present in every `.FS` source file. There some exceptions, but it is good practice anyway.
+In general, there must be a top level module declaration present in every `.FS` source file. There are some exceptions, but it is good practice anyway.
 The module name does not have to be the same as the name of the file, but two files cannot share the same module name.
 
 For `.FSX` script files, the module declaration is not needed, in which case the module name is automatically set to the filename of the script.
