@@ -305,7 +305,7 @@ The overall problem with this approach is that you have to do extra work to crea
 ### The error-code-based approach
 
 > "Writing good error-code-based code is hard, but writing good exception-based code is really hard." 
-> [*Raymond Chen*](http://blogs.msdn.com/b/oldnewthing/archive/2005/01/14/352949.aspx)
+> [*Raymond Chen*](https://devblogs.microsoft.com/oldnewthing/20050114-00/?p=36693)
 
 In the functional world, returning error codes (or rather error *types*) is generally preferred to throwing exceptions, and so a standard hybrid approach is to encode the common cases (the ones that you would expect a user to care about) into a error type, but leave the very unusual exceptions alone.
 
