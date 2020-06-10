@@ -36,10 +36,10 @@ Coming soon!
 
 Slides from NDC Oslo, Jun 10, 2020
 
-<iframe src="//www.slideshare.net/slideshow/embed_code/key/4yPMnUykGSdMaA" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/HUQdCUsDF0DQ1u" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> 
 
 <div style="margin-bottom:5px"> 
-<strong><a href="https://www.slideshare.net/ScottWlaschin/tla-for-programmers-235332063" title="TLA+ for programmers" target="_blank">TLA+ for programmers</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
+<strong><a href="https://www.slideshare.net/ScottWlaschin/tla-for-programmers-235339832" title="TLA+ for programmers" target="_blank">TLA+ for programmers</a> </strong> from <strong><a href="http://www.slideshare.net/ScottWlaschin" target="_blank">my slides on Slideshare</a></strong> 
 </div>
 
 
