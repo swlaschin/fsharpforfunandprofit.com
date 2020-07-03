@@ -260,7 +260,7 @@ and the [`Functor` trait in Scalaz](https://scalaz.github.io/scalaz/scalaz-2.9.0
 not to mention functors in SML and [OCaml](https://realworldocaml.org/v1/en/html/functors.html) (and [C++](http://www.cprogramming.com/tutorial/functors-function-objects-in-c++.html)),
 which are different yet again!*
 
-*Consequently, I prefer to talk about "mappable" worlds. In practical programming, you will almost never run into a elevated world that does not support being mapped over somehow.*
+*Consequently, I prefer to talk about "mappable" worlds. In practical programming, you will almost never run into an elevated world that does not support being mapped over somehow.*
 
 ### Variants of map
 
