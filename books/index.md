@@ -47,7 +47,7 @@ If you enjoy the book, I'd be grateful if you could leave a review on [the Goodr
 
 **How is it different from the content on this site?**
 
-It does have some chapters on stuff I haven't blogged about (yet) such how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
+It does have some chapters on stuff I haven't blogged about (yet) such as how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
 
 
 </div>
