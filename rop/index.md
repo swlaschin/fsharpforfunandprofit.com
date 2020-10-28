@@ -24,6 +24,8 @@ I am also planning to upload some posts on these topics soon. Meanwhile, please 
 If you want to to see some real code, I have created 
 [this project on Github that compares normal C# with F# using the ROP approach](https://github.com/swlaschin/Railway-Oriented-Programming-Example)
 
+WARNING: This is a useful approach to error handling, but please don't take it to extremes! See my post on ["Against Railway-Oriented Programming"](/posts/against-railway-oriented-programming/).
+
 ## Videos
  
 I presented on this topic at NDC London 2014 (click image to view video)  

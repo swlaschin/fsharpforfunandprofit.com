@@ -8,7 +8,9 @@ categories: []
 image: "/assets/img/Recipe_Railway_Transparent.png"
 ---
 
-*UPDATE: [Slides and video from a more comprehensive presentation available here](/rop/) (and if you understand the Either monad, [read this first](/rop/#monads)!)*
+*UPDATE: [Slides and video from a more comprehensive presentation available here](/rop/) (and if you understand the Either monad, [read this first](/rop/#monads)!)*. 
+
+*UPDATE 2: This is one of my most popular posts, and it is a useful approach to error handling, but please don't overuse the idea! See my post on ["Against Railway-Oriented Programming"](/posts/against-railway-oriented-programming/).*
 
 In the previous post, we saw how a use case could be broken into steps, and all the errors shunted off onto a separate error track, like this:
     
