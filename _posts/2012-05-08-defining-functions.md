@@ -155,7 +155,7 @@ Now let's use them:
 ```fsharp
 //test
 addTwoParams 1 2      // ok - uses spaces to separate args
-addTwoParams (1,2)    // error trying to pass a single tuple 
+addTwoParams (1,2)    // error trying to pass a single tuple
 //   => error FS0001: This expression was expected to have type
 //                    int but here has type 'a * 'b
 ```
@@ -171,11 +171,11 @@ To make a tuple, use a comma!  Here's how to do it correctly:
 addTuple (1,2)           // ok
 addConfusingTuple (1,2)  // ok
 
-let x = (1,2)                 
+let x = (1,2)
 addTuple x               // ok
 
-let y = 1,2              // it's the comma you need, 
-                         // not the parentheses!      
+let y = 1,2              // it's the comma you need,
+                         // not the parentheses!
 addTuple y               // ok
 addConfusingTuple y      // ok
 ```
@@ -183,8 +183,8 @@ addConfusingTuple y      // ok
 Conversely, if you attempt to pass multiple arguments to a function expecting a tuple, you will also get an obscure error.
 
 ```fsharp
-addConfusingTuple 1 2    // error trying to pass two args 
-// => error FS0003: This value is not a function and 
+addConfusingTuple 1 2    // error trying to pass two args
+// => error FS0003: This value is not a function and
 //                  cannot be applied
 ```
 
@@ -192,7 +192,7 @@ In this case, the compiler thinks that, since you are passing two arguments, `ad
 
 ### Why not use tuples as parameters? ###
 
-The discussion of the issues with tuples above shows that there's another way to define functions with more than one parameter: rather than passing them in separately, all the parameters can be combined into a single composite data structure. In the example below, the function takes a single parameter, which is a tuple containing three items. 
+The discussion of the issues with tuples above shows that there's another way to define functions with more than one parameter: rather than passing them in separately, all the parameters can be combined into a single composite data structure. In the example below, the function takes a single parameter, which is a tuple containing three items.
 
 ```fsharp
 let f (x,y,z) = x + y * z
@@ -202,7 +202,7 @@ let f (x,y,z) = x + y * z
 f (1,2,3)
 ```
 
-Note that the function signature is different from a true three parameter function. There is only one arrow, so only one parameter, and the stars indicate that this is a tuple of `(int*int*int)`. 
+Note that the function signature is different from a true three parameter function. There is only one arrow, so only one parameter, and the stars indicate that this is a tuple of `(int*int*int)`.
 
 When would we want to use tuple parameters instead of individual ones?  
 
@@ -211,7 +211,7 @@ When would we want to use tuple parameters instead of individual ones?
 
 ### A special case: tuples and .NET library functions ###
 
-One area where commas are seen a lot is when calling .NET library functions! 
+One area where commas are seen a lot is when calling .NET library functions!
 
 These all take tuple-like arguments, and so these calls look just the same as they would from C#:  
 
@@ -245,15 +245,14 @@ let strCompareWithB = strCompare "B"
 
 // use it with a higher order function
 ["A";"B";"C"]
-|> List.map strCompareWithB 
+|> List.map strCompareWithB
 ```
-
 
 ## Guidelines for separate vs. grouped parameters ##
 
 The discussion on tuples leads us to a more general topic: when should function parameters be separate and when should they be grouped?
 
-Note that F# is different from C# in this respect. In C# *all* the parameters are *always* provided, so the question does not even arise!  In F#, due to partial application, only some parameters might be provided, so you need to distinguish between those that are required to be grouped together vs. those that are independent. 
+Note that F# is different from C# in this respect. In C# *all* the parameters are *always* provided, so the question does not even arise!  In F#, due to partial application, only some parameters might be provided, so you need to distinguish between those that are required to be grouped together vs. those that are independent.
 
 Here are some general guidelines of how to structure parameters when you are designing your own functions.
 
@@ -265,11 +264,11 @@ In other words, when designing a function, ask yourself "could I provide this pa
 Let's look at some examples:
 
 ```fsharp
-// Pass in two numbers for addition. 
+// Pass in two numbers for addition.
 // The numbers are independent, so use two parameters
 let add x y = x + y
 
-// Pass in two numbers as a geographical co-ordinate. 
+// Pass in two numbers as a geographical co-ordinate.
 // The numbers are dependent, so group them into a tuple or record
 let locateOnMap (xCoord,yCoord) = // do something
 
@@ -279,7 +278,7 @@ type CustomerName = {First:string; Last:string}
 let setCustomerName aCustomerName = // good
 let setCustomerName first last = // not recommended
 
-// Set first and last name and and pass the 
+// Set first and last name and and pass the
 // authorizing credentials as well.
 // The name and credentials are independent, keep them separate
 let setCustomerName myCredentials aName = //good
@@ -295,7 +294,7 @@ Sometimes we may want functions that don't take any parameters at all. For examp
 let sayHello = printfn "Hello World!"     // not what we want
 ```
 
-The fix is to add a unit parameter to the function, or use a lambda. 
+The fix is to add a unit parameter to the function, or use a lambda.
 
 ```fsharp
 let sayHello() = printfn "Hello World!"           // good
@@ -321,22 +320,22 @@ Do remember to call them with the unit parameter!
 
 ## Defining new operators ##
 
-You can define functions named using one or more of the operator symbols (see the [F# documentation](http://msdn.microsoft.com/en-us/library/dd233204) for the exact list of symbols that you can use):
+You can define functions named using one or more of the operator symbols (see the [F# documentation](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/operator-overloading) for the exact list of symbols that you can use):
 
 ```fsharp
 // define
 let (.*%) x y = x + y + 1
 ```
 
-You must use parentheses around the symbols when defining them. 
+You must use parentheses around the symbols when defining them.
 
-Note that for custom operators that begin with `*`, a space is required; otherwise the `(*` is interpreted as the start of a comment: 
+Note that for custom operators that begin with `*`, a space is required; otherwise the `(*` is interpreted as the start of a comment:
 
 ```fsharp
 let ( *+* ) x y = x + y + 1
 ```
 
-Once defined, the new function can be used in the normal way, again with parens around the symbols:
+Once defined, the new function can be used in the normal way, again with parentheses around the symbols:
 
 ```fsharp
 let result = (.*%) 2 3
@@ -348,7 +347,7 @@ If the function has exactly two parameters, you can use it as an infix operator 
 let result = 2 .*% 3
 ```
 
-You can also define prefix operators that start with `!` or `~` (with some restrictions -- see the [F# documentation on operator overloading](http://msdn.microsoft.com/en-us/library/dd233204#prefix))
+You can also define prefix operators that start with `!` or `~` (with some restrictions -- see the [F# documentation on operator overloading](https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/operator-overloading#prefix-and-infix-operators))
 
 ```fsharp
 let (~%%) (s:string) = s.ToCharArray()
@@ -376,13 +375,13 @@ let sum list = List.reduce (fun sum e -> sum+e) list // explicit
 let sum = List.reduce (+)                            // point free
 ```
 
-There are pros and cons to this style. 
+There are pros and cons to this style.
 
-On the plus side, it focuses attention on the high level function composition rather than the low level objects. For example "`(+) 1 >> (*) 2`" is clearly an addition operation followed by a multiplication. And "`List.reduce (+)`" makes it clear that the plus operation is key, without needing to know about the list it is actually applied to. 
+On the plus side, it focuses attention on the high level function composition rather than the low level objects. For example "`(+) 1 >> (*) 2`" is clearly an addition operation followed by a multiplication. And "`List.reduce (+)`" makes it clear that the plus operation is key, without needing to know about the list it is actually applied to.
 
 Point-free helps to clarify the underlying algorithm and reveal commonalities between code -- the "`reduce`" function used above is a good example of this -- it will be discussed in a planned series on list processing.
 
-On the other hand, too much point-free style can make for confusing code. Explicit parameters can act as a form of documentation, and their names (such as "list") make it clear what the function is acting on. 
+On the other hand, too much point-free style can make for confusing code. Explicit parameters can act as a form of documentation, and their names (such as "list") make it clear what the function is acting on.
 
 As with anything in programming, the best guideline is to use the approach that provides the most clarity.
 
@@ -424,7 +423,7 @@ The letter names are quite standard, so if you refer to "the K combinator", ever
 
 It turns out that many common programming patterns can be represented using these standard combinators. For example, the Kestrel is a common pattern in fluent interfaces where you do something but then return the original object. The Thrush is the pipe operation, the Queer bird is forward composition, and the Y-combinator is famously used to make functions recursive.
 
-Indeed, there is a well-known theorem that states that any computable function whatsoever can be built from just two basic combinators, the Kestrel and the Starling. 
+Indeed, there is a well-known theorem that states that any computable function whatsoever can be built from just two basic combinators, the Kestrel and the Starling.
 
 ### Combinator libraries ###
 
@@ -432,7 +431,7 @@ A combinator library is a code library that exports a set of combinator function
 
 A well designed combinator library allows you to focus on the high level operations, and push the low level "noise" to the background. We've already seen some examples of this power in the examples in ["why use F#"](/series/why-use-fsharp.html) series, and the `List` module is full of them -- the "`fold`" and "`map`" functions are also combinators, if you think about it.
 
-Another advantage of combinators is that they are the safest type of function. As they have no dependency on the outside world they cannot change if the global environment changes.  A function that reads a global value or uses a library function can break or alter between calls if the context is different. This can never happen with combinators. 
+Another advantage of combinators is that they are the safest type of function. As they have no dependency on the outside world they cannot change if the global environment changes.  A function that reads a global value or uses a library function can break or alter between calls if the context is different. This can never happen with combinators.
 
 In F#, combinator libraries are available for parsing (the FParsec library), HTML construction, testing frameworks, and more.  We'll discuss and use combinators further in later series.
 
@@ -441,14 +440,14 @@ In F#, combinator libraries are available for parsing (the FParsec library), HTM
 Often, a function will need to refer to itself in its body.  The classic example is the Fibonacci function:
 
 ```fsharp
-let fib i = 
+let fib i =
    match i with
    | 1 -> 1
    | 2 -> 1
    | n -> fib(n-1) + fib(n-2)
 ```
 
-Unfortunately, this will not compile: 
+Unfortunately, this will not compile:
 
 	error FS0039: The value or constructor 'fib' is not defined
 
