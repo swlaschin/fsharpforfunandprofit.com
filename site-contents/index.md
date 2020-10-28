@@ -128,9 +128,7 @@ F# for C# Developers:
 * [Introvert and extrovert programming languages](/posts/introvert-vs-extrovert/)
 * [Swapping type-safety for high performance using compiler directives](/posts/typesafe-performance-with-compiler-directives/)
 
-## Support This Site 
 
-{% include donate.inc %}
 
 
 

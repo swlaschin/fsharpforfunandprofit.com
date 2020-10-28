@@ -66,17 +66,7 @@ It does have some chapters on stuff I haven't blogged about (yet) such how to de
 
 ## Downloadable ebook of this site
 
-Reading offline? I have compiled all the pages of this site into an ebook using [GitBook](https://goo.gl/XHLBgC).
-Available in ePub, Mobi/Kindle and PDF formats.
-
-<a class="btn btn-primary" href="https://goo.gl/UVMgfs">Download PDF</a>
-<a class="btn btn-primary" href="https://goo.gl/xadJJt">Download ePub</a>
-<a class="btn btn-primary" href="https://goo.gl/gXFDNF">Download Mobi/Kindle</a>
-
-This site contains a lot of words. If you printed out the PDF above, it would be about 2000 pages! I want to keep this site ad-free, so if you find the content useful, please donate the price of a few beers to help keep it up.
-
-<a class="btn btn-warning" href="https://goo.gl/jz4URD">Donate</a>
-
+Not available right now.
 </div>
 
 <div class="col-sm-4" style="float:left;">
