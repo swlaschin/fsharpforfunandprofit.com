@@ -449,7 +449,7 @@ let rec cataGift fBook fChocolate fWrapped fBox fCard gift :'r =
 It's much simpler than the original implementation, and also demonstrates the symmetry between a case constructor like `Wrapped (gift,style)`
 and the corresponding handler `fWrapped (recurse gift,style)`. Which leads us nicely to...
 
-### The relationship between the type constructors and the handlers
+### The relationship between the case constructors and the handlers
 
 Here is the signature for the `cataGift` function. You can see that each case handler function (`fBook`, `fBox`, etc.) has the same pattern:
 an input which contains all the data for that case, and a common output type `'r`.  
