@@ -124,7 +124,7 @@ Now let's try subtraction. Does `1 - (2 - 3)` give the same result as `(1 - 2) -
 
 What about division? Does `12 / (2 / 3)` give the same result as `(12 / 2) / 3`?  No. For division also, the order matters. 
 
-But the `max` function does work. `max( max(12,2), 3)` gives the same result as `max(12, max(2,3)`.
+But the `max` function does work. `max( max(12,2), 3)` gives the same result as `max(12, max(2,3))`.
 
 What about strings and lists? Does concatenation meet the requirement? What do you think?
 
