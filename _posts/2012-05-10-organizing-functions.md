@@ -356,7 +356,7 @@ module MathStuff =
 Because of this namespace, the fully qualified name of the `MathStuff` module now becomes `Utilities.MathStuff` and
 the fully qualified name of the `add` function now becomes `Utilities.MathStuff.add`.
 
-With the namespace, the indentation rules apply, so that the module defined above must have its content indented, as it it were a nested module.
+With the namespace, the indentation rules apply, so that the module defined above must have its content indented, as if it were a nested module.
 
 You can also declare a namespace implicitly by adding dots to the module name. That is, the code above could also be written as:
 
