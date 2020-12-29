@@ -8,6 +8,8 @@ categories: [Dependency Injection ]
 > This post is part of the [F# Advent Calendar in English 2016](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/) project.
 > Check out all the other great posts there! And special thanks to Sergey Tihon for organizing this.
 
+*UPDATE: This post is superceded by a [newer one here](/posts/dependencies).*
+
 For people who are learning functional programming techniques, one of the more common questions is: "how do you do dependency injection?"
 This series of posts addresses that topic.
 
@@ -924,3 +926,5 @@ That is, we evolved the code from an "injection" oriented approach to a composit
 And that is the ultimate in decoupling: standalone functions that are implemented independently and can be glued together in various ways as needed.
 
 That's it for now. Until next time, Happy Holidays!
+
+
