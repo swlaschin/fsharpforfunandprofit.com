@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Five approaches to dependency injection"
+title: "Six approaches to dependency injection"
 description: ""
 categories: []
 ---
@@ -8,19 +8,20 @@ categories: []
 > This post is part of the [2020 F# Advent Calendar](https://sergeytihon.com/2020/10/22/f-advent-calendar-in-english-2020/).
 > Check out all the other great posts there! And special thanks to Sergey Tihon for organizing this.
 
-In this series of posts, we'll look at 5 different approaches to doing "dependency injection".
+In this series of posts, we'll look at six different approaches to doing "dependency injection".
 
-This post was inspired by [Mark Seemann's similar series of posts](https://blog.ploeh.dk/2017/01/27/from-dependency-injection-to-dependency-rejection/), and covers the same ideas in a slightly different way. There are other good posts on this topic by [Bartosz Sypytkowski](https://bartoszsypytkowski.com/dealing-with-complex-dependency-injection-in-f/), [Carsten König](http://gettingsharper.de/2015/03/10/dependency-injection-a-functional-way/), and [Matthew Podwysokci ](http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/). They are all worth reading!
+This post was inspired by [Mark Seemann's similar series of posts](https://blog.ploeh.dk/2017/01/27/from-dependency-injection-to-dependency-rejection/), and covers the same ideas in a slightly different way. There are other good posts on this topic by [Bartosz Sypytkowski](https://bartoszsypytkowski.com/dealing-with-complex-dependency-injection-in-f/) and [Carsten König](http://gettingsharper.de/2015/03/10/dependency-injection-a-functional-way/). They are all worth reading!
 
-The five approaches we will look at are:
+The six approaches we will look at are:
 
 * **Dependency retention**, in which we don't worry about managing dependencies; we just inline and hard-code everything!
 * **Dependency rejection**, a great term (coined by Mark Seemann, above), in which we avoid having *any* dependencies in our core business logic code. We do this by keeping all I/O and other impure code at the "edges" of our domain.
 * [**Dependency parameterization**](/posts/dependencies-2/), in which we pass in all dependencies as parameters. This is commonly used in conjunction with partial application.
-* [**Dependency injection**](/posts/dependencies-3/), in which we pass in dependencies after the rest of the code has already been constructed. In OO-style code this is typically done via constructor injection and in FP-style code this corresponds to the Reader monad.
+* [**Dependency injection** and the **Reader monad**](/posts/dependencies-3/), in which we pass in dependencies after the rest of the code has already been constructed. In OO-style code this is typically done via constructor injection and in FP-style code this corresponds to the Reader monad.
 * [**Dependency interpretation**](/posts/dependencies-4/), in which we replace calls to dependencies with a data structure that is interpreted later. This approach is used in both OO ([Interpreter Pattern](https://en.wikipedia.org/wiki/Interpreter_pattern)) and in FP (e.g. [free monads](https://softwaremill.com/free-monads/))
 
 For each approach, we will look at a sample implementation, and then discuss the pros and cons of each approach.
+And as a bonus, in the [final post in the series](/posts/dependencies-5/), we'll take a different example and again implement it in the six different ways.
 
 *NOTE: I did a [similar post](/posts/dependency-injection-1/) a long time ago. That post is now superseded by these ones.*
 
@@ -50,7 +51,7 @@ For more details on this approach, see my [Reinventing The Transaction Script](h
 
 ## The requirements
 
-Let's take some very simple requirements and implement them using these five different approaches.
+Let's take some very simple requirements and implement them using these six different approaches.
 
 The requirements are:
 
@@ -138,20 +139,20 @@ This code is completely deterministic and therefore easy to test, like the littl
 testCase "smaller" <| fun () ->
   let expected = PureCore.Smaller
   let actual = PureCore.compareTwoStrings "a" "b"
-  Expect.equal expected actual "a < b"
+  Expect.equal actual expected "a < b"
 
 testCase "equal" <| fun () ->
   let expected = PureCore.Equal
   let actual = PureCore.compareTwoStrings "a" "a"
-  Expect.equal expected actual "a = a"
+  Expect.equal actual expected "a = a"
 
 testCase "bigger" <| fun () ->
   let expected = PureCore.Bigger
   let actual = PureCore.compareTwoStrings "b" "a"
-  Expect.equal expected actual "b > a"
+  Expect.equal actual expected "b > a"
 ```
 
-But how do we actually *use* this pure code? Well, we need the caller to provide the inputs and to act on the output. Generally the I/O should be done as high in the call stack as possible. The "top layer" can be known by many different names, such as the "api layer", the "shell layer", or simply "the program".
+But how do we actually *use* this pure code? Well, we need the caller to provide the inputs and to act on the output. Generally the I/O should be done as high in the call stack as possible. The "top layer" can be known by many different names, such as the "api layer", the "shell layer", the "composition root", or simply "the program".
 
 Here's what the caller code looks like:
 
@@ -213,13 +214,16 @@ What's also nice about this approach is that the test boundaries become very cle
 
 ## Summary
 
-In this post, we looked at the two of the five approaches: "dependency retention", where dependencies are inlined, and "dependency rejection", where all I/O is eliminated, leaving only pure code in the core domain.
+In this post, we looked at the two of the six approaches: "dependency retention", where dependencies are inlined, and "dependency rejection", where all I/O is eliminated, leaving only pure code in the core domain.
 
 Given the clear benefits, the "dependency rejection" approach should be used wherever possible.  The only downside is the extra indirection needed:
 
 * You will probably need to define a special data structure to represent the decision returned by the pure code.
 * You will need a higher-level layer to run the impure code and pass the results to the pure code, and then interpret the result and convert it back into I/O operations.
 
+The source code for this post is available at these gists: 
+* [DependencyRejection.fsx](https://gist.github.com/swlaschin/cbc9a5992695a88e32e3f39fbf1ecf79) 
+* [DependencyRetention.fsx](https://gist.github.com/swlaschin/d35b59795a85a62723124df1a79d2388) 
+
 In the [next post](/posts/dependencies-2/), we'll look at "dependency parameterization". That is, passing in dependencies as standard function parameters.
 
-*The source code for this post is available at [this gist](https://gist.github.com/swlaschin/cbc9a5992695a88e32e3f39fbf1ecf79).*

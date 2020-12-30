@@ -1,17 +1,18 @@
 ---
 layout: post
-title: "Dependency Interpretation"
-description: "Five approaches to dependency injection, Part 5"
+title: "Revisiting the six approaches"
+description: "Six approaches to dependency injection, Part 5"
 categories: []
 ---
 
-In this series, we looked at five different approaches to dependency injection.
+In this series, we looked at six different approaches to dependency injection.
 
-* In the [first post](/posts/dependencies/), we looked at "dependency rejection", or keeping I/O at the edges of your implementation.
+* In the [first post](/posts/dependencies/), we looked at "dependency retention" (inlining the dependencies) and "dependency rejection", or keeping I/O at the edges of your implementation.
 * In the [second post](/posts/dependencies-2/), we looked at injecting dependencies using standard function parameters.
 * In the [third post](/posts/dependencies-3/), we looked at dependency handling using classic OO-style dependency injection and the FP equivalent: the Reader monad.
 * In the [fourth post](/posts/dependencies-4/), we looked at avoiding dependencies altogether by using the interpreter pattern.
-* In this final post, we'll implement the same simple requirements using all five approaches.
+
+In this final post, we'll implement some simple requirements using all six approaches, so that you can see the differences. I won't explain what's going on in detail. For that, you should read the earlier posts.
  
 <hr>
 
@@ -22,507 +23,728 @@ Let's look at a concrete use-case that we can use as a basis to experiment with 
 Say that we have some kind of web app with users, and each user has a "profile" with their name, email, preferences, etc.
 A use-case for updating their profile might be something like this:
 
-* Parse the JSON request into a domain object representing the request
-* Read the user's current email address from the database (needed for step 4)
-* Update the user's profile in the database
-* If the email has changed, send a courtesy email message to the user's old email notifying them that it has changed
+* Receive a new profile (parsed from a JSON request, say)
+* Read the user's current profile from the database
+* If the profile has changed, update the user's profile in the database
+* If the email has changed, send a verification email message to the user's new email 
 
-We will also add logging to each step.
+We will also add a little bit of logging into the mix.
 
+## The domain
 
-## Dependency interpretation
-
-In the ["dependency rejection" approach](/posts/dependencies/) we showed how to return a data structure (typically a "choice" type) that represented a decision. The last segment of the pipeline would then do various I/O actions based on the choice provided. This kept the core code pure and pushed all I/O to the edges.
-
-We can take this approach further and extend it to cover *all* I/O. Instead of performing the I/O directly, we will return a data structure that will act as instructions to do various I/O actions later.
-
-For our first attempt at this, let's return a list of I/O instructions, like this:
+Let's start with the domain types we're going to use:
 
 ```fsharp
-type Instruction =
-  | ReadLn
-  | WriteLn of string
-
-let readFromConsole() = 
-  let cmd1 = WriteLn "Enter the first value"
-  let cmd2 = ReadLn
-  let cmd3 = WriteLn "Enter the second value"
-  let cmd4 = ReadLn
-
-  // return all the instructions I want the I/O part to do
-  [cmd1; cmd2; cmd3; cmd4]
-```
-
-And then interpret these instructions separately, like this:
-
-```fsharp
-let interpretInstruction instruction =
-  match instruction with
-  | ReadLn -> Console.ReadLine()
-  | WriteLn str -> printfn "%s" str  
-```
-
-There are lots of problems with this approach, though. First, `interpretInstruction` doesn't even compile! This is because each branch in the `match instruction` expression returns different types of data.
-
-Even more seriously, there is no way to use the output of the interpreter in the middle of the code. For example, let's say I wanted to use the result of the first `ReadLn` to change the output of the second `WriteLn`. In the design above, this is not possible at all.
-
-What we want to do instead is an approach like the diagram below, where the output of each step of the interpreter is made available to the next line of our code.
-
-![](/assets/img/Dependencies6a.jpg)
-
-We can actually do this! The trick is that, when we create an instruction, we *also* provide a "next" function to be called after the interpretation has happened.
-After the interpreter executes an instruction, it then calls the "next" function with the result of the execution, which in turn calls back into the code under our control. 
-
-Let's call the complete set of actions to interpret a "Program". A Program consists of normal pure code intermixed with instructions to be interpreted.
-Then for each instruction we will need to pass to the interpreter a pair: `interpreterInput * (interpreterOutput -> Program)`. 
-
-![](/assets/img/Dependencies6b.jpg)
-
-For a concrete example, let's look at `ReadLn`. A normal `ReadLn` function has the signature `unit -> string`. In our new approach, we will give the interpreter a `unit` and we want it to give us back a `string`. But that's not quite right. Instead of feeding a string back to *us*, the interpreter will feed that string to the *"next"* function that we provide to the interpreter.  The *next* function will therefore have the signature `string -> Program`, where `Program` is the rest of the code.
-
-Similarly, the signature of the normal `WriteLn` is `string -> unit`, but in the interpreted approach, the pair we need to pass to the interpreter will be `string * (unit -> Program)`. In other words, our input to the interpreter is a string, and then, after interpretation, the interpreter calls the *next* function with `unit` to get a new `Program`.
-
-Let's see some code that implements all this.
-
-First, we define the set of instructions. Using the convention above, I'm going call the entire set of instructions a `Program`.
-
-```fsharp
-type Program<'a> =
-  | ReadLn  of unit    * next:(string  -> Program<'a>)
-  | WriteLn of string  * next:(unit    -> Program<'a>)
-  | Stop    of 'a
-```
-
-This particular program has three instructions:
-
-`ReadLn` has no input to the interpreter. To process this instruction, the interpreter will read a line of text from somewhere, and then call the associated "next" function `string->Program<'a>` using the line that was read. That function will then return a new `Program` ready to be interpreted again.
-
-`WriteLn` has a string input to the interpreter. To process this instruction, the interpreter will write that string to somewhere, and then call the associated "next" function `unit->Program<'a>`. That function will then return a new `Program` ready to be interpreted again.
-
-If we just had these two instructions, we would have an endless loop, so we need one additional instruction to tell the interpreter to stop. I'll call it `Stop` but you could also call it `Done` or `Return` or something similar. (Haskellers might call it `Pure` or `Unit` for reasons). `Stop` has an associated value but does *not* have a "next" function to call. When the interpreter sees this instruction it stops recursing and just returns the associated value. The value associated with `Stop` could be anything, and so that forces us to make the entire `Program` type generic (`Program<'a>`).
-
-Here's what some code using these instructions looks like:
-
-```fsharp
-let readFromConsole = 
-  WriteLn ("Enter the first value" , fun () ->
-  ReadLn  ( ()                     , fun str1 ->
-  WriteLn ("Enter the second value", fun () ->
-  ReadLn  ( ()                     , fun str2 ->
-  Stop  (str1,str2)
-  ))))
-```
-You can see that after each instruction, there is a function which contains more instructions, and so on until we get to `Stop`, where we return the two strings as a tuple.
-
-It's important to remember that at this point we just have a *data structure*, a `WriteLn` that contains a `ReadLn` that contains another `WriteLn` that contains another `ReadLn` that contains a `Stop`. The data structure contains functions, but nothing has actually been executed yet.
-
-Now we can write the interpreter that will "execute" the data structure. The implementation should be easy to follow if you have understood the explanation so far. Notice that for `ReadLn` and `WriteLn` it is recursive, but at `Stop` it stops recursing and returns the supplied value.
-
-```fsharp
-let rec interpret program =
-  match program with
-  | ReadLn ((), next) -> 
-      // do the actual I/O
-      let str = Console.ReadLine()
-      // call "next" with the output of the interpreter
-      // to get another program
-      let nextProgram = next str 
-      // interpret the new program
-      interpret nextProgram   
-  | WriteLn (str,next) -> 
-      printfn "%s" str
-      let nextProgram = next()
-      interpret nextProgram   
-  | Stop value -> 
-      value // return as overall result
-```
-
-We can now test that it works:
-
-```fsharp
-interpret readFromConsole
-```
-
-And it does! You can try it yourself using the code in the gist linked at the bottom of this post.
-
-## Making life easier with a computation expression
-
-The `readFromConsole` implementation above is hard to write and ugly to look at. Can we make it easier to write and read this kind of code?
-
-Yes, we can. The series of continuations at the end of each line (`fun ... -> ...`) is [exactly the problem that computation expressions were designed to solve](/posts/computation-expressions-intro/)!
-
-So let's now build a computation expression for these instructions.
-First we need to implement a `bind` function. It can be created mechanically using the following rules:
-
-* for the `Stop` case, apply the `f` parameter to the return value.
-* for all other cases, replace the `next` function with `next >> bind f`.  
-
-```fsharp
-module Program =
-  let rec bind f program = 
-    match program with
-    | ReadLn ((),next) -> ReadLn ((),next >> bind f)
-    | WriteLn (str,next) -> WriteLn (str, next >> bind f)
-    | Stop x -> f x
-```
-
-Note that `bind` must be defined with `let rec` so it can be used recursively.
-
-Once we have `bind`,  we can define the computation expression and it's associated "builder" class.
-
-* The `Bind` method uses the `bind` defined above.
-* The `Return` and `Zero` methods use `Stop` to return a value
-
-
-```fsharp
-type ProgramBuilder() =
-  member __.Return(x) = Stop x 
-  member __.Bind(x,f) = Program.bind f x
-  member __.Zero() = Stop ()
+module Domain =
+  type UserId = UserId of int
+  type UserName = string
+  type EmailAddress = EmailAddress of string
   
-// the builder instance
-let program = ProgramBuilder()
-```
-
-It's also convenient to define some helper functions to use within the computation expression. These helper function don't "do" anything, they just create a data structure.
-
-```fsharp
-// helpers to use within the computation expression
-let writeLn str = WriteLn (str,Stop)
-let readLn() = ReadLn ((),Stop)
-```
-
-And now we can use the `program` computation expression and the two helper functions to re-implement the `readFromConsole` function in a cleaner way:
-
-```fsharp
-let readFromConsole = program {
-    do! writeLn "Enter the first value"
-    let! str1 = readLn()  
-    do! writeLn "Enter the second value"
-    let! str2 = readLn()  
-    return  (str1,str2)
+  type Profile = {
+    UserId : UserId 
+    Name : UserName 
+    EmailAddress : EmailAddress 
+  }
+  
+  type EmailMessage = {
+    To : EmailAddress
+    Body : string
     }
 ```
 
-Amazingly, this code looks almost exactly like the code in the very first "dependency retention" example. No dependencies are passed in, and it's all very clean.
-Of course, there's a lot more complexity under the hood, and unlike "dependency retention" example, we also need to write the interpreter!
-
-
-## Designing the instructions and interpreter for our complete mini-application
-
-Now let's extend this interpreter to build the example that we have been using in this series.
-
-First we need to define the instructions in the program. Rather than putting *all* the instructions under one `Program` type, let's see how we can build it from smaller pieces. This is exactly the kind of thing we will need to do when we have a more complex system.
-
-We will define two separate instruction sets: one for the console instructions and one for the logger instructions, like this.
+and here's the infrastructure services for logging, database and email:
 
 ```fsharp
-type ConsoleInstruction<'a> =
-  | ReadLn  of unit    * next:(string -> 'a)
-  | WriteLn of string  * next:(unit   -> 'a)
+module Infrastructure =
+  open Domain 
 
-type LoggerInstruction<'a> =
-  | LogDebug of string * next:(unit -> 'a)
-  | LogInfo of string  * next:(unit -> 'a)
+  type ILogger =
+    abstract Info : string -> unit
+    abstract Error : string -> unit
+  
+  type InfrastructureError =
+    | DbError of string
+    | SmtpError of string
+  
+  type DbConnection = DbConnection of unit // dummy definition
+  
+  type IDbService = 
+    abstract NewDbConnection : 
+      unit -> DbConnection 
+    abstract QueryProfile :
+      DbConnection -> UserId -> Async<Result<Profile,InfrastructureError>>
+    abstract UpdateProfile : 
+      DbConnection -> Profile -> Async<Result<unit,InfrastructureError>>
+  
+  type SmtpCredentials = SmtpCredentials of unit // dummy definition
+  
+  type IEmailService = 
+    abstract SendChangeNotification : 
+      SmtpCredentials -> EmailMessage -> Async<Result<unit,InfrastructureError>>
 ```
 
-Now we can define our `Program` type using the two instructions, plus `Stop` as before:
+A few things to note about the infrastructure:
+
+* The DB and Email services take an extra parameter: `DbConnection` and `SmtpCredentials` respectively. We'll have to pass that in somehow, but it would be nice to hide it as it's not a core part of the functionality.
+* The DB and Email services return an `AsyncResult` which indicates that that they are impure and also might fail with an `InfrastructureError`. That's helpful, but also means that combining them with other effects (such as Reader) will be annoying.
+* The logger does *not* return an `AsyncResult`, even though it is impure. Using a logger in the middle of the domain code should not have any effect on the business logic.
+
+We will assume that there is a global logger and default implementations of these services available to us.
+
+## Approach #1: Dependency retention
+
+Our first implementation will use all the dependencies directly, with no attempt at abstraction or parameterization.
+
+Notes:
+
+* The infrastructure services return `AsyncResult`, and so we use an `asyncResult` computation expression to make the code easier to write and understand.
+* The decisions (`if currentProfile <> newProfile`) and impure code are mixed together.
 
 ```fsharp
-type Program<'a> =
-  | ConsoleInstruction of ConsoleInstruction<Program<'a>>
-  | LoggerInstruction of LoggerInstruction<Program<'a>>
-  | Stop  of 'a
+let updateCustomerProfile (newProfile:Profile) =
+  let dbConnection = defaultDbService.NewDbConnection()
+  let smtpCredentials = defaultSmtpCredentials
+  asyncResult {
+    let! currentProfile = 
+      defaultDbService.QueryProfile dbConnection newProfile.UserId
+
+    if currentProfile <> newProfile then
+      globalLogger.Info("Updating Profile")
+      do! defaultDbService.UpdateProfile dbConnection newProfile
+
+    if currentProfile.EmailAddress <> newProfile.EmailAddress then
+      let emailMessage = {
+        To = newProfile.EmailAddress
+        Body = "Please verify your email"
+        }
+      globalLogger.Info("Sending email")
+      do! defaultEmailService.SendChangeNotification smtpCredentials emailMessage 
+    }
 ```
 
-If we need to have more instructions, we simply add them as new choices. 
+As we discussed in the [first post](/posts/dependencies/#approach-1-dependency-retention), I think this approach is fine *if* it is for a small script *or* if it is used to quickly assemble a prototype or sketch. But this code is very hard to test properly, and if it gets more complicated, I would strongly recommend refactoring to separate the pure code from the impure code -- the "dependency rejection" approach.
 
-*Note: It would be nice if we could collapse all these choices into one higher-order choice that takes a type as a parameter. We'll look at an F#-friendly way of doing this shortly.*
+## Approach #2: Dependency rejection
 
-Next we need to implement a `bind` function for the program. Now it turns out that we *don't* need to implement `bind` for each of the instructions, we just need to implement a `map` function. The `bind` function is only needed for the program as a whole.
+When I [discussed "dependency rejection" in an earlier post](/posts/dependencies/#approach-2-dependency-rejection), I used this diagram to show the end goal: separating pure, deterministic code from impure, non-deterministic code.
 
+![](/assets/img/Dependencies2a.jpg)
 
-Here are the two `map` functions:
+So let's apply that approach to our example. The decision is:
+
+* Do nothing
+* Update the database only
+* Update the database and also send a verification email
+
+So let's encode that decision as a type.
 
 ```fsharp
-module ConsoleInstruction =
-  let rec map f program = 
-    match program with
-    | ReadLn ((),next) -> ReadLn ((),next >> f)
-    | WriteLn (str,next) -> WriteLn (str, next >> f)
-
-module LoggerInstruction =
-  let rec map f program = 
-    match program with
-    | LogDebug (str,next) ->  LogDebug (str,next >> f)
-    | LogInfo (str,next) ->  LogInfo (str,next >> f)
+type Decision =
+  | NoAction
+  | UpdateProfileOnly of Profile
+  | UpdateProfileAndNotify of Profile * EmailMessage
 ```
 
-And here is the `bind` function for the program:
+And now the pure, decision-making part of the code can be implemented like this:
 
 ```fsharp
-module Program =
-  let rec bind f program = 
-    match program with
-    | ConsoleInstruction inst -> 
-      inst |> ConsoleInstruction.map (bind f) |> ConsoleInstruction 
-    | LoggerInstruction inst -> 
-      inst |> LoggerInstruction.map (bind f) |> LoggerInstruction 
-    | Stop x -> f x
-```
-
-The code for the computation expression is exactly the same as before:
-
-```fsharp
-type ProgramBuilder() =
-  member __.Return(x) = Stop x 
-  member __.Bind(x,f) = Program.bind f x
-  member __.Zero() = Stop ()
-
-// the builder instance
-let program = ProgramBuilder()
-```
-
-Finally, the interpreter is similar to the previous version, except that it now has two sub-interpreters for the two instruction sets:
-
-
-```fsharp
-let rec interpret program =
-
-  let interpretConsole inst =
-    match inst with
-    | ReadLn ((), next) -> 
-        let str = Console.ReadLine()
-        interpret (next str)
-    | WriteLn (str,next) -> 
-        printfn "%s" str
-        interpret (next())
-
-  let interpretLogger inst =
-    match inst with
-    | LogDebug (str, next) -> 
-        printfn "DEBUG %s" str
-        interpret (next())
-    | LogInfo (str, next) -> 
-        printfn "INFO %s" str
-        interpret (next())
-
-  match program with
-  | ConsoleInstruction inst -> interpretConsole inst
-  | LoggerInstruction inst -> interpretLogger inst
-  | Stop value -> value 
-```
-
-
-### Building the pipeline
-
-In the Reader approach from the [previous post](/posts/dependencies-3/), we broke our mini-application into three components:
-
-* readFromConsole
-* compareTwoStrings
-* writeToConsole
-
-We will re-use this same partitioning for the interpreter approach as well.
-
-First, let's define some helpers that construct a `Program` for us.
-
-```fsharp
-let writeLn str = ConsoleInstruction (WriteLn (str,Stop))
-let readLn() = ConsoleInstruction (ReadLn ((),Stop))
-let logDebug str = LoggerInstruction (LogDebug (str,Stop))
-let logInfo str = LoggerInstruction (LogInfo (str,Stop))
-```
-
-And now we can create the three components of the mini-application:
-
-
-```fsharp
-let readFromConsole = program {
-  do! writeLn "Enter the first value"
-  let! str1 = readLn()  
-  do! writeLn "Enter the second value"
-  let! str2 = readLn()  
-  return  (str1,str2)
-  }
-```
-
-and 
-
-```fsharp
-let compareTwoStrings str1 str2 = program {
-  do! logDebug "compareTwoStrings: Starting"
-
-  let result =
-    if str1 > str2 then
-      Bigger
-    else if str1 < str2 then
-      Smaller
+let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) =
+  if currentProfile <> newProfile then
+    globalLogger.Info("Updating Profile")
+    if currentProfile.EmailAddress <> newProfile.EmailAddress then
+      let emailMessage = {
+        To = newProfile.EmailAddress
+        Body = "Please verify your email"
+        }
+      UpdateProfileAndNotify (newProfile, emailMessage)
     else
-      Equal
+      globalLogger.Info("Sending email")
+      UpdateProfileOnly newProfile
+  else
+    NoAction
+```
 
-  do! logInfo (sprintf "compareTwoStrings: result=%A" result)
-  do! logDebug "compareTwoStrings: Finished"
-  return result 
+In this implementation, we do not read from the database. Instead, we have the `currentProfile` passed in as a parameter.
+And we do not write to the database. Instead, we return the `Decision` type to tell the later impure part what to do.
+
+As a result, this code is very easy to test.
+
+Note that the logger is not being passed as a parameter -- we are just using the `globalLogger`. I think that, in some cases, logging can be an exception to the rule about accessing globals.  If this bothers you, in the next section we'll turn it into a parameter!
+
+Now that the "pure" decision-making part of the code is done, we can implement the top-level code. It should be clear that we now have a impure/pure/impure sandwich, just as we wanted:
+
+```fsharp
+let updateCustomerProfile (newProfile:Profile) =
+  let dbConnection = defaultDbService.NewDbConnection()
+  let smtpCredentials = defaultSmtpCredentials
+  asyncResult {
+    // ----------- impure ----------------
+    let! currentProfile = 
+      defaultDbService.QueryProfile dbConnection newProfile.UserId
+
+    // ----------- pure ----------------
+    let decision = Pure.updateCustomerProfile newProfile currentProfile 
+
+    // ----------- impure ----------------
+    match decision with
+    | NoAction ->
+        ()
+    | UpdateProfileOnly profile ->
+        do! defaultDbService.UpdateProfile dbConnection profile 
+    | UpdateProfileAndNotify (profile,emailMessage) ->
+        do! defaultDbService.UpdateProfile dbConnection profile 
+        do! defaultEmailService.SendChangeNotification smtpCredentials emailMessage
+    }
+
+```
+
+Breaking the code into two parts like this is very easy and has lots of benefits. So "dependency rejection" should always be the first refactoring that you do.
+
+In the rest of this post, even as we use additional techniques, we will keep the decision-making part and the IO-using part separate.
+
+
+## Approach #3: Dependency parameterization
+
+We've now separated pure from impure code, except for the logger, which cannot be easily disentangled from the pure code. 
+
+Let's address this logger problem. The easiest way to make testing easier, at least, is to pass the logger as a parameter to the pure core, like this:
+
+```fsharp
+let updateCustomerProfile (logger:ILogger) (newProfile:Profile) (currentProfile:Profile) =
+  if currentProfile <> newProfile then
+    logger.Info("Updating Profile")
+    if currentProfile.EmailAddress <> newProfile.EmailAddress then
+      ...
+    else
+      logger.Info("Sending email")
+      UpdateProfileOnly newProfile
+  else
+    NoAction
+```
+
+If we want to, we could also parameterize the services in the top-level impure code as well. If there are a lot of infrastructure services, it's common to bundle them up into a single type:
+
+```fsharp
+type IServices = {
+  Logger : ILogger
+  DbService : IDbService
+  EmailService : IEmailService
   }
 ```
 
-and
+A parameter of this type can then be passed into the top-level code, as shown below. Everywhere we were using the `defaultDbService` directly before, we are now using the `services` parameter. Note that the `logger` is extracted from the services and then passed as a parameter to the pure function that we implemented above.
 
 ```fsharp
-let writeToConsole (result:ComparisonResult) = program {
-  match result with
-  | Bigger ->
-    do! writeLn "The first value is bigger"
-  | Smaller ->
-    do! writeLn "The first value is smaller"
-  | Equal ->
-    do! writeLn "The values are equal"
+let updateCustomerProfile (services:IServices) (newProfile:Profile) =
+  let dbConnection = services.DbService.NewDbConnection()
+  let smtpCredentials = defaultSmtpCredentials
+  let logger = services.Logger
+
+  asyncResult {
+    // ----------- Impure ----------------
+    let! currentProfile = 
+      services.DbService.QueryProfile dbConnection newProfile.UserId
+
+    // ----------- pure ----------------
+    let decision = Pure.updateCustomerProfile logger newProfile currentProfile 
+
+    // ----------- Impure ----------------
+    match decision with
+    | NoAction ->
+        ()
+    | UpdateProfileOnly profile ->
+        do! services.DbService.UpdateProfile dbConnection profile 
+    | UpdateProfileAndNotify (profile,emailMessage) ->
+        do! services.DbService.UpdateProfile dbConnection profile 
+        do! services.EmailService.SendChangeNotification smtpCredentials emailMessage
+    }
+```
+
+Passing a `services` parameter like this makes it easy to mock the services or change the implementation. It's a simple refactoring which doesn't require any special expertise, so as with "dependency rejection", this is one of the first refactorings I would do if the code is getting hard to test.
+
+
+## Approach #4a: OO-style dependency injection
+
+The OO way to pass dependencies is generally to pass them into the constructor when the object is created. This is not the default approach for a functional-first design, but if you are writing F# code that will be used from C#, or you are working within a C# framework that expects this kind of dependency injection, then this is the technique you should use.
+
+```fsharp
+// define a class with a constructor that accepts the dependencies
+type MyWorkflow (services:IServices) =
+
+  member this.UpdateCustomerProfile (newProfile:Profile) =
+    let dbConnection = services.DbService.NewDbConnection()
+    let smtpCredentials = defaultSmtpCredentials
+    let logger = services.Logger
+
+    asyncResult {
+      // ----------- Impure ----------------
+      let! currentProfile = services.DbService.QueryProfile dbConnection newProfile.UserId
+
+      // ----------- pure ----------------
+      let decision = Pure.updateCustomerProfile logger newProfile currentProfile 
+
+      // ----------- Impure ----------------
+      match decision with
+      | NoAction ->
+          ()
+      | UpdateProfileOnly profile ->
+          do! services.DbService.UpdateProfile dbConnection profile 
+      | UpdateProfileAndNotify (profile,emailMessage) ->
+          do! services.DbService.UpdateProfile dbConnection profile 
+          do! services.EmailService.SendChangeNotification smtpCredentials emailMessage
+      }
+```
+
+As you can see, the `UpdateCustomerProfile` method has no explicit `services` parameter, instead using the `services` field thats in scope for the whole class.
+
+The upside is that the method call itself is simpler. The downside is that the method now relies on the context of the class, making it harder to refactor and test in isolation.
+
+## Approach #4b: Reader monad
+
+The FP equivalent of delaying the injection of dependencies is the `Reader` type and its associated tools, such as the `reader` computation expression.
+For more discussion on the Reader monad, see the [earlier post](/posts/dependencies-3/).
+
+Here's the pure part of the code written to return a `Reader` containing the `ILogger` as its environment.
+
+```fsharp
+let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) = 
+  reader {
+    let! (logger:ILogger) = Reader.ask
+    
+    let decision = 
+      if currentProfile <> newProfile then
+        logger.Info("Updating Profile")
+        if currentProfile.EmailAddress <> newProfile.EmailAddress then
+          let emailMessage = {
+            To = newProfile.EmailAddress
+            Body = "Please verify your email"
+            }
+          UpdateProfileAndNotify (newProfile, emailMessage)
+        else
+          logger.Info("Sending email")
+          UpdateProfileOnly newProfile
+      else
+        NoAction
+    
+    return decision
   }
 ```
 
-Putting them all together, we have the final program:
+The return type of `updateCustomerProfile` is `Reader<ILogger,Decision>`, just as we want.
 
+We can run the Reader from our top level code like this:
 
 ```fsharp
-let myProgram = program {
-  let! str1, str2 = readFromConsole 
-  let! result = compareTwoStrings str1 str2 
-  do! writeToConsole result 
+let updateCustomerProfile (services:IServices) (newProfile:Profile) =
+  let logger = services.Logger
+
+  asyncResult {
+    // ----------- impure ----------------
+    let! currentProfile = ...
+
+    // ----------- pure ----------------
+    let decision = 
+      Pure.updateCustomerProfile newProfile currentProfile 
+      |> Reader.run logger
+
+    // ----------- impure ----------------
+    match decision with
+	... etc
+```
+
+
+### Using Reader for the top-level dependencies as well
+
+If you really want to use Reader, I would recommend only using it to hide "effectless" dependencies in pure code, such as logging.
+If you use Reader for impure code that returns different kinds of effects, such as `AsyncResult`, it can get quite messy.
+
+To demonstrate this, let's divide the impure code into two new functions, each of which returns a Reader: 
+
+The first function will read the profile from the database. It needs an `IServices` as the environment for the Reader, and it will return a `AsyncResult<Profile,InfrastructureError>`. So the overall return type will be `Reader<IServices, AsyncResult<Profile,InfrastructureError>>` which is pretty gnarly.
+
+```fsharp
+let getProfile (userId:UserId) = 
+  reader {
+    let! (services:IServices) = Reader.ask
+    let dbConnection = services.DbService.NewDbConnection()
+    return services.DbService.QueryProfile dbConnection userId
   }
 ```
 
-And to "execute" this program, we simply pass it into the interpreter:
+The second function will handle the decision and update the profile in the database if needed. Again, it needs an `IServices` as the environment for the Reader, and it will return a `unit` wrapped in an `AsyncResult`. So the overall return type will be `Reader<IServices, AsyncResult<unit,InfrastructureError>>`.
 
 ```fsharp
-interpret myProgram
+let handleDecision (decision:Decision) = 
+  reader {
+    let! (services:IServices) = Reader.ask
+    let dbConnection = services.DbService.NewDbConnection()
+    let smtpCredentials = defaultSmtpCredentials
+    let action = asyncResult {
+      match decision with
+      | NoAction ->
+          () 
+      | UpdateProfileOnly profile ->
+          do! services.DbService.UpdateProfile dbConnection profile 
+      | UpdateProfileAndNotify (profile,emailMessage) ->
+          do! services.DbService.UpdateProfile dbConnection profile 
+          do! services.EmailService.SendChangeNotification smtpCredentials emailMessage
+      }
+    return action
+  }
+```
+
+Working with multiple different effects at the same time (`Reader`, `Async`, and `Result` in this case) is pretty painful. Languages like Haskell have some workarounds, but F# is not really designed to do this. The easiest way is to write a custom computation expression for the combined set of effects. The `Async` and `Result` effects are often used together, so it makes sense to have a special `asyncResult` computation expression. But if we add `Reader` into the mix, we would need something like a `readerAsyncResult` computation expression.
+
+In my implementation below, I couldn't be bothered to do that. Instead, I just run the Reader for each component function as needed, within the overall `asyncResult` expression. It's ugly but it works.
+
+```fsharp
+let updateCustomerProfile (newProfile:Profile) = 
+  reader {
+    let! (services:IServices) = Reader.ask
+    let getLogger services = services.Logger
+    
+    return asyncResult {
+      // ----------- impure ----------------
+      let! currentProfile = 
+        getProfile newProfile.UserId   
+        |> Reader.run services
+    
+      // ----------- pure ----------------
+      let decision = 
+        Pure.updateCustomerProfile newProfile currentProfile 
+        |> Reader.withEnv getLogger
+        |> Reader.run services
+          
+      // ----------- impure ----------------
+      do! (handleDecision decision) |> Reader.run services   
+      }
+  }
 ```
 
 
-## A modular approach to handling multiple instruction sets
+## Approach #5: Dependency interpretation
 
-The downside of the previous approach is that every time we need to add a new set of instructions, we need to modify the main `Program` type, which is brittle and anti-modular.
-So let's quickly look at an alternative approach.
+To finish up, we'll look at applying the interpreter approach as discussed in the [previous post](/posts/dependencies-4). 
 
-In Haskell and other languages that support typeclasses (and in particular, Functors), we can use them to construct a "Free Monad". We're writing F#, not Haskell, so let's use interfaces instead!
+To write the program, we will need to:
 
-First we define an interface that our instructions must implement. It has one member, the `Map` method:
+* Define the instruction sets we want to use. These will be data structures, not functions.
+* Implement `IInstruction` for each of these instruction sets so it can be used with the generic ["Program" library that we defined in the previous post](/posts/dependencies-4/#a-modular-approach-to-handling-multiple-instruction-sets).
+* Create some helper functions to make it easier to create instructions
+* And then we can write the code using the `program` computation expression
 
-```fsharp
-type IInstruction<'a> =
-  abstract member Map : ('a->'b) -> IInstruction<'b> 
-```
+After that is done, we need to interpret the program:
 
-Then we define our `Program` to use that type
+* We will create sub-interpreters for each instruction set
+* We will then create a top-level interpreter for the whole program that calls the sub-interpreters as needed.
 
-```fsharp
-type Program<'a> =
-  | Instruction of IInstruction<Program<'a>>
-  | Stop  of 'a
-```
+We can choose to do this for just the pure part of the code, or for the impure part as well. Let's start by just doing the pure part.
 
-Finally, we can define the `bind` using the `map` method associated with the instructions:
+### Developing the pure component
 
-```fsharp
-module Program =
-  let rec bind f program = 
-    match program with
-    | Instruction inst -> 
-        inst.Map (bind f) |> Instruction 
-    | Stop x -> f x
-```
+First we need to define the instruction set for the pure code. Right now, the only thing we need is logging. So we need:
 
-The computation expression builder is unchanged.
+* A `LoggerInstruction` type with a case for each logging action
+* An implementation of `IInstruction` and its associated `Map` method
+* Some helper functions to build the various instructions
 
-So far, this is completely generic and reusable code which has no knowledge of any particular instructions.
-
-### Defining instructions
-
-To implement a specific workflow, we start by defining some instructions and their map method. Each of these instructions is ignorant of the others.
+Here's the code:
 
 ```fsharp
-type ConsoleInstruction<'a> =
-  | ReadLn  of unit  * next:(string -> 'a)
-  | WriteLn of string  * next:(unit   -> 'a)
-  interface IInstruction<'a> with
-    member this.Map f  = 
-      match this with
-      | ReadLn ((),next) -> ReadLn ((),next >> f)
-      | WriteLn (str,next) -> WriteLn (str, next >> f)
-      :> IInstruction<'b> 
-
 type LoggerInstruction<'a> =
-  | LogDebug of string * next:(unit -> 'a)
   | LogInfo of string  * next:(unit -> 'a)
+  | LogError of string * next:(unit -> 'a)
   interface IInstruction<'a> with
     member this.Map f  = 
       match this with
-      | LogDebug (str,next) ->  LogDebug (str,next >> f)
-      | LogInfo (str,next) ->  LogInfo (str,next >> f)
-      :> IInstruction<'b> 
+      | LogInfo (str,next) -> 
+          LogInfo (str,next >> f)
+      | LogError (str,next) -> 
+          LogError (str,next >> f)
+      :> IInstruction<_> 
+
+// helpers to use within the computation expression
+let logInfo str = Instruction (LogInfo (str,Stop))
+let logError str = Instruction (LogError (str,Stop))
 ```
 
-The only difference from the earlier implementation is that map has to cast the result back to an `IInstruction`.
-
-Next we want to create some modular interpreters too. We want the interpreter for a particular instruction set to be unaware of the top level interpreter, so we will pass the `interpret` function in as a parameter:
+With this instruction set, we can write the pure part, abstracting away the logger parameter that we needed in the earlier implementations.
 
 ```fsharp
-// modular interpreter for ConsoleInstruction
-let interpretConsole interpret inst =
-  match inst with
-  | ReadLn ((), next) -> 
-    let str = Console.ReadLine()
-    interpret (next str)
-  | WriteLn (str,next) -> 
-    printfn "%s" str
-    interpret (next())
+let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) = 
+  if currentProfile <> newProfile then program {
+    do! logInfo("Updating Profile")
+    if currentProfile.EmailAddress <> newProfile.EmailAddress then 
+      let emailMessage = {
+        To = newProfile.EmailAddress
+        Body = "Please verify your email"
+        }
+      return UpdateProfileAndNotify (newProfile, emailMessage) 
+    else 
+      do! logInfo("Sending email")
+      return UpdateProfileOnly newProfile
+    }
+  else program {
+    return NoAction
+    }
+```
 
-// modular interpreter for LoggerInstruction
+The return type of `updateCustomerProfile` is just `Program<Decision>`. No mention of a specific `ILogger` anywhere!
+
+Notice that there are sub `programs` for each branch of the main if/then/else expression. The rules for nesting `let!` and `do!` within computation expressions are not particularly intuitive, and you might get errors such as ["This construct may only be used within computation expressions"](https://stackoverflow.com/questions/20913022/using-let-inside-match-statements-causes-compilation-error). It sometimes takes a bit of tweaking to get it right.
+
+
+### Developing the impure component
+
+If we want to replace *all* direct I/O calls with interpreted ones, then we will need to create instruction sets for them. So instead of the `IDbService` and `IEmailService` interfaces, we will have instruction types that look like this:
+
+```fsharp
+type DbInstruction<'a> =
+  | QueryProfile of UserId * next:(Profile -> 'a)
+  | UpdateProfile of Profile * next:(unit -> 'a)
+  interface IInstruction<'a> with
+    member this.Map f  = 
+      match this with
+      | QueryProfile (userId,next) -> 
+          QueryProfile (userId,next >> f)
+      | UpdateProfile (profile,next) -> 
+          UpdateProfile (profile, next >> f)
+      :> IInstruction<_> 
+
+type EmailInstruction<'a> =
+  | SendChangeNotification of EmailMessage * next:(unit-> 'a)
+  interface IInstruction<'a> with
+    member this.Map f  = 
+      match this with
+      | SendChangeNotification (message,next) -> 
+          SendChangeNotification (message,next >> f)
+      :> IInstruction<_> 
+```
+
+And the helpers to use within the computation expression:
+
+```fsharp	  
+let queryProfile userId = 
+  Instruction (QueryProfile(userId,Stop))
+let updateProfile profile = 
+  Instruction (UpdateProfile(profile,Stop))
+let sendChangeNotification message = 
+  Instruction (SendChangeNotification(message,Stop))
+```
+
+### Writing the shell program
+
+As with the Reader implementation, we'll break the system down into three components:
+
+* `getProfile`. An impure part that will read the profile from the database.
+* `updateCustomerProfile`. The pure part that we implemented above.
+* `handleDecision`. An impure part that will handle the decision and update the profile in the database if needed.
+
+Here's the implementation of `getProfile` using the `queryProfile` helper, which, as a reminder, actually creates the `QueryProfile` instruction but does not do anything.
+
+```fsharp
+let getProfile (userId:UserId) :Program<Profile> = 
+  program {
+    return! queryProfile userId
+  }
+```
+
+Here's the implementation of `handleDecision`. Note that for the `NoAction` case, I want to return `unit`, but wrapped in a `Program`. That's exactly what `program.Zero()` is.  I could also have used `program { return() }` to have the same effect.
+	
+```fsharp	
+let handleDecision (decision:Decision) :Program<unit> = 
+    match decision with
+    | NoAction ->
+        program.Zero()
+    | UpdateProfileOnly profile ->
+        updateProfile profile 
+    | UpdateProfileAndNotify (profile,emailMessage) ->
+        program {
+        do! updateProfile profile 
+        do! sendChangeNotification emailMessage
+        }
+```
+
+With these three functions in hand, implementing the top-level function is straightforward.
+
+```fsharp	
+let updateCustomerProfile (newProfile:Profile) = 
+  program {
+    let! currentProfile = getProfile newProfile.UserId 
+    let! decision = Pure.updateCustomerProfile newProfile currentProfile 
+    do! handleDecision decision
+  }
+```
+
+It looks very clean -- no `AsyncResults` anywhere! That makes it cleaner than the Reader version implemented earlier.
+
+### Creating the sub-interpreters
+
+But now we come to the tricky part: implementing the sub-interpreters and the top-level interpreter.
+This is made more complicated by the fact that the infrastructure services all return `AsyncResult`. Everything we do has to be lifted into that context.
+
+Let's go through the interpreter for `DbInstruction` first. (In the code below, I have added an "AS" suffix to show which values are AsyncResults.)
+
+To understand what's going on, let's start with just one instruction, the interpreter for `QueryProfile`.
+
+```fsharp	
+| QueryProfile (userId, next) -> 
+    let profileAS = defaultDbService.QueryProfile dbConnection userId
+    let newProgramAS = (AsyncResult.map next) profileAS
+    interpret newProgramAS 
+```
+
+First, we call the infrastructure service, which returns an AsyncResult.
+
+```fsharp	
+let profileAS = defaultDbService.QueryProfile dbConnection userId
+```
+
+Then we call the `next` function to get the next Program to interpret. But the `next` function doesn't work with AsyncResult, so we have to use `AsyncResult.map` to "lift" into a function that does. At that point we can call it with the `profileAS` and get back a new Program wrapped in an AsyncResult.
+
+```fsharp	
+let newProgramAS = (AsyncResult.map next) profileAS
+```
+
+Finally, we can interpret the program. Normally, an interpreter would take a `Program<'a>` and return an `'a`.
+But with AsyncResult contaminating everything, the `interpret` function will need to take an `AsyncResult<Program<'a>>` and return an `AsyncResult<'a>`.
+
+```fsharp	
+interpret newProgramAS   // returns an AsyncResult<'a,InfrastructureError>
+```
+
+Here's the full implementation of `interpretDbInstruction`:
+
+```fsharp	
+let interpretDbInstruction (dbConnection:DbConnection) interpret inst =
+  match inst with
+  | QueryProfile (userId, next) -> 
+      let profileAS = defaultDbService.QueryProfile dbConnection userId
+      let newProgramAS = (AsyncResult.map next) profileAS
+      interpret newProgramAS 
+  | UpdateProfile (profile, next) -> 
+      let unitAS = defaultDbService.UpdateProfile dbConnection profile
+      let newProgramAS = (AsyncResult.map next) unitAS 
+      interpret newProgramAS 
+```
+
+Note also that `interpretDbInstruction` takes a `dbConnection` as a parameter. The caller is going to have to pass that in.
+
+The interpreter implementation for `EmailInstruction` is similar.
+
+For the `LoggerInstruction` interpreter we need to tweak it somewhat, because the logger service does not use AsyncResult. In this case, we create a new program by calling `next` in the usual way, but then "lift" the result to an AsyncResult using `asyncResult.Return`.
+
+```fsharp	
 let interpretLogger interpret inst =
   match inst with
-  | LogDebug (str, next) -> 
-    printfn "DEBUG %s" str
-    interpret (next())
   | LogInfo (str, next) -> 
-    printfn "INFO %s" str
-    interpret (next())
+      globalLogger.Info str
+      let newProgramAS = next() |> asyncResult.Return
+      interpret newProgramAS 
+  | LogError (str, next) -> 
+      ...
 ```
 
-Now all we need to do is define the top-level interpreter. Again, this very similar to the earlier implementation, except that we now match on the type of the instruction rather than exhaustively matching a fixed list of cases. It's not as safe as having the compiler check everything for you, but if you forget to handle an instruction it will be very obvious!
+### Creating the top-level interpreters
 
-```fsharp
-let rec interpret program =
-  match program with
-  | Instruction inst ->
-      match inst with
-      | :? ConsoleInstruction<Program<_>> as i -> interpretConsole interpret i
-      | :? LoggerInstruction<Program<_>> as i -> interpretLogger interpret i
-      | _ -> failwithf "unknown instruction type %O" (inst.GetType())
-  | Stop value -> value 
+Even though we have built the sub-interpreters for each instruction set, we cannot relax. The top-level interpreter is also quite complicated!
+
+Here it is:
+
+```fsharp	
+let interpret program =
+  // 1. get the extra parameters and partially apply them to make all the interpreters 
+  // have a consistent shape
+  let smtpCredentials = defaultSmtpCredentials
+  let dbConnection = defaultDbService.NewDbConnection()
+  let interpretDbInstruction' = interpretDbInstruction dbConnection 
+  let interpretEmailInstruction' = interpretEmailInstruction smtpCredentials 
+
+  // 2. define a recursive loop function. It has signature:
+  //   AsyncResult<Program<'a>,InfrastructureError>) -> AsyncResult<'a,InfrastructureError> 
+  let rec loop programAS = 
+    asyncResult {
+      let! program = programAS 
+      return! 
+        match program with
+        | Instruction inst ->
+            match inst with
+            | :? LoggerInstruction<Program<_>> as inst -> interpretLogger loop inst
+            | :? DbInstruction<Program<_>> as inst -> interpretDbInstruction' loop inst
+            | :? EmailInstruction<Program<_>> as inst -> interpretEmailInstruction' loop inst
+            | _ -> failwithf "unknown instruction type %O" (inst.GetType())
+        | Stop value -> 
+            value |> asyncResult.Return
+      }
+
+  // 3. start the loop
+  let initialProgram = program |> asyncResult.Return
+  loop initialProgram 
 ```
 
-The advantage of this approach is that it is much more modular. We can write subcomponents independently of each other, using different instruction sets, and then combine them later. The only thing that needs to change is the top-level interpreter for a particular workflow, and that main interpreter itself can be built from a number of independent sub-interpreters.
+I've broken it down into three sections. Let's go through them in turn.
 
-## Pros and cons of interpreters
+First, we get the extra parameters (`smtpCredentials` and `dbConnection`) and create local variants of the interpreters with these parameters partially applied.
+This puts all the interpreter functions into the same "shape". It's not strictly necessary, but it is a little bit cleaner I think.
 
-As you can see, using the interpreter results in very clean code where all the dependencies are hidden. All the nastiness of dealing with IO (e.g. `Async`) is gone (or rather, pushed to the interpreter).
+Next, we define a local "loop" function, which is the actual interpreter loop. There are a number of advantages to using a local function like this.
 
-Another benefit is that you can easily switch out the interpreter if you need to work with different infrastructure. For example, I could change the logger interpretation to use a logger like Serilog, and I could change the console interpretation to use a file, or a socket. And "global" values (such as loggers) can easily managed in the interpreter loop without affecting the main program logic.
+* It can reuse values that are in scope, in this case using the same `dbConnection` all the way through the interpretation process.
+* It can have a different signature from the main `interpret`. In this case, the loop accepts Programs wrapped in AsyncResults, rather than normal Programs.
 
-But as always, there are tradeoffs.
+Inside the the `loop` function, it handles the two cases of the Program:
 
-First, there is a lot of extra work. You have to define and interpret every possible I/O action that your workflow will need, which can be tedious. And the number of operations can easily get out of hand if you are not careful. One advantage to [building your application out of independent workflows](https://www.youtube.com/watch?v=USSkidmaS6w) is that the number of operations shouldn't be too high for any particular workflow.
+* For the `Instruction` case, the `loop` function calls the sub-interpreters, passing in itself to recursively interpret the next step.
+* For the `Stop` case, it takes the normal value and wraps it into an AsyncResult using `asyncResult.Return`
 
-Second, it's a lot harder to understand what's going on if you are not already familiar with this approach. Unlike the ["dependency rejection"](/posts/dependencies/) and ["dependency parameterization"](/posts/dependencies-2/) techniques, which do not require any special background, both the Reader and the Interpreter approaches demand quite a lot of knowledge. And if you ever need to step through code in a debugger, the deeply nested continuations will really make things very complicated.
+Finally, at the bottom, we start the loop. It needs an AsyncResult as input, so once again we have to lift the initial input program using `asyncResult.Return`
 
-Next, as always, one of the downsides of computation expressions is that it is hard to mix and match them. For example, in the previous post, I mentioned that it would be tricky to mix the `Reader` expressions with `Result` expressions and `Async` expressions. The interpreter approach alleviates this issue a little, as you never have to deal with things like `Async` in the main "program" code, and not even `Result` most of the time.  But even so, when you do need to deal with this problem, it can be painful.
+With the interpreter now available, the very top-most function can be completed. It works as follows:
 
-Finally, another issue is performance. If you have a large program with 1000's of instructions, then you will have a very very deeply nested data structure. Interpretation might be slow, and might even cause stack overflows. There are workarounds (see [trampolines](https://stackoverflow.com/a/49681264/1136133)) but that makes the code more complicated.
+* Call `Shell.updateCustomerProfile`, which returns a `Program`
+* Then interpret that program using `interpret`, which returns an `AsyncResult`
+* Then run that `AsyncResult` to get the final response (which in turn might need to be transformed into HTTP codes or similar)
 
-So, to sum up, I would only recommend this approach if (a) you really care about separating I/O from the pure code (b) everyone on the team is familiar with it (c) you have the skills and know-how to deal with any performance issues that might arise.
+```fsharp	
+let updateCustomerProfileApi (newProfile:Profile) =
+  Shell.updateCustomerProfile newProfile
+  |> interpret
+  |> Async.RunSynchronously
+```
 
-*The source code for this post is available at [this gist](https://gist.github.com/swlaschin/1cdbed00d2095987e474d500caa9bd4d).*
+### Review of the interpreter approach
 
-## More reading
+As we saw in the [previous post](/posts/dependencies-4), and as we see here, the interpreter approach results in very clean code where all the dependencies are hidden. All the nastiness of dealing with IO and stacked multiple effects (e.g. `Async` wrapping `Result`) is gone, or rather, pushed to the interpreter.
+
+But getting to that clean code was a lot of extra work. For this program we needed only five instructions, yet we had to write around 100 extra lines of code to support them! And that was the simple version of the interpreter, dealing with only one kind of effect, AsyncResult. Furthermore, in practice, you might also need to [avoid stack overflows by adding trampolines](https://johnazariah.github.io/2020/12/07/bouncing-around-with-recursion.html#trampolines), which makes the code even more complicated. In general, I would say that is way too much effort for most situations.
+
+So when *would* this be a good idea? 
+
+* If you have a use-case where you need to create a DSL or library for others to use *and* there are a small number of instructions, then the simplicity of the "front-end" use might outweigh the complexity of the "back-end" interpreter. 
+* If you need to do optimizations such as batching I/O requests, caching previous results, etc. By separating the program and the interpretation, you can do these optimizations behind the scenes while still having a clean front-end. 
+
+These requirements applied to Twitter, and Twitter's engineering team developed [a library called Stitch](https://www.youtube.com/watch?v=VVpmMfT8aYw) that does something like this. [This video has a good explanation](https://www.youtube.com/watch?v=VVpmMfT8aYw&feature=youtu.be&t=625), or see [this post](https://underscore.io/blog/posts/2015/04/14/free-monads-are-simple.html). And Facebook engineering has a similar library called [Haxl](https://github.com/facebook/Haxl), developed [for the same reasons](https://engineering.fb.com/2014/06/10/web/open-sourcing-haxl-a-library-for-haskell/).
+
+
+## Summary
+
+In this post we applied the six different techniques to the same example. Which one did you like best?
+
+Here's my personal opinion of each approach:
+
+* **Dependency Retention** is fine for small scripts or where you don't need to test.
+* **Dependency Rejection** is always a good idea and should always be used (with some exceptions for low-decision, high I/O workflows).
+* **Dependency Parameterization** is generally a good idea for making pure code testable. Parameterizing the infrastructure services in the I/O heavy "edges" is not required but can often be useful.
+* **OO-style Dependency Injection** should be used if you are interacting with OO-style C# or OO-style frameworks. Don't make life hard for yourself!
+* **Reader monad** is not a technique I would recommend unless you can see a clear benefit over the other techniques here. 
+* **Dependency Interpretation** is also not a technique I would recommend unless you have a specific use-case for it where none of the other techniques work. 
+
+Regardless of my opinion, *all* the techniques are useful to have in your toolbox. In particular, it's good to understand how the Reader and Interpreter implementations work, even you don't use much them in practice. 
+
+
+*The source code for all the example code in this post is available at [this gist](https://gist.github.com/swlaschin/ef1d180bfde18a9b876eb8f54913c49e).*
+
+
 
 
 

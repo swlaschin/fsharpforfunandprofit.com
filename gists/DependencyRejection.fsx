@@ -1,5 +1,5 @@
 (* ===================================
-Code from my post "Five approaches to dependency injection"
+Code from my series of posts "Six approaches to dependency injection"
 =================================== *)
 
 open System
@@ -49,17 +49,17 @@ module PureCore_Test =
         testCase "smaller" <| fun () ->
             let expected = PureCore.Smaller
             let actual = PureCore.compareTwoStrings "a" "b"
-            Expect.equal expected actual "a < b"
+            Expect.equal actual expected "a < b"
 
         testCase "equal" <| fun () ->
             let expected = PureCore.Equal
             let actual = PureCore.compareTwoStrings "a" "a"
-            Expect.equal expected actual "a = a"
+            Expect.equal actual expected "a = a"
 
         testCase "bigger" <| fun () ->
             let expected = PureCore.Bigger
             let actual = PureCore.compareTwoStrings "b" "a"
-            Expect.equal expected actual "b > a"
+            Expect.equal actual expected "b > a"
         ]
 
     let runTests() =

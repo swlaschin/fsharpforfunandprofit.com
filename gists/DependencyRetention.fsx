@@ -1,5 +1,5 @@
 (* ===================================
-Code from my post "Five approaches to dependency injection"
+Code from my series of posts "Six approaches to dependency injection"
 =================================== *)
 
 open System

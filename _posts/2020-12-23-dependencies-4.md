@@ -1,16 +1,17 @@
 ---
 layout: post
 title: "Dependency Interpretation"
-description: "Five approaches to dependency injection, Part 4"
+description: "Six approaches to dependency injection, Part 4"
 categories: []
 ---
 
-In this series, we are looking at five different approaches to dependency injection.
+In this series, we are looking at six different approaches to dependency injection.
 
-* In the [first post](/posts/dependencies/), we looked at "dependency rejection", or keeping I/O at the edges of your implementation.
+* In the [first post](/posts/dependencies/), we looked at "dependency retention" (inlining the dependencies) and "dependency rejection" (keeping I/O at the edges of your implementation).
 * In the [second post](/posts/dependencies-2/), we looked at injecting dependencies using standard function parameters.
 * In the [third post](/posts/dependencies-3/), we looked at dependency handling using classic OO-style dependency injection and the FP equivalent: the Reader monad.
-* In this final post, we'll look at avoiding dependencies altogether by using the interpreter pattern.
+* In this post, we'll look at avoiding dependencies altogether by using the interpreter pattern.
+* In the [next post](/posts/dependencies-5/), we'll revisit all the techniques discussed and apply them to a new example.
 
 The examples in this post build on the examples in previous posts, so please read them first.
   
@@ -96,32 +97,33 @@ let readFromConsole =
   ReadLn  ( ()                     , fun str1 ->
   WriteLn ("Enter the second value", fun () ->
   ReadLn  ( ()                     , fun str2 ->
-  Stop  (str1,str2)
+  Stop  (str1,str2)        // no "next" function
   ))))
 ```
 You can see that after each instruction, there is a function which contains more instructions, and so on until we get to `Stop`, where we return the two strings as a tuple.
 
 **It's very important to understand that `readFromConsole` is a *data structure*, not a function!** It's a `WriteLn` that contains a `ReadLn` that contains another `WriteLn` that contains another `ReadLn` that contains a `Stop`. The data structure contains functions, but nothing has actually been executed yet.
 
-Now we can write the interpreter that will "execute" the data structure. The implementation should be easy to follow if you have understood the explanation so far. Notice that for `ReadLn` and `WriteLn` it is recursive, but at `Stop` it stops recursing and returns the supplied value.
+Now that we have built a data structure, we need an interpreter that will "execute" the data structure. The implementation should be easy to follow if you have understood the explanation so far. Notice that for `ReadLn` and `WriteLn` it is recursive, but at `Stop` it stops recursing and returns the supplied value.
 
 ```fsharp
 let rec interpret program =
   match program with
   | ReadLn ((), next) -> 
-      // do the actual I/O
+      // 1. interpret the meaning of "ReadLn" to do actual I/O
       let str = Console.ReadLine()
-      // call "next" with the output of the interpreter
-      // to get another program
+      // 2. call "next" with the output of the interpretation.
+      // This gives us another Program
       let nextProgram = next str 
-      // interpret the new program
+      // 3. interpret the new Program (recursively)
       interpret nextProgram   
   | WriteLn (str,next) -> 
       printfn "%s" str
       let nextProgram = next()
       interpret nextProgram   
   | Stop value -> 
-      value // return as overall result
+      // return the overall result of the Program
+      value 
 ```
 
 We can now test that it works:
@@ -155,7 +157,7 @@ module Program =
 
 Note that `bind` must be defined with `let rec` so it can be used recursively.
 
-Once we have `bind`,  we can define the computation expression and it's associated "builder" class.
+Once we have `bind`,  we can define the computation expression and its associated "builder" class.
 
 * The `Bind` method uses the `bind` defined above.
 * The `Return` and `Zero` methods use `Stop` to return a value
@@ -187,7 +189,7 @@ let readFromConsole = program {
     let! str1 = readLn()  
     do! writeLn "Enter the second value"
     let! str2 = readLn()  
-    return  (str1,str2)
+    return (str1,str2)
     }
 ```
 
@@ -195,9 +197,9 @@ Amazingly, this code looks almost exactly like the code in the very first "depen
 Of course, there's a lot more complexity under the hood, and unlike "dependency retention" example, we also need to write the interpreter!
 
 
-## Designing the instructions and interpreter for our complete mini-application
+## Designing the instructions and interpreter for our example
 
-Now let's extend this interpreter to build the example that we have been using in this series.
+Now let's extend this interpreter approach to build the example that we have been using in this series.
 
 First we need to define the instructions in the program. Rather than putting *all* the instructions under one `Program` type, let's see how we can build it from smaller pieces. This is exactly the kind of thing we will need to do when we have a more complex system.
 
@@ -219,7 +221,7 @@ Now we can define our `Program` type using the two instructions, plus `Stop` as 
 type Program<'a> =
   | ConsoleInstruction of ConsoleInstruction<Program<'a>>
   | LoggerInstruction of LoggerInstruction<Program<'a>>
-  | Stop  of 'a
+  | Stop of 'a
 ```
 
 If we need to have more instructions, we simply add them as new choices. 
@@ -241,8 +243,8 @@ module ConsoleInstruction =
 module LoggerInstruction =
   let rec map f program = 
     match program with
-    | LogDebug (str,next) ->  LogDebug (str,next >> f)
-    | LogInfo (str,next) ->  LogInfo (str,next >> f)
+    | LogDebug (str,next) -> LogDebug (str,next >> f)
+    | LogInfo (str,next) -> LogInfo (str,next >> f)
 ```
 
 And here is the `bind` function for the program:
@@ -252,10 +254,11 @@ module Program =
   let rec bind f program = 
     match program with
     | ConsoleInstruction inst -> 
-      inst |> ConsoleInstruction.map (bind f) |> ConsoleInstruction 
+        inst |> ConsoleInstruction.map (bind f) |> ConsoleInstruction 
     | LoggerInstruction inst -> 
-      inst |> LoggerInstruction.map (bind f) |> LoggerInstruction 
-    | Stop x -> f x
+        inst |> LoggerInstruction.map (bind f) |> LoggerInstruction 
+    | Stop x -> 
+	    f x
 ```
 
 The code for the computation expression is exactly the same as before:
@@ -420,11 +423,11 @@ module Program =
 
 The computation expression builder is unchanged.
 
-So far, this is completely generic and reusable code which has no knowledge of any particular instructions.
+So far, this is completely generic and reusable code which has no knowledge of any particular instruction set.
 
 ### Defining instructions
 
-To implement a specific workflow, we start by defining some instructions and their map method. Each of these instructions is ignorant of the others.
+To implement a specific workflow, we start by defining some instructions and their map method. Each of these instructions is unaware of, and hence decoupled from, the others.
 
 ```fsharp
 type ConsoleInstruction<'a> =
@@ -448,9 +451,9 @@ type LoggerInstruction<'a> =
       :> IInstruction<'b> 
 ```
 
-The only difference from the earlier implementation is that map has to cast the result back to an `IInstruction`.
+The only difference from the earlier implementation is that `Map` method has to cast the result back to an `IInstruction`.
 
-Next we want to create some modular interpreters too. We want the interpreter for a particular instruction set to be unaware of the top level interpreter, so we will pass the `interpret` function in as a parameter:
+Next we want to create some modular interpreters too. Again, to keep things decoupled, we want the interpreter for a particular instruction set to be unaware of the top level interpreter, so we will pass the `interpret` function in as a parameter:
 
 ```fsharp
 // modular interpreter for ConsoleInstruction
@@ -474,7 +477,7 @@ let interpretLogger interpret inst =
     interpret (next())
 ```
 
-Now all we need to do is define the top-level interpreter. Again, this very similar to the earlier implementation, except that we now match on the type of the instruction rather than exhaustively matching a fixed list of cases. It's not as safe as having the compiler check everything for you, but if you forget to handle an instruction it will be very obvious!
+To finish everything off, we just need to define the top-level interpreter. Again, this is very similar to the earlier implementation, except that we now match on the *type* of the instruction rather than exhaustively matching a fixed list of cases. It's not as safe as having the compiler check everything for you, but if you forget to handle an instruction it will be very obvious very quickly!
 
 ```fsharp
 let rec interpret program =
@@ -491,12 +494,11 @@ The advantage of this approach is that it is much more modular. We can write sub
 
 ## Further reading
 
+For another example of using the Interpreter approach, see [the last post in this series](/posts/dependencies-5/#approach-5-dependency-interpretation).
+
 The interpreter approach that I've used here is closely related to the "Free Monad" approach used in Haskell and FP-style Scala. The Free Monad is even more abstract, and uses more math-y jargon to name the cases in the `Program` type, namely "Free" and "Pure" instead of "Instruction" and "Stop". Nevertheless, I think it is worth spending some time understanding it, even if you rarely use it in practice.
 
 Mark Seemann has written some very good posts on free monads in F#, such as one on [a "recipe" that you can follow](https://blog.ploeh.dk/2017/08/07/f-free-monad-recipe/) and another on [how to "stack" free monads together](https://blog.ploeh.dk/2017/07/31/combining-free-monads-in-f/).
-
-
-
 
 
 ## Pros and cons of interpreters
@@ -507,15 +509,18 @@ Another benefit is that you can easily switch out the interpreter if you need to
 
 But as always, there are tradeoffs.
 
-First, there is a lot of extra work. You have to define and interpret every possible I/O action that your workflow will need, which can be tedious. And the number of operations can easily get out of hand if you are not careful. One advantage to [building your application out of independent workflows](https://www.youtube.com/watch?v=USSkidmaS6w) is that the number of operations shouldn't be too high for any particular workflow.
+First, there is a lot of extra work. You have to define and interpret every possible I/O action that your workflow will need, which can be tedious. The number of operations can easily get out of hand if you are not careful. One advantage to [building your system out of small independent workflows](https://www.youtube.com/watch?v=USSkidmaS6w) is that the number of operations shouldn't be too high for any particular workflow.
 
-Second, it's a lot harder to understand what's going on if you are not already familiar with this approach. Unlike the ["dependency rejection"](/posts/dependencies/) and ["dependency parameterization"](/posts/dependencies-2/) techniques, which do not require any special background, both the Reader and the Interpreter approaches demand quite a lot of knowledge. And if you ever need to step through code in a debugger, the deeply nested continuations will really make things very complicated.
+Second, it's a lot harder to understand what's going on if you are not already familiar with this approach. Unlike the ["dependency rejection"](/posts/dependencies/) and ["dependency parameterization"](/posts/dependencies-2/) techniques, which do not require any special knowledge, both the Reader and the Interpreter approaches demand quite a lot of expertise. And if you ever need to step through code in a debugger, the deeply nested continuations will really make things very complicated.
 
 Next, as always, one of the downsides of computation expressions is that it is hard to mix and match them. For example, in the previous post, I mentioned that it would be tricky to mix the `Reader` expressions with `Result` expressions and `Async` expressions. The interpreter approach alleviates this issue a little, as you never have to deal with things like `Async` in the main "program" code, and not even `Result` most of the time.  But even so, when you do need to deal with this problem, it can be painful.
 
-Finally, another issue is performance. If you have a large program with 1000's of instructions, then you will have a very very deeply nested data structure. Interpretation might be slow, and might even cause stack overflows. There are workarounds (see [trampolines](https://stackoverflow.com/a/49681264/1136133)) but that makes the code more complicated.
+Finally, another issue is performance. If you have a large program with 1000's of instructions, then you will have a very very deeply nested data structure.
+Interpretation might be slow, use a lot of memory, trigger more garbage collections, and might even cause stack overflows. There are workarounds ([such as "trampolines"](https://johnazariah.github.io/2020/12/07/bouncing-around-with-recursion.html#trampolines)) but that makes the code even more complicated.
 
-So, to sum up, I would only recommend this approach if (a) you really care about separating I/O from the pure code (b) everyone on the team is familiar with it (c) you have the skills and know-how to deal with any performance issues that might arise.
+So, to sum up, I would only recommend this approach if (a) you really care about separating I/O from the pure code (b) everyone on the team is familiar with this technique (c) you have the skills and know-how to deal with any performance issues that might arise.
+
+In the [next post](/posts/dependencies-5/), we'll revisit all the techniques discussed and apply them to a new example.
 
 *The source code for this post is available at [this gist](https://gist.github.com/swlaschin/1cdbed00d2095987e474d500caa9bd4d).*
 

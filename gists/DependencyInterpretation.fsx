@@ -1,5 +1,5 @@
 (* ===================================
-Code from my post "Five approaches to dependency injection"
+Code from my series of posts "Six approaches to dependency injection"
 =================================== *)
 
 open System
@@ -66,25 +66,26 @@ module ReadFromConsole_v2 =
         ReadLn  ( ()                     , fun str1 ->
         WriteLn ("Enter the second value", fun () ->
         ReadLn  ( ()                     , fun str2 ->
-        Stop  (str1,str2)
+        Stop  (str1,str2)        // no "next" function
         ))))
         
     let rec interpret program =
         match program with
         | ReadLn ((), next) -> 
-            // do the actual I/O
+            // 1. interpret the meaning of "ReadLn" to do actual I/O
             let str = Console.ReadLine()
-            // call "next" with the output of the interpreter
-            // to get another program
+            // 2. call "next" with the output of the interpretation.
+            // This gives us another Program
             let nextProgram = next str 
-            // interpret the new program
+            // 3. interpret the new Program (recursively)
             interpret nextProgram   
         | WriteLn (str,next) -> 
             printfn "%s" str
             let nextProgram = next()
             interpret nextProgram   
         | Stop value -> 
-            value // return as overall result
+            // return the overall result of the Program
+            value 
     
 // test
 (*
@@ -126,7 +127,7 @@ module ReadFromConsole_v3 =
         let! str1 = readLn()  
         do! writeLn "Enter the second value"
         let! str2 = readLn()  
-        return  (str1,str2)
+        return (str1,str2)
         }
 
     // same as before
@@ -158,7 +159,7 @@ module MiniApplication_v1 =
     type Program<'a> =
         | ConsoleInstruction of ConsoleInstruction<Program<'a>>
         | LoggerInstruction of LoggerInstruction<Program<'a>>
-        | Stop  of 'a
+        | Stop of 'a
 
     // 2. Define a "map" for each group of instructions
     module ConsoleInstruction =
@@ -170,8 +171,8 @@ module MiniApplication_v1 =
     module LoggerInstruction =
         let rec map f program = 
             match program with
-            | LogDebug (str,next) ->  LogDebug (str,next >> f)
-            | LogInfo (str,next) ->  LogInfo (str,next >> f)
+            | LogDebug (str,next) -> LogDebug (str,next >> f)
+            | LogInfo (str,next) -> LogInfo (str,next >> f)
 
     // 3. Define the corresponding "bind" 
     module Program =
@@ -181,7 +182,8 @@ module MiniApplication_v1 =
                 inst |> ConsoleInstruction.map (bind f) |> ConsoleInstruction 
             | LoggerInstruction inst -> 
                 inst |> LoggerInstruction.map (bind f) |> LoggerInstruction 
-            | Stop x -> f x
+            | Stop x -> 
+                f x
 
     // 4. Define the computation expression
     type ProgramBuilder() =

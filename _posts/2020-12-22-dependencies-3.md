@@ -1,13 +1,13 @@
 ---
 layout: post
 title: "Dependency injection using the Reader monad"
-description: "Five approaches to dependency injection, Part 3"
+description: "Six approaches to dependency injection, Part 3"
 categories: []
 ---
 
-In this series, we are looking at five different approaches to dependency injection.
+In this series, we are looking at six different approaches to dependency injection.
 
-* In the [first post](/posts/dependencies/), we looked at "dependency retention" (doing nothing!) and "dependency rejection" (keeping I/O at the edges of your implementation).
+* In the [first post](/posts/dependencies/), we looked at "dependency retention" (inlining the dependencies) and "dependency rejection" (keeping I/O at the edges of your implementation).
 * In the [second post](/posts/dependencies-2/), we looked at injecting dependencies as standard function parameters.
 * In this post, we'll look at dependency handling using classic OO-style dependency injection and the FP equivalent: the Reader monad
   
@@ -32,7 +32,6 @@ let compareTwoStrings (logger:ILogger) str1 str2 =
       Equal
     
   logger.Info (sprintf "compareTwoStrings: result=%A" result)
-
   logger.Debug "compareTwoStrings: Finished"
   result
 ```
@@ -68,7 +67,7 @@ Here's an example of a class definition in F#
 
 
 ```fsharp
-// "infrastructure services" passed in via the constructor
+// logger passed in via the constructor
 type StringComparisons(logger:ILogger) =
 
   member __.CompareTwoStrings str1 str2  =
@@ -92,13 +91,13 @@ let stringComparisons = StringComparisons logger
 stringComparisons.CompareTwoStrings "a" "b"
 ```
 
-Note that in F#, the call to the class constructor, `StringComparisons logger`, looks just like a function call!
+Interestingly, in F#, the call to the class constructor -- `StringComparisons logger` -- looks just like a function call, passing in the logger as the "last" parameter to the class.
 
 ## FP-style dependency injection: returning a function
 
 What's the FP version of "passing in the dependencies later"? As we saw above, it simply means returning a *function* where the function has an `ILogger` parameter which will be provided later.
 
-Here's the original function, with the `ILogger` dependency as the *last* parameter:
+Here's the `compareTwoStrings` function, but now with the `ILogger` dependency as the *last* parameter:
 
 ```fsharp
 let compareTwoStrings str1 str2 (logger:ILogger) =
@@ -111,7 +110,7 @@ let compareTwoStrings str1 str2 (logger:ILogger) =
   result
 ```
 
-And here's *exactly* the same function, reinterpreted such that the return value is the `ILogger -> ComparisonResult` function.
+And here's *exactly* the same function, reinterpreted such that the return value is a `ILogger -> ComparisonResult` function.
 
 ```fsharp
 let compareTwoStrings str1 str2 =
@@ -129,7 +128,7 @@ let compareTwoStrings str1 str2 =
 
 This turns out to be a very common pattern in FP, so much so that it has a name: the "Reader monad" or the "Environment monad".
 
-It sounds complicated, but all we are doing is giving a name to a function which has some sort of context or environment as the parameter. In our case, the environment is the `ILogger` dependency.
+Using the dreaded m-word makes it sounds complicated, but all we are doing is giving a name to a function which has some sort of context or environment as the parameter. In our case, the environment is the `ILogger` dependency.
 
 ![](/assets/img/Dependencies5d.jpg)
 
@@ -141,7 +140,7 @@ type Reader<'env,'a> = Reader of action:('env -> 'a)
 
 You can understand this as: a Reader contains a function that takes some environment `'env` as the input, and returns a value `'a`
 
-If we change our original code to wrap the returned function in the `Reader` type, then our new implementation looks like this:
+If we tweak our code to wrap the returned function in the `Reader` type, then our new implementation looks like this:
 
 
 ```fsharp
@@ -157,7 +156,7 @@ let compareTwoStrings str1 str2 :Reader<ILogger,ComparisonResult> =
   |> Reader // <------------------ NEW!!!
 ```
 
-Notice that the return type has now changed from `ComparisonResult` to `Reader<ILogger,ComparisonResult>`
+Notice that the return type has now changed from `ILogger -> ComparisonResult` to `Reader<ILogger,ComparisonResult>`
 
 Ok, so why we have done all this extra work? Why bother?
 
@@ -226,7 +225,7 @@ let compareTwoStrings str1 str2  =
 It looks very similar to the previous implementations, but there are few things to notice:
 
 * Everything is contained in a `reader {...}` computation expression.
-* The `ILogger` parameter has gone. Instead we can access the environment value (`ILogger` in this case) directly using `Reader.ask`
+* The `ILogger` parameter has gone. Instead we can access the environment value (`ILogger` in this case) directly using `Reader.ask`.
 * Just as in all computation expressions, we can use `let!` and `do!` to "unpack" the contents of the Reader value.
   In this case we are using `let!` to unpack the `ask` Reader to get the environment (an `ILogger`).
 * I've added an explicit type annotation to the `let! (logger:ILogger) = Reader.ask`. This allows the compiler to infer the type of the reader without me having to explicitly annotate the whole function.
@@ -332,19 +331,19 @@ let program :Reader<IServices,_> = reader {
 
 It's important to understand that at this point the `program` has not been run yet. Just like `Async` values or [home made parsers](/parser/), it has the *potential* to be run, but we will need to pass in an `IServices` to actually run it.
 
-Here's the implementation of `IServices`:
+Given that we have a default implementation of the console and logger, we can implementation of `IServices` like this:
 
 ```fsharp
 let services = 
   { new IServices 
     interface IConsole with 
-    member __.ReadLn() = ...
-    member __.WriteLn str = ...
+      member __.ReadLn() = defaultConsole.ReadLn()
+      member __.WriteLn str = defaultConsole.WriteLn str 
     interface ILogger with
-    member __.Debug str = ...
-    member __.Info str = ...
-    member __.Error str = ...
-  }
+      member __.Debug str = defaultLogger.Debug str
+      member __.Info str = defaultLogger.Info str
+      member __.Error str = defaultLogger.Error str
+    }
 ```
 
 And finally, we can run the whole thing:
@@ -365,6 +364,7 @@ We start by defining the functions as before, this time each function asks for t
 ```fsharp
 let readFromConsole() = 
   reader {
+    // ask for an IConsole,ILogger pair
     let! (console:IConsole),(logger:ILogger) = Reader.ask  // a tuple
     ...
     return str1,str2
@@ -372,6 +372,7 @@ let readFromConsole() =
 
 let compareTwoStrings str1 str2  =
   reader {
+    // ask for an ILogger
     let! (logger:ILogger) = Reader.ask
     logger.Debug "compareTwoStrings: Starting"
 
@@ -380,15 +381,14 @@ let compareTwoStrings str1 str2  =
     return result 
     }
 
-
 let writeToConsole (result:ComparisonResult) = 
   reader {
+    // ask for an IConsole
     let! (console:IConsole) = Reader.ask
 
     match result with
     ...
     }
-
 ```
 
 Now if we attempt to compose them in a computation expression, we get lots of errors:
@@ -412,16 +412,16 @@ type Services = {
   }
 ```
 
-Next, we need a way to map from the `Services` type to the individual environments. I'll call this `withEnv`:
+Next, we need a way to map from the `Services` type to the individual sub-environments. I'll call this `withEnv`:
 
 ```fsharp
-/// Transform a Reader's environment.
-/// Known as `withReader` in Haskell
-let withEnv (f:'env2->'env1) reader = 
-    Reader (fun env' -> (run (f env') reader))
+/// Transform a Reader's environment from subtype to supertype.
+let withEnv (f:'superEnv->'subEnv) reader = 
+  Reader (fun superEnv -> (run (f superEnv) reader))  
+  // The new Reader environment is now "superEnv"
 ```
 
-*Aside: The type signature for `withEnv` looks very like the signature for "map" except that in mapping function `f` the types go in the other direction (`env2->env1` rather than `env1->env2`). The jargon word for this signature is "contramap"*
+*Aside: The type signature for `withEnv` looks very like the signature for "map". We're transforming a `Reader<subEnvironment>` to a `Reader<superEnvironment>`, and passing in a mapping function `f` to do this. Unlike a normal map function, the types in `f` go in the other direction (`superEnv->subEnv` rather than `subEnv->superEnv`). The jargon word for this signature is "contramap".*
 	
 Now we can take the Reader that each function returns and transform its environment using `Reader.withEnv`, as shown below:
 
@@ -449,13 +449,20 @@ Again, the `program` has not been run yet. We will need to pass in an `Services`
 
 ```fsharp
 let services = { 
-  Console = ...
-  Logger = ...
+  Console = defaultConsole
+  Logger = defaultLogger
   }
 
 Reader.run services program	
 ```
 
+## Further reading
+
+For another example of using the Reader monad, see [the last post in this series](/posts/dependencies-5/#approach-4b-reader-monad).
+
+The Reader approach is rarely used in F# but is commonly used in Haskell and FP-style Scala.
+Some good posts on using it in F# are by [Carsten König](http://gettingsharper.de/2015/03/10/dependency-injection-a-functional-way/)
+and [Matthew Podwysokci ](http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/).
 
 ## Pros and cons of late-passing dependencies
 
@@ -469,13 +476,12 @@ Otherwise, using the Reader monad has lots of nice features: it eliminates the u
 
 But it's not all good news. The Reader monad has the same major issue that all monad-centric approaches do: it's hard to mix and match them with other types. 
 
-For example, if you want to return a `Result` as well as a `Reader`, you can't just quickly integrate the two types. And if you want to add `Async` to the design as well, it can get even more complicated. Yes, there is a solution to this, but it is all too easy to become bogged down in "Type Tetris", spending too much time trying to get the types to match up.
-
-Furthermore, deeply nested or deeply chained Readers can negatively affect performance. They cause higher memory use, more garbage collection, and a possibility of stack overflows.
+For example, if you want to return a `Result` as well as a `Reader`, you can't just quickly integrate the two types. And if you want to add `Async` to the design as well, it can get even more complicated. Yes, there is a solution to this, but it is all too easy to become bogged down in "Type Tetris", spending too much time trying to get the types to match up. In fact, for the "edge" part of your code, which is heavily I/O, I would not use Reader at all because of the pain of these mismatches. Save the Reader approach for injecting dependencies like loggers into your pure code. 
 
 To summarize, I think that Readers are a good tool to have in your toolbox, especially if you are passionate about keeping your code pure, Haskell style. But F# is not Haskell, and so I think that using Reader by default is overkill. I'd probably reach first for one of the other approaches discussed in this series, depending on the circumstances.
 
-We are not done yet! In the [next and final post](/posts/dependencies-4/), we'll look at one more approach to managing dependencies: the interpreter pattern.
+
+We are not done yet! In the [next post](/posts/dependencies-4/), we'll look at one more approach to managing dependencies: the interpreter pattern.
 
 *The source code for this post is available at [this gist](https://gist.github.com/swlaschin/4ed2e4e8ea5b63c968bc469fbce620b5).*
 

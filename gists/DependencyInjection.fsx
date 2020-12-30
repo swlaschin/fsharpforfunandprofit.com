@@ -1,5 +1,5 @@
 (* ===================================
-Code from my post "Five approaches to dependency injection"
+Code from my series of posts "Six approaches to dependency injection"
 =================================== *)
 
 open System
@@ -58,7 +58,6 @@ module OODependencyInjection =
                     Equal
 
             logger.Info (sprintf "compareTwoStrings: result=%A" result)
-
             logger.Debug "compareTwoStrings: Finished"
             result
 
@@ -140,10 +139,10 @@ module Reader =
             run env (f x)
         Reader newAction
 
-    /// Transform a Reader's environment.
-    /// Known as `withReader` in Haskell
-    let withEnv (f:'env2->'env1) reader = 
-        Reader (fun env' -> (run (f env') reader))
+    /// Transform a Reader's environment from subtype to supertype.
+    let withEnv (f:'superEnv->'subEnv) reader = 
+        Reader (fun superEnv -> (run (f superEnv) reader))  
+        // The new Reader environment is now "superEnv"
 
 
 type ReaderBuilder() =
@@ -300,6 +299,7 @@ module ReaderComposition_v2 =
 
     let readFromConsole() = 
         reader {
+            // ask for an IConsole,ILogger pair
             let! (console:IConsole),(logger:ILogger) = Reader.ask  // a tuple
 
             console.WriteLn "Enter the first value"
@@ -312,6 +312,7 @@ module ReaderComposition_v2 =
 
     let compareTwoStrings str1 str2  =
         reader {
+            // ask for an ILogger
             let! (logger:ILogger) = Reader.ask
             logger.Debug "compareTwoStrings: Starting"
 
@@ -331,6 +332,7 @@ module ReaderComposition_v2 =
 
     let writeToConsole (result:ComparisonResult) = 
         reader {
+            // ask for an IConsole
             let! (console:IConsole) = Reader.ask
 
             match result with

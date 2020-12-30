@@ -1,14 +1,14 @@
 ---
 layout: post
 title: "Dependency injection using parameters"
-description: "Five approaches to dependency injection, Part 2"
+description: "Six approaches to dependency injection, Part 2"
 categories: []
 ---
 
 
-In this series, we are looking at five different approaches to dependency injection.
+In this series, we are looking at six different approaches to dependency injection.
 
-* In the [first post](/posts/dependencies/), we looked at "dependency retention" (doing nothing!) and "dependency rejection" (keeping I/O at the edges of your implementation).
+* In the [first post](/posts/dependencies/), we looked at "dependency retention" (inlining the dependencies) and "dependency rejection" (keeping I/O at the edges of your implementation).
 * In this post, we'll look at "dependency parameterization" as a way of managing dependencies.
   
 <hr>
@@ -177,7 +177,6 @@ let compareTwoStrings (logger:ILogger) str1 str2 =
       Equal
     
   logger.Info (sprintf "compareTwoStrings: result=%A" result)
-
   logger.Debug "compareTwoStrings: Finished"
   result
 ```
