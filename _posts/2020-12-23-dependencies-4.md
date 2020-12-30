@@ -194,8 +194,7 @@ let readFromConsole = program {
 ```
 
 Amazingly, this code looks almost exactly like the code in the very first "dependency retention" example. No dependencies are passed in, and it's all very clean.
-Of course, there's a lot more complexity under the hood, and unlike "dependency retention" example, we also need to write the interpreter!
-
+Of course, there's a lot more complexity under the hood, and unlike the "dependency retention" example, we are not done yet. We also need to write the interpreter!
 
 ## Designing the instructions and interpreter for our example
 
@@ -258,7 +257,7 @@ module Program =
     | LoggerInstruction inst -> 
         inst |> LoggerInstruction.map (bind f) |> LoggerInstruction 
     | Stop x -> 
-	    f x
+        f x
 ```
 
 The code for the computation expression is exactly the same as before:
@@ -273,7 +272,7 @@ type ProgramBuilder() =
 let program = ProgramBuilder()
 ```
 
-Finally, the interpreter is similar to the previous version, except that it now has two sub-interpreters for the two instruction sets:
+Finally, we can implement the interpreter in the same way that we did earlier, except that this one has two sub-interpreters for the two instruction sets:
 
 
 ```fsharp
@@ -362,11 +361,11 @@ and
 let writeToConsole (result:ComparisonResult) = program {
   match result with
   | Bigger ->
-    do! writeLn "The first value is bigger"
+      do! writeLn "The first value is bigger"
   | Smaller ->
-    do! writeLn "The first value is smaller"
+      do! writeLn "The first value is smaller"
   | Equal ->
-    do! writeLn "The values are equal"
+      do! writeLn "The values are equal"
   }
 ```
 
@@ -393,7 +392,7 @@ interpret myProgram
 The downside of the previous approach is that every time we need to add a new set of instructions, we need to modify the main `Program` type, which is brittle and anti-modular.
 So let's quickly look at an alternative approach.
 
-In Haskell and other languages that support typeclasses (and in particular, Functors), we can use them to construct a "Free Monad". We're writing F#, not Haskell, so let's use interfaces instead!
+In Haskell and other languages that support typeclasses (and in particular, Functors), we can construct a "Free Monad". We're writing F#, not Haskell, so let's use interfaces instead!
 
 First we define an interface that our instructions must implement. It has one member, the `Map` method:
 
@@ -418,7 +417,8 @@ module Program =
     match program with
     | Instruction inst -> 
         inst.Map (bind f) |> Instruction 
-    | Stop x -> f x
+    | Stop x -> 
+        f x
 ```
 
 The computation expression builder is unchanged.
@@ -431,10 +431,10 @@ To implement a specific workflow, we start by defining some instructions and the
 
 ```fsharp
 type ConsoleInstruction<'a> =
-  | ReadLn  of unit  * next:(string -> 'a)
+  | ReadLn  of unit    * next:(string -> 'a)
   | WriteLn of string  * next:(unit   -> 'a)
   interface IInstruction<'a> with
-    member this.Map f  = 
+    member this.Map f = 
       match this with
       | ReadLn ((),next) -> ReadLn ((),next >> f)
       | WriteLn (str,next) -> WriteLn (str, next >> f)
@@ -444,37 +444,60 @@ type LoggerInstruction<'a> =
   | LogDebug of string * next:(unit -> 'a)
   | LogInfo of string  * next:(unit -> 'a)
   interface IInstruction<'a> with
-    member this.Map f  = 
+    member this.Map f = 
       match this with
-      | LogDebug (str,next) ->  LogDebug (str,next >> f)
-      | LogInfo (str,next) ->  LogInfo (str,next >> f)
+      | LogDebug (str,next) -> LogDebug (str,next >> f)
+      | LogInfo (str,next) -> LogInfo (str,next >> f)
       :> IInstruction<'b> 
 ```
 
-The only difference from the earlier implementation is that `Map` method has to cast the result back to an `IInstruction`.
+The only difference from the earlier implementation is that the `Map` method has to cast the result back to an `IInstruction`.
 
-Next we want to create some modular interpreters too. Again, to keep things decoupled, we want the interpreter for a particular instruction set to be unaware of the top level interpreter, so we will pass the `interpret` function in as a parameter:
+The helpers to use within the computation expression are almost the same, but now they use the more generic `Instruction` case.
+
+```fsharp
+let writeLn str = Instruction (WriteLn (str,Stop))
+let readLn() = Instruction (ReadLn ((),Stop))
+let logDebug str = Instruction (LogDebug (str,Stop))
+let logInfo str = Instruction (LogInfo (str,Stop))
+```
+
+Although we are using the new generic `Program` type, the helper functions hide any changes, with the result that the main application code is unchanged. For example, `readFromConsole` looks exactly the same as before:
+
+```fsharp
+let readFromConsole = program {
+  do! writeLn "Enter the first value"
+  let! str1 = readLn()  
+  do! writeLn "Enter the second value"
+  let! str2 = readLn()  
+  return  (str1,str2)
+  }
+```
+
+### Building a modular interpreter
+
+We want to build the interpreter in a modular way too. Again, to keep things decoupled, we want the interpreter for a particular instruction set to be unaware of the top level interpreter, so we will pass the `interpret` function in as a parameter:
 
 ```fsharp
 // modular interpreter for ConsoleInstruction
 let interpretConsole interpret inst =
   match inst with
   | ReadLn ((), next) -> 
-    let str = Console.ReadLine()
-    interpret (next str)
+      let str = Console.ReadLine()
+      interpret (next str)
   | WriteLn (str,next) -> 
-    printfn "%s" str
-    interpret (next())
+      printfn "%s" str
+      interpret (next())
 
 // modular interpreter for LoggerInstruction
 let interpretLogger interpret inst =
   match inst with
   | LogDebug (str, next) -> 
-    printfn "DEBUG %s" str
-    interpret (next())
+      printfn "DEBUG %s" str
+      interpret (next())
   | LogInfo (str, next) -> 
-    printfn "INFO %s" str
-    interpret (next())
+      printfn "INFO %s" str
+      interpret (next())
 ```
 
 To finish everything off, we just need to define the top-level interpreter. Again, this is very similar to the earlier implementation, except that we now match on the *type* of the instruction rather than exhaustively matching a fixed list of cases. It's not as safe as having the compiler check everything for you, but if you forget to handle an instruction it will be very obvious very quickly!
@@ -484,13 +507,16 @@ let rec interpret program =
   match program with
   | Instruction inst ->
       match inst with
-      | :? ConsoleInstruction<Program<_>> as i -> interpretConsole interpret i
-      | :? LoggerInstruction<Program<_>> as i -> interpretLogger interpret i
+      | :? ConsoleInstruction<Program<_>> as i -> 
+             interpretConsole interpret i
+      | :? LoggerInstruction<Program<_>> as i -> 
+             interpretLogger interpret i
       | _ -> failwithf "unknown instruction type %O" (inst.GetType())
-  | Stop value -> value 
+  | Stop value -> 
+      value 
 ```
 
-The advantage of this approach is that it is much more modular. We can write subcomponents independently of each other, using different instruction sets, and then combine them later. The only thing that needs to change is the top-level interpreter for a particular workflow, and that main interpreter itself can be built from a number of independent sub-interpreters.
+The advantage of this approach is that it is much more modular. We can write subcomponents independently of each other, using different instruction sets, and then combine them later. The only thing that needs to change is the top-level interpreter for a particular workflow, which in turn can be built from a number of independent sub-interpreters.
 
 ## Further reading
 
@@ -500,6 +526,7 @@ The interpreter approach that I've used here is closely related to the "Free Mon
 
 Mark Seemann has written some very good posts on free monads in F#, such as one on [a "recipe" that you can follow](https://blog.ploeh.dk/2017/08/07/f-free-monad-recipe/) and another on [how to "stack" free monads together](https://blog.ploeh.dk/2017/07/31/combining-free-monads-in-f/).
 
+For a real world story of using Interpreter/Free Monad in practice, here is a [nice talk by Chris Myers](https://www.youtube.com/watch?v=rK53C-xyPWw), although he is using Scala.
 
 ## Pros and cons of interpreters
 
