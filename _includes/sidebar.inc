@@ -1,15 +1,11 @@
 <!--Sidebar content-->
 
 {% unless page.isBookPage %}
-<h6>Get the books</h6>
+<h6>Books</h6>
 <div>
 <a href="/books/">
-Reading offline? Download the ebook of this site.
-<!--
-<br>
-Or buy my proper book: <br>
+Buy my book!<br>
 <img src="/books/domain-modeling-made-functional-200.jpg">
--->
 </a>
 </div>
 {% endunless %}

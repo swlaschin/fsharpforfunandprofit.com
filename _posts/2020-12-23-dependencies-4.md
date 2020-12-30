@@ -526,7 +526,7 @@ The interpreter approach that I've used here is closely related to the "Free Mon
 
 Mark Seemann has written some very good posts on free monads in F#, such as one on [a "recipe" that you can follow](https://blog.ploeh.dk/2017/08/07/f-free-monad-recipe/) and another on [how to "stack" free monads together](https://blog.ploeh.dk/2017/07/31/combining-free-monads-in-f/).
 
-For a real world story of using Interpreter/Free Monad in practice, here is a [nice talk by Chris Myers](https://www.youtube.com/watch?v=rK53C-xyPWw), although he is using Scala.
+For a real world story of using Interpreter/Free Monad in practice, here is a [nice talk by Chris Myers](https://www.youtube.com/watch?v=rK53C-xyPWw), although he is using Scala. For a counter-example, see [*Free Monads Aren't Free* by Kelley Robinson](https://www.youtube.com/watch?v=U0lK0hnbc4U).
 
 ## Pros and cons of interpreters
 
