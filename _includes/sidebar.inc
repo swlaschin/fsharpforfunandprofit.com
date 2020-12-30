@@ -40,6 +40,7 @@ Or buy my proper book: <br>
 <h6>More</h6>
 <div><a href="https://goo.gl/a1j5CS" class="twitter-follow-button" data-size="small" data-show-count="false" data-lang="en">Follow @ScottWlaschin</a></div>
 <div><a href="/about/">About</a></div>
+<div><a href="/about/terms/">Terms and Conditions</a></div>
 <div><a href="https://github.com/swlaschin/fsharpforfunandprofit.com">Typos?</a></div>
 
 <h6>Share the love</h6>

@@ -9,6 +9,8 @@ hasComments: 1
 
 The goal of this site is to introduce .NET developers to the joys of functional programming, and F# in particular.
 
+Please be aware of the [Terms and Conditions](/about/terms/) when using this site.
+
 I hope that this site will live up to its title and demonstrate that not only is F# a lot of fun to program in, but it is also useful for mainstream business and enterprise software. F# is not just an academic exercise, it is meant to be useful.
 
 My approach is unapologetically .NET centric and non-academic. For example:
