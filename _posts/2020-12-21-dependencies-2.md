@@ -140,7 +140,7 @@ This keeps the components in the pipeline decoupled. Even though you are breakin
  
 ## Sidebar: Can pure functions have impure arguments?
 
-If a non-deterministic dependency is used as parameter, does that mean that the calling function is impure? To my mind, no. You can pass an impure parameter to `List.map` as well -- `List.map` doesn't suddenly become impure. 
+If a non-deterministic dependency is used as parameter to a function, is that function impure? To my mind, no. You can pass an impure parameter to `List.map` as well -- `List.map` doesn't suddenly become impure. 
 
 In Haskell, any "impure" function is indicated by having `IO` in its type. The `IO` type will "contaminate" the call stack, and so the output of the main function will have `IO` as well and will be clearly signaled as impure. In F#, the compiler does not enforce this. Some people like to use `Async` as an equivalent to Haskell's `IO`, as an indicator of non-determinism. I'm personally agnostic on this -- it might be helpful in some situations but I wouldn't enforce it as a general principle.
 
