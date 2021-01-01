@@ -5,6 +5,7 @@ description:
 hasComments: 1
 ---
 
+
 These terms and conditions form your agreement with this site (hereafter, the SITE) and ScottW (hereafter, ME).
 
 By reading this site, you agree to the following: 
@@ -16,11 +17,11 @@ THEREFORE, you promise to always look at the timestamp on a post and, if it is a
 
 * You agree to never uncritically use the techniques described on this SITE. This SITE is not responsible for damage, loss of income, or your bad code that you thought was cool at the time but you end up hating later.
 
-* Some of the techniques on this SITE can be dangerous when [over-used](/posts/against-railway-oriented-programming/). If you are concerned that you have ingested too much functional programming, please consult a physician or Fortran programmer.
+* Some of the techniques on this SITE can be dangerous if [ingested carelessly](/posts/against-railway-oriented-programming/). If you are concerned that your monads have become free, please consult a physician.
 
-* You acknowledge that this SITE is primarily targeted at beginner and intermediate functional programmers. You indemnify ME against any pain and suffering caused to you by not consuming words such as "Endofunctor", "Coyoneda", and "Zygohistomorphic prepromorphism".
+* You acknowledge that this SITE is primarily targeted at beginner and intermediate functional programmers. You indemnify ME against any pain and suffering caused to you by being deprived of words such as "Endofunctor", "Coyoneda", and "Zygohistomorphic prepromorphism".
  
-* You agree not to call ME a thought-leader or any other derogatory term. Penalties may include, but are not limited to, writing "I heart Scaled Agile Framework" 1000 times, publicly announcing on all social media that no other language will ever be as good as LISP, or presenting a talk on free monads to your local Rotary Club while wearing a superman costume.
+* You agree not to call ME a thought-leader or any similar derogatory term. Penalties may include, but are not limited to, writing "I heart Scaled Agile Framework" 1000 times, publicly announcing on all social media that no other language will ever be as good as Visual Basic 6, or presenting a talk entitled "The Power of Enterprise JavaBeans" at the International Conference on Functional Programming.
 
 
 
