@@ -156,9 +156,9 @@ let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) =
         To = newProfile.EmailAddress
         Body = "Please verify your email"
         }
+      globalLogger.Info("Sending email")
       UpdateProfileAndNotify (newProfile, emailMessage)
     else
-      globalLogger.Info("Sending email")
       UpdateProfileOnly newProfile
   else
     NoAction
@@ -215,9 +215,10 @@ let updateCustomerProfile (logger:ILogger) (newProfile:Profile) (currentProfile:
     logger.Info("Updating Profile")
     if currentProfile.EmailAddress <> newProfile.EmailAddress then
       ...
-    else
       logger.Info("Sending email")
-      UpdateProfileOnly newProfile
+      UpdateProfileAndNotify (newProfile, emailMessage)
+    else
+      ...
   else
     NoAction
 ```
@@ -319,9 +320,9 @@ let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) =
             To = newProfile.EmailAddress
             Body = "Please verify your email"
             }
+          logger.Info("Sending email")
           UpdateProfileAndNotify (newProfile, emailMessage)
         else
-          logger.Info("Sending email")
           UpdateProfileOnly newProfile
       else
         NoAction
@@ -479,9 +480,9 @@ let updateCustomerProfile (newProfile:Profile) (currentProfile:Profile) =
         To = newProfile.EmailAddress
         Body = "Please verify your email"
         }
+      do! logInfo("Sending email")
       return UpdateProfileAndNotify (newProfile, emailMessage) 
     else 
-      do! logInfo("Sending email")
       return UpdateProfileOnly newProfile
     }
   else program {
