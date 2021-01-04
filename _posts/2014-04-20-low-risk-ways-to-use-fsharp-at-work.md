@@ -61,7 +61,7 @@ Here's a list of the twenty six ways so that you can go straight to any one that
 [16. Use F# to do automated browser testing](/posts/low-risk-ways-to-use-fsharp-at-work-3/#test-canopy)<br />
 [17. Use F# for Behaviour Driven Development](/posts/low-risk-ways-to-use-fsharp-at-work-3/#test-bdd)<br />
 
-**Part 4. Using F# for database related tasks**
+**Part 4 - Using F# for database related tasks**
 
 [18. Use F# to replace LINQpad](/posts/low-risk-ways-to-use-fsharp-at-work-4/#sql-linqpad)<br />
 [19. Use F# to unit test stored procedures](/posts/low-risk-ways-to-use-fsharp-at-work-4/#sql-testprocs)<br />
@@ -69,7 +69,7 @@ Here's a list of the twenty six ways so that you can go straight to any one that
 [21. Use F# to do simple ETL](/posts/low-risk-ways-to-use-fsharp-at-work-4/#sql-etl)<br />
 [22. Use F# to generate SQL Agent scripts](/posts/low-risk-ways-to-use-fsharp-at-work-4/#sql-sqlagent)<br />
 
-**Part 5: Other interesting ways of using F# **
+**Part 5 - Other interesting ways of using F#**
 
 [23. Use F# for parsing](/posts/low-risk-ways-to-use-fsharp-at-work-5/#other-parsers)<br />
 [24. Use F# for diagramming and visualization](/posts/low-risk-ways-to-use-fsharp-at-work-5/#other-diagramming)<br />
