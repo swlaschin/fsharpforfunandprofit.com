@@ -23,9 +23,9 @@ THEREFORE, you promise to always look at the timestamp on a post and, if it is a
  
 * You agree not to call ME a thought-leader or any similar derogatory term. You also agree that I am not your uncle.
 
-Penalties for breaking this agreement may include, but are not limited to, writing "I heart Scaled Agile Framework" 1000 times, publicly announcing on all social media that no other framework will ever be as good as Enterprise JavaBeans, or presenting a talk at the International Conference on Functional Programming entitled "Why Visual Basic DESTROYS Haskell"<sup>1</sup>.
+Penalties for breaking this agreement may include, but are not limited to, writing "I heart Scaled Agile Framework" 1000 times, publicly announcing on all social media that no other framework will ever be as good as Enterprise JavaBeans, or presenting a talk at the International Conference on Functional Programming entitled "Why Visual Basic DESTROYS Haskell".
 
-<sup>1</sup>*Erik Meijer excepted.* 
+
 
 
 

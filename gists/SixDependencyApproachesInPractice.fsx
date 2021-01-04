@@ -218,9 +218,9 @@ module DependencyRejection =
                         To = newProfile.EmailAddress
                         Body = "Please verify your email"
                         }
+                    globalLogger.Info("Sending email")
                     UpdateProfileAndNotify (newProfile, emailMessage)
                 else
-                    globalLogger.Info("Sending email")
                     UpdateProfileOnly newProfile
             else
                 NoAction
@@ -283,9 +283,9 @@ module DependencyParameterization =
                         To = newProfile.EmailAddress
                         Body = "Please verify your email"
                         }
+                    logger.Info("Sending email")
                     UpdateProfileAndNotify (newProfile, emailMessage)
                 else
-                    logger.Info("Sending email")
                     UpdateProfileOnly newProfile
             else
                 NoAction
@@ -367,9 +367,9 @@ module DependencyInjection =
                             To = newProfile.EmailAddress
                             Body = "Please verify your email"
                             }
+                        logger.Info("Sending email")
                         UpdateProfileAndNotify (newProfile, emailMessage)
                     else
-                        logger.Info("Sending email")
                         UpdateProfileOnly newProfile
                 else
                     NoAction
@@ -498,9 +498,9 @@ module ReaderInjection =
                                 To = newProfile.EmailAddress
                                 Body = "Please verify your email"
                                 }
+                            logger.Info("Sending email")
                             UpdateProfileAndNotify (newProfile, emailMessage)
                         else
-                            logger.Info("Sending email")
                             UpdateProfileOnly newProfile
                     else
                         NoAction
@@ -727,9 +727,9 @@ module DependencyInterpretation =
                         To = newProfile.EmailAddress
                         Body = "Please verify your email"
                         }
+                    do! logInfo("Sending email")
                     return UpdateProfileAndNotify (newProfile, emailMessage) 
                 else 
-                    do! logInfo("Sending email")
                     return UpdateProfileOnly newProfile
                 }
             else program {

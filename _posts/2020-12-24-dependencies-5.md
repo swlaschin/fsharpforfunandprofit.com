@@ -218,7 +218,7 @@ let updateCustomerProfile (logger:ILogger) (newProfile:Profile) (currentProfile:
       logger.Info("Sending email")
       UpdateProfileAndNotify (newProfile, emailMessage)
     else
-      ...
+      UpdateProfileOnly newProfile
   else
     NoAction
 ```
