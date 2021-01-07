@@ -123,7 +123,7 @@ let program() =
 
 ## Pros and cons of dependency parameterization
 
-For "strategy" style dependencies, parameterization is the standard approach. It's so common that it's not even noteworthy. For example, it is seen in almost all the collection functions, such as `List.map`, `List.sortBy`, and so so.
+For "strategy" style dependencies, parameterization is the standard approach. It's so common that it's not even noteworthy. For example, it is seen in almost all the collection functions, such as `List.map`, `List.sortBy`, and so on.
 
 For parameterizing infrastructure services and other non-deterministic dependencies, the benefits are less clear. Let's look at some reasons why you might or might not want to do this.
 
