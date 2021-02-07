@@ -146,10 +146,7 @@ if i.IsEven then printfn "'%i' is even" i
 
 ## Static members
 
-You can make the member functions static by:
-
-* adding the keyword `static` 
-* dropping the `this` placeholder
+You can make the member functions static by adding the keyword `static`:
 
 ```fsharp
 module Person = 
