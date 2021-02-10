@@ -3,3 +3,4 @@
 /sys$command
 /.sass-cache/
 *.log
+/gists/.paket
