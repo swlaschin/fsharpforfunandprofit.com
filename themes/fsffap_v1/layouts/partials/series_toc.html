@@ -1,0 +1,19 @@
+{{ $page := .}}
+{{ if $page.Params.seriesId }}
+<div class="well">
+    <a name="series-toc"></a>
+    <h4>All posts in the "{{ $page.Params.seriesId  }}" series</h4>
+{{ range $otherpage := where (site.Pages.ByParam "seriesOrder") ".Params.seriesid" "==" $page.Params.seriesid }}
+        {{ if eq $page.Params.seriesOrder $otherpage.Params.seriesOrder }}
+        <div>{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title  }}</div>
+        {{ else if $otherpage.Params.seriesOrder }}
+        <div><a href="{{ $otherpage.RelPermalink }}" title="{{ $otherpage.Title }}">{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title }}</a></div>
+        {{ else }}
+        {{ end }}
+
+
+{{ end }}
+
+</div>
+{{ end }}
+
