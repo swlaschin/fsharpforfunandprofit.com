@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0KNWZ79B6"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-H0KNWZ79B6');
+    </script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
+    <meta name="robots" content="index, follow">
+    <base src="https://fsharpbooks.com">
+    <title>{{ .Title }}</title>
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="F# books">
+    <meta property="og:locale" content="en">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site:id" content="@ScottWlaschin">
+    <meta name="twitter:title" content="{{ .Title }}">
+    <meta property="og:title" content="{{ .Title }}">
+    <meta name="twitter:description" content="{{ .Description }}">
+    <meta property="og:description" content="{{ .Description }}">
+    <meta name="twitter:image" content="https://fsharpbooks.com/images/twitter-card.jpg">
+    <meta property="og:image" content="https://fsharpbooks.com/images/twitter-card.jpg">
+    <link rel="image_src" href="/images/twitter-card.jpg">
+    <link rel="stylesheet" href="/normalize.css">
+    <link rel="stylesheet" href="/milligram.min.css">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    {{ block "main" . }}
+    {{ end }}
+    {{ block "footer" . }}
+    <footer class="footer">
+    <section class="container" id="container">
+        <hr>
+        <nav class="nav home-center" >
+        <div style="font-size: x-small; margin-top: 20;">
+            <div>
+                Built with <a href="https://milligram.io/">milligram.io</a>
+            </div>
+        </div>
+        </nav>
+    </section>
+
+    </footer>
+    {{ end }}
+</body>
+</html>

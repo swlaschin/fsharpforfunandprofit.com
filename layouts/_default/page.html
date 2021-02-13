@@ -1,0 +1,55 @@
+{{ define "main" }}
+
+<div class="container" template="PAGE">
+<div class="row">
+
+{{ partial "series_toc_sidebar.html" . }}
+
+<div class="col-md-9">
+
+{{ if isset .Params "hideHeader" }}
+{{ else }}
+	<div class="page-header">
+		<h1>{{ .Title  }}</h1>
+		{{ if .Description }}
+		<div class="subtitle alignleft">{{ .Description  }}</div>
+		{{ end }}
+		<div class="alignright">{{ partial "twitter_tweet.html" . }}</div><div class="alignoff"></div>
+	</div>
+{{ end  }}
+
+{{ .Content }}
+
+	<div class="post-footer">
+{{ if .Params.hidePostedBy }}
+{{ else }}
+	<hr>
+	<div class="well">
+		<div>
+			Written by <a href="/about/">ScottW</a>.
+			<a href="https://github.com/swlaschin/fsharpforfunandprofit.com">Found a typo or error?</a>
+			Follow me on <a href="https://goo.gl/a1j5CS"><img src="/assets/img/Twitter_logo_blue_25x20.png" style="vertical-align: middle;"> Twitter</a>.
+		</div>
+	</div >
+{{ end  }}
+	</div >
+
+	{{ partial "series_toc.html" . }}
+
+	{{ if .Params.hasComments }}
+	{{ partial "disqus.html" . }}
+	{{ end  }}
+</div> <!-- content -->
+
+
+<div class="col-md-3 sidebar">
+{{ partial "sidebar.html" . }}
+</div> <!-- sidebar -->
+
+
+
+</div> <!-- row -->
+</div> <!-- container -->
+
+{{ end }}
+

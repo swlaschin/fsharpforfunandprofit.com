@@ -1,0 +1,25 @@
+baseURL = "https://fsharpforfunandprofit.com"
+languageCode = "en-us"
+title = "F# for Fun and Profit"
+description = "This site shows you ways that F# can help in day-to-day development of mainstream commercial business software"
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[params]
+    disqus = "fforfunandprofit"
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = false
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ""
+    lineAnchors = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = false
+    style = "pygments"
+    tabWidth = 4

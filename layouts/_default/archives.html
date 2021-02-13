@@ -1,0 +1,41 @@
+{{ define "main" }}
+
+<div class="container">
+<div class="row">
+
+    <div class="col-md-9">
+
+		<h1>{{ .Title  }}</h1>
+
+{{ .Content }}
+
+{{ $pages := where (.Site.Pages.ByDate.Reverse) ".Params.layout" "==" "post" }}
+
+		{{ range $pages.GroupByDate "2006-01" }}
+		<div class="row">
+			<div class="col-md-2">
+				<h2 class="archiveMonth">{{ .Key }}</h2>
+			</div>
+			<div class="col-md-7">
+			{{ range .Pages }}
+			<div class="postIndexItem">
+				<div class="title"><a href="{{ .RelPermalink }}" title="{{ .Title  }}">{{ .Title }}</a></div>
+				<div class="description">{{ .Description}}</div>
+				<div class="date">{{ .Date.Format "02 Jan 2006" }}</div>
+			</div>
+			{{ end }}
+			</div>
+		</div>
+		{{ end }}
+
+    </div>
+    <div class="col-md-3 sidebar">
+		{{ partial "sidebar.html" . }}
+    </div>
+
+
+</div>
+</div>
+
+{{ end }}
+

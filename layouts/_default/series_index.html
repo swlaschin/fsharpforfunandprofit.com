@@ -1,0 +1,40 @@
+{{ define "main" }}
+
+<div class="container" template="SERIES">
+	<div class="row">
+
+
+		<div class="col-md-9">
+			{{ $page := .}}
+			<h1 class="category">The "{{ $page.Params.seriesIndexId }}" series</h1>
+
+			{{ .Content }}
+
+			<div class="alignright">{{ partial "twitter_tweet.html" . }}</div>
+			<div class="alignoff"></div>
+
+			<div class="postIndex">
+			{{ range where (site.Pages.ByParam "seriesOrder") ".Params.seriesid" "==" $page.Params.seriesIndexId }}
+			<div class="postIndexItem">
+				<div class="title"><a href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Params.seriesOrder }}. {{ .Title }}</a></div>
+				<div class="description">{{ .Description}}</div>
+			</div>
+			{{ end }}
+			</div>
+		</div>
+
+
+
+		<div class="col-md-3 sidebar">
+		{{ partial "sidebar.html" . }}
+		</div>
+
+
+
+
+
+</div> <!-- row -->
+</div> <!-- container -->
+
+{{ end }}
+

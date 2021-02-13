@@ -4,3 +4,10 @@
 /.sass-cache/
 *.log
 /gists/.paket
+
+.fake
+.ionide
+/-v
+/public
+/_tools
+/_site.zip
