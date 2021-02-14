@@ -3,6 +3,7 @@ layout: page
 title: "The Functional Programmer's Toolkit"
 hasComments: 1
 image: "/fptoolkit/fptoolkit427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "The Functional Programmer's Toolkit".

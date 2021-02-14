@@ -4,6 +4,7 @@ title: "Understanding parser combinators"
 description: Building a parser combinator library and then writing a JSON parser from scratch
 hasComments: 1
 image: "/parser/parser427.png"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Understanding parser combinators".

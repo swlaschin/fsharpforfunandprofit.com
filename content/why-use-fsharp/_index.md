@@ -4,7 +4,8 @@ title: "Why use F#?"
 description: "Why you should consider using F# for your next project"
 nav: why-use-fsharp
 hasIcons: 1
-image: "/assets/img/four-concepts2.png"
+image: "/why-use-fsharp/four-concepts2.png"
+date: 2020-01-01
 ---
 
 Although F# is great for specialist areas such as scientific or data analysis, it is also an excellent choice for enterprise development. Here are five good reasons why you should consider using F# for  your next project.

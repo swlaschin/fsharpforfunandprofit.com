@@ -4,6 +4,7 @@ title: "Domain Driven Design"
 description: Slides and video from my talk "Domain Modeling Made Functional with the F# Type System"
 hasComments: 1
 image: "/ddd/ddd427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides, video and code from my talk "Domain Modeling Made Functional".

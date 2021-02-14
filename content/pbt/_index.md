@@ -4,6 +4,7 @@ title: "An introduction to property based testing"
 description: The lazy programmer's guide to writing 1000's of tests
 hasComments: 1
 image: "/pbt/pbt427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "An introduction to property based testing".

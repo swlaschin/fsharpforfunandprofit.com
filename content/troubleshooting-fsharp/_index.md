@@ -4,6 +4,7 @@ title: "Troubleshooting F#"
 description: "Why won't my code compile?"
 nav: troubleshooting-fsharp
 hasComments: 1
+date: 2020-01-01
 ---
 
 As the saying goes, "if it compiles, it's correct", but it can be extremely frustrating just trying to get the code to compile at all!  So this page is devoted to helping you troubleshoot your F# code.

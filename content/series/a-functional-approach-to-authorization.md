@@ -3,7 +3,8 @@ layout: series_index
 title: "The 'functional approach to authorization' series"
 seriesIndexId: "A functional approach to authorization"
 seriesIndexOrder : 16
-permalink: /series/a-functional-approach-to-authorization.html
+aliases: [/series/a-functional-approach-to-authorization.html]
+date: 2020-01-01
 ---
 
 In this series of posts, I'll look at how you might handle the common security challenge of authorization.

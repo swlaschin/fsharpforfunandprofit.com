@@ -3,7 +3,8 @@ layout: page
 title: "TLA+ for programmers"
 description: Building confidence in concurrent code with a model checker
 hasComments: 1
-image: "/tlaplus427/tlaplus427.jpg"
+image: "/tlaplus/tlaplus427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "TLA+ for programmers: Building confidence in concurrent code using a model checker".

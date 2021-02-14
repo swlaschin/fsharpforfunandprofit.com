@@ -4,6 +4,7 @@ title: "Enterprise Tic-Tac-Toe"
 description:  In which I ridiculously over-engineer a simple game to make it "enterprise-ready"
 hasComments: 1
 image: "/ettt/ettt427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Enterprise Tic-Tac-Toe".

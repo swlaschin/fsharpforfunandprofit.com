@@ -3,6 +3,7 @@ layout: page
 title: "Dr Frankenfunctor and the Monadster"
 hasComments: 1
 image: "/monadster/monadster427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and video from my talk "Dr Frankenfunctor and the Monadster".

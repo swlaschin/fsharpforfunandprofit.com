@@ -35,12 +35,12 @@ image: "/assets/img/twitter-home.jpg"
 <div class="row">
 
   <div class="col-md-6">
-    <h3><img src="/assets/img/glyphicons/glyphicons_064_lightbulb.png" class="bs-icon"> Learn to think functionally</h3>
+    <h3><img src="/assets/glyphicons/glyphicons_064_lightbulb.png" class="bs-icon"> Learn to think functionally</h3>
     <p>"Thinking functionally" is critical to getting the most out of F#, so I will spend a lot of time on getting the basics down, and I will generally avoid too much discussion of the hybrid and OO features.</p>
   </div>
 
   <div class="col-md-6">
-    <h3><img src="/assets/img/glyphicons/glyphicons_227_usd.png" class="bs-icon"> Useful examples</h3>
+    <h3><img src="/assets/glyphicons/glyphicons_227_usd.png" class="bs-icon"> Useful examples</h3>
     <p>The site will mostly focus on mainstream business problems, such as domain driven design, website development, data processing, business rules, and so on.  In the examples I will try to use business concepts such as Customer, Product, and Order, rather than overly academic ones.</p>
   </div>
 
@@ -48,12 +48,12 @@ image: "/assets/img/twitter-home.jpg"
 
 <div class="row">
   <div class="col-md-6">
-    <h3><img src="/assets/img/glyphicons/glyphicons_290_skull.png" class="bs-icon"> Don't be scared</h3>
+    <h3><img src="/assets/glyphicons/glyphicons_290_skull.png" class="bs-icon"> Don't be scared</h3>
     <p>F# can look very intimidating if you look at complex code without any background. In the beginning I will keep it very simple, and I have tried to anticipate the questions that a newcomer to functional programming concepts will have. If you work through the examples slowly (and in the right order) you should have no problem understanding everything.</p>
   </div>
 
   <div class="col-md-6">
-    <h3><img src="/assets/img/glyphicons/glyphicons_012_heart.png" class="bs-icon"> Have fun!</h3>
+    <h3><img src="/assets/glyphicons/glyphicons_012_heart.png" class="bs-icon"> Have fun!</h3>
     <p>Many people claim that learning to think functionally will "blow your mind". Well, it's true! Learning a completely new paradigm is exciting and stimulating. You may fall in love with programming again.</p>
   </div>
 

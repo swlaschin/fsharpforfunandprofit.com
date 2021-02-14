@@ -4,6 +4,7 @@ title: "The Power of Composition"
 description:  A review of why composition is a fundamental principle of functional programming
 hasComments: 1
 image: "/composition/composition427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "The Power of Composition".

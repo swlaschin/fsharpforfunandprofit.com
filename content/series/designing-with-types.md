@@ -3,7 +3,8 @@ layout: series_index
 title: "The 'designing with types' series"
 seriesIndexId: "Designing with types"
 seriesIndexOrder : 5
-permalink: /series/designing-with-types.html
+aliases: [/series/designing-with-types.html]
+date: 2020-01-01
 ---
 
 In this series, we'll look at some of the ways we can use types as part of the design process.

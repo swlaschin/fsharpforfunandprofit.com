@@ -3,6 +3,7 @@ layout: page
 title: "The C# Light project"
 description:
 hasComments: 1
+date: 2020-01-01
 ---
 
 **Welcome to the "C# light" project page.**

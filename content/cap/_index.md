@@ -4,6 +4,7 @@ title: "Designing with Capabilities"
 description:  Designing using capabilities and the principle of least authority
 hasComments: 1
 image: "/cap/cap427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Designing with Capabilities".

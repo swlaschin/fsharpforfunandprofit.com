@@ -3,6 +3,7 @@ layout: page
 title: "Terms and Conditions"
 description:
 hasComments: 1
+date: 2021-01-01
 ---
 
 

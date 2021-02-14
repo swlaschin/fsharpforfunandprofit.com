@@ -4,6 +4,7 @@ title: "Four Languages From Forty Years Ago"
 description: a.k.a What can we learn from the 1970's?
 hasComments: 1
 image: "/fourfromforty/fourfromforty427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Four Languages From Forty Years Ago".

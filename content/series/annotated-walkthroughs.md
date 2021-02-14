@@ -3,7 +3,8 @@ layout: series_index
 title: "The 'Annotated walkthroughs' series"
 seriesIndexId: "Annotated walkthroughs"
 seriesIndexOrder : 7
-permalink: /series/annotated-walkthroughs.html
+aliases: [/series/annotated-walkthroughs.html]
+date: 2020-01-01
 ---
 
 One comment I hear often is a complaint about the gap between theory and practice in F# and functional programming in general.

@@ -3,7 +3,8 @@ layout: series_index
 title: "The 'Handling State' series"
 seriesIndexId: "Handling State"
 seriesIndexOrder : 16
-permalink: /series/handling-state.html
+aliases: [/series/handling-state.html]
+date: 2020-01-01
 ---
 
 In this series of posts, I'll look at how you can thread state through a series of pure functions in a convenient way.

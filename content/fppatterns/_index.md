@@ -4,6 +4,7 @@ title: "Functional Programming Design Patterns"
 description: Slides and video from my talk
 hasComments: 1
 image: "/fppatterns/fppatterns427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Functional Programming Design Patterns".

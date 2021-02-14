@@ -4,6 +4,7 @@ title: "Thirteen ways of looking at a turtle"
 description:
 hasComments: 1
 image: "/turtle/turtle427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Thirteen ways of looking at a turtle".

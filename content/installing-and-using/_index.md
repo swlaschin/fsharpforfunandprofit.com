@@ -4,8 +4,8 @@ title: "Installing and using F#"
 description: "Instructions for downloading, installing and using F# with Visual Studio, SharpDevelop and MonoDevelop"
 nav:
 hasComments: 1
-image: "/assets/img/fsharp_eval2.png"
-
+image: "/installing-and-using/fsharp_eval2.png"
+date: 2014-01-01
 ---
 
 The F# compiler is a free and open source tool which is available for Windows, Mac and Linux (via Mono).
@@ -60,11 +60,11 @@ If you are on a Windows platform, using Visual Studio to write F# is strongly re
 
 Once you have F# installed, you should create an F# project.
 
-![New project](/assets/img/fsharp_new_project2.png)
+![New project](./fsharp_new_project2.png)
 
 And then create a script (FSX) file to run the examples in.
 
-![New FSX script](/assets/img/fsharp_new_script2.png)
+![New FSX script](./fsharp_new_script2.png)
 
 Next, make sure the F# interactive window is active (typically via `View > Other Windows > F# Interactive`).
 
@@ -73,7 +73,7 @@ Using a script file is the easiest way to experiment with F#; simply type in som
 * Right click to get a context menu and do "send to interactive".  Note that if the F# interactive window is not visible, the "send to interactive" menu option will not appear.
 * Use the `Alt+Enter` key combination (but see note below on keyboard mappings).
 
-![Send to Interactive](/assets/img/send_to_interactive.png)
+![Send to Interactive](./send_to_interactive.png)
 
 {{< alerterror >}}
 #### Resharper alert
@@ -85,7 +85,7 @@ You can remap the command from the Visual Studio menu `Tools > Options > Keyboar
 
 You can also work directly in the interactive window. But in this case, you must always terminate a block of code with double semicolons.
 
-![Interactive](/assets/img/fsharp_interactive2.png)
+![Interactive](./fsharp_interactive2.png)
 
 {{< linktarget "mono-develop" >}}
 
@@ -103,21 +103,21 @@ Once you have Mono installed, you can use the MonoDevelop IDE or an editor such 
 
 If you don't want to download anything, you can try F# directly from your browser.  The site is at [www.tryfsharp.org](http://www.tryfsharp.org). Note that it does require Silverlight to run.
 
-![Interactive](/assets/img/fsharp_web2.png)
+![Interactive](./fsharp_web2.png)
 
 {{< linktarget "interactive-shell" >}}
 ## Using F# in the interactive shell
 
 F# has a simple interactive console called FSI.exe that can also be used to run code in. Just as with the interactive window in Visual Studio, you must terminate a block of code with double semicolons.
 
-![FSI](/assets/img/fsharp_fsi2.png)
+![FSI](./fsharp_fsi2.png)
 
 {{< linktarget "sharp-develop" >}}
 ## Using F# in SharpDevelop
 
 [SharpDevelop](http://www.icsharpcode.net/OpenSource/SD/) has some support for F#. You can create an F# project, and then within that, create an FSX script file.   Then type in some code in the script window and use the context menu to send the code to the interactive window (as shown below).
 
-![Send to Interactive](/assets/img/fsharp_eval_sharpdevelop2.png)
+![Send to Interactive](./fsharp_eval_sharpdevelop2.png)
 
 {{< linktarget "compilation-errors" >}}
 ## Compilation Errors? ##

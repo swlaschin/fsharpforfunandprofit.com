@@ -5,6 +5,7 @@ description:
 nav: video
 hasComments: 1
 image: "/video/fppatterns320.jpg"
+date: 2020-01-01
 ---
 
 Like to watch videos? You're in the right place!

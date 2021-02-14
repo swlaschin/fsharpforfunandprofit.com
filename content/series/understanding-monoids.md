@@ -3,7 +3,8 @@ layout: series_index
 title: "The 'Understanding monoids' series"
 seriesIndexId: "Understanding monoids"
 seriesIndexOrder : 12
-permalink: /series/understanding-monoids.html
+aliases: [/series/understanding-monoids.html]
+date: 2020-01-01
 ---
 
 In this series, we'll look at a very common "pattern" known as a *monoid*.

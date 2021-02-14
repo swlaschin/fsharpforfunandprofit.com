@@ -4,6 +4,7 @@ title: "Learning F#"
 description: "Functional programming languages need a different approach"
 nav: learning-fsharp
 hasComments: 1
+date: 2015-01-01
 ---
 
 Functional languages are very different from standard imperative languages, and can be quite tricky to get the hang of initially.  This page offers some tips on how to learn F# effectively.

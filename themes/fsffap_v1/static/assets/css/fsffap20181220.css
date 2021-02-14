@@ -1,0 +1,181 @@
+code
+{
+	color: #333333;
+	font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+    font-size: 15px;
+}
+
+pre code
+{
+    font-size: 15px;
+}
+
+/* http://www.sitepoint.com/eight-definitive-font-stacks/  */
+
+p, body, li
+{
+	font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif", "Liberation Serif", Georgia, serif;
+	font-size: 18px;
+	line-height: 24px
+}
+
+h1,h2,h3,h4
+{
+	font-family: Candara, "Bitstream Vera Sans", "DejaVu Sans", "Bitstream Vera Sans", "Trebuchet MS", Verdana, "Verdana Ref", sans-serif;
+}
+
+
+.archiveMonth {
+	margin-top: 10px;
+	border-top: 1px solid #eee;
+	padding-top: 5px;
+	}
+
+.postIndexItem { margin-top:10px; }
+.postIndexItem .date { font-size: 12px }
+.postIndexItem .title a { font-size: 16px; font-weight:bold }
+.postIndexItem .description { color: #444;  }
+.postIndexItem .categories { color: #444;  font-style: italic; }
+
+.sidebar { color: #999999;}
+
+.sidebar h6 {
+	 margin-top: 20px;
+	 margin-bottom: 5px;
+	 font-size: 14px;
+	 font-weight: bold;
+	 text-transform: uppercase;
+ }
+
+
+.subtitle { font-size: 18px; color: #999999; margin: 4px 0 4px 0; line-height: 20px}
+
+.postdate { font-size: 18px; color: #999999; margin: 4px 0 4px 0; line-height: 20px}
+
+.post-footer { margin-top:50px; margin-bottom:20px;  }
+
+.footer { margin-top:50px; color: #999999 }
+
+.footer, .footer p, .footer li { font-size: 12px; color: #999999 }
+
+.extraMarginTop { margin-top:20px }
+
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
+}
+.alignoff {
+	clear: both;
+}
+
+
+#twitterMenu{
+    background-image: url('/assets/img/Twitter_logo_white_25x20.png');
+    background-repeat:no-repeat;
+    background-position:center;
+    height: 16px;
+    width: 20px;
+}
+
+#twitterMenu:hover {
+   background-image: url('/assets/img/Twitter_logo_blue_25x20.png');
+}
+
+figure {
+    display: block;
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+
+/* to fix error in Rouge, fsharp.rb*/
+/* code span {
+    white-space: normal;
+} */
+
+
+
+h2,h3,h4,h5,h6
+{
+
+	a{
+		padding-left: 5px;
+		&:hover{ text-decoration: none;}
+	}
+}
+
+h1{
+	font-size: 36px;
+	font-weight: bold;
+	margin: 0px;
+}
+
+h2{
+	font-size: 28px;
+	font-weight: bold;
+}
+
+h3{
+	font-size: 20px;
+	font-weight: bold;
+}
+
+
+container img {
+    display: inline-block;
+    height: auto;
+    max-width: 100%;
+}
+
+.gsc-input-box {
+	height: 35px !important;
+}
+
+.gsc-search-button {
+	height: 30px !important;
+	width: auto !important;
+}
+
+/* 60px to make the container go all the way to the bottom of the topbar */
+
+
+body
+{
+	padding-top: 60px;
+}
+
+.whyuse h2 {
+	margin-top: 0px;
+}
+
+.video h2 {
+	margin-top: 0px;
+}
+
+img {
+    display: inline-block;
+    height: auto;
+    max-width: 100%;
+}
+
+media img {
+	max-width: none;
+}
+
+.chroma .sd { color: #408080; font-style: italic }
+.chroma .c1 { color: #408080; font-style: italic }
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.alert-error {
+    color: #8f3155;
+    background-color: #f7d9de;
+    border-color: #f1bcc7;
+}

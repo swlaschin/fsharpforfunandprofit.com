@@ -6,7 +6,7 @@
 
     {{ partial "series_toc_header.html" . }}
 
-    {{ if isset .Params "hideHeader" }}
+    {{ if .Params.hideHeader }}
     {{ else }}
         <div class="page-header">
             <h1>{{ .Title  }}</h1>

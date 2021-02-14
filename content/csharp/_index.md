@@ -3,6 +3,7 @@ layout: page
 title: "F# for C# Programmers"
 hasComments: 1
 image: "/csharp/csharp427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and video from my talk "F# for C# Programmers".

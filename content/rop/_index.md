@@ -4,6 +4,7 @@ title: "Railway Oriented Programming"
 description: Slides and videos explaining a functional approach to error handling
 hasComments: 1
 image: "/rop/rop427.jpg"
+date: 2020-01-01
 ---
 
 This page contains links to the slides and code from my talk "Railway Oriented Programming".
