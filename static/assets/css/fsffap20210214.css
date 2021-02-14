@@ -1,28 +1,29 @@
-code
-{
-	color: #333333;
-	font-family: Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 15px;
-}
-
-pre code
-{
-    font-size: 15px;
-}
-
-/* http://www.sitepoint.com/eight-definitive-font-stacks/  */
-
 p, body, li
 {
 	font-family: Constantia, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 18px;
-	line-height: 24px
+	font-size: 1.8em;
+	line-height: 1.4;
 }
 
 h1,h2,h3,h4
 {
 	font-family: Candara, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+
+code
+{
+	color: #333333;
+	font-family: Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 1.4em;
+}
+
+pre code
+{
+    font-size: 1.4em;
+}
+
+/* http://www.sitepoint.com/eight-definitive-font-stacks/  */
 
 
 .archiveMonth {
@@ -108,7 +109,7 @@ h2,h3,h4,h5,h6
 }
 
 h1{
-	font-size: 36px;
+	font-size: 2em;
 	font-weight: bold;
 	margin: 0px;
 }
