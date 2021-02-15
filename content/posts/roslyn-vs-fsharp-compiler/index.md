@@ -109,7 +109,7 @@ It's not the most sophisticated analysis -- there is no parsing involved, just s
 
 Let's see the results:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th># of files</th><th>Lines of code</th><th>Blank lines</th><th>Comments</th><th>Braces</th><th>Nulls</th><th>Useful lines</th></tr>
@@ -122,7 +122,7 @@ Let's see the results:
 <tr><td>F# Compiler</td><td>96</td><td>162,435</td><td>17,589</td><td>25,975 (16%)</td><td>109</td><td>31</td><td>118,731 (73%)</td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are self explanatory, I hope:
 
@@ -150,7 +150,7 @@ Another crude analysis we can do is to look at the LOC per file. Yes, I know tha
 
 Analyzing the LOC per source file for both projects, I can see many files that are very large -- 1000 lines in a file is very common, and many have over 5000 lines!
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Lines per file</th><th>Roslyn(Core)</th><th>Roslyn(C#)</th><th>Roslyn(both)</th><th>F# compiler</th></tr>
@@ -171,7 +171,7 @@ Analyzing the LOC per source file for both projects, I can see many files that a
 <tr><td>Avg LOC per file</td><td>207</td><td>464</td><td>354</td><td>1,692  </td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 Now it is commonly agreed that when you get to more than 500-1000 lines per file, it's probably time to refactor. So if these were normal projects,
 I would be complaining that the number of large files was excessive.
@@ -186,7 +186,7 @@ The relevance of these numbers will become clear when it comes to analyzing the 
 For this section, I will just compare the lines of code to the instructions generated.
 Again, not a great metric, but I think it is a reasonable way to get some idea of the output of the two compilers.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Code size</th><th>Total lines of code</th><th>Bytecode/ Total ;LOC</th><th>Useful lines</th><th>Bytecode/ Useful ;LOC</th></tr>
@@ -199,7 +199,7 @@ Again, not a great metric, but I think it is a reasonable way to get some idea o
 <tr><td>F# Compiler</td><td>2,765,997</td><td> 162,435 </td><td>17.0</td><td> 118,731 </td><td>23.3 </td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 
@@ -245,7 +245,7 @@ Now that Roslyn is available, it would be interesting to do a true source based 
 
 Here are the modularity-related results for the projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Code size</th><th>Files</th><th>Top-level types</th><th>Authored Types</th><th>All types</th><th>Code/File</th><th>Top-level types/File</th><th>Authored types/File</th><th>Code/Authored type</th></tr>
@@ -258,7 +258,7 @@ Here are the modularity-related results for the projects:
 <tr><td>F# compiler</td><td>2,765,997</td><td>96</td><td>180</td><td>2502</td><td>12,525</td><td> 28,812</td><td>	1.9</td><td> 26.1</td><td>1,106 </td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 
@@ -304,7 +304,7 @@ So far, we have looked at various "size" metrics. Now let's look at dependencies
 
 Here are the results:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top Level Types	</th><th>Total Dep. Count	</th><th>Dep/Top	</th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.	</th><th>Ten or more dep.</th><th>Diagram</th></tr>
@@ -317,7 +317,7 @@ Here are the results:
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 
@@ -415,7 +415,7 @@ I personally think that cyclic (or circular) dependencies are a major cause of c
 
 Here are the cyclic dependency results for the three projects.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top-level types</th><th>Cycle count</th><th>Partic.</th><th>Partic.%</th><th>Max comp. size</th><th>Diagram</th></tr>
@@ -428,7 +428,7 @@ Here are the cyclic dependency results for the three projects.
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 

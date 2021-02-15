@@ -11,12 +11,8 @@ date: 2020-01-01
 ---
 
 
-{{< rawhtml >}}
-<div class="row video">
 
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-{{< /rawhtml >}}
+{{< twocolumn-start >}}
 
 ## Domain Modeling Made Functional (ebook and paper)
 
@@ -53,34 +49,22 @@ If you enjoy the book, I'd be grateful if you could leave a review on [the Goodr
 
 It does have some chapters on stuff I haven't blogged about (yet) such as how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
 
-{{< rawhtml >}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/oviuHT"><img alt="Domain Modeling Made Functional" src="domain-modeling-made-functional-200.jpg"></a>
-</div>
+[![Domain Modeling Made Functional](domain-modeling-made-functional-200.jpg)](https://goo.gl/oviuHT)
 
-</div>
-{{< /rawhtml >}}
+{{< twocolumn-end >}}
 
 ----
 
-{{< rawhtml >}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{< /rawhtml >}}
+{{< twocolumn-start >}}
 
 ## Downloadable ebook of this site
 
 Not available right now.
 
-{{< rawhtml >}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/XHLBgC"><img alt="Gitbook" src="gitbook-200.jpg"></a>
-</div>
+[![Gitbook](gitbook-200.jpg)](https://goo.gl/XHLBgC)
 
-</div>
-{{< /rawhtml >}}
+{{< twocolumn-end >}}

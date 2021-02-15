@@ -1,0 +1,11 @@
+more:
+  - name: "Follow @ScottWlaschin"
+    ref: "https://twitter.com/ScottWlaschin"
+    external: true
+  - name: About
+    ref: "about"
+  - name: Terms and Conditions
+    ref: "/about/terms"
+  - name: "Typos?"
+    ref: "https://github.com/swlaschin/fsharpforfunandprofit.com"
+    external: true

@@ -2,7 +2,7 @@ open System
 open System.IO
 
 let staticDir = Path.Combine(__SOURCE_DIRECTORY__,"../static") |> Path.GetFullPath
-let postsDir = Path.Combine(__SOURCE_DIRECTORY__,"../content/posts") |> Path.GetFullPath
+let contentDir = Path.Combine(__SOURCE_DIRECTORY__,"../content") |> Path.GetFullPath
 
 /// Return the abs path of the local image.
 /// If the path is relative, it is relative to the post
@@ -17,7 +17,7 @@ let makeAbsPath (post:FileInfo) (imageSrc:string) =
 
 (*
 // test
-let post = Path.Combine(postsDir,"tuples/index.md") |> FileInfo
+let post = Path.Combine(contentDir,"posts/tuples/index.md") |> FileInfo
 makeAbsPath post "abc.jpg"
 makeAbsPath post "./abc.jpg"
 makeAbsPath post "/assets/abc.jpg"
@@ -35,10 +35,10 @@ let tryMissingLink context (post:FileInfo) (imageSrc:string) =
 
 (*
 // test
-let post = Path.Combine(postsDir,"tuples/index.md") |> FileInfo
-tryMissingLink post "tuple_int_int.png"
-tryMissingLink post "./tuple_int_int.png"
-tryMissingLink post "/assets/tuple_int_int.png"
+let post = Path.Combine(contentDir,"posts/tuples/index.md") |> FileInfo
+tryMissingLink "error" post "tuple_int_int.png"
+tryMissingLink "error" post "./tuple_int_int.png"
+tryMissingLink "error" post "/assets/tuple_int_int.png"
 *)
 
 let checkMarkdownLinks (post:FileInfo) =
@@ -51,7 +51,7 @@ let checkMarkdownLinks (post:FileInfo) =
 
 (*
 // test
-let post = Path.Combine(postsDir,"tuples/index.md") |> FileInfo
+let post = Path.Combine(contentDir,"posts/tuples/index.md") |> FileInfo
 checkMarkdownLinks post
 *)
 
@@ -65,7 +65,7 @@ let checkFrontMatter (post:FileInfo) =
 
 (*
 // test
-let post = Path.Combine(postsDir,"tuples/index.md") |> FileInfo
+let post = Path.Combine(contentDir,"posts/tuples/index.md") |> FileInfo
 checkFrontMatter post
 *)
 
@@ -77,4 +77,4 @@ let rec checkDirectory (di:DirectoryInfo) =
             yield! checkDirectory di
     }
 
-checkDirectory (DirectoryInfo postsDir)
+checkDirectory (DirectoryInfo contentDir)

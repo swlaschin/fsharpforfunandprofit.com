@@ -1,0 +1,47 @@
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>{{ if .Title }}{{ .Title  }} | {{ end }}F# for fun and profit</title>
+<meta name="description" content="{{ .Description }}" />
+<meta name="keywords" content="" />
+<meta name="author" content="" />
+
+<link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/x-icon">
+<link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/x-icon">
+
+{{ if .Params.image }}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://fsharpforfunandprofit.com{{ .Params.image }}">
+{{ else }}
+<meta name="twitter:card" content="summary">
+{{ end }}
+<meta name="twitter:site" content="@ScottWlaschin">
+<meta name="twitter:title" content="{{ .Title  }}">
+<meta name="twitter:description" content="{{ .Description }}">
+<link rel="shortcut icon" href="/assets/ico/favicon.ico"/>
+
+<!-- CSS -->
+<link href="/normalize.css" rel="stylesheet" type="text/css" >
+
+<link rel="preload" href="{{ index .Site.Data.assets "main.min.css" | relURL }}" as="style">
+<link rel="stylesheet" href="{{ index .Site.Data.assets "main.min.css" | relURL }}" media="all">
+
+<link rel="preload" href="{{ index .Site.Data.assets "mobile.min.css" | relURL }}" as="style">
+<link rel="stylesheet" href="{{ index .Site.Data.assets "mobile.min.css" | relURL }}" media="screen and (max-width: 45rem)">
+
+<link rel="preload" href="{{ index .Site.Data.assets "print.min.css" | relURL }}" as="style">
+<link rel="stylesheet" href="{{ index .Site.Data.assets "print.min.css" | relURL }}" media="print">
+
+
+<!-- Custom CSS -->
+<link href="/pygments.css" rel="stylesheet" type="text/css" >
+<link rel="preload" href="{{ index .Site.Data.assets "custom.css" | relURL }}" as="style">
+<link rel="stylesheet" href="{{ index .Site.Data.assets "custom.css" | relURL }}" media="all">
+
+{{ with .OutputFormats.Get "rss" -}}
+    {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
+{{ end -}}
+
+{{ printf "<!-- %s -->" "Made with Geekdoc theme https://github.com/thegeeklab/hugo-geekdoc" | safeHTML }}

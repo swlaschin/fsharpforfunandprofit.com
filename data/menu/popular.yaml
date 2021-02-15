@@ -1,0 +1,19 @@
+root:
+  - name: Functional design patterns
+    ref: "/fppatterns"
+  - name: Thinking Functionally
+    ref: "/series/thinking-functionally"
+  - name: Designing with Types
+    ref: "/series/designing-with-types"
+  - name: Railway Oriented Programming
+    ref: "/rop"
+  - name: Thirteen ways of looking at a turtle
+    ref: "/posts/13-ways-of-looking-at-a-turtle"
+  - name: Understanding Parser Combinators
+    ref: "/parser"
+  - name: Roman Numerals Kata
+    ref: "/posts/roman-numeral-kata"
+  - name: Property-based testing
+    ref: "/posts/property-based-testing"
+
+

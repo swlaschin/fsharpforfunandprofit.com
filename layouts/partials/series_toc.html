@@ -2,7 +2,7 @@
 {{ if $page.Params.seriesId }}
 <div class="well">
     <a name="series-toc"></a>
-    <h4>All posts in the "{{ $page.Params.seriesId  }}" series</h4>
+    <h3>The "{{ $page.Params.seriesId  }}" series</h3>
 {{ range $otherpage := where (site.Pages.ByParam "seriesOrder") ".Params.seriesid" "==" $page.Params.seriesid }}
         {{ if eq $page.Params.seriesOrder $otherpage.Params.seriesOrder }}
         <div>{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title  }}</div>

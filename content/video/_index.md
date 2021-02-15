@@ -1,14 +1,12 @@
 ---
 layout: page
 title: "Videos"
-description:
+description: "Like to watch videos? You're in the right place!"
 nav: video
 hasComments: 1
 image: "/video/fppatterns320.jpg"
 date: 2020-01-01
 ---
-
-Like to watch videos? You're in the right place!
 
 This page lists all my talks that are available on video. Each talk is about one hour long.
 Slides and more information are also available for each talk -- see the link at the end of each description.
@@ -17,11 +15,7 @@ For more F# videos, visit the [Community for F#](http://c4fsharp.net/#online-pre
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Functional Design Patterns
 
@@ -36,23 +30,15 @@ demonstrations of FP design in practice. **Over [100,000 views on YouTube](https
 
 [Slides and more information](../fppatterns/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/aptvwN"><img alt="Video from NDC London 2014" src="fppatterns320.jpg"></a>
-</div>
+[![Video from NDC London 2014](fppatterns320.jpg)](https://goo.gl/aptvwN)
 
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Domain Modeling Made Functional
 
@@ -68,27 +54,16 @@ with some simple real world examples in F#. No jargon, no maths, and no prior F#
 
 [Slides and more information](../ddd/)
 
-{{<rawhtml>}}
 
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/kxVAWt"><img alt="Video from NDC Oslo, June 2017" src="ddd320.jpg"></a>
-</div>
+[!["Video from NDC Oslo, June 2017](ddd320.jpg)](https://goo.gl/kxVAWt)
 
-</div>
-
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## A functional approach to error handling *(Railway Oriented Programming)*
 
@@ -104,26 +79,15 @@ using a fun and easy-to-understand railway analogy.
 
 [Slides and more information](../rop/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from NDC London 2014](rop320.jpg)](https://goo.gl/Lv5ZAo)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/Lv5ZAo"><img alt="Video from NDC London 2014" src="rop320.jpg"></a>
-</div>
-
-</div>
-
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## F# for C# Programmers
 
@@ -135,24 +99,16 @@ Along the way, there will be many examples showing the same code written in C# a
 
 [Slides and more information](../csharp/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from NDC Oslo, June 14, 2017](csharp320.jpg)](https://goo.gl/LdQNGD)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/LdQNGD"><img alt="Video from NDC Oslo, June 14, 2017" src="csharp320.jpg"></a>
-</div>
+{{< twocolumn-end >}}
 
-</div>
-{{</rawhtml>}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## The Power of Composition
 
@@ -164,24 +120,15 @@ After that, we'll see how composition is used in practice, beginning with a simp
 
 [Slides and more information](../composition/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from dotNext Moscow, 2019](composition320.jpg)](https://www.youtube.com/watch?v=oquuPOkz8xo)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://www.youtube.com/watch?v=oquuPOkz8xo"><img alt="Video from dotNext Moscow, 2019" src="composition320.jpg"></a>
-</div>
-
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Understanding parser combinators
 
@@ -199,24 +146,15 @@ This talk is based on my blog posts on this topic:
 
 * [Understanding parser combinators](/series/understanding-parser-combinators/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from NDC Oslo, Jun 9, 2016](parser320.jpg)](https://goo.gl/Cxa7NR)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/Cxa7NR"><img alt="Video from NDC Oslo, Jun 9, 2016" src="parser320.jpg"></a>
-</div>
-
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Thirteen ways of looking at a turtle
 
@@ -234,25 +172,15 @@ This talk is based on my blog posts on this topic:
 
 * [Thirteen ways of looking at a turtle](/posts/13-ways-of-looking-at-a-turtle/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/2BN161"><img alt="Video from NDC London, Jan 18, 2017" src="turtle320.jpg"></a>
-</div>
+[!["Video from NDC London, Jan 18, 2017](turtle320.jpg)](https://goo.gl/2BN161)
 
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Property-based testing
 
@@ -272,27 +200,15 @@ This talk is based on my blog posts on this topic:
 * [An introduction to property-based testing](/posts/property-based-testing/)
 * [Choosing properties for property-based testing](/posts/property-based-testing-2/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from Functional Programming eXchange, Jun 11, 2015](pbt320.jpg)](https://goo.gl/p2kfWH)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/p2kfWH"><img alt="Video from Functional Programming eXchange, Jun 11, 2015" src="pbt320.jpg"></a>
-</div>
-
-</div>
-{{</rawhtml>}}
-
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
-
+{{< twocolumn-start >}}
 
 ## Dr Frankenfunctor and the Monadster
 
@@ -307,24 +223,16 @@ This talk is based on my blog post on this topic:
 
 * [Dr Frankenfunctor and the Monadster](/posts/monadster/)
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Video from NDC London 2016, Jan 14, 2016](monadster320.jpg)](https://goo.gl/8TwY8C)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/8TwY8C"><img alt="Video from NDC London 2016, Jan 14, 2016" src="monadster320.jpg"></a>
-</div>
-
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
+{{< twocolumn-start >}}
 
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
 
 ## Enterprise Tic-Tac-Toe
 
@@ -342,23 +250,15 @@ This talk is based on my blog posts on this topic:
 * [Enterprise Tic-Tac-Toe](/posts/enterprise-tic-tac-toe/)
 * [Enterprise Tic-Tac-Toe Part 2, In which I throw away the previous design](/posts/enterprise-tic-tac-toe-2/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/YE4pW2"><img alt="Video from NDC Oslo, Jun 17, 2015" src="ettt320.jpg"></a>
-</div>
+[!["Video from NDC Oslo, Jun 17, 2015](ettt320.jpg)](https://goo.gl/YE4pW2)
 
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Designing with Capabilities
 
@@ -382,23 +282,15 @@ This talk is based on my blog posts on this topic:
 * [Constraining capabilities based on identity and role](/posts/capability-based-security-2/)
 * [Using types as access tokens](/posts/capability-based-security-3/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/hmzGFn"><img alt="Video from NDC London, Jan 15, 2016" src="cap320.jpg"></a>
-</div>
+[!["Video from NDC London, Jan 15, 2016](cap320.jpg)](https://goo.gl/hmzGFn)
 
-</div>
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Four Languages From Forty Years Ago
 
@@ -410,25 +302,16 @@ We'll come away with some practical principles that are still very applicable to
 
 [Slides and more information](../fourfromforty/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://www.youtube.com/watch?v=0fpDlAEQio4"><img alt="Video from NDC Oslo, Jun 15, 2018" src="fourfromforty320.jpg"></a>
-</div>
+[!["Video from NDC Oslo, Jun 15, 2018](fourfromforty320.jpg)](https://www.youtube.com/watch?v=0fpDlAEQio4)
 
-</div>
+{{< twocolumn-end >}}
 
-{{</rawhtml>}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## The Functional Programmer's Toolkit
 
@@ -440,25 +323,15 @@ We'll then see how the tools in this tool kit can be applied to a wide variety o
 
 [Slides and more information](../fptoolkit/)
 
-{{<rawhtml>}}
-</div>
+{{< twocolumn-image >}}
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://www.youtube.com/watch?v=bK-Tz-GLfOs"><img alt="Video from NDC Oslo, Jun 19, 2019" src="fptoolkit320.jpg"></a>
-</div>
+[!["Video from NDC Oslo, Jun 19, 2019](fptoolkit320.jpg)](https://www.youtube.com/watch?v=bK-Tz-GLfOs)
 
-</div>
-{{</rawhtml>}}
-
+{{< twocolumn-end >}}
 
 ------
 
-{{<rawhtml>}}
-
-<div class="row video">
-
-<div class="col-sm-8" style="float:right;" markdown="1">
-{{</rawhtml>}}
+{{< twocolumn-start >}}
 
 ## Code Review/Refactor Live
 
@@ -466,16 +339,10 @@ In this live session for [Community for F#](http://c4fsharp.net/), I refactor so
 
 [GitHub repository with code samples is here](https://github.com/swlaschin/RefactoringFSharp).
 
-{{<rawhtml>}}
+{{< twocolumn-image >}}
 
-</div>
+[!["Code Review/Refactor Live](refactoring320.jpg)](https://goo.gl/6L5Sbd)
 
-<div class="col-sm-4" style="float:left;">
-<a href="https://goo.gl/6L5Sbd"><img alt="Code Review/Refactor Live" src="refactoring320.jpg"></a>
-</div>
-
-</div>
-
-{{</rawhtml>}}
+{{< twocolumn-end >}}
 
 

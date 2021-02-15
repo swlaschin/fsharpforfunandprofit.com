@@ -1,0 +1,46 @@
+{{ define "main" }}
+    <article class="gdoc-markdown gdoc-post" template="posts/single">
+    {{ if .Params.hideHeader }}
+    {{ else }}
+        <header class="gdoc-post__header">
+            {{ partial "series_toc_header.html" . }}
+            <h1 class="gdoc-post__title">{{ .Title }}</h1>
+            {{ if .Description }}
+            <div class="subtitle ">{{ .Description  }}</div>
+            {{ end }}
+            <div class="gdoc-post__date ">{{ .Date.Format "02 Jan 2006" }}</div>
+            <div class="alignright"> {{ partial "twitter_tweet.html" }}</div>
+            <div class="alignoff"></div>
+        </header>
+    {{ end  }}
+
+    <div>
+        {{ .Content }}
+    </div>
+
+    <div class="post-footer">
+        <hr>
+        {{ partial "series_prev_next.html" . }}
+        {{ partial "series_toc.html" . }}
+        <div>
+            <br>
+            <div style="float:left">
+                Written by <a href="/about/">ScottW</a>.
+                <a href="https://github.com/swlaschin/fsharpforfunandprofit.com">Found a typo or error?</a>
+                Follow me on <a href="https://goo.gl/a1j5CS"><img src="/assets/img/Twitter_logo_blue_25x20.png" style="vertical-align: middle;"> Twitter</a>.
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    </div >
+
+    {{ partial "disqus.html" . }}
+
+    </article>
+{{ end }}
+
+
+
+
+
+
+

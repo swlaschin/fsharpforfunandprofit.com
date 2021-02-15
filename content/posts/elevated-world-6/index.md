@@ -832,7 +832,7 @@ let getPurchaseInfo (custId:CustId) (api:ApiClient) =
 
 Let's compare the two versions in a table:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <tr>
 <th>Earlier version</th>
@@ -855,7 +855,7 @@ Let's compare the two versions in a table:
 <td>No intermediate values needed. Just a data pipeline. </td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 
 ### Implementing traverse

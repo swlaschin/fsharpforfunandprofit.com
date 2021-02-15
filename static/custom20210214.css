@@ -1,0 +1,287 @@
+/* You can add custom styles here. */
+
+body
+{
+	font-family: xConstantia, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 18px;
+	line-height: 27px;
+}
+
+a, a:visited {
+	color: #326495;
+	text-decoration: none;
+}
+
+h1,h2,h3,h4
+{
+	font-family: Candara, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+code
+{
+	color: #333333;
+	font-family: Consolas, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    xfont-size: 1.4em;
+}
+
+
+
+
+/* ============================
+navigation
+============================*/
+
+aside h2 {
+    margin-top: 20px;
+	margin-bottom: 5px;
+	font-size: 1.5em;
+    font-weight: bold;
+	text-transform: uppercase;
+}
+aside h2:first-child { margin-top: 5px !important; }
+
+.gdoc-nav--main>ul>li>label, .gdoc-nav--main>ul>li>label>a, .gdoc-nav--main>ul>li>span, .gdoc-nav--main>ul>li>span>a {
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.gdoc-nav__list li {
+	margin: 0 0;
+	font-size: 16px;
+}
+.gdoc-nav__entry.is-active, .gdoc-nav__entry:hover, .gdoc-search__entry.is-active, .gdoc-search__entry:hover {
+	 text-decoration: none;
+}
+
+/* ============================
+main page overall
+============================*/
+
+.gdoc-page {
+	min-width: 288px;
+	max-width: 40em;
+}
+
+/* ============================
+site heading
+============================*/
+
+.gdoc-header {
+    background: #4186c9;
+    color: #fff;
+    border-bottom: .3em solid #2f333e;
+}
+
+.gdoc-header {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* ============================
+main page heading
+============================*/
+
+.gdoc-post__header {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* series head */
+.series-partof {
+	margin-top: 0;
+	margin-bottom: 1em;
+	font-style: italic;
+	font-weight: normal;
+    font-size: 1em;
+}
+.series-partof a {
+	color: #326495;
+}
+.series-partof a:hover {
+    text-decoration: underline;
+}
+
+.gdoc-post__title{
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.subtitle {
+	font-size: 1.2em;
+	color: #999999;
+	margin: 0 0 4px 0;
+	line-height: 1.3em;
+}
+
+.gdoc-post__date, .postdate {
+	font-size: 18px; color: #999999; margin: 4px 0 4px 0; line-height: 20px
+}
+
+/* ============================
+main page content
+============================*/
+
+.gdoc-markdown {
+	font-size: 1em;
+	line-height: 1.5em;
+}
+
+
+
+
+/* ============================
+callouts
+============================*/
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.alert-error {
+    color: #8f3155;
+    background-color: #f7d9de;
+    border-color: #f1bcc7;
+}
+
+.well {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+}
+
+/* ============================
+pygments override
+============================*/
+
+.chroma .sd { color: #408080; font-style: italic }
+.chroma .c1 { color: #408080; font-style: italic }
+.chroma .kt { color: #B00040; font-weight: normal;}
+.chroma .ow { color: #008000; font-weight: bold; }
+
+/* ============================
+Tables
+============================*/
+
+.fsffap-table table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    background-color: transparent;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-condensed>tbody>tr>td, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>td, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>thead>tr>th {
+    padding: 5px;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+}
+
+.fsffap-table th {
+    text-align: left;
+}
+.fsffap-table td, th {
+    padding: 0;
+}
+
+
+
+/* ============================
+Search
+============================*/
+
+.google-search table,
+.google-search caption,
+.google-search tbody,
+.google-search tfoot,
+.google-search thead,
+.google-search tr,
+.google-search th,
+.google-search td {
+    margin: 0;
+    padding: 0!important;
+    border: 0!important;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+	background: transparent;
+	border-color: none!important;
+}
+.google-search input {
+	padding: 5px;
+}
+/* ============================
+bootstrap -> flexbox conversion
+============================*/
+
+.twocolumn {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+}
+.twocolumn-main {
+	flex: 60%;
+	min-width: 288px;
+}
+.twocolumn-image {
+	flex: 30%;
+	width: 200px;
+	padding-right: 15px;
+}
+.twocolumn-code {
+	flex: 50%;
+	padding-right: 15px;
+	min-width: 288px;
+}
+
+@media (max-width: 600px) {
+	.twocolumn {
+		flex-direction: column;
+	}
+  }
+
+
+
+/* ============================
+content footer
+============================*/
+
+.series-prev-next ul {
+	padding-left: 0;
+	margin: 20px 0;
+	text-align: center;
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.series-prev-next li {
+	display: inline-block;
+	padding: 5px 14px;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 15px;
+}
+
+.series-prev-next .series-previous {
+	text-align: left;
+}
+.series-prev-next .series-next {
+	text-align: right;
+	margin-left: auto;
+}
+

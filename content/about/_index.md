@@ -1,12 +1,10 @@
 ---
 layout: page
-title: "About"
+title: "About this site"
 description:
 hasComments: 1
 date: 2020-01-01
 ---
-
-## About This Site
 
 The goal of this site is to introduce .NET developers to the joys of functional programming, and F# in particular.
 

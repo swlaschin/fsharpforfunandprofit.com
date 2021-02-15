@@ -83,7 +83,7 @@ Some examples:
 In each of these cases, we have a set of states, a set of transitions, and events that can trigger a transition.
 State machines are often represented by a table, like this one for a shopping cart:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed">
 <thead>
 <tr>
@@ -118,7 +118,7 @@ State machines are often represented by a table, like this one for a shopping ca
 </tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 With a table like this, you can quickly see exactly what should happen for each event when the system is in a given state.
 

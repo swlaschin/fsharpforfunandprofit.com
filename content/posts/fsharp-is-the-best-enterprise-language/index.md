@@ -333,7 +333,7 @@ or if you like videos, here are some good ones that demonstrate its versatility:
 
 ----
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table border="0" >
 <tr>
 <td width="150">
@@ -345,7 +345,7 @@ It's a beginner-friendly introduction that covers Domain Driven Design, modeling
 </td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 
 

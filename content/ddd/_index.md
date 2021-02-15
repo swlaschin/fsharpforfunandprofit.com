@@ -46,7 +46,7 @@ added sections on why OO, not FP is scary, and designing with states and transit
 
 I have a book all about this topic -- you can find more details on the [books page](/books/).
 
-[![Domain Modeling Made Functional](/books/domain-modeling-made-functional-320.jpg)](/books/)
+[![Domain Modeling Made Functional](./domain-modeling-made-functional-320.jpg)](/books/)
 
 ##  Getting the code
 

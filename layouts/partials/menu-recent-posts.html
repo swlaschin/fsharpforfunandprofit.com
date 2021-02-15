@@ -1,0 +1,17 @@
+{{ $current := . }}
+{{ $site := .Site }}
+
+<ul class="gdoc-nav__list">
+{{ $recentPages := where (.Site.Pages.ByDate.Reverse) ".Params.layout" "==" "post" }}
+{{ range $recent := first 5 $recentPages  }}
+    {{ $isCurrent := eq $current $recent }}
+    <li><span class="flex">
+    <a href="{{ .Permalink }}" title="{{ .Title }}" class="gdoc-nav__entry ">{{ .Title }}</a>
+    </span></li>
+{{ end }}
+    <li class="archive"><span class="flex">
+    <a href="/archives/" class="gdoc-nav__entry ">&raquo; Archives</a>
+    </span></li>
+</ul>
+
+

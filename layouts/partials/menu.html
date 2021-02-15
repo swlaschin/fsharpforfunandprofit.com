@@ -1,0 +1,21 @@
+<nav>
+    <section class="gdoc-nav--main">
+        <h2>Get Started</h2>
+        {{ partial "menu-bundle" (dict "current" . "source" .Site.Data.menu.start.root) }}
+    </section>
+
+    <section class="gdoc-nav--main">
+        <h2>Popular posts</h2>
+        {{ partial "menu-bundle" (dict "current" . "source" .Site.Data.menu.popular.root) }}
+    </section>
+
+    <section class="gdoc-nav--main">
+        <h2>Recent Posts</h2>
+        {{ partial "menu-recent-posts" . }}
+    </section>
+
+    <section class="gdoc-nav--more">
+        <h2>More</h2>
+        {{ partial "menu-bundle" (dict "current" . "source" .Site.Data.menu.more.more) }}
+    </section>
+</nav>

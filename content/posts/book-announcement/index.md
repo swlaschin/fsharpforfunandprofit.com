@@ -11,9 +11,9 @@ So, finally, I've got round to working on a book based on the contents of this s
 
 I'm publishing it on LeanPub, and it is working out well. Their workflow is markdown based, which is great, because that's what this site is generated from also.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <iframe style="" width="300" height="370" src="https://leanpub.com/understandingfunctionalprogramming/embed" frameborder="0" allowtransparency="true"></iframe>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 You can see the table of contents using the ["Learn More" link](https://leanpub.com/understandingfunctionalprogramming?utm_campaign=understandingfunctionalprogramming) above.
 

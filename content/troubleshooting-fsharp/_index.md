@@ -182,7 +182,7 @@ I will continue to add to the list in the future, and I welcome any suggestions 
 
 This is probably the most common error you will run into. It can manifest itself in a wide variety of contexts, so I have grouped the most common problems together with examples and fixes. Do pay attention to the error message, as it is normally quite explicit about what the problem is.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-bordered table-condensed">
 <thead>
   <tr>
@@ -248,7 +248,7 @@ This is probably the most common error you will run into. It can manifest itself
   </tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 ### A. Can't mix ints and floats {#FS0001A}
 

@@ -231,7 +231,7 @@ The nice thing about using functions to represent capabilities is that we can us
 
 Many of the other requirements of the object-capability model fit well within a functional programming framework. Here is a comparison table:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-bordered table-striped">
 <tr>
 <th>Object-capability model
@@ -277,7 +277,7 @@ on paths that assumed that it was successful.
 </td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 
 

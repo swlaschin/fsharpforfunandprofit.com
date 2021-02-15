@@ -1,0 +1,17 @@
+root:
+  - name: Explore this site
+    ref: "/site-contents"
+  - name: Why use F#?
+    ref: "/why-use-fsharp"
+  - name: Tips for learning F#
+    ref: "/learning-fsharp"
+  - name: Troubleshooting F#
+    ref: "/troubleshooting-fsharp"
+  - name: Books
+    ref: "/books"
+  - name: Videos
+    ref: "/video"
+  - name: Search this site
+    ref: "/search"
+
+

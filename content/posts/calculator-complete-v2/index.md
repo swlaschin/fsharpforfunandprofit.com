@@ -334,7 +334,7 @@ And there are six possible inputs:
 
 Let's document each state, and what data it needs to store, if any.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -374,7 +374,7 @@ Let's document each state, and what data it needs to store, if any.
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 
 ## Documenting each state and event combination
@@ -384,7 +384,7 @@ As with the sample code above, we'll group them so that we only have to deal wit
 
 Let's start with the `ZeroState` state. Here are the transitions for each type of input:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -433,11 +433,11 @@ Let's start with the `ZeroState` state. Here are the transitions for each type o
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 We can repeat the process with the `AccumulatorState` state. Here are the transitions for each type of input:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -487,13 +487,13 @@ We can repeat the process with the `AccumulatorState` state. Here are the transi
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The event handling for `AccumulatorDecimalState` state is the same, except that `DecimalSeparator` is ignored.
 
 What about the `ComputedState` state. Here are the transitions for each type of input:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -539,11 +539,11 @@ What about the `ComputedState` state. Here are the transitions for each type of 
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 Finally, the `ErrorState` state is very easy. :
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -565,7 +565,7 @@ Finally, the `ErrorState` state is very easy. :
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 ## Converting the states into F# code
 

@@ -168,7 +168,7 @@ As you read through this series, pay attention to how the constructors are used 
 
 The same "type" keyword is used to define all the F# types, so they can all look very similar if you are new to F#. Here is a quick list of these types and how to tell the difference between them.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-bordered table-striped">
 <colgroup>
 <col>
@@ -332,4 +332,4 @@ Can have constructor.<br>
 </td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}

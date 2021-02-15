@@ -6,26 +6,17 @@ nav: why-use-fsharp
 hasIcons: 1
 image: "/why-use-fsharp/four-concepts2.png"
 date: 2020-01-01
+GeekdocAnchor: false
 ---
 
 Although F# is great for specialist areas such as scientific or data analysis, it is also an excellent choice for enterprise development. Here are five good reasons why you should consider using F# for  your next project.
 
-{{<rawhtml>}}
-<div class="row whyuse" >
-<div class="col-md-6" style="float:right;" markdown="1">
-{{</rawhtml>}}
-
-## {{<glyphicon glyphicons_030_pencil>}} Conciseness
+## {{<glyphicon glyphicons_030_pencil>}}&nbsp;Conciseness
 
 F# is not cluttered up with [coding "noise"](/posts/fvsc-sum-of-squares/) such as curly brackets, semicolons and so on.
 
 You almost never have to specify the type of an object, thanks to a powerful [type inference system](/posts/conciseness-type-inference/).
 And, compared with C#, it generally takes [fewer lines of code](/posts/fvsc-download/) to solve the same problem.
-
-{{<rawhtml>}}
-</div>
-<div class="col-md-6" style="float:left;" markdown="1">
-{{</rawhtml>}}
 
 ```fsharp
 // one-liners
@@ -47,26 +38,15 @@ type Employee =
 let jdoe = {First="John"; Last="Doe"}
 let worker = Worker jdoe
 ```
-{{<rawhtml>}}
-</div>
-</div>
-{{</rawhtml>}}
 
-{{<rawhtml>}}
-<div class="row whyuse" >
-<div class="col-md-6" style="float:right;" markdown="1">
-{{</rawhtml>}}
+----
 
-## {{<glyphicon glyphicons_343_thumbs_up>}} Convenience
+## {{<glyphicon glyphicons_343_thumbs_up>}}&nbsp;Convenience
 
 Many common programming tasks are much simpler in F#.  This includes things like creating and using [complex type definitions](/posts/conciseness-type-definitions/), doing [list processing](/posts/conciseness-extracting-boilerplate/), [comparison and equality](/posts/convenience-types/), [state machines](/posts/designing-with-types-representing-states/), and much more.
 
 And because functions are first class objects, it is very easy to create powerful and reusable code by creating functions that have [other functions as parameters](/posts/conciseness-extracting-boilerplate/), or that [combine existing functions](/posts/conciseness-functions-as-building-blocks/) to create new functionality.
 
-{{<rawhtml>}}
-</div>
-<div class="col-md-6" style="float:left;" markdown="1">
-{{</rawhtml>}}
 
 ```fsharp
 // automatic equality and comparison
@@ -83,17 +63,9 @@ let add2times3 = (+) 2 >> (*) 3
 let result = add2times3 5
 ```
 
-{{<rawhtml>}}
-</div>
-</div>
-{{</rawhtml>}}
+----
 
-{{<rawhtml>}}
-<div class="row whyuse" >
-<div class="col-md-6" style="float:right;" markdown="1">
-{{</rawhtml>}}
-
-## {{<glyphicon glyphicons_150_check>}} Correctness
+## {{<glyphicon glyphicons_150_check>}}&nbsp;Correctness
 
 
 F# has a [powerful type system](/posts/correctness-type-checking/) which prevents many common errors such as [null reference exceptions](/posts/the-option-type/#option-is-not-null).
@@ -102,10 +74,6 @@ Values are [immutable by default](/posts/correctness-immutability/), which preve
 
 In addition, you can often encode business logic using the [type system](/posts/correctness-exhaustive-pattern-matching/) itself in such a way that it is actually [impossible to write incorrect code](/posts/designing-for-correctness/) or mix up [units of measure](/posts/units-of-measure/), greatly reducing the need for unit tests.
 
-{{<rawhtml>}}
-</div>
-<div class="col-md-6" style="float:left;" markdown="1">
-{{</rawhtml>}}
 
 ```fsharp
 // strict type checking
@@ -127,27 +95,16 @@ emptyShoppingCart.remove   // compile error!
 let distance = 10<m> + 10<ft> // error!
 ```
 
-{{<rawhtml>}}
-</div>
-</div>
-{{</rawhtml>}}
+----
 
-{{<rawhtml>}}
-<div class="row whyuse" >
-<div class="col-md-6" style="float:right;" markdown="1">
-{{</rawhtml>}}
 
-## {{<glyphicon glyphicons_054_clock>}} Concurrency
+## {{<glyphicon glyphicons_054_clock>}}&nbsp;Concurrency
 
 
 F# has a number of built-in libraries to help when more than one thing at a time is happening. Asynchronous programming is [very easy](/posts/concurrency-async-and-parallel/), as is parallelism. F# also has a built-in [actor model](/posts/concurrency-actor-model/), and excellent support for event handling and [functional reactive programming](/posts/concurrency-reactive/).
 
 And of course, because data structures are immutable by default, sharing state and avoiding locks is much easier.
 
-{{<rawhtml>}}
-</div>
-<div class="col-md-6" style="float:left;" markdown="1">
-{{</rawhtml>}}
 
 ```fsharp
 // easy async logic with "async" keyword
@@ -164,17 +121,9 @@ MailboxProcessor.Start(fun inbox-> async{
 	})
 ```
 
-{{<rawhtml>}}
-</div>
-</div>
-{{</rawhtml>}}
+----
 
-{{<rawhtml>}}
-<div class="row whyuse" >
-<div class="col-md-6" style="float:right;" markdown="1">
-{{</rawhtml>}}
-
-## {{<glyphicon glyphicons_280_settings>}} Completeness
+## {{<glyphicon glyphicons_280_settings>}}&nbsp;Completeness
 
 
 Although it is a functional language at heart, F# does support other styles which are not 100% pure, which makes it much easier to interact with the non-pure world of web sites, databases, other applications, and so on. In particular, F# is designed as a hybrid functional/OO language, so it can do [virtually everything that C# can do](/posts/completeness-anything-csharp-can-do/).
@@ -183,10 +132,6 @@ Of course, F# is [part of the .NET ecosystem](/posts/completeness-seamless-dotne
 
 Finally, it is well integrated with Visual Studio, which means you get a great IDE with IntelliSense support, a debugger, and many plug-ins for unit tests, source control, and other development tasks. Or on Linux, you can use the MonoDevelop IDE instead.
 
-{{<rawhtml>}}
-</div>
-<div class="col-md-6" style="float:left;" markdown="1">
-{{</rawhtml>}}
 
 ```fsharp
 // impure code when needed
@@ -213,11 +158,7 @@ form.Click.Add (fun args -> printfn "clicked!")
 form.Show()
 ```
 
-{{<rawhtml>}}
-</div>
-</div>
-{{</rawhtml>}}
-
+----
 
 ## Want more details?
 

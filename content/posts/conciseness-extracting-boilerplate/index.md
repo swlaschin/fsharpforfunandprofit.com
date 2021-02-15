@@ -64,7 +64,7 @@ public static int AlternatingSum(int n)
 
 What do all these implementations have in common?  The looping logic!  As programmers, we are told to remember the DRY principle ("don't repeat yourself"), yet here we have repeated almost exactly the same loop logic each time. Let's see if we can extract just the differences between these three methods:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table">
 <thead>
   <tr>
@@ -91,7 +91,7 @@ What do all these implementations have in common?  The looping logic!  As progra
   </tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 Is there a way to strip the duplicate code and focus on the just the setup and inner loop logic?  Yes there is. Here are the same three functions in F#:
 

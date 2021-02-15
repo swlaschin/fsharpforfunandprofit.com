@@ -26,7 +26,7 @@ The following tables list the primitive types, with their F# keywords, their suf
 
 ### Miscellaneous types
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -73,13 +73,13 @@ The following tables list the primitive types, with their F# keywords, their suf
 <td>Byte</td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 Object and unit are not really .NET primitive types, but I have included them for the sake of completeness.
 
 ### String types
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -120,7 +120,7 @@ Object and unit are not really .NET primitive types, but I have included them fo
 <td>Byte[]</td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The usual special characters can be used inside normal strings, such as `\n`, `\t`, `\\`, etc. Quotes must be escaped with a backslash: `\'` and `\"`.
 
@@ -130,7 +130,7 @@ Triple-quoted strings are new in VS2012. They are useful because special charact
 
 ### Integer types
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -196,7 +196,7 @@ Triple-quoted strings are new in VS2012. They are useful because special charact
 <td>BigInteger</td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 `BigInteger` is available in all versions of F#. From .NET 4 it is included as part of the .NET base library.
 
@@ -208,7 +208,7 @@ Integer types can also be written in hex and octal.
 
 ### Floating point types
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -244,13 +244,13 @@ Integer types can also be written in hex and octal.
 <td>Decimal</td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 Note that F# natively uses `float` instead of `double`, but both can be used.
 
 ### Pointer types
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -281,11 +281,11 @@ Note that F# natively uses `float` instead of `double`, but both can be used.
 <td>UIntPtr</td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 ## Casting between built-in primitive types
 
-*Note: this section only covers casting of primitive types. For casting between classes see the series on [object-oriented programming](/posts/casting/).*
+*Note: this section only covers casting of primitive types. For casting between classes see the series on [object-oriented programming](/series/object-oriented-programming-in-fsharp/).*
 
 
 There is no direct "cast" syntax in F#, but there are helper functions to cast between types. These helper functions have the same name as the type (you can see them in the `Microsoft.FSharp.Core` namespace).

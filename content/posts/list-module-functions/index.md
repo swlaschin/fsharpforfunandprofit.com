@@ -31,7 +31,7 @@ And for fun, I've done it in a "Choose Your Own Adventure" style!
 First, a table with information about the different kinds of standard collections. There are five "native" F# ones: `list`, `seq`, `array`, `map` and `set`,
 and `ResizeArray` and `IDictionary` are also often used.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <tr>
 <th></th>
@@ -119,7 +119,7 @@ and `ResizeArray` and `IDictionary` are also often used.
 </td>
 </tr>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 
 

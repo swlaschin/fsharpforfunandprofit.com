@@ -871,7 +871,7 @@ Functions like `bind`, `map`, `plus`, etc., crop up in all sorts of functional p
 
 Here they all are together:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -945,7 +945,7 @@ Here they all are together:
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 ### The railway track functions: complete code
 

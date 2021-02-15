@@ -1,6 +1,7 @@
 {{ $page := .}}
 {{ if .Params.seriesId }}
-<ul class="pager">
+<div class="series-prev-next">
+<ul class="flex">
 	<!-- all pages in same series -->
 	{{ $seriesPages := where (site.Pages.ByParam "seriesOrder") ".Params.seriesid" "==" $page.Params.seriesid }}
 
@@ -8,7 +9,7 @@
 	{{ $prevId := sub $page.Params.seriesOrder 1 }}
 	{{ $prevPage := where $seriesPages ".Params.seriesorder" "==" $prevId }}
 	{{ range $otherpage := $prevPage }}
-	<li class="previous">
+	<li class="series-previous">
 	<a href="{{ $otherpage.RelPermalink }}" title="{{ $otherpage.Title  }}">&larr; {{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title  }}</a>
 	</li>
 	{{ end }}
@@ -16,11 +17,12 @@
 	{{ $nextId := add $page.Params.seriesOrder 1 }}
 	{{ $nextPage := where $seriesPages ".Params.seriesorder" "==" $nextId }}
 	{{ range $otherpage := $nextPage }}
-	<li class="next">
+	<li class="series-next">
 	<a href="{{ $otherpage.RelPermalink }}" title="{{ $otherpage.Title  }}">{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title  }} &rarr;</a>
 	</li>
 	{{ end }}
 
 </ul>
+</div>
 {{ end }} <!-- end if .Params.seriesId -->
 

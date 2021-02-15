@@ -160,7 +160,7 @@ Let's look at the modularity first.
 
 Here are the modularity-related results for the C# projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Code size</th><th>Top-level types</th><th>Authored types</th><th>All types</th><th>Code/Top</th><th>Code/Auth</th><th>Code/All</th><th>Auth/Top</th><th>All/Top</th></tr>
@@ -184,11 +184,11 @@ Here are the modularity-related results for the C# projects:
 <tr><td>TOTAL	</td><td>2244670	</td><td>3869	</td><td>4392	</td><td>5420	</td><td>580	</td><td>511	</td><td>414	</td><td>1.1	</td><td>1.4	</td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 And here are the results for the F# projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Code size</th><th>Top-level types</th><th>Authored types</th><th>All types</th><th>Code/Top</th><th>Code/Auth</th><th>Code/All</th><th>Auth/Top</th><th>All/Top</th></tr>
@@ -212,7 +212,7 @@ And here are the results for the F# projects:
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 
@@ -302,7 +302,7 @@ Now let's look at the dependency relationships between the top level classes.
 
 Here are the results for the C# projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top Level Types	</th><th>Total Dep. Count	</th><th>Dep/Top	</th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.	</th><th>Ten or more dep.</th><th>Diagram</th></tr>
@@ -327,11 +327,11 @@ Here are the results for the C# projects:
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 And here are the results for the F# projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top Level Types	</th><th>Total Dep. Count	</th><th>Dep/Top	</th><th>One or more dep.</th><th>Three or more dep.</th><th>Five or more dep.	</th><th>Ten or more dep.</th><th>Diagram</th></tr>
@@ -355,7 +355,7 @@ And here are the results for the F# projects:
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 
@@ -500,7 +500,7 @@ Finally, we can turn our attention to the oh-so-evil cyclic dependencies. (If yo
 
 Here are the cyclic dependency results for the C# projects.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top-level types</th><th>Cycle count</th><th>Partic.</th><th>Partic.%</th><th>Max comp. size</th><th>Cycle count (public)</th><th>Partic. (public)</th><th>Partic.% (public)</th><th>Max comp. size (public)</th><th>Diagram</th></tr>
@@ -525,11 +525,11 @@ Here are the cyclic dependency results for the C# projects.
 
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 And here are the results for the F# projects:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-striped table-condensed">
 <thead>
 <tr><th>Project</th><th>Top-level types</th><th>Cycle count</th><th>Partic.</th><th>Partic.%</th><th>Max comp. size</th><th>Cycle count (public)</th><th>Partic. (public)</th><th>Partic.% (public)</th><th>Max comp. size (public)</th><th>Diagram</th></tr>
@@ -552,7 +552,7 @@ And here are the results for the F# projects:
 <tr><td>TOTAL	</td><td>692	</td><td>	</td><td>7	</td><td>1%	</td><td>	</td><td>	</td><td>0	</td><td>0%	</td><td>	</td><td>.	</td></tr>
 </tbody>
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 The columns are:
 

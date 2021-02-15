@@ -133,30 +133,4 @@ So to sum up, I think the `Result` type and railway-oriented programming are ext
 
 Thanks for reading! If you're interested in more F# posts, check out the rest of the [2019 F# Advent Calendar](https://sergeytihon.com/2019/11/05/f-advent-calendar-in-english-2019/).
 
-----
-
-{{<rawhtml>}}
-<table border="0" >
-<tr>
-<td width="150">
-<a href="/books"><img src="/books/domain-modeling-made-functional-150.jpg"></a>
-</td>
-<td style="padding: 10px">
-And if you are interested in the functional approach to domain modeling and design, here's <a href="/books">my "Domain Modeling Made Functional" book!</a>
-It's a beginner-friendly introduction that covers Domain Driven Design, modeling with types, and functional programming.
-</td>
-</tr>
-</table>
-{{</rawhtml>}}
-
-
-
-
-
-
-
-
-
-
-
-
+{{< book_page_ddd_img >}}

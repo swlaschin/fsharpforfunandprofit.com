@@ -98,19 +98,11 @@ var y = x - 1;
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 The answer is `-1`.  Did you get that answer?  No? If you can't figure it out, scroll down again.
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 Trick question!  This code is actually JavaScript!
 
@@ -146,10 +138,6 @@ So now we have our first requirement for making a language predictable:
 
 C# is looking good compared to JavaScript. But we're not done yet...
 
-{{<rawhtml>}}
-<br><br><br>
-{{</rawhtml>}}
-
 *UPDATE: This is an admittedly silly example. In retrospect, I could have picked a better one.
 Yes, I know that no one sensible would ever do this. The point still stands: the JavaScript language does not prevent you from doing stupid things with implicit typecasts.*
 
@@ -172,11 +160,7 @@ cust1.Equals(cust2);
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 ```csharp
 // true or false?
@@ -225,11 +209,7 @@ cust.Equals(order);
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 ```csharp
 // true or false?
@@ -250,9 +230,6 @@ So let's add another item to our list.
 1. Objects containing the same values should be equal by default.
 1. **Comparing objects of different types is a compile-time error.**
 
-{{<rawhtml>}}
-<br><br><br>
-{{</rawhtml>}}
 
 *UPDATE: Many people have pointed out that you need this when comparing classes related by inheritance. This is true, of course.
 But what is the cost of this feature? You get the ability to compare subclasses, but you lose the ability to detect accidental errors.*
@@ -277,12 +254,7 @@ Now the question is: what is the expected output of `WriteLine`?
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
-
+{{<scrolldown>}}
 
 ```csharp
 // what is the expected output?
@@ -340,11 +312,7 @@ So, does the set still contain the customer at the end of this code?
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 ```csharp
 // Does the set contain the customer?
@@ -440,11 +408,7 @@ The question is: after we do `customer = repo.GetById(42)`, what is the value of
 
 (scroll down for answer)
 
-{{<rawhtml>}}
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-{{</rawhtml>}}
+{{<scrolldown>}}
 
 ```csharp
 var customer = repo.GetById(42);

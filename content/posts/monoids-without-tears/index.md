@@ -226,7 +226,7 @@ Luckily, there is a trick that can convert any semigroup into a monoid (which I'
 
 Let's put all our examples into a table, so you can see them all together.
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 <colgroup>
 <col width="5em">
@@ -418,7 +418,7 @@ Let's put all our examples into a table, so you can see them all together.
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 There are many other kinds of things you can add to this list; polynomials, matrices, probability distributions, and so on.
 This post won't discuss them, but once you get the idea of monoids, you will see that the concept can be applied to all sorts of things.
@@ -448,7 +448,7 @@ In other words, if we can define a pairwise operation, we can extend it to list 
 
 The function that does this is typically called "reduce". Here are some examples:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -477,7 +477,7 @@ The function that does this is typically called "reduce". Here are some examples
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 You can see that `reduce` can be thought of as inserting the specified operation between each element of the list.
 
@@ -531,7 +531,7 @@ Once we have a divide and conquer strategy, it can be easily converted into a pa
 
 For example, to sum the first 8 integers on a four-core CPU, we might do something like this:
 
-{{<rawhtml>}}
+{{<rawtable>}}
 <table class="table table-condensed table-striped">
 
 <tr>
@@ -567,7 +567,7 @@ For example, to sum the first 8 integers on a four-core CPU, we might do somethi
 </tr>
 
 </table>
-{{</rawhtml>}}
+{{</rawtable>}}
 
 There are still seven calculations that need to be done, but because we are doing it parallel, we can do them all in three steps.
 

@@ -9,7 +9,7 @@ hidePostedBy: 1
 ---
 
 {{<rawhtml>}}
-<div>
+<div class="google-search">
 		<script>
 			(function() {
 				var cx = '005822461080256964871:ukp7bevhyrw';

@@ -2,13 +2,17 @@ baseURL = "https://fsharpforfunandprofit.com"
 languageCode = "en-us"
 title = "F# for Fun and Profit"
 description = "This site shows you ways that F# can help in day-to-day development of mainstream commercial business software"
+theme = "hugo-geekdoc"
 
 [taxonomies]
   category = "categories"
   tag = "tags"
 
 [params]
-    disqus = "fforfunandprofit"
+  disqus = "fforfunandprofit"
+  GeekdocLogo = "favicon-128x128-blue-on-white.png"
+  GeekdocMenuBundle = true
+  GeekdocAnchor = true
 
 [markup]
   [markup.highlight]
