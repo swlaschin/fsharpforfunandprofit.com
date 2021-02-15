@@ -11,7 +11,7 @@ seriesOrder: 4
 In this series of posts, I've been developing a simple pocket calculator app.
 
 In the [first post](/posts/calculator-design/), we completed a first draft of the design, using type-first development.
-and in the [second post](/posts/calculator-implementation/), we created an initial implemeentation.
+and in the [second post](/posts/calculator-implementation/), we created an initial implementation.
 
 In the [previous post](/posts/calculator-complete-v1/), we created the rest of the code, including the user interface, and attempted to use it.
 

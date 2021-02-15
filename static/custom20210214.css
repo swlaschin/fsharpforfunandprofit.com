@@ -1,11 +1,13 @@
-/* You can add custom styles here. */
-
 body
 {
 	font-family: xConstantia, ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	font-size: 18px;
 	line-height: 27px;
 }
+body {
+	background-color: #FAFAFA;
+}
+
 
 a, a:visited {
 	color: #326495;
@@ -26,9 +28,31 @@ code
 
 
 
+/* ============================
+site heading
+============================*/
+
+.wrapper main {
+    padding: 0;
+}
+
+.gdoc-header {
+    background: #4186c9;
+    color: #fff;
+    border-bottom: .3em solid #2f333e;
+}
+
+.gdoc-header {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+
+.gdoc-page{
+	background-color: white;
+}
 
 /* ============================
-navigation
+navigation column
 ============================*/
 
 aside h2 {
@@ -39,6 +63,11 @@ aside h2 {
 	text-transform: uppercase;
 }
 aside h2:first-child { margin-top: 5px !important; }
+
+.gdoc-nav nav {
+	padding: 1rem 1rem 1rem 1rem;
+}
+
 
 .gdoc-nav--main>ul>li>label, .gdoc-nav--main>ul>li>label>a, .gdoc-nav--main>ul>li>span, .gdoc-nav--main>ul>li>span>a {
     font-size: 1em;
@@ -53,31 +82,29 @@ aside h2:first-child { margin-top: 5px !important; }
 	 text-decoration: none;
 }
 
+.gdoc-nav--main>ul>li>span>a:hover
+{
+	color: #326495;
+	text-decoration-line: underline;
+	text-decoration-style: solid!important;
+}
+
 /* ============================
-main page overall
+content column
 ============================*/
 
 .gdoc-page {
 	min-width: 288px;
 	max-width: 40em;
 }
-
-/* ============================
-site heading
-============================*/
-
-.gdoc-header {
-    background: #4186c9;
-    color: #fff;
-    border-bottom: .3em solid #2f333e;
+.gdoc-page {
+	padding-left: 2rem;
+	padding-right: 2rem;
 }
 
-.gdoc-header {
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
 
 /* ============================
-main page heading
+content column heading
 ============================*/
 
 .gdoc-post__header {
