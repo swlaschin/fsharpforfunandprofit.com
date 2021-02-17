@@ -6,6 +6,9 @@ more:
     ref: "about"
   - name: Terms and Conditions
     ref: "/about/terms"
-  - name: "Typos?"
+  - name: "License"
+    ref: "/about/license"
+  - name: "This site on GitHub"
     ref: "https://github.com/swlaschin/fsharpforfunandprofit.com"
     external: true
+

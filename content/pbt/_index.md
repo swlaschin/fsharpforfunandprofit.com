@@ -30,7 +30,9 @@ This talk is based on my blog posts on this topic:
 
 ## Video
 
-(Click image to view video - free registration required)
+{{< embedyoutube IYzDFHx6QPY >}}
+
+Or an older version with better sound (Click image to view video - free registration required)
 
 [![Video from Functional Programming eXchange, Jun 11, 2015](pbt427.jpg)](https://goo.gl/p2kfWH)
 

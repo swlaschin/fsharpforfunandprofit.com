@@ -1,8 +1,10 @@
 root:
   - name: Explore this site
     ref: "/site-contents"
-  - name: Why use F#?
+  - name: Why use F#? (short)
     ref: "/why-use-fsharp"
+  - name: Why use F#? (long)
+    ref: "/series/why-use-fsharp"
   - name: Tips for learning F#
     ref: "/learning-fsharp"
   - name: Troubleshooting F#
