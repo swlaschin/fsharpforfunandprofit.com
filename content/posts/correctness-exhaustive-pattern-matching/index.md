@@ -293,7 +293,7 @@ First set up a good file and a bad file.
 ```fsharp
 /// write some text to a file
 let writeSomeText filePath someText =
-    use writer = new System.IO.StreamWriter(path:string)
+    use writer = new System.IO.StreamWriter(filePath:string)
     writer.WriteLine(someText:string)
 
 let goodFileName = "good.txt"
