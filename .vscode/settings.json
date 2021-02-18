@@ -1,5 +1,14 @@
 {
     "cSpell.words": [
         "struct"
+    ],
+    "spellright.language": [
+        "en-US"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext",
+        "jsonc"
     ]
 }
