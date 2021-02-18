@@ -542,13 +542,13 @@ And here's an example of lifting a three-parameter function:
 
 ```fsharp
 // define a three-parameter function to test with
-let addTriple x y z = x + y + z
+let add3 x y z = x + y + z
 
 // lift a three-param function
-let addTripleOpt = Option.lift3 addTriple
+let add3eOpt = Option.lift3 add3
 
 // call as normal
-addTripleOpt (Some 1) (Some 2) (Some 3)
+add3Opt (Some 1) (Some 2) (Some 3)
 // result => Some 6
 ```
 
