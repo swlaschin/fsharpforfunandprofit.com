@@ -528,13 +528,13 @@ First, here's an example of lifting a two-parameter function:
 
 ```fsharp
 // define a two-parameter function to test with
-let addPair x y = x + y
+let add2 x y = x + y
 
 // lift a two-param function
-let addPairOpt = Option.lift2 addPair
+let add2Opt = Option.lift2 add2
 
 // call as normal
-addPairOpt (Some 1) (Some 2)
+add2Opt (Some 1) (Some 2)
 // result => Some 3
 ```
 
