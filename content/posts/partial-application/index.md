@@ -176,7 +176,7 @@ However, it is easy enough to create wrappers for them that are more idiomatic. 
 let replace oldStr newStr (s:string) =
   s.Replace(oldValue=oldStr, newValue=newStr)
 
-let startsWith lookFor (s:string) =
+let startsWith (lookFor:string) (s:string) =
   s.StartsWith(lookFor)
 ```
 
