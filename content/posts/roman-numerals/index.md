@@ -9,7 +9,7 @@ seriesOrder: 12
 categories: [Patterns, Worked Examples]
 ---
 
-[Last time](/posts/pattern-matching-command-line) we looked at parsing a command line. This time we'll we'll look at another pattern matching example, this time using Roman numerals.
+[Last time](/posts/pattern-matching-command-line) we looked at parsing a command line. This time we'll look at another pattern matching example, this time using Roman numerals.
 
 As before, we will try to have a "pure" internal model with separate stages to convert the input to the internal model, and then another separate stage to convert from the internal model to the output.
 
