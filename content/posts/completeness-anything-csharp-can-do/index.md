@@ -219,7 +219,7 @@ let color2:Color = enum 2  // cast from int
 // created from parsing a string
 let color3 = System.Enum.Parse(typeof<Color>,"Green") :?> Color // :?> is a downcast
 
-[<System.FlagsAttribute>]
+[<System.Flags>]
 type FileAccess = | Read=1 | Write=2 | Execute=4
 let fileaccess = FileAccess.Read ||| FileAccess.Write
 ```
