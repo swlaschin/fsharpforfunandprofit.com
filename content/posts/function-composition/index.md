@@ -7,7 +7,7 @@ nav: thinking-functionally
 seriesId: "Thinking functionally"
 seriesOrder: 7
 categories: [Functions]
-image: "posts/function-composition/Functions_Composition.png"
+image: "/posts/function-composition/Functions_Composition.png"
 ---
 
 ## Function associativity ##

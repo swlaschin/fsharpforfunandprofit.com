@@ -99,14 +99,19 @@ let processLine state line  =
         // add fence start
         outputLines.Add(line)
 
-        // if the fragmentId is found in the map, then start a new fragment
-        match fragmentMap.TryGetValue(newFragmentId) with
-        | true, fragment ->
-            logDebug (sprintf "%s, %i: Found Fragment %s" fi.Post lineNo newFragmentId)
-            {state with lineNo=lineNo; currentFragmentOpt=Some fragment }
-        | false, _ ->
-            logWarn (sprintf "%s, %i: WARNING: no fragment found with id '%s'" fi.Post lineNo newFragmentId)
+        if newFragmentId = "none" then
+            // ignore without warning
             {state with lineNo=lineNo; currentFragmentOpt=None}
+        else
+            match fragmentMap.TryGetValue(newFragmentId) with
+            | true, fragment ->
+                // if the fragmentId is found in the map, then start a new fragment
+                logDebug (sprintf "%s, %i: Found Fragment %s" fi.Post lineNo newFragmentId)
+                {state with lineNo=lineNo; currentFragmentOpt=Some fragment }
+            | false, _ ->
+                // if the fragmentId is NOT found in the map, that's an warning
+                logWarn (sprintf "%s, %i: WARNING: no fragment found with id '%s'" fi.Post lineNo newFragmentId)
+                {state with lineNo=lineNo; currentFragmentOpt=None}
 
     | NamedFenceWithoutId, currentFragmentOpt ->
         // check for unclosed fence

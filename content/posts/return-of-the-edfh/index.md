@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The return of the Enterprise Developer From Hell"
+title: "The Return of the Enterprise Developer From Hell"
 description: "And how property-based testing can defeat the EDFH"
 date: 2021-02-14
 categories: [Testing]

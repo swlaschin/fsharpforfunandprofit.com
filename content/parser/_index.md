@@ -3,7 +3,7 @@ layout: page
 title: "Understanding parser combinators"
 description: Building a parser combinator library and then writing a JSON parser from scratch
 hasComments: 1
-image: "/parser/parser427.png"
+image: "/parser/parser427.jpg"
 date: 2020-01-01
 ---
 

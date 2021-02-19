@@ -6,7 +6,7 @@ date: 2015-08-04
 categories: ["Patterns"]
 seriesId: "Map and Bind and Apply, Oh my!"
 seriesOrder: 3
-image: "/posts/elevated-world/vgfp_rop_before.png"
+image: "/posts/elevated-world-3/vgfp_rop_before.png"
 ---
 
 This post is the third in a series.

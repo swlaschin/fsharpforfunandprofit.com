@@ -3,17 +3,19 @@
 <div class="well">
     <a name="series-toc"></a>
     <h3>The "{{ $page.Params.seriesId  }}" series</h3>
+    <ul>
 {{ range $otherpage := where (site.Pages.ByParam "seriesOrder") ".Params.seriesid" "==" $page.Params.seriesid }}
+        <li>
         {{ if eq $page.Params.seriesOrder $otherpage.Params.seriesOrder }}
-        <div>{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title  }}</div>
+        <span><strong>{{ $otherpage.Title  }}</strong></span>
         {{ else if $otherpage.Params.seriesOrder }}
-        <div><a href="{{ $otherpage.RelPermalink }}" title="{{ $otherpage.Title }}">{{ $otherpage.Params.seriesOrder }}. {{ $otherpage.Title }}</a></div>
+        <span><a href="{{ $otherpage.RelPermalink }}" title="{{ $otherpage.Title }}">{{ $otherpage.Title }}</a></span>
         {{ else }}
         {{ end }}
-
-
+        <br><span class="description">{{ .Description}}</span>
+        </li>
 {{ end }}
-
+    </ul>
 </div>
 {{ end }}
 

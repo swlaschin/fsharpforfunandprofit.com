@@ -4,6 +4,8 @@ title = "F# for Fun and Profit"
 description = "This site shows you ways that F# can help in day-to-day development of mainstream commercial business software"
 theme = "hugo-geekdoc"
 
+ignoreFiles = [ "\\.fsx$" ]
+
 [taxonomies]
   category = "categories"
   tag = "tags"

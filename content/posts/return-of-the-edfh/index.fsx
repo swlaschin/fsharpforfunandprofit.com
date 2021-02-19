@@ -153,11 +153,16 @@ rle_groupedCount "aaaabbbcca"  //=> [('a',5); ('b',3); ('c',2))]
 #r "nuget:FsCheck"
 //<
 
-(*
 // If not using F# 5, use nuget to download it using "nuget install FsCheck" or similar
-// then add your nuget path here
+
+(*
+//>nugetFsCheckOld
+// 1) use "nuget install FsCheck" or similar to download
+// 2) include your nuget path here
 #I "/Users/%USER%/.nuget/packages/fscheck/2.14.4/lib/netstandard2.0"
+// 3) reference the DLL
 #r "FsCheck.dll"
+//<
 *)
 
 //>propUsesAllCharacters
