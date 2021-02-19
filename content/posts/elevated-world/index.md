@@ -723,7 +723,7 @@ let readQuotedString =
 In this snippet, `readQuoteChar` means "match and read a quote character from the input stream" and
 `readNonQuoteChars` means "read a series of non-quote characters from the input stream".
 
-When we are parsing a quoted string we want ensure the input stream that contains the quote character is read,
+When we are parsing a quoted string we want to ensure the input stream that contains the quote character is read,
 but we don't care about the quote characters themselves, just the inner content.
 
 Hence the use of `*>` to ignore the leading quote and `<*` to ignore the trailing quote.
