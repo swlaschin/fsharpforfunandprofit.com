@@ -436,7 +436,7 @@ How can we insert this after the validation steps but before the update step?
 
 Well, if we can turn this simple function into a switch function, then we can use the switch composition we just talked about above.
 
-In other words, we need an adapter block. It the same concept that we used for `bind`, except that this time our adapter block will have a slot for one-track function, and the overall "shape" of the adapter block is a switch.
+In other words, we need an adapter block. It has the same concept that we used for `bind`, except that this time our adapter block will have a slot for one-track function, and the overall "shape" of the adapter block is a switch.
 
 ![lifting a simple function](./Recipe_Railway_SwitchAdapter.png)
 
