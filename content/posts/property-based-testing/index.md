@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Enterprise Developer from Hell"
-description: "An introduction to property-based testing"
+description: "Outwitting malicious compliance with property-based testing"
 date: 2014-12-01
 updated: 2021-02-17
 categories: ["TDD", "Testing"]
@@ -56,7 +56,7 @@ So now imagine that rather than being a developer, you are a test engineer who i
 Unfortunately for you, the implementation is being written by a burned-out, always lazy and often malicious programmer who I will call *The Enterprise Developer From Hell*, or "EDFH".
 (The EDFH has a [cousin who you might have heard of](https://en.wikipedia.org/wiki/Bastard_Operator_From_Hell)).
 
-You are practicing test-driven-development, enterprise-style, which means that you write a test, and then the EDFH implements code that passes the test.
+You are practicing test-driven-development, enterprise-style, which means that you write a test, and then the EDFH implements code that passes the test. Unfortunately for you, the EDFH loves to practice [malicious compliance](https://www.reddit.com/r/MaliciousCompliance/top/?sort=top&t=all), as we will see.
 
 So you start with a test like this (using vanilla NUnit style):
 

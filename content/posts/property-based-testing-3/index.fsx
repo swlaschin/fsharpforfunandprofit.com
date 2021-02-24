@@ -93,9 +93,9 @@ Check.Quick (addThenSort_eq_sortThenAdd edfhSort1)
 let minValueThenSort_eq_sortThenMinValue sortFn aList =
     let minValue = Int32.MinValue
 
-    let appendThenSort = 
+    let appendThenSort =
         (aList @ [minValue]) |> sortFn
-    let sortThenPrepend = 
+    let sortThenPrepend =
         minValue :: (aList |> sortFn)
     appendThenSort = sortThenPrepend
 
@@ -119,13 +119,13 @@ let edfhSort2 aList =
     | _ ->
         let head, tail = List.splitAt (aList.Length-1) aList
         let lastElem = tail.[0]
-        // if the last element is Int32.MinValue, 
+        // if the last element is Int32.MinValue,
         // then move it to front
         if (lastElem = Int32.MinValue) then
             lastElem :: head
         else
             // otherwise, do not sort the list!
-            aList 
+            aList
 //<
 
 
@@ -143,9 +143,9 @@ Check.Quick (minValueThenSort_eq_sortThenMinValue edfhSort2)
 let negateThenSort_eq_sortThenNegateThenReverse sortFn aList =
     let negate x = x * -1
 
-    let negateThenSort = 
+    let negateThenSort =
         aList |> List.map negate |> sortFn
-    let sortThenNegateAndReverse = 
+    let sortThenNegateAndReverse =
         aList |> sortFn |> List.map negate |> List.rev
     negateThenSort = sortThenNegateAndReverse
 //<
@@ -173,9 +173,9 @@ Check.Quick (negateThenSort_eq_sortThenNegateThenReverse edfhSort2)
 module Path1 =
     //>path_rev1
     let appendThenReverse_eq_reverseThenPrepend revFn anyValue aList =
-        let appendThenReverse = 
+        let appendThenReverse =
             (aList @ [anyValue]) |> revFn
-        let reverseThenPrepend = 
+        let reverseThenPrepend =
             anyValue :: (aList |> revFn)
         appendThenReverse = reverseThenPrepend
     //<
@@ -233,18 +233,18 @@ module StringSplit =
     //<
 
 // actual implementation for tests below
-let stringSplit (str:string) : string list = 
+let stringSplit (str:string) : string list =
     str.Split([|','|]) |> Array.toList
 
 let concatProperty (inputString:string) =
 
     //>hardConcat2
-    let tokens = stringSplit inputString 
+    let tokens = stringSplit inputString
 
     // build a string from the tokens
     let recombinedString = tokens |> String.concat ","
 
-    // compare with the original 
+    // compare with the original
     inputString = recombinedString
     //<
 
@@ -254,8 +254,8 @@ let concatElementsOfSplitString_eq_originalString (strings:string list) =
     // make a string
     let inputString = strings |> String.concat ","
 
-    // use the 'split' function on the inputString 
-    let tokens = stringSplit inputString 
+    // use the 'split' function on the inputString
+    let tokens = stringSplit inputString
 
     // build a string from the tokens
     let recombinedString = tokens |> String.concat ","
@@ -293,7 +293,7 @@ module AdjacentPairs1 =
 
     (*
     //>hardList1_out
-    System.Exception: The type System.IComparable is not 
+    System.Exception: The type System.IComparable is not
                       handled automatically by FsCheck
     //<
     *)
@@ -362,9 +362,9 @@ module SortInvariant1 =
     // EDFH implementation has same length as original
     let edfhSort2 aList =
         match aList with
-        | [] -> 
+        | [] ->
             []
-        | head::_ -> 
+        | head::_ ->
             List.replicate (List.length aList) head
 
     // for example
@@ -397,21 +397,21 @@ module SortInvariant2 =
     /// given aList and anElement to insert,
     /// generate all possible lists with anElement
     /// inserted into aList
-    let rec distribute e list = 
-        match list with 
+    let rec distribute e list =
+        match list with
         | [] -> [[e]]
         | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
 
     /// Given a list, return all permutations of it
-    let rec permute list = 
-        match list with 
+    let rec permute list =
+        match list with
         | [] -> [[]]
         | e::xs -> List.collect (distribute e) (permute xs)
     //<
 
     //>permutations_out
     permute [1;2;3] |> Seq.toList
-    //  [[1; 2; 3]; [2; 1; 3]; [2; 3; 1]; 
+    //  [[1; 2; 3]; [2; 1; 3]; [2; 3; 1];
     //   [1; 3; 2]; [3; 1; 2]; [3; 2; 1]]
 
     permute [1;2;3;4] |> Seq.toList
@@ -454,7 +454,7 @@ module SortInvariant3 =
     /// return a new list without the specified element.
     /// If not found, return None
 
-    /// Given an element and a list, return a new list 
+    /// Given an element and a list, return a new list
     /// without the first instance of the specified element.
     /// If element is not found, return None
     let withoutElement x aList =
@@ -464,13 +464,13 @@ module SortInvariant3 =
             else
                 (elem::acc), found // accumulate
 
-        let (filteredList,found) = 
+        let (filteredList,found) =
             aList |> List.fold folder ([],false)
         if found then
             filteredList |> List.rev |> Some
         else
             None
-    
+
 
     /// Given two lists, return true if they have the same contents
     /// regardless of order
@@ -482,7 +482,7 @@ module SortInvariant3 =
             | None -> false
             | Some t2 -> isPermutationOf t1 t2
     //<
-    
+
     (*
     [] |> withoutElement 1
     [1] |> withoutElement 1
@@ -490,7 +490,7 @@ module SortInvariant3 =
     [1;2] |> withoutElement 1
     [1;2;1] |> withoutElement 1
 
-    
+
     [1;2;3] |> isPermutationOf [1;2]
     [1;2;3] |> isPermutationOf [1;2;3]
     [1;2;3] |> isPermutationOf [1;3;2]
@@ -515,7 +515,7 @@ module SortInvariant3 =
 
     //>sortinvariant2_check2
     Check.Quick (sortedListIsPermutationOfOriginal edfhSort)
-    // Falsifiable, after 2 tests (4 shrinks) 
+    // Falsifiable, after 2 tests (4 shrinks)
     // [0]
 
     Check.Quick (sortedListIsPermutationOfOriginal edfhSort2)
@@ -529,7 +529,7 @@ module SortInvariant3 =
 
 module Combine =
 
-    let adjacentPairsAreOrdered = 
+    let adjacentPairsAreOrdered =
         AdjacentPairs2.adjacentPairsAreOrdered
 
     let sortedListIsPermutationOfOriginal =
@@ -558,10 +558,10 @@ module Combine =
 
     //>combine4
     let listIsSorted_labelled sortFn (aList:int list) =
-        let prop1 = 
+        let prop1 =
             adjacentPairsAreOrdered sortFn aList
             |@ "adjacent pairs from a list are ordered"
-        let prop2 = 
+        let prop2 =
             sortedListIsPermutationOfOriginal sortFn aList
             |@ "sorted list is a permutation of original list"
         prop1 .&. prop2
@@ -570,7 +570,7 @@ module Combine =
     //>combine5
     Check.Quick (listIsSorted_labelled badSort )
     //  Falsifiable, after 1 test (2 shrinks)
-    //  Label of failing property: 
+    //  Label of failing property:
     //     sorted list is a permutation of original list
     //  [0]
     //<
@@ -661,7 +661,7 @@ module Idem =
         // first GET
         let get1 = get()
 
-        // second GET 
+        // second GET
         let get2 = get()
         get1 = get2
     //<
@@ -675,7 +675,7 @@ module Idem =
         // Ok, passed 100 tests.
         //<
 
-    do 
+    do
         //>idem_service2_check
         let service = NonIdempotentService()
         let get() = service.Get()

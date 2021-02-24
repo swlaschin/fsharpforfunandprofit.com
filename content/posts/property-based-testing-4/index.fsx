@@ -104,8 +104,8 @@ Check.Quick biquinary_eq_tally
 
 
 //>oracle_input
-let arabicNumber = 
-    Arb.Default.Int32() 
+let arabicNumber =
+    Arb.Default.Int32()
     |> Arb.filter (fun i -> i > 0 && i <= 4000)
 //<
 
@@ -115,7 +115,7 @@ let biquinary_eq_tally_withinRange =
 //<
 
 //>oracle_prop2_check
-Check.Quick biquinary_eq_tally_withinRange 
+Check.Quick biquinary_eq_tally_withinRange
 // Ok, passed 100 tests.
 //<
 
@@ -125,7 +125,7 @@ Check.Quick biquinary_eq_tally_withinRange
 
 
 //>oracle_4000_check
-[1..4000] |> List.choose (fun i -> 
+[1..4000] |> List.choose (fun i ->
     if biquinary_eq_tally i then None else Some i
     )
 // output => [4000]
@@ -167,8 +167,8 @@ do
 do
     //>oracle_prop4_check
     let config = {
-        Config.Quick with 
-            StartSize = 3900 
+        Config.Quick with
+            StartSize = 3900
             EndSize = 4000
             MaxTest = 1000
             }
@@ -180,7 +180,7 @@ do
 do
     //>oracle_boundary_check
     for i in [3999..4001] do
-        if not (biquinary_eq_tally i) then 
+        if not (biquinary_eq_tally i) then
             failwithf "test failed for %i" i
     //<
 
@@ -190,7 +190,7 @@ do
 // Decoding and testing with an inverse
 //==============================
 
-module TallyDecode = 
+module TallyDecode =
 
     //>TallyDecode_impl
     let romanToArabic (str:string) =
@@ -209,100 +209,100 @@ module TallyDecode =
             .Replace("V","IIIII")
             .Length
     //<
-    
+
 (*
 //>TallyDecode_test
 TallyDecode.romanToArabic "I"       //=> 1
 TallyDecode.romanToArabic "IX"      //=> 9
 TallyDecode.romanToArabic "XXIV"    //=> 24
-TallyDecode.romanToArabic "CMXCIX"  //=> 999  
-TallyDecode.romanToArabic "MCDXCIII"//=> 1493 
+TallyDecode.romanToArabic "CMXCIX"  //=> 999
+TallyDecode.romanToArabic "MCDXCIII"//=> 1493
 //<
 *)
 
 
 //>inverse_prop
-/// encoding then decoding should return 
+/// encoding then decoding should return
 /// the original number
 let encodeThenDecode_eq_original =
-    
+
     // define an inner property
     let innerProp arabic1 =
-        let arabic2 = 
+        let arabic2 =
             arabic1
             |> TallyImpl.arabicToRoman // encode
             |> TallyDecode.romanToArabic // decode
         // should be same
-        arabic1 = arabic2 
+        arabic1 = arabic2
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>inverse_prop_check
-Check.Quick encodeThenDecode_eq_original  
+Check.Quick encodeThenDecode_eq_original
 // Ok, passed 100 tests.
 //<
 
 //>inverse_prop2
-/// encoding then decoding should return 
+/// encoding then decoding should return
 /// the original number
 let encodeThenDecode_eq_original2 =
-    
+
     // define an inner property
     let innerProp arabic1 =
-        let arabic2 = 
+        let arabic2 =
             arabic1
             |> BiQuinaryImpl.arabicToRoman // encode
             |> TallyDecode.romanToArabic // decode
         // should be same
-        arabic1 = arabic2 
+        arabic1 = arabic2
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>inverse_prop2_check
-Check.Quick encodeThenDecode_eq_original2  
+Check.Quick encodeThenDecode_eq_original2
 // Ok, passed 100 tests.
 //<
 
 //==============================
-// Recursively testing 
+// Recursively testing
 //==============================
 
 
-/// if we break the number into 1000s, 100s, 10s, 
+/// if we break the number into 1000s, 100s, 10s,
 /// and units, and encode them separately, the concat
 /// of the components should be the same as encoded directly.
 //>recursive_prop
 let recursive_prop =
-    
+
     // define an inner property
     let innerProp arabic =
-        let thousands = 
+        let thousands =
             (arabic / 1000 % 10) * 1000
-            |> BiQuinaryImpl.arabicToRoman 
-        let hundreds =  
+            |> BiQuinaryImpl.arabicToRoman
+        let hundreds =
             (arabic / 100 % 10) * 100
-            |> BiQuinaryImpl.arabicToRoman 
-        let tens =  
+            |> BiQuinaryImpl.arabicToRoman
+        let tens =
             (arabic / 10 % 10) * 10
-            |> BiQuinaryImpl.arabicToRoman 
-        let units = 
-            arabic % 10 
-            |> BiQuinaryImpl.arabicToRoman 
+            |> BiQuinaryImpl.arabicToRoman
+        let units =
+            arabic % 10
+            |> BiQuinaryImpl.arabicToRoman
 
         let direct =
-            arabic 
-            |> BiQuinaryImpl.arabicToRoman 
+            arabic
+            |> BiQuinaryImpl.arabicToRoman
 
         // should be same
-        direct = thousands+hundreds+tens+units 
+        direct = thousands+hundreds+tens+units
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>recursive_prop_check
-Check.Quick recursive_prop  
+Check.Quick recursive_prop
 // Ok, passed 100 tests.
 //<
 
@@ -310,7 +310,7 @@ Check.Quick recursive_prop
 // Invariants
 //==============================
 
-//>matches 
+//>matches
 let matchesFor pattern input =
     System.Text.RegularExpressions.Regex.Matches(input,pattern).Count
 
@@ -322,7 +322,7 @@ let matchesFor pattern input =
 *)
 //<
 
-//>invariant_prop 
+//>invariant_prop
 let invariant_prop =
 
     let maxMatchesFor pattern n input =
@@ -330,7 +330,7 @@ let invariant_prop =
 
     // define an inner property
     let innerProp arabic =
-        let roman = arabic |> TallyImpl.arabicToRoman 
+        let roman = arabic |> TallyImpl.arabicToRoman
         (roman |> maxMatchesFor "I" 3)
         && (roman |> maxMatchesFor "V" 1)
         && (roman |> maxMatchesFor "X" 4)
@@ -338,7 +338,7 @@ let invariant_prop =
         && (roman |> maxMatchesFor "C" 4)
         // etc
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>invariant_prop_check
@@ -351,18 +351,18 @@ Check.Quick invariant_prop
 //==============================
 
 
-//>commutative_prop1 
-/// Encoding a number less than 400 and then replacing 
+//>commutative_prop1
+/// Encoding a number less than 400 and then replacing
 /// all the characters with the corresponding 10x higher one
 /// should be the same as encoding the 10x number directly.
 let commutative_prop1 =
-    
+
     // define an inner property
     let innerProp arabic =
         // take the part < 1000
         let arabic = arabic % 1000
         // encode it
-        let result1 = 
+        let result1 =
             (TallyImpl.arabicToRoman arabic)
               .Replace("C","M")
               .Replace("L","D")
@@ -370,30 +370,30 @@ let commutative_prop1 =
               .Replace("V","L")
               .Replace("I","X")
         // encode the 10x number
-        let result2 = 
+        let result2 =
             TallyImpl.arabicToRoman (arabic * 10)
 
         // should be same
-        result1 = result2 
+        result1 = result2
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>commutative_prop1_check
-Check.Quick commutative_prop1  
+Check.Quick commutative_prop1
 // Ok, passed 100 tests.
 //<
 
-//>commutative_prop2 
-/// Encoding a number and then replacing all the characters with 
-/// the corresponding 10x lower one should be the same as 
+//>commutative_prop2
+/// Encoding a number and then replacing all the characters with
+/// the corresponding 10x lower one should be the same as
 /// encoding the 10x lower number directly.
 let commutative_prop2 =
-    
+
     // define an inner property
     let innerProp arabic =
         // encode it
-        let result1 = 
+        let result1 =
             (TallyImpl.arabicToRoman arabic)
                 .Replace("I","")
                 .Replace("V","")
@@ -403,17 +403,17 @@ let commutative_prop2 =
                 .Replace("D","L")
                 .Replace("M","C")
         // encode the 10x lower number
-        let result2 = 
+        let result2 =
             TallyImpl.arabicToRoman (arabic / 10)
 
         // should be same
-        result1 = result2 
+        result1 = result2
 
-    Prop.forAll arabicNumber innerProp 
+    Prop.forAll arabicNumber innerProp
 //<
 
 //>commutative_prop2_check
-Check.Quick commutative_prop2  
+Check.Quick commutative_prop2
 // Falsifiable, after 9 tests
 // 9
 //<

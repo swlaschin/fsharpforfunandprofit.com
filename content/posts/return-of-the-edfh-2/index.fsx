@@ -1,259 +1,180 @@
-
-// ================================================
-// Part 1: The return of the EDFH
-// ================================================
-
-(*
-From https://twitter.com/allenholub/status/1357115515672555520
-
-Most candidates cannot solve this interview problem:
-
-* Input: "aaaabbbcca"
-* Output: [("a", 4), ("b", 3), ("c", 2), ("a", 1)]
-
-Write a function that converts the input to the output.
-
-I ask it in the screening interview and give it 25 minutes.
-
-How would you solve it?
-
-----
-
-def func(x):
-   return [("a", 4), ("b", 3), ("c", 2), ("a", 1)]
-
-*)
-
-/// EFDH implementation that meets the spec :)
-module EdfhImplementation_v1 =
-    //>efdh1
-    let func inputStr =
-        [('a',4); ('b',3); ('c',2); ('a',1)]
-    //<
-
-(*
-// test
-open EdfhImplementation_v1
-func "aaaabbbcca"    //=> [('a',4); ('b',3); ('c',2); ('a',1)]
-*)
-
-module EdfhImplementation_v2 =
-    //>efdh2
-    let rle inputStr =
-        match inputStr with
-        | "" ->
-            []
-        | "a" ->
-            [('a',1)]
-        | "aab" ->
-            [('a',2); ('b',1)]
-        | "aaaabbbcca" ->
-            [('a',4); ('b',3); ('c',2); ('a',1)]
-        // everything else
-        | _ -> []
-    //<
-(*
-// test
-open EdfhImplementation_v2
-//>efdh2_test
-rle "a"           //=> [('a',1);]
-rle "aab"         //=> [('a',2); ('b',1)]
-rle "aaaabbbcca"  //=> [('a',4); ('b',3); ('c',2); ('a',1)]
-//<
-*)
-
-// -----------------------------------------------
-// Using EDFH implementations to help think of properties
-// -----------------------------------------------=
-
-
-// EFDH implementation that returns empty list
-//>rle_empty
-let rle_empty (inputStr:string) : (char*int) list =
-    []
-//<
-
-(*
-// test
-rle_empty "aaaabbbcca"     //=> []
-*)
-
-// EFDH implementation that returns all the characters
-//>rle_allChars
-let rle_allChars inputStr =
-    inputStr
-    |> Seq.toList
-    |> List.map (fun ch -> (ch,1))
-//<
-
-(*
-// test
-//>rle_allChars_test
-rle_allChars ""      //=> []
-rle_allChars "a"     //=> [('a',1)]
-rle_allChars "abc"   //=> [('a',1); ('b',1); ('c',1)]
-rle_allChars "aab"   //=> [('a',1); ('a',1); ('b',1)]
-//<
-*)
-
-// EFDH implementation that returns all the distinct characters
-//>rle_distinct
-let rle_distinct inputStr =
-    inputStr
-    |> Seq.distinct
-    |> Seq.toList
-    |> List.map (fun ch -> (ch,1))
-//<
-
-(*
-// test
-//>rle_distinct_test
-rle_distinct "a"     //=> [('a',1)]
-rle_distinct "aab"   //=> [('a',1); ('b',1))]
-rle_distinct "aaabb" //=> [('a',1); ('b',1))]
-//<
-*)
-
-
-// EFDH implementation that returns all the characters AND the counts add up
-//>rle_groupedCount
-let rle_groupedCount inputStr =
-    inputStr
-    |> Seq.countBy id
-    |> Seq.toList
-//<
-
-(*
-// test
-//>rle_groupedCount_test
-rle_groupedCount "aab"         //=> [('a',2); ('b',1))]
-rle_groupedCount "aaabb"       //=> [('a',3); ('b',3))]
-rle_groupedCount "aaaabbbcca"  //=> [('a',5); ('b',3); ('c',2))]
-//<
-*)
-
-// What we wanted:
-//>rle_groupedCount_1
-[('a',4); ('b',3); ('c',2); ('a',1)]
-//<
-
-// What we got:
-//>rle_groupedCount_2
-[('a',5); ('b',3); ('c',2)]
-//    ^ wrong              ^ another entry needed here
-//<
-
-
-// ================================================
-// Part 2: Using FsCheck
-// ================================================
-
-// F# 5 will load a nuget package directly!
-//>nugetFsCheck
 #r "nuget:FsCheck"
-//<
 
 (*
-// If not using F# 5, use nuget to download it using "nuget install FsCheck" or similar
-// then add your nuget path here
+// If not using F# 5
+// 1) use "nuget install FsCheck" or similar to download
+// 2) include your nuget path here
 #I "/Users/%USER%/.nuget/packages/fscheck/2.14.4/lib/netstandard2.0"
+// 3) reference the DLL
 #r "FsCheck.dll"
 *)
 
-//>propUsesAllCharacters
-// An RLE implementation has this signature
-type RleImpl = string -> (char*int) list
-
-let propUsesAllCharacters (impl:RleImpl) inputStr =
-    let output = impl inputStr
-    let expected =
-        inputStr
-        |> Seq.distinct
-        |> Seq.toList
-    let actual =
-        output
-        |> Seq.map fst
-        |> Seq.distinct
-        |> Seq.toList
-    expected = actual
-//<
-
-// -----------------------------------------------
-// check the rle_empty implementation
-// -----------------------------------------------
-
-do
-    //>rle_empty_proptest
-    let impl = rle_empty
-    let prop = propUsesAllCharacters impl
-    FsCheck.Check.Quick prop
-    //<
-
-(*
-//>rle_empty_proptest_result
-Falsifiable, after 1 test (1 shrink) (StdGen (777291017, 296855223)):
-Original:
-"#"
-Shrunk:
-"a"
-//<
-*)
-
-// -----------------------------------------------
-// check the rle_allChars implementation
-// -----------------------------------------------
-
-do
-    //>rle_allChars_proptest
-    let impl = rle_allChars
-    let prop = propUsesAllCharacters impl
-    FsCheck.Check.Quick prop
-    //<
-
-(*
-//>rle_allChars_proptest_result
-Falsifiable, after 1 test (0 shrinks) (StdGen (153990125, 296855225)):
-Original:
-<null>
-with exception:
-System.ArgumentNullException: Value cannot be null.
-//<
-*)
+open System
+open FsCheck
 
 
-// lets fix up those implementations
-module EdfhImplementationsWithNullCheck =
+// ================================================
+// classifying the inputs
+// ================================================
 
-    //>rle_allChars_fixed
-    let rle_allChars inputStr =
-        if System.String.IsNullOrEmpty inputStr then
-            []
-        else
-            inputStr
-            |> Seq.toList
-            |> List.map (fun ch -> (ch,1))
-    //<
-
-    let rle_distinct inputStr =
-        if System.String.IsNullOrEmpty inputStr then
-            []
-        else
-            inputStr
-            |> Seq.distinct
-            |> Seq.toList
-            |> List.map (fun ch -> (ch,1))
-
-
-    let rle_countBy inputStr =
-        if System.String.IsNullOrEmpty inputStr then
-            []
-        else
+//>isInterestingString
+let isInterestingString inputStr =
+    if System.String.IsNullOrEmpty inputStr then
+        false
+    else
+        let distinctChars =
             inputStr
             |> Seq.countBy id
-            |> Seq.toList
+            |> Seq.length
+        distinctChars <= (inputStr.Length / 2)
+//<
 
-// corrected version of property that handles nulls
-//>propUsesAllCharacters_fixed
+//>isInterestingString_test
+isInterestingString ""        //=> false
+isInterestingString "aa"      //=> true
+isInterestingString "abc"     //=> false
+isInterestingString "aabbccc" //=> true
+isInterestingString "aabaaac" //=> true
+isInterestingString "abcabc"  //=> true (but no runs)
+//<
+
+//>propIsInterestingString
+let propIsInterestingString input =
+    let isInterestingInput = isInterestingString input
+
+    true // we don't care about the actual test
+    |> Prop.classify (not isInterestingInput) "not interesting"
+    |> Prop.classify isInterestingInput "interesting"
+//<
+
+//>propIsInterestingString_check
+FsCheck.Check.Quick propIsInterestingString
+// Ok, passed 100 tests (100% not interesting).
+//<
+
+// ================================================
+// generating interesting strings, version 1
+// ================================================
+
+//>arbTwoCharString
+let arbTwoCharString =
+    // helper function to create strings from a list of chars
+    let listToString chars =
+        chars |> List.toArray |> System.String
+
+    // random lists of 'a's and 'b's
+    let genListA = Gen.constant 'a' |> Gen.listOf
+    let genListB  = Gen.constant 'b' |> Gen.listOf
+
+    (genListA,genListB)
+    ||> Gen.map2 (fun listA listB -> listA @ listB )
+    |> Gen.map listToString
+    |> Arb.fromGen
+//<
+
+//>arbTwoCharString_sample
+arbTwoCharString.Generator |> Gen.sample 10 10
+(*
+[ "aaabbbbbbb"; "aaaaaaaaabb"; "b"; "abbbbbbbbbb";
+  "aaabbbb"; "bbbbbb"; "aaaaaaaabbbbbbb";
+  "a"; "aabbbb"; "aaaaabbbbbbbbb"]
+*)
+//<
+
+do
+    //>arbTwoCharString_propForAll_check
+    // make a new property from the old one, with input from our generator
+    let prop = Prop.forAll arbTwoCharString propIsInterestingString
+    // check it
+    Check.Quick prop
+
+    (*
+    Ok, passed 100 tests.
+    97% interesting.
+    3% not interesting.
+    *)
+    //<
+
+
+
+// ================================================
+// Generating interesting strings, part 2
+// ================================================
+
+//>flipRandomBits
+let flipRandomBits (str:string) = gen {
+
+    // convert input to a mutable array
+    let arr = str |> Seq.toArray
+
+    // get a random subset of pixels
+    let max = str.Length - 1
+    let! indices = Gen.subListOf [0..max]
+
+    // flip them
+    for i in indices do arr.[i] <- '1'
+
+    // convert back to a string
+    return (System.String arr)
+    }
+//<
+
+//>arbPixels
+let arbPixels =
+    gen {
+        // randomly choose a length up to 50,
+        // and set all pixels to 0
+        let! pixelCount = Gen.choose(1,50)
+        let image1 = String.replicate pixelCount "0"
+
+        // then flip some pixels
+        let! image2 = flipRandomBits image1
+
+        return image2
+        }
+    |> Arb.fromGen // create a new Arb from the generator
+//<
+
+//>arbPixels_test
+arbPixels.Generator |> Gen.sample 10 10
+(*
+"0001001000000000010010010000000";
+"00000000000000000000000000000000000000000000100";
+"0001111011111011110000011111";
+"0101101101111111011010";
+"10000010001011000001000001000001101000100100100000";
+"0000000000001000";
+"00010100000101000001010000100100001010000010100";
+"00000000000000000000000000000000000000000";
+"0000110101001010010";
+"11100000001100011000000000000000001"
+*)
+//<
+
+do
+    //>arbPixels_propForAll_check
+    // make a new property from the old one, with input from our generator
+    let prop = Prop.forAll arbPixels propIsInterestingString
+    // check it
+    Check.Quick prop
+
+    (*
+    Ok, passed 100 tests.
+    94% interesting.
+    6% not interesting.
+    *)
+    //<
+
+// ================================================
+// Properties to check: propUsesAllCharacters
+// ================================================
+
+//>RleImpl
+// A RLE implementation has this signature
+type RleImpl = string -> (char*int) list
+//<
+
+//>propUsesAllCharacters
 let propUsesAllCharacters (impl:RleImpl) inputStr =
     let output = impl inputStr
     let expected =
@@ -271,16 +192,10 @@ let propUsesAllCharacters (impl:RleImpl) inputStr =
     expected = actual
 //<
 
-// check the updated EdfhImplementation_allChars implementation
-do
-    let impl = EdfhImplementationsWithNullCheck.rle_allChars
-    let prop = propUsesAllCharacters impl
-    FsCheck.Check.Quick prop
 
-
-// -----------------------------------------------
-// Create the "Adjacent characters are not the same" property
-// -----------------------------------------------
+// ================================================
+// Properties to check: propAdjacentCharactersAreNotSame
+// ================================================
 
 //>removeDupAdjacentChars
 /// Given a list of elements, remove elements that have the
@@ -301,25 +216,22 @@ let removeDupAdjacentChars charList =
             else
                 stack
 
-    // loop over the input, generating a new list (in reverse order)
-    // then reverse the result
+    // Loop over the input, generating a list of non-dup items.
+    // These are in reverse order. so reverse the result
     charList |> List.fold folder [] |> List.rev
 //<
 
 (*
-// test
-removeDupAdjacentChars ['a';'a';'b';'b';'a']
-// => ['a'; 'b'; 'a']
+removeDupAdjacentChars ['a';'a';'b';'b';'a'] // => ['a'; 'b'; 'a']
 *)
 
+
 //>propAdjacentCharactersAreNotSame
-/// Property: "Adjacent characters in the output cannot be the same"
 let propAdjacentCharactersAreNotSame (impl:RleImpl) inputStr =
     let output = impl inputStr
     let actual =
         output
         |> Seq.map fst
-        |> Seq.distinct
         |> Seq.toList
     let expected =
         actual
@@ -327,344 +239,291 @@ let propAdjacentCharactersAreNotSame (impl:RleImpl) inputStr =
     expected = actual // should be the same
 //<
 
-open EdfhImplementationsWithNullCheck
+(*
+propAdjacentCharactersAreNotSame
+*)
 
-// check the updated EdfhImplementation_allChars implementation
-// This passes, but it shouldn't :(
-do
-    //>propAdjacentCharactersAreNotSame_rle_allChars
-    let impl = rle_allChars
-    let prop = propAdjacentCharactersAreNotSame impl
-    FsCheck.Check.Quick prop
-    //<
 
-// try again with more runs
-// This passes, but it shouldn't :(
-do
-    //>propAdjacentCharactersAreNotSame_rle_allChars_10000
-    let impl = rle_allChars
-    let prop = propAdjacentCharactersAreNotSame impl
-    let config = {FsCheck.Config.Default with MaxTest = 10000}
-    FsCheck.Check.One(config,prop)
-    //<
+// ================================================
+// Properties to check:
+//    The sum of the run lengths in the
+//    output must equal the length of the input
+// ================================================
 
-//>propAdjacentCharactersAreNotSame_debug
-let propAdjacentCharactersAreNotSame (impl:RleImpl) inputStr =
+//>propRunLengthSum_eq_inputLength
+let propRunLengthSum_eq_inputLength (impl:RleImpl) inputStr =
     let output = impl inputStr
-    printfn "%s" inputStr
-    // etc
+    let expected = inputStr.Length
+    let actual = output |> List.sumBy snd
+    expected = actual // should be the same
+//<
+
+// ================================================
+// Properties to check:
+//  If the input is reversed, the output must also be reversed
+// ================================================
+
+//>propInputReversed_implies_outputReversed
+/// Helper to reverse strings
+let strRev (str:string) =
+    str
+    |> Seq.rev
+    |> Seq.toArray
+    |> System.String
+
+let propInputReversed_implies_outputReversed (impl:RleImpl) inputStr =
+    // original
+    let output1 =
+        inputStr |> impl
+
+    // reversed
+    let output2 =
+        inputStr |> strRev |> impl
+
+    List.rev output1 = output2 // should be the same
+//<
+
+// ================================================
+// Combining all properties
+// ================================================
+
+//>propRle
+let propRle (impl:RleImpl) inputStr =
+  let prop1 =
+    propUsesAllCharacters impl inputStr
+    |@ "propUsesAllCharacters"
+  let prop2 =
+    propAdjacentCharactersAreNotSame impl inputStr
+    |@ "propAdjacentCharactersAreNotSame"
+  let prop3 =
+    propRunLengthSum_eq_inputLength impl inputStr
+    |@ "propRunLengthSum_eq_inputLength"
+  let prop4 =
+    propInputReversed_implies_outputReversed impl inputStr
+    |@ "propInputReversed_implies_outputReversed"
+
+  // combine them
+  prop1 .&. prop2 .&. prop3 .&. prop4
 //<
 
 
 // ================================================
-// Part 3: Generating and analyzing inputs
+// EDFH Implementations
 // ================================================
 
+//>rle_empty
+/// Return an empty list
+let rle_empty (inputStr:string) : (char*int) list =
+    []
+//<
 
+do
+    //>rle_empty_check
+    let prop = Prop.forAll arbPixels (propRle rle_empty)
+    // -- expect to fail on propUsesAllCharacters
 
+    // check it
+    Check.Quick prop
+    (*
+    Falsifiable, after 1 test (0 shrinks)
+    Label of failing property: propUsesAllCharacters
+    *)
+    //<
 
+// ----------------------------------------------
 
-
-/// correct implementation
-module GoodImplementation_v1 =
-
-    let rle inputStr =
-        let folder (currChar,currCount,prevCounts,firstTime) inputChar =
-            if firstTime then
-                // Start from scratch
-                (inputChar,1,[],false)
-            else if currChar <> inputChar then
-                // Start new sequence:
-                // prepend current count onto prev count
-                let prevCounts' = (currChar,currCount) :: prevCounts
-                (inputChar,1,prevCounts',firstTime)
-            else
-                // Same char, so just increment currCount
-                (currChar,currCount+1,prevCounts,firstTime)
-
-        let toFinalList (currChar,currCount,prevCounts,firstTime) =
-            if firstTime then
-                // input was empty
-                []
-            else
-                // prepend the final count onto prev count
-                (currChar,currCount) :: prevCounts
-                |> List.rev
-
-        // the initial char could be anything. I'm using NUL
-        let initialState = ('\000',0,[],true)
-
-        // process a string
+//>rle_allChars
+/// Return each char with count 1
+let rle_allChars inputStr =
+    // add null check
+    if System.String.IsNullOrEmpty inputStr then
+        []
+    else
         inputStr
+        |> Seq.toList
+        |> List.map (fun ch -> (ch,1))
+//<
+
+(*
+arbPixels.Generator
+|> Gen.sample 10 1
+|> List.map rle_allChars
+*)
+
+do
+    //>rle_allChars_check
+    let prop = Prop.forAll arbPixels (propRle rle_allChars)
+    // -- expect to fail on propAdjacentCharactersAreNotSame
+
+    // check it
+    Check.Quick prop
+    (*
+    Falsifiable, after 1 test (0 shrinks)
+    Label of failing property: propAdjacentCharactersAreNotSame
+    *)
+    //<
+
+// ----------------------------------------------
+
+
+//>rle_distinct
+let rle_distinct inputStr =
+    // add null check
+    if System.String.IsNullOrEmpty inputStr then
+        []
+    else
+        inputStr
+        |> Seq.distinct
+        |> Seq.toList
+        |> List.map (fun ch -> (ch,1))
+//<
+
+do
+    //>rle_distinct_check
+    let prop = Prop.forAll arbPixels (propRle rle_distinct)
+    // -- expect to fail on propRunLengthSum_eq_inputLength
+
+    // check it
+    Check.Quick prop
+    (*
+    Falsifiable, after 1 test (0 shrinks)
+    Label of failing property: propRunLengthSum_eq_inputLength
+    *)
+    //<
+
+// ----------------------------------------------
+
+//>rle_countBy
+let rle_countBy inputStr =
+    if System.String.IsNullOrEmpty inputStr then
+        []
+    else
+        inputStr
+        |> Seq.countBy id
+        |> Seq.toList
+//<
+
+do
+    //>rle_countBy_check
+    let prop = Prop.forAll arbPixels (propRle rle_countBy)
+    // -- expect to fail on propInputReversed_implies_outputReversed
+
+    // check it
+    Check.Quick prop
+    (*
+    Falsifiable, after 1 test (0 shrinks)
+    Label of failing property: propInputReversed_implies_outputReversed
+    *)
+    //<
+
+
+// ================================================
+// Correct implementation - recursive
+// ================================================
+
+//>rle_recursive
+let rle_recursive inputStr =
+
+    // inner recursive function
+    let rec loop input =
+        match input with
+        | [] -> []
+        | head::_ ->
+            [
+            // get a run
+            let runLength = List.length (List.takeWhile ((=) head) input)
+            // return it
+            yield head,runLength
+            // skip the run and repeat
+            yield! loop (List.skip runLength input)
+            ]
+
+    // main
+    inputStr |> Seq.toList |> loop
+//<
+
+(*
+//>rle_recursive_test
+rle_recursive "aaaabbbcca"
+// [('a', 4); ('b', 3); ('c', 2); ('a', 1)]
+//<
+*)
+
+
+do
+    //>rle_recursive_check
+    let prop = Prop.forAll arbPixels (propRle rle_recursive)
+    // -- expect it to not fail
+
+    // check it
+    Check.Quick prop
+    (*
+    Ok, passed 100 tests.
+    *)
+    //<
+
+
+// ================================================
+// Correct implementation: fold
+// ================================================
+
+//>rle_fold
+let rle_fold inputStr =
+    // This implementation iterates over the list
+    // using the 'folder' function and accumulates
+    // into 'acc'
+
+    // helper
+    let folder (currChar,currCount,acc) inputChar =
+        if currChar <> inputChar then
+            // push old run onto accumulator
+            let acc' = (currChar,currCount) :: acc
+            // start new run
+            (inputChar,1,acc')
+        else
+            // same run, so increment count
+            (currChar,currCount+1,acc)
+
+    // helper
+    let toFinalList (currChar,currCount,acc) =
+        // push final run onto acc
+        (currChar,currCount) :: acc
+        |> List.rev
+
+    // main
+    if System.String.IsNullOrEmpty inputStr then
+        []
+    else
+        let head = inputStr.[0]
+        let tail = inputStr.[1..inputStr.Length-1]
+        let initialState = (head,1,[])
+        tail
         |> Seq.fold folder initialState
         |> toFinalList
+//<
 
 (*
-// test
-GoodImplementation_v1.rle "aaaabbbcca"
-// [('a', 4); ('b', 3); ('c', 2); ('a', 1)]
+//>rle_fold_test
+rle_fold ""    //=> []
+rle_fold "a"   //=> [('a',1)]
+rle_fold "aa"  //=> [('a',2)]
+rle_fold "ab"  //=> [('a',1); ('b',1)]
+rle_fold "aab" //=> [('a',2); ('b',1)]
+rle_fold "abb" //=> [('a',1); ('b',2)]
+rle_fold "aaaabbbcca"
+          //=> [('a',4); ('b',3); ('c',2); ('a',1)]
+//<
 *)
 
-/// another correct implementation with the special case
-/// empty strings removed from "folder" function
-module GoodImplementation_v2 =
+do
+    //>rle_fold_check
+    let prop = Prop.forAll arbPixels (propRle rle_fold)
+    // -- expect it to not fail
 
-    // correct implementation that meets the spec :)
-    let rle inputStr =
+    // check it
+    Check.Quick prop
+    (*
+    Ok, passed 100 tests.
+    *)
+    //<
 
-        let folder (currChar,currCount,prevCounts) inputChar =
-            if currChar <> inputChar then
-                // start new sequence
-                let prevCounts' = (currChar,currCount) :: prevCounts
-                (inputChar,1,prevCounts')
-            else
-                // same char, so increment
-                (currChar,currCount+1,prevCounts)
-
-        let toFinalList (currChar,currCount,prevCounts) =
-            (currChar,currCount) :: prevCounts
-            |> List.rev
-
-        // process a string
-        if System.String.IsNullOrEmpty inputStr then
-            []
-        else
-            let head = inputStr.[0]
-            let tail = inputStr.[1..inputStr.Length-1]
-            let initialState = (head,1,[])
-            tail
-            |> Seq.fold folder initialState
-            |> toFinalList
-
-(*
-// test
-GoodImplementation_v2.rle "aaaabbbcca"
-// [('a', 4); ('b', 3); ('c', 2); ('a', 1)]
-
-GoodImplementation_v2.rle ""
-GoodImplementation_v2.rle "a"
-GoodImplementation_v2.rle "aa"
-GoodImplementation_v2.rle "ab"
-GoodImplementation_v2.rle "aab"
-GoodImplementation_v2.rle "abb"
-*)
-
-module GoodImplementation_v3 =
-
-    let rle inputStr =
-        let rec loop input =
-            match input with
-            | [] -> []
-            | head::_ ->
-                [
-                let runLength = List.length (List.takeWhile ((=) head) input)
-                yield head,runLength
-                yield! loop (List.skip runLength input)
-                ]
-        inputStr |> Seq.toList |> loop
-
-(*
-// test
-GoodImplementation_v3.rle "aaaabbbcca"
-// [('a', 4); ('b', 3); ('c', 2); ('a', 1)]
-*)
-
-
-let removeAdjacent1 charList =
-    let folder chars newChar =
-        match chars with
-        | [] -> [newChar]
-        | head::tail ->
-            if head <> newChar then
-                newChar::chars
-            else
-                chars
-    charList |> List.fold folder [] |> List.rev
-
-let removeAdjacent pairList =
-    let folder pairs newPair =
-        match pairs with
-        | [] -> [newPair]
-        | head::tail ->
-            if fst head <> fst newPair then
-                newPair::pairs
-            else
-                pairs
-    pairList |> List.fold folder [] |> List.rev
-
-// test
-removeAdjacent1 (Seq.toList "aabbcdeea")
-removeAdjacent ['C',1; 'C',2]
-
-// property based test that tries to reproduce the expected output
-open FsCheck
-
-let isInteresting (charAndLens:(char * PositiveInt) list) =
-    let isLongList = charAndLens.Length > 3
-    let hasLongRuns =
-        (charAndLens
-        |> List.filter (fun (_,PositiveInt run) -> run > 2)
-        |> List.length)
-         > 2
-    isLongList && hasLongRuns
-
-let prop1 (charAndLens:(char * PositiveInt) list) =
-    let expected =
-        charAndLens
-        |> List.map (fun (ch,PositiveInt len) -> (ch,len))
-        |> removeAdjacent
-        |> List.filter (fun pair -> fst pair <> '\000')
-
-    let inputStr =
-        expected
-        |> List.map (fun (ch,len) -> Array.replicate len ch |> System.String)
-        |> String.concat ""
-    let actual = Implementation_v2.rle inputStr
-
-    (actual = expected)
-    |> Prop.ofTestable
-    |> Prop.classify (charAndLens.Length = 0) "0-length list"
-    |> Prop.classify (charAndLens.Length = 1) "1-length list"
-    |> Prop.classify (isInteresting charAndLens) "interesting list"
-
-FsCheck.Check.Quick prop1
-(*
-Ok, passed 100 tests.
-11% interesting.
-8% 1.
-7% 0.
-*)
-
-// FsCheck provides several ways to observe the distribution of test data.
-// https://fscheck.github.io/FsCheck/Properties.html
-
-// ==================================
-
-type RleList = RleList of (char * PositiveInt) list
-
-let rleListToString (RleList pairs) =
-    let strFromChar (ch,PositiveInt len) =
-        Array.replicate len ch |> System.String
-    pairs |> List.map  strFromChar |> String.concat ""
-
-let rleListStats (RleList pairs) =
-    pairs
-    |> List.countBy snd
-    //|> List.map snd
-    |> List.sort
-    |> List.map (fun (pi,count) -> sprintf "%i runs %A long" count pi)
-
-
-let genRleListSimple =
-    Gen.zip Arb.generate<char> Arb.generate<PositiveInt>
-    |> Gen.nonEmptyListOf
-    |> Gen.map RleList
-
-let genRleListComplex =
-    let runSize = Gen.choose(2,5) |> Gen.map PositiveInt
-    Gen.zip Arb.generate<char> runSize
-    |> Gen.nonEmptyListOf
-    |> Gen.map RleList
-
-
-type MyGenerators1 =
-  static member RleList() =
-      {new Arbitrary<RleList>() with
-          //override x.Generator = genRleListSimple
-          override x.Generator = genRleListComplex
-          override x.Shrinker t = Seq.empty }
-
-Arb.register<MyGenerators1>()
-
-Arb.generate<RleList>
-|> Gen.sample 10 1
-
-Arb.generate<RleList>
-|> Gen.map rleListStats
-|> Gen.sample 10 10
-
-Arb.generate<RleList>
-|> Gen.map (fun (RleList pairs) -> isInteresting pairs)
-|> Gen.sample 50 100
-|> List.countBy id
-
-let prop1a (RleList charAndLens) =
-    prop1 charAndLens
-
-FsCheck.Check.Quick prop1a
-(*
-Ok, passed 100 tests.
-40% interesting.
-1% 1.
-*)
-
-
-// =====================================
-
-
-type RleString = RleString of string
-
-let flipRandomBits (str:string) = gen {
-    let max = str.Length - 1
-    let! indices = Gen.subListOf [0..max]
-    let arr = str |> Seq.toArray
-    for i in indices do
-       arr.[i] <- '1'
-    return (System.String arr)
-    }
-
-
-let genRleString =
-    gen {
-        let! max = Gen.choose(1,100)
-        let str = String.replicate max "0"
-        let! str' = flipRandomBits str
-        return (RleString str')
-    }
-
-
-type MyGenerators2 =
-  static member RleString() =
-    let shrink (RleString str) = Arb.shrink str |> Seq.map RleString
-    {new Arbitrary<RleString>() with
-          override x.Generator = genRleString
-          override x.Shrinker t = shrink t  }
-
-Arb.register<MyGenerators2>()
-
-Arb.generate<RleString>
-|> Gen.sample 10 1
-|> List.map (fun (RleString str) -> Implementation_v2.rle str)
-
-
-let prop_all_chars impl (RleString inputStr) =
-    let expected = inputStr |> Set.ofSeq
-    let actual =
-        inputStr
-        |> impl
-        |> List.map fst
-        |> Set.ofSeq
-    actual = expected
-
-let prop_sameCount impl (RleString inputStr) =
-    let expected = inputStr |> String.length
-    let actual =
-        inputStr
-        |> impl
-        |> List.sumBy snd
-    actual = expected
-
-let prop_reverse impl (RleString inputStr) =
-    let revAfter = inputStr |> impl |> List.rev
-    let revBefore = inputStr |> Seq.toArray |> Array.rev |> System.String |> impl
-    revAfter = revBefore
-
-FsCheck.Check.Quick (prop_all_chars Implementation_v1.rle)
-
-FsCheck.Check.Quick (prop_all_chars Implementation_v1a.rle)
-FsCheck.Check.Quick (prop_sameCount Implementation_v1a.rle)
-FsCheck.Check.Quick (prop_reverse Implementation_v1a.rle)
-
-FsCheck.Check.Quick (prop_all_chars Implementation_v2.rle)
-FsCheck.Check.Quick (prop_sameCount Implementation_v2.rle)
-FsCheck.Check.Quick (prop_reverse Implementation_v2.rle)

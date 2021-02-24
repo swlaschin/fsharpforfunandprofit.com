@@ -145,8 +145,8 @@ So that covers some of the common ways of thinking about properties.
 
 Here are the seven ways again, along with a more formal term, if available.
 
-* "Different paths, same destination" -- a diagram that commutes 
-* "There and back again" -- an invertable function
+* "Different paths, same destination" -- a diagram that commutes
+* "There and back again" -- an invertible function
 * "Some things never change" -- an invariant under transformation
 * "The more things change, the more they stay the same" -- idempotence
 * "Solve a smaller problem first" -- structural induction

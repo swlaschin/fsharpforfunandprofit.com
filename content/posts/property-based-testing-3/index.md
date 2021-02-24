@@ -12,15 +12,15 @@ seriesOrder: 4
 
 In [the previous post](/posts/property-based-testing-2/), we looked at some common patterns for finding properties. In this post, we'll apply these approaches to see if we can come up with properties for some simple functions such as "sort a list" and "reverse a list". As we work, we'll always being thinking about the Enterprise Developer From Hell ([see earlier post](/posts/property-based-testing/)) and how the EDFH could trick our tests into passing.
 
-* ["Different paths, same destination"](#path_sort) applied to sorting a list 
+* ["Different paths, same destination"](#path_sort) applied to sorting a list
 * ["Different paths, same destination"](#path_rev) applied to reversing a list
 * ["There and back again"](#inverseRev) applied to reversing a list
 * ["Hard to prove, easy to verify"](#hardSplit) applied to splitting a string
-* ["Hard to prove, easy to verify"](#hardList) applied to sorting a list 
+* ["Hard to prove, easy to verify"](#hardList) applied to sorting a list
 * ["Some things never change"](#invariantSort). Invariants applied to sorting a list
-* ["Solving a smaller problem"](#recurse) applied to sorting a list 
-* ["The more things change, the more they stay the same"](#idempotent) applied to sorting a list 
-* ["Two heads are better than one"](#oracle) applied to sorting a list 
+* ["Solving a smaller problem"](#recurse) applied to sorting a list
+* ["The more things change, the more they stay the same"](#idempotent) applied to sorting a list
+* ["Two heads are better than one"](#oracle) applied to sorting a list
 
 
 ## "Different paths, same destination" {#path_sort}
@@ -87,9 +87,9 @@ Here's the code:
 let minValueThenSort_eq_sortThenMinValue sortFn aList =
   let minValue = Int32.MinValue
 
-  let appendThenSort = 
+  let appendThenSort =
     (aList @ [minValue]) |> sortFn
-  let sortThenPrepend = 
+  let sortThenPrepend =
     minValue :: (aList |> sortFn)
   appendThenSort = sortThenPrepend
 
@@ -122,13 +122,13 @@ let edfhSort2 aList =
   | _ ->
     let head, tail = List.splitAt (aList.Length-1) aList
     let lastElem = tail.[0]
-    // if the last element is Int32.MinValue, 
+    // if the last element is Int32.MinValue,
     // then move it to front
     if (lastElem = Int32.MinValue) then
       lastElem :: head
     else
       // otherwise, do not sort the list!
-      aList 
+      aList
 ```
 
 And when we check it...
@@ -153,9 +153,9 @@ then on the path that negates *after* the sort, add an extra reverse as well.
 let negateThenSort_eq_sortThenNegateThenReverse sortFn aList =
   let negate x = x * -1
 
-  let negateThenSort = 
+  let negateThenSort =
     aList |> List.map negate |> sortFn
-  let sortThenNegateAndReverse = 
+  let sortThenNegateAndReverse =
     aList |> sortFn |> List.map negate |> List.rev
   negateThenSort = sortThenNegateAndReverse
 ```
@@ -194,9 +194,9 @@ Here's the code for the property. Again, I've added an extra parameter `revFn` s
 
 ```fsharp {src=#path_rev1}
 let appendThenReverse_eq_reverseThenPrepend revFn anyValue aList =
-  let appendThenReverse = 
+  let appendThenReverse =
     (aList @ [anyValue]) |> revFn
-  let reverseThenPrepend = 
+  let reverseThenPrepend =
     anyValue :: (aList |> revFn)
   appendThenReverse = reverseThenPrepend
 ```
@@ -283,7 +283,7 @@ If we are looking for the *shortest* path, we might not be able to check it, but
 
 This principle can be applied quite generally.
 
-For example, let's say that we want to check whether a `stringSplit` function is working. 
+For example, let's say that we want to check whether a `stringSplit` function is working.
 
 ```fsharp {src=#hardConcat1}
 let stringSplit (str:string) : string list = ...
@@ -296,12 +296,12 @@ We don't have to write a tokenizer -- all we have to do is ensure that the token
 Here's the core code from that property:
 
 ```fsharp {src=#hardConcat2}
-let tokens = stringSplit inputString 
+let tokens = stringSplit inputString
 
 // build a string from the tokens
 let recombinedString = tokens |> String.concat ","
 
-// compare with the original 
+// compare with the original
 inputString = recombinedString
 ```
 
@@ -318,8 +318,8 @@ let concatElementsOfSplitString_eq_originalString (strings:string list) =
   // make a string
   let inputString = strings |> String.concat ","
 
-  // use the 'split' function on the inputString 
-  let tokens = stringSplit inputString 
+  // use the 'split' function on the inputString
+  let tokens = stringSplit inputString
 
   // build a string from the tokens
   let recombinedString = tokens |> String.concat ","
@@ -362,11 +362,11 @@ Check.Quick (adjacentPairsAreOrdered goodSort)
 But something funny happens when we execute the code above. We get an error!
 
 ```text {src=#hardList1_out}
-System.Exception: The type System.IComparable is not 
+System.Exception: The type System.IComparable is not
   handled automatically by FsCheck
 ```
 
-The exception means that FsCheck is trying to generate a random list, but all it knows is that the elements must be `IComparable`. Now `IComparable<int>` or `IComparable<string>` are concrete types, but `IComparable` on its own is not, and so FsCheck throws an error. 
+The exception means that FsCheck is trying to generate a random list, but all it knows is that the elements must be `IComparable`. Now `IComparable<int>` or `IComparable<string>` are concrete types, but `IComparable` on its own is not, and so FsCheck throws an error.
 
 How can we prevent this from happening? The solution is to specify a particular concrete type for the property, such as `int list`, like this:
 
@@ -456,9 +456,9 @@ Unfortunately, the EDFH is not defeated and can come up with another compliant i
 // EDFH implementation has same length as original
 let edfhSort2 aList =
   match aList with
-  | [] -> 
+  | [] ->
     []
-  | head::_ -> 
+  | head::_ ->
     List.replicate (List.length aList) head
 
 // for example
@@ -509,14 +509,14 @@ Let's head over to StackOverflow and ~~steal~~ [borrow an implementation](https:
 /// given aList and anElement to insert,
 /// generate all possible lists with anElement
 /// inserted into aList
-let rec distribute e list = 
-  match list with 
+let rec distribute e list =
+  match list with
   | [] -> [[e]]
   | x::xs' as xs -> (e::xs)::[for xs in distribute e xs' -> x::xs]
 
 /// Given a list, return all permutations of it
-let rec permute list = 
-  match list with 
+let rec permute list =
+  match list with
   | [] -> [[]]
   | e::xs -> List.collect (distribute e) (permute xs)
 ```
@@ -525,7 +525,7 @@ Some quick interactive tests confirm that it works as expected:
 
 ```fsharp {src=#permutations_out}
 permute [1;2;3] |> Seq.toList
-//  [[1; 2; 3]; [2; 1; 3]; [2; 3; 1]; 
+//  [[1; 2; 3]; [2; 1; 3]; [2; 3; 1];
 //   [1; 3; 2]; [3; 1; 2]; [3; 2; 1]]
 
 permute [1;2;3;4] |> Seq.toList
@@ -593,7 +593,7 @@ but it doesn't rely on an existing implementation of `sort`.
 /// return a new list without the specified element.
 /// If not found, return None
 
-/// Given an element and a list, return a new list 
+/// Given an element and a list, return a new list
 /// without the first instance of the specified element.
 /// If element is not found, return None
 let withoutElement x aList =
@@ -603,7 +603,7 @@ let withoutElement x aList =
     else
       (elem::acc), found // accumulate
 
-  let (filteredList,found) = 
+  let (filteredList,found) =
     aList |> List.fold folder ([],false)
   if found then
     filteredList |> List.rev |> Some
@@ -633,7 +633,7 @@ What's also great is that the malicious EDFH implementations fail to satisfy thi
 
 ```fsharp {src=#sortinvariant2_check2}
 Check.Quick (sortedListIsPermutationOfOriginal edfhSort)
-// Falsifiable, after 2 tests (4 shrinks) 
+// Falsifiable, after 2 tests (4 shrinks)
 // [0]
 
 Check.Quick (sortedListIsPermutationOfOriginal edfhSort2)
@@ -641,7 +641,7 @@ Check.Quick (sortedListIsPermutationOfOriginal edfhSort2)
 // [1; 0]
 ```
 
-In fact, these two properties, "adjacent pairs from a list should be ordered" and "a sorted list is a permultation of the original list" should indeed ensure that any implementation of `sort` is correct.
+In fact, these two properties, "adjacent pairs from a list should be ordered" and "a sorted list is a permutation of the original list" should indeed ensure that any implementation of `sort` is correct.
 
 ## Sidebar: Combining properties
 
@@ -686,10 +686,10 @@ What we would like to do is add a "label" to each property so that we can tell t
 
 ```fsharp {src=#combine4}
 let listIsSorted_labelled sortFn (aList:int list) =
-  let prop1 = 
+  let prop1 =
     adjacentPairsAreOrdered sortFn aList
     |@ "adjacent pairs from a list are ordered"
-  let prop2 = 
+  let prop2 =
     sortedListIsPermutationOfOriginal sortFn aList
     |@ "sorted list is a permutation of original list"
   prop1 .&. prop2
@@ -700,7 +700,7 @@ And now, when we test with the bad sort, we get a message `Label of failing prop
 ```fsharp {src=#combine5}
 Check.Quick (listIsSorted_labelled badSort )
 //  Falsifiable, after 1 test (2 shrinks)
-//  Label of failing property: 
+//  Label of failing property:
 //     sorted list is a permutation of original list
 //  [0]
 ```
@@ -817,14 +817,14 @@ type NonIdempotentService() =
     data
 ```
 
-A property to check whether a function is idemponent might look like this:
+A property to check whether a function is idempotent might look like this:
 
 ```fsharp {src=#idem_service_prop}
 let idempotentServiceGivesSameResult get =
   // first GET
   let get1 = get()
 
-  // second GET 
+  // second GET
   let get2 = get()
   get1 = get2
 ```
@@ -849,7 +849,7 @@ Check.Quick (idempotentServiceGivesSameResult get)
 // Falsifiable, after 1 test
 ```
 
-This non-idempotent service was trivial. In a more realistic example, the internal state might not be changed by the query, but by some other operation. But mutable state and concurrency do not play well together, and in this scenario it would be easy for the state to change (because some other process alters it) between calls to the same query. 
+This non-idempotent service was trivial. In a more realistic example, the internal state might not be changed by the query, but by some other operation. But mutable state and concurrency do not play well together, and in this scenario it would be easy for the state to change (because some other process alters it) between calls to the same query.
 
 
 There are a number of ways to solve this problem. If you are building a REST GET handler or a database query service, and you want idempotence, you should consider using techniques such as etags, "as-of" times, date ranges, etc. Design techniques that make this easier include event sourcing, temporal databases, and so on. If you need tips on how to do this, searching for [idempotency patterns](http://blog.jonathanoliver.com/idempotency-patterns/) will turn up some good results.

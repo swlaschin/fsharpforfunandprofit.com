@@ -342,6 +342,7 @@ let removeFragmentsFromFile (context:string) (source:FileInfo) (target:FileInfo)
 
     // write body
     File.ReadAllLines(source.FullName)
+    |> Array.map (fun s -> s.TrimEnd()) // remove trailing blanks
     |> Array.iter (copyNonFragment textWriter)
 
 (*

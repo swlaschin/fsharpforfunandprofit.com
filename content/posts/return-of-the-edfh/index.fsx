@@ -28,6 +28,7 @@ def func(x):
 module EdfhImplementation_v1 =
     //>efdh1
     let func inputStr =
+        // hard code the answer
         [('a',4); ('b',3); ('c',2); ('a',1)]
     //<
 
@@ -100,7 +101,7 @@ rle_allChars "aab"   //=> [('a',1); ('a',1); ('b',1)]
 //>rle_distinct
 let rle_distinct inputStr =
     inputStr
-    |> Seq.distinct
+    |> Seq.distinct // added
     |> Seq.toList
     |> List.map (fun ch -> (ch,1))
 //<
@@ -140,7 +141,7 @@ rle_groupedCount "aaaabbbcca"  //=> [('a',5); ('b',3); ('c',2))]
 // What we got:
 //>rle_groupedCount_2
 [('a',5); ('b',3); ('c',2)]
-//    ^ wrong              ^ another entry needed here
+//    ^ wrong number      ^ another entry needed here
 //<
 
 
@@ -231,6 +232,7 @@ module ImplementationsWithNullCheck =
 
     //>rle_allChars_fixed
     let rle_allChars inputStr =
+        // add null check
         if System.String.IsNullOrEmpty inputStr then
             []
         else
@@ -240,6 +242,7 @@ module ImplementationsWithNullCheck =
     //<
 
     let rle_distinct inputStr =
+        // add null check
         if System.String.IsNullOrEmpty inputStr then
             []
         else
@@ -308,8 +311,8 @@ let removeDupAdjacentChars charList =
             else
                 stack
 
-    // loop over the input, generating a new list (in reverse order)
-    // then reverse the result
+    // Loop over the input, generating a list of non-dup items.
+    // These are in reverse order. so reverse the result
     charList |> List.fold folder [] |> List.rev
 //<
 
@@ -326,7 +329,6 @@ let propAdjacentCharactersAreNotSame (impl:RleImpl) inputStr =
     let actual =
         output
         |> Seq.map fst
-        |> Seq.distinct
         |> Seq.toList
     let expected =
         actual
@@ -363,7 +365,6 @@ module Debug =
         let actual =
             output
             |> Seq.map fst
-            |> Seq.distinct
             |> Seq.toList
         let expected =
             actual

@@ -27,7 +27,7 @@ type Dollar(amount:int) =
   static member Create amount  =
     Dollar amount
   /// field
-  member val Amount = 
+  member val Amount =
     amount with get, set
   /// Add to the amount
   member this.Add add =
@@ -88,7 +88,7 @@ let setIsIdempotent value =
   let afterSecondSet = obj.Amount
   afterFirstSet = afterSecondSet
 
-Check.Quick setIsIdempotent 
+Check.Quick setIsIdempotent
 // Ok, passed 100 tests.
 ```
 
@@ -108,7 +108,7 @@ Here's the immutable version:
 type Dollar(amount:int) =
   static member Create amount  =
     Dollar amount
-  member val Amount = 
+  member val Amount =
     amount
   member this.Add add =
     Dollar (amount + add)
@@ -168,7 +168,7 @@ let dollarsWithSameAmountAreEqual amount =
   let d2 = Dollar.Create amount
   d1 = d2
 
-Check.Quick dollarsWithSameAmountAreEqual 
+Check.Quick dollarsWithSameAmountAreEqual
 // Falsifiable, after 1 test
 ```
 

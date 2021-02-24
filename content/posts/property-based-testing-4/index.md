@@ -59,7 +59,7 @@ TallyImpl.arabicToRoman 1493 //=> "MCDXCIII"
 
 ### Bi-quinary implementation
 
-Another way to think about Roman numerals is to imagine an abacus. Each wire has four "unit" beads and one "five" bead. 
+Another way to think about Roman numerals is to imagine an abacus. Each wire has four "unit" beads and one "five" bead.
 
 ![](./RomanAbacusRecon.jpg)
 
@@ -130,8 +130,8 @@ We saw in [an earlier post](/posts/property-based-testing-1/#adding-pre-conditio
 First we'll define a integer generator (an "arbitrary") called `arabicNumber` which is filtered as we want (if you recall, an "arbitrary" is a combination of a generator algorithm and a shrinker algorithm, as described [earlier](/posts/property-based-testing-1/#understanding-fscheck-generators)). We'll only include numbers from 1 to 4000.
 
 ```fsharp {src=#oracle_input}
-let arabicNumber = 
-  Arb.Default.Int32() 
+let arabicNumber =
+  Arb.Default.Int32()
   |> Arb.filter (fun i -> i > 0 && i <= 4000)
 ```
 
@@ -145,7 +145,7 @@ let biquinary_eq_tally_withinRange =
 Now finally, we can do the cross-check test again:
 
 ```fsharp {src=#oracle_prop2_check}
-Check.Quick biquinary_eq_tally_withinRange 
+Check.Quick biquinary_eq_tally_withinRange
 // Ok, passed 100 tests.
 ```
 
@@ -158,7 +158,7 @@ How many roman numbers do we have in total? 4000 we said. So why not test them a
 Let's run all 4000 numbers through our property, and filter out the ones that succeed, leaving only the ones that fail, like this:
 
 ```fsharp {src=#oracle_4000_check}
-[1..4000] |> List.choose (fun i -> 
+[1..4000] |> List.choose (fun i ->
   if biquinary_eq_tally i then None else Some i
   )
 // output => [4000]
@@ -201,7 +201,7 @@ This little hiccup is a reminder then, that property-based checking is not a gol
 
 ```fsharp {src=#oracle_boundary_check}
 for i in [3999..4001] do
-  if not (biquinary_eq_tally i) then 
+  if not (biquinary_eq_tally i) then
     failwithf "test failed for %i" i
 ```
 
@@ -235,59 +235,59 @@ and here's some ad-hoc tests
 TallyDecode.romanToArabic "I"       //=> 1
 TallyDecode.romanToArabic "IX"      //=> 9
 TallyDecode.romanToArabic "XXIV"    //=> 24
-TallyDecode.romanToArabic "CMXCIX"  //=> 999  
-TallyDecode.romanToArabic "MCDXCIII"//=> 1493 
+TallyDecode.romanToArabic "CMXCIX"  //=> 999
+TallyDecode.romanToArabic "MCDXCIII"//=> 1493
 ```
 
 With the inverse function now available, we can write a property based test. Note that we're using the same `arabicNumber` generator to limit the inputs:
 
 ```fsharp {src=#inverse_prop}
-/// encoding then decoding should return 
+/// encoding then decoding should return
 /// the original number
 let encodeThenDecode_eq_original =
 
   // define an inner property
   let innerProp arabic1 =
-    let arabic2 = 
+    let arabic2 =
       arabic1
       |> TallyImpl.arabicToRoman // encode
       |> TallyDecode.romanToArabic // decode
     // should be same
-    arabic1 = arabic2 
+    arabic1 = arabic2
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 And if we run the test, it passes.
 
 ```fsharp {src=#inverse_prop_check}
-Check.Quick encodeThenDecode_eq_original  
+Check.Quick encodeThenDecode_eq_original
 // Ok, passed 100 tests.
 ```
 
 We can also check the biquinary *encoding* against the tally-based *decoding*
 
 ```fsharp {src=#inverse_prop2}
-/// encoding then decoding should return 
+/// encoding then decoding should return
 /// the original number
 let encodeThenDecode_eq_original2 =
 
   // define an inner property
   let innerProp arabic1 =
-    let arabic2 = 
+    let arabic2 =
       arabic1
       |> BiQuinaryImpl.arabicToRoman // encode
       |> TallyDecode.romanToArabic // decode
     // should be same
-    arabic1 = arabic2 
+    arabic1 = arabic2
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 And if we run the test, it passes again.
 
 ```fsharp {src=#inverse_prop2_check}
-Check.Quick encodeThenDecode_eq_original2  
+Check.Quick encodeThenDecode_eq_original2
 // Ok, passed 100 tests.
 ```
 
@@ -295,7 +295,7 @@ Check.Quick encodeThenDecode_eq_original2
 
 Yet another way of checking that the implementation is correct is to break it down into smaller components and check that the smaller components are correct.
 
-For example, if the we break the arabic number into 1000s, 100s, 10s, and units, and then encode them separately, the concatenation of these components should be the same as the original arabic number encoded directly.
+For example, if the we break the Arabic number into 1000s, 100s, 10s, and units, and then encode them separately, the concatenation of these components should be the same as the original Arabic number encoded directly.
 
 
 ```fsharp {src=#recursive_prop}
@@ -303,34 +303,34 @@ let recursive_prop =
 
   // define an inner property
   let innerProp arabic =
-    let thousands = 
+    let thousands =
       (arabic / 1000 % 10) * 1000
-      |> BiQuinaryImpl.arabicToRoman 
-    let hundreds =  
+      |> BiQuinaryImpl.arabicToRoman
+    let hundreds =
       (arabic / 100 % 10) * 100
-      |> BiQuinaryImpl.arabicToRoman 
-    let tens =  
+      |> BiQuinaryImpl.arabicToRoman
+    let tens =
       (arabic / 10 % 10) * 10
-      |> BiQuinaryImpl.arabicToRoman 
-    let units = 
-      arabic % 10 
-      |> BiQuinaryImpl.arabicToRoman 
+      |> BiQuinaryImpl.arabicToRoman
+    let units =
+      arabic % 10
+      |> BiQuinaryImpl.arabicToRoman
 
     let direct =
-      arabic 
-      |> BiQuinaryImpl.arabicToRoman 
+      arabic
+      |> BiQuinaryImpl.arabicToRoman
 
     // should be same
-    direct = thousands+hundreds+tens+units 
+    direct = thousands+hundreds+tens+units
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 And, it works great!
 
 
 ```fsharp {src=#recursive_prop_check}
-Check.Quick recursive_prop  
+Check.Quick recursive_prop
 // Ok, passed 100 tests.
 ```
 
@@ -338,7 +338,7 @@ Check.Quick recursive_prop
 
 As we mentioned last time, invariants are often a great way to beat the [EDFH](../property-based-testing). On their own, they can not prove that an implementation is correct, but in conjunction with other properties they are a very powerful tool.
 
-So, what invariants are there for a roman numeral encoding? 
+So, what invariants are there for a roman numeral encoding?
 
 Well, there are no obvious things which are preserved between the input and the output of the encoding, such as the length of a string, or the contents of a collection.
 
@@ -368,7 +368,7 @@ let invariant_prop =
 
   // define an inner property
   let innerProp arabic =
-    let roman = arabic |> TallyImpl.arabicToRoman 
+    let roman = arabic |> TallyImpl.arabicToRoman
     (roman |> maxMatchesFor "I" 3)
     && (roman |> maxMatchesFor "V" 1)
     && (roman |> maxMatchesFor "X" 4)
@@ -376,7 +376,7 @@ let invariant_prop =
     && (roman |> maxMatchesFor "C" 4)
     // etc
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 And if we test it, it works as expected.
@@ -395,21 +395,21 @@ How far can we go with these patterns? We haven't done the commutive diagram app
 
 Yes, we can. It's not really the most appropriate way to test this, but it's a fun game to see what you can come up with!
 
-How about this for the two paths: 
+How about this for the two paths:
 
 * Path 1
   * given a number less than 400
   * encode it first
   * then replace "C" with "M", "X" with "C", and so on, to create a new roman numeral.
 * Path 2
-  * given the same number 
+  * given the same number
   * multiply it by 10 first
   * then encode it
 
 The two paths should give the same result.
 
 ```fsharp {src=#commutative_prop1}
-/// Encoding a number less than 400 and then replacing 
+/// Encoding a number less than 400 and then replacing
 /// all the characters with the corresponding 10x higher one
 /// should be the same as encoding the 10x number directly.
 let commutative_prop1 =
@@ -419,7 +419,7 @@ let commutative_prop1 =
     // take the part < 1000
     let arabic = arabic % 1000
     // encode it
-    let result1 = 
+    let result1 =
       (TallyImpl.arabicToRoman arabic)
         .Replace("C","M")
         .Replace("L","D")
@@ -427,43 +427,43 @@ let commutative_prop1 =
         .Replace("V","L")
         .Replace("I","X")
     // encode the 10x number
-    let result2 = 
+    let result2 =
       TallyImpl.arabicToRoman (arabic * 10)
 
     // should be same
-    result1 = result2 
+    result1 = result2
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 And, amazingly, it works!
 
 ```fsharp {src=#commutative_prop1_check}
-Check.Quick commutative_prop1  
+Check.Quick commutative_prop1
 // Ok, passed 100 tests.
 ```
 
-What about the converse:  
+What about the converse:
 
 * Path 1
   * given a number less than 4000
   * encode it first
   * then replace "C" with "X", "M" with "C", and so on, to create a new roman numeral.
 * Path 2
-  * given the same number 
+  * given the same number
   * divide it by 10 first
   * then encode it
 
 ```fsharp {src=#commutative_prop2}
-/// Encoding a number and then replacing all the characters with 
-/// the corresponding 10x lower one should be the same as 
+/// Encoding a number and then replacing all the characters with
+/// the corresponding 10x lower one should be the same as
 /// encoding the 10x lower number directly.
 let commutative_prop2 =
 
   // define an inner property
   let innerProp arabic =
     // encode it
-    let result1 = 
+    let result1 =
       (TallyImpl.arabicToRoman arabic)
         .Replace("I","")
         .Replace("V","")
@@ -473,19 +473,19 @@ let commutative_prop2 =
         .Replace("D","L")
         .Replace("M","C")
     // encode the 10x lower number
-    let result2 = 
+    let result2 =
       TallyImpl.arabicToRoman (arabic / 10)
 
     // should be same
-    result1 = result2 
+    result1 = result2
 
-  Prop.forAll arabicNumber innerProp 
+  Prop.forAll arabicNumber innerProp
 ```
 
 This time, it fails, with "9" as a counter-example. Why is this?
 
 ```fsharp {src=#commutative_prop2_check}
-Check.Quick commutative_prop2  
+Check.Quick commutative_prop2
 // Falsifiable, after 9 tests
 // 9
 ```
@@ -498,7 +498,7 @@ That can be an exercise for the reader!
 
 ## Summary so far
 
-I hope you get the idea now. By trying out the various approaches (oracles, inverses, invariants, commutative diagrams, etc) we can almost always come up with useful properties for our design.
+I hope you get the idea now. By trying out the various approaches (oracles, inverses, invariants, commutative diagrams, etc.) we can almost always come up with useful properties for our design.
 
 
 {{< linktarget "zendo" >}}
