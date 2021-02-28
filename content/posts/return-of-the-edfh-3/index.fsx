@@ -412,7 +412,7 @@ let decode (Rle rle) : string =
 
 //>decode_test
 rle_recursive "111000011"
-|> Rle
+|> Rle     // wrap in Rle type
 |> decode  //=> "111000011"
 //<
 
@@ -425,7 +425,7 @@ let propEncodeDecode (encode:RleImpl) inputStr =
     let actual =
         inputStr
         |> encode
-        |> Rle  // RleImpl doesn't return a Rle yet
+        |> Rle  // wrap in Rle type
         |> decode
 
     actual = inputStr

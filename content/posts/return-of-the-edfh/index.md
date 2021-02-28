@@ -119,7 +119,7 @@ rle_allChars "abc"   //=> [('a',1); ('b',1); ('c',1)]
 rle_allChars "aab"   //=> [('a',1); ('a',1); ('b',1)]
 ```
 
-These output do indeed contain every character from the input.
+These outputs do indeed contain every character from the corresponding input.
 
 Why is that wrong? Well, we want to collect "runs", which means that we should not have two 'a's together. Each character in the output list must be different from the adjacent characters.
 
@@ -196,7 +196,7 @@ Is that enough to correctly check a RLE implementation? Can you think of any mal
 
 Let's put these concepts into practice. We'll use `FsCheck`, the F# library, to test these properties against both bad and good implementations.
 
-As of F# 5, it's really easy to load FsCheck into the interactive workspace. You can just reference it directly like this:
+As of F# 5, it's easy to load FsCheck into the interactive workspace. You can just reference it directly like this:
 
 ```fsharp {src=#nugetFsCheck}
 #r "nuget:FsCheck"
@@ -230,7 +230,7 @@ as our (hopefully) correct ones
 
 ### Checking the rle_empty implementation
 
-Let's try it out with the first EDFH implementation, that always returned an empty list
+Let's try it out with the first EDFH implementation, the one that always returned an empty list:
 
 ```fsharp {src=#rle_empty_proptest}
 let impl = rle_empty
@@ -238,7 +238,7 @@ let prop = propUsesAllCharacters impl
 FsCheck.Check.Quick prop
 ```
 
-The response from FsCheck is
+The response from FsCheck is:
 
 ```text {src=#rle_empty_proptest_result}
 Falsifiable, after 1 test (1 shrink) (StdGen (777291017, 296855223)):
@@ -248,7 +248,7 @@ Shrunk:
 "a"
 ```
 
-In other words, the using the string "a" as input will break the property.
+In other words, simply using the minimal string "a" as input will break the property.
 
 ### Checking the rle_allChars implementation
 

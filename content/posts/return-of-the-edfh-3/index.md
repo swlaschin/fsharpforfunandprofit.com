@@ -109,7 +109,7 @@ In our case, we want the `rle` function to preserve the structure of strings as 
 rle(str1 + str2) = rle(str1) + rle(str2)
 ```
 
-So now all we need is a way to "add" two `Rle` structures. Even though they are lists, we don't want to just add them directly, because we may end up with adjacent runs. That is, we want runs of the same character to be merged:
+So now all we need is a way to "add" two `Rle` structures. Even though they are lists, we can't just concatenate them directly, because we may end up with adjacent runs. Instead, we want runs of the same character to be merged:
 
 ```fsharp {src=#addingRles}
 // wrong
@@ -160,7 +160,7 @@ let rle3 = rle_recursive ("aaabb" + "bccc")
 rle3 = rleConcat rle1 rle2   //=> true
 ```
 
-We've got our "add" function now, so we can define a property that uses it to check that an RLE implementation is structure preserving.
+We've got our RLE "concat" function now, so we can define a property that checks that a RLE implementation preserves string concatenation.
 
 ```fsharp {src=#propStructurePreserving}
 let propConcat (impl:RleImpl) (str1,str2) =
@@ -205,7 +205,7 @@ Check.One(config,prop)
 ```
 
 
-Finally, let's put it all together. We can replace the overly constrained "reverse" property with the more general "concat-preserving" property, so that our properties for a run-length encoding implementation are these:
+Let's review. We can replace the overly constrained "reverse" property with the more general "concat-preserving" property, so that our properties for a run-length encoding implementation are these:
 
 * **Content invariance**: The output must contain all the characters from the input, in the same order.
 * **Runs are distinct**: Two adjacent characters in the output cannot be the same.
@@ -216,7 +216,7 @@ We have four separate properties, each of which has to be discovered an implemen
 
 ## Testing with an inverse function
 
-If we go right back to the purpose of a run-length encoding, it is supposed to represent a string in a compressed but lossless way. "Lossless" is key. That means that we have a inverse function -- a function that can recreate the original string from the RLE string.
+If we go right back to the purpose of a run-length encoding, it is supposed to represent a string in a compressed but lossless way. "Lossless" is key. That means that we have a inverse function -- a function that can recreate the original string from the RLE data structure.
 
 Since we have an inverse, we can do a "there and back" test. An encoding followed by a decoding should take us back to where we started.
 
@@ -245,7 +245,7 @@ Let's quickly test this interactively:
 
 ```fsharp {src=#decode_test}
 rle_recursive "111000011"
-|> Rle
+|> Rle     // wrap in Rle type
 |> decode  //=> "111000011"
 ```
 
@@ -258,7 +258,7 @@ let propEncodeDecode (encode:RleImpl) inputStr =
   let actual =
     inputStr
     |> encode
-    |> Rle  // RleImpl doesn't return a Rle yet
+    |> Rle  // wrap in Rle type
     |> decode
 
   actual = inputStr
@@ -319,7 +319,7 @@ First, RLE is lossless, so we can say that there must be an inverse function as 
 
 Second, we need to eliminate trivial encodings, such as the one where each run is of length one. We can do this by requiring runs to be maximal, which implies that adjacent runs do not share the same character.
 
-And I think that is all we need. The other properties are implied. For example "contain all the characters from the input" is implied because of the round trip property. And "sum of the run lengths" property is also implied for the same reason.
+And I think that is all we need. The other properties are implied. For example "contains all the characters from the input" is implied because of the round trip property. And the "sum of the run lengths" property is also implied for the same reason.
 
 So, here's the specification:
 
@@ -327,7 +327,7 @@ So, here's the specification:
 An RLE implementation is a pair of functions `encode : string->Rle` and `decode : Rle->string`, such that:
 
 * **Round trip.** `encode` composed with `decode` is the same as the identity function.
-* **Maximal runs.** No adjacent runs in the Rle structure share the same character.
+* **Maximal runs.** No adjacent runs in the Rle structure share the same character, and all run-lengths are > 0.
 {{</alertwell>}}
 
 Can you think of a way that the EDFH can break this specification? Let me know in the comments.
@@ -337,7 +337,7 @@ Can you think of a way that the EDFH can break this specification? Let me know i
 
 We could stop there, but let's explore FsCheck some more.
 
-Encoding and decoding are inverses of each other, so we could equally well define a property that started with decoding, like this:
+Encoding and decoding are inverses of each other, so we could equally well define a property that started with decoding, and then encoded the result, like this:
 
 
 ```fsharp {src=#propDecodeEncode}
@@ -375,7 +375,7 @@ Why is that? We can see immediately that FsCheck is generating a 0-length run, w
 
 Before we create a new generator though, let's put some monitoring into place so that we can tell if it is actually working.
 
-We'll following the same approach as before. First, we'll define what "interesting" looks like and then we'll create a dummy property to monitor the input.
+We'll follow the same approach as before. First, we'll define what "interesting" looks like and then we'll create a dummy property to monitor the input.
 
 First, we'll say that an "interesting" RLE is one which is of non-trivial length and has some non-trivial runs in it.
 
@@ -447,7 +447,7 @@ Check.One(config,prop)
 
 Oops, we did it again. It still fails.
 
-Fortunately, the counter-example shows us why. Two adjacent characters are the same, which means that the reencoding won't match up. The fix for this is filter out these runs out as part of the generator.
+Fortunately, the counter-example shows us why. Two adjacent characters are the same, which means that the re-encoding won't match up with the original one. The fix for this is to filter out these shared-character runs in the generator logic.
 
 Here's the code to remove adjacent runs:
 
@@ -495,11 +495,11 @@ Check.One(config,prop)
 
 FsCheck defines default generators for all the common types (`string`, `int`, etc.) and can also generate data for compound types (records, discriminated unions) by reflection, but as we have seen, we often need to have more control than this.
 
-So far, we have been explicitly passing the `arbRle` instance into each test using `Prop.forAll`. FsCheck supports registering a the arbitrary for a type so that you don't have to pass it every time. For a common type that will see lots of reuse, this is very convenient.
+So far, we have been explicitly passing the `arbRle` instance into each test using `Prop.forAll`. FsCheck supports registering an `Arbitrary` for a type so that you don't have to pass it every time. For a common type that will see lots of reuse, this is very convenient.
 
-FsCheck provides a number of useful built-in types with custom generators, such as [PositiveInt](https://fscheck.github.io/FsCheck/reference/fscheck-positiveint.html), [NonWhiteSpaceString](https://fscheck.github.io/FsCheck/reference/fscheck-nonwhitespacestring.html) and more in the [FsCheck namespace](https://fscheck.github.io/FsCheck/reference/fscheck.html). How can we add our custom type to this list?
+FsCheck provides a number of useful built-in types with custom generators, such as [PositiveInt](https://fscheck.github.io/FsCheck/reference/fscheck-positiveint.html), [NonWhiteSpaceString](https://fscheck.github.io/FsCheck/reference/fscheck-nonwhitespacestring.html), and so on (see more in the [FsCheck namespace](https://fscheck.github.io/FsCheck/reference/fscheck.html)). How can we add our custom type to this list?
 
-The [FsCheck documentation explains how](https://fscheck.github.io/FsCheck//TestData.html#Default-Generators-and-Shrinkers-based-on-type). You first define a class with a static methods for each Arb that you want to register:
+The [FsCheck documentation explains how](https://fscheck.github.io/FsCheck//TestData.html#Default-Generators-and-Shrinkers-based-on-type). You first define a class with a static method for each `Arbitrary` that you want to register:
 
 ```fsharp {src=#MyGenerators}
 type MyGenerators =

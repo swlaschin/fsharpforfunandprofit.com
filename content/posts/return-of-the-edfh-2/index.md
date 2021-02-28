@@ -14,9 +14,9 @@ In this post we'll look at a couple of ways of generating "interesting" inputs, 
 
 ## Observing the generated data
 
-The first we should do is add some kind of monitoring to see how many of the inputs are interesting.
+The first thing we should do is add some kind of monitoring to see how many of the inputs are interesting.
 
-So what is an "interesting" input. For this scenario, it's a string that has some runs in it. A string consisting of random characters like this...
+So what is an "interesting" input? For this scenario, it's a string that has some runs in it. Which means that a string consisting of random characters like this...
 
 ```
 %q6,NDUwm9~ 8I?a-ruc(@6Gi_+pT;1SdZ|H
@@ -24,7 +24,7 @@ So what is an "interesting" input. For this scenario, it's a string that has som
 
 ...is not very interesting as input for an RLE implementation.
 
-Without trying to reimplement the RLE logic, one way to determine whether there are runs is to see if the number of distinct characters is much less than the length of the string. If this is true, then by the [pigeonhole principle](https://en.wikipedia.org/wiki/Pigeonhole_principle) there must be duplicates of some character. This doesn't *ensure* that there are runs, but if we make the difference large enough, most of the "interesting" inputs will have runs.
+Without trying to reimplement the RLE logic, one way to determine whether there are runs is to see if the number of distinct characters is much less than the length of the string. If this is true, then by the [pigeonhole principle](https://en.wikipedia.org/wiki/Pigeonhole_principle) there *must* be duplicates of some character. This doesn't *ensure* that there are runs, but if we make the difference large enough, most of the "interesting" inputs will have runs.
 
 So here's the definition of our `isInterestingString` function:
 
@@ -76,16 +76,16 @@ FsCheck.Check.Quick propIsInterestingString
 // Ok, passed 100 tests (100% not interesting).
 ```
 
-We find that 100% of the inputs are not interesting!  So we need to make better inputs!
+We find that 100% of the inputs are not interesting.  So we need to make better inputs!
 
 ## Generating interesting strings, part 1
 
 One way to do this is to use a filter to remove all strings that are not interesting.
 But that would be horrendously inefficient, as interesting strings are extremely rare.
 
-Instead, let's *generate* interesting strings. For our first attempt, we'll start with something very simple: we will generate a list of `'a'` characters and a list of `'b'` characters, and then concatenate the two lists, given us some nice runs.
+Instead, let's *generate* interesting strings. For our first attempt, we'll start with something very simple: we will generate a list of `'a'` characters and a list of `'b'` characters, and then concatenate the two lists, giving us some nice runs.
 
-In order to do this, we will build our own generator (see earlier discussion of [generators and shrinkers](/posts/property-based-testing-1)). FsCheck provides a library for making generators, such as `Gen.constant` to generate a constant, `Gen.choose` to pick a random number from an interval, and `Gen.elements` to pick a random element from a list. Once you have a basic generator, you can `map` and `filter` its output, and also combine multiple generators with `map2`, `oneOf`, etc.
+In order to do this, we will build our own generator (see earlier discussion of [generators and shrinkers](/posts/property-based-testing-1)). FsCheck provides a useful set of functions for making generators, such as `Gen.constant` to generate a constant, `Gen.choose` to pick a random number from an interval, and `Gen.elements` to pick a random element from a list. Once you have a basic generator, you can `map` and `filter` its output, and also combine multiple generators with `map2`, `oneOf`, etc.
 
 
 {{<alertinfo >}}
@@ -151,7 +151,7 @@ The strings we're generating have at most two runs, which is not very representa
 
 One of the most common uses for run-length encoding is to compress images. We can think of a monochrome image as an array of 0s and 1s, with 1 representing a black pixel. Now let's consider an image with only a few black pixels, which in turn means lots of long runs of white pixels, perfect as input for our tests.
 
-How can we generate such "images"? How about starting with an array of white pixels and randomly flipping some of them to black.
+How can we generate such "images"? How about starting with an array of white pixels and randomly flipping some of them to black?
 
 First we need a helper function to randomly flip "bits" in a string:
 
