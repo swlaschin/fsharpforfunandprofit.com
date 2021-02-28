@@ -248,7 +248,7 @@ do
     // check it thoroughly
     let config = { Config.Default with MaxTest=10000}
     Check.One(config,prop)
-    // Ok, passed 100 tests.
+    // Ok, passed 10000 tests.
     //<
 
 (*
@@ -510,11 +510,11 @@ do
 //>isInterestingRle
 let isInterestingRle (Rle rle) =
     let isLongList = rle.Length > 2
-    let noOflongRuns =
+    let noOfLongRuns =
         rle
         |> List.filter (fun (_,run) -> run > 2)
         |> List.length
-    isLongList && (noOflongRuns > 2)
+    isLongList && (noOfLongRuns > 2)
 //<
 
 //>propIsInterestingRle
@@ -577,24 +577,26 @@ do
 // ================================================
 
 //>removeAdjacentRuns
-let removeAdjacentRuns pairList =
-    let folder pairs newPair =
-        match pairs with
-        | [] -> [newPair]
-        | head::tail ->
-            if fst head <> fst newPair then
-                newPair::pairs
+let removeAdjacentRuns runList =
+    let folder prevRuns run =
+        match prevRuns with
+        | [] -> [run]
+        | head::_ ->
+            if fst head <> fst run then
+                // add
+                run::prevRuns
             else
-                pairs
-    pairList
+                // duplicate -- ignore
+                prevRuns
+    runList
     |> List.fold folder []
     |> List.rev
 //<
 
 //>arbRle
 let arbRle =
-    let genRunLength = Gen.choose(1,10)
     let genChar = Gen.elements ['a'..'z']
+    let genRunLength = Gen.choose(1,10)
     Gen.zip genChar genRunLength
     |> Gen.listOf
     |> Gen.map removeAdjacentRuns
@@ -644,7 +646,7 @@ do
     // check it thoroughly
     let config = { Config.Default with MaxTest=10000}
     Check.One(config,prop)
-    // Ok, passed 100 tests.
+    // Ok, passed 10000 tests.
     //<
 
 do
@@ -674,7 +676,7 @@ do
     // check it thoroughly
     let config = { Config.Default with MaxTest=10000}
     Check.One(config,prop)
-    // Ok, passed 100 tests.
+    // Ok, passed 10000 tests.
     //<
 
 do
@@ -705,7 +707,7 @@ do
     // check it thoroughly
     let config = { Config.Default with MaxTest=10000}
     Check.One(config,prop)
-    // Ok, passed 100 tests.
+    // Ok, passed 10000 tests.
     //<
 
 do

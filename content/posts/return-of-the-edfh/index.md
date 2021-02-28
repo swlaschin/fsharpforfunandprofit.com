@@ -347,7 +347,7 @@ let propAdjacentCharactersAreNotSame (impl:RleImpl) inputStr =
   expected = actual // should be the same
 ```
 
-Now lets check this new property against the EDFH's `rle_allChars` implementation:
+Now let's check this new property against the EDFH's `rle_allChars` implementation:
 
 ```fsharp {src=#propAdjacentCharactersAreNotSame_rle_allChars}
 let impl = rle_allChars

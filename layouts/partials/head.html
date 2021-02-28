@@ -1,3 +1,14 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-25384426-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-25384426-1');
+</script>
+
+
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -16,6 +27,8 @@
 <meta name="twitter:image" content="http://fsharpforfunandprofit.com{{ .Params.image }}">
 {{ else }}
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://fsharpforfunandprofit.com/favicon-128x128.png">
+
 {{ end }}
 <meta name="twitter:site" content="@ScottWlaschin">
 <meta name="twitter:title" content="{{ .Title  }}">

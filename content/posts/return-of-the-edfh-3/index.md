@@ -67,7 +67,7 @@ let prop = Prop.forAll arbPixels (propRle rle_corrupted)
 // check it thoroughly
 let config = { Config.Default with MaxTest=10000}
 Check.One(config,prop)
-// Ok, passed 100 tests.
+// Ok, passed 10000 tests.
 ```
 
 And it passed. Oh dear! How are we going to defeat the EDFH now?
@@ -212,7 +212,7 @@ Let's review. We can replace the overly constrained "reverse" property with the 
 * **Same total length**: The sum of the run lengths in the output must equal the total length of the input.
 * **Structure-preserving**: Must preserve concatenation as above.
 
-We have four separate properties, each of which has to be discovered an implemented separately. Is there an easier way? Yes there is!
+We have four separate properties, each of which has to be discovered and implemented separately. Is there an easier way? Yes there is!
 
 ## Testing with an inverse function
 
@@ -382,11 +382,11 @@ First, we'll say that an "interesting" RLE is one which is of non-trivial length
 ```fsharp {src=#isInterestingRle}
 let isInterestingRle (Rle rle) =
   let isLongList = rle.Length > 2
-  let noOflongRuns =
+  let noOfLongRuns =
     rle
     |> List.filter (fun (_,run) -> run > 2)
     |> List.length
-  isLongList && (noOflongRuns > 2)
+  isLongList && (noOfLongRuns > 2)
 ```
 
 And then let's use it to classify the inputs of a property:
@@ -452,16 +452,18 @@ Fortunately, the counter-example shows us why. Two adjacent characters are the s
 Here's the code to remove adjacent runs:
 
 ```fsharp {src=#removeAdjacentRuns}
-let removeAdjacentRuns pairList =
-  let folder pairs newPair =
-    match pairs with
-    | [] -> [newPair]
-    | head::tail ->
-      if fst head <> fst newPair then
-        newPair::pairs
+let removeAdjacentRuns runList =
+  let folder prevRuns run =
+    match prevRuns with
+    | [] -> [run]
+    | head::_ ->
+      if fst head <> fst run then
+        // add
+        run::prevRuns
       else
-        pairs
-  pairList
+        // duplicate -- ignore
+        prevRuns
+  runList
   |> List.fold folder []
   |> List.rev
 ```
@@ -470,8 +472,8 @@ And here's the updated generator:
 
 ```fsharp {src=#arbRle}
 let arbRle =
-  let genRunLength = Gen.choose(1,10)
   let genChar = Gen.elements ['a'..'z']
+  let genRunLength = Gen.choose(1,10)
   Gen.zip genChar genRunLength
   |> Gen.listOf
   |> Gen.map removeAdjacentRuns

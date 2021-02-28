@@ -13,6 +13,10 @@ The tool will:
 * 1. Extract fragments from the code file.
 * 2. Parse the code blocks in the post and if the id matches, replace the code in that block
 
+Also, it will copy the files to the fsharpforfunandprofit.com_code location
+* The index.fsx file will have it's fragment delimiters removed and will be renamed
+* All other .fsx files will be copied over unchanged
+
 == Execution ==
 
 The tool is run using `dotnet fsi process_code_snippets.fsx`
@@ -59,7 +63,8 @@ let processFile (postFile:FileInfo) =
         |> dict
     MarkdownFenceParser.processFile fragmentMap postFile
 
-let copyCodeFileWithoutMarkup (postFile:FileInfo) =
+/// Copy index.fsx file to the fsharpforfunandprofit.com_code location, with fragment tags stripped
+let copyIndexFileWithoutMarkup (postFile:FileInfo) =
     let codeFile = postFile.FullName.Replace(".md",".fsx") |> FileInfo
     let targetFile =
         codeFile.FullName
@@ -70,6 +75,17 @@ let copyCodeFileWithoutMarkup (postFile:FileInfo) =
     targetFile.Directory.Create()
     let context = sprintf "https://fsharpforfunandprofit.com/posts/%s" codeFile.Directory.Name
     FragmentParser.removeFragmentsFromFile context codeFile targetFile
+
+/// Copy non-index code files (.fsx) to the fsharpforfunandprofit.com_code location
+let copyNonIndexFile (sourceFile:FileInfo) =
+    let targetFile =
+        sourceFile.FullName
+            .Replace(".com",".com_code")
+            .Replace("content","")
+        |> FileInfo
+    targetFile.Directory.Create()
+    File.Copy(sourceFile.FullName,targetFile.FullName,overwrite=true)
+
 
 let rec processDirectory (d:DirectoryInfo) =
 
@@ -101,16 +117,25 @@ let main() =
         logInfo (sprintf "processing all posts in '%s'" postsDir.FullName)
         processDirectory postsDir
     | [|_fsiPath; filename |] ->
-        let path = Path.Combine(postsDir.FullName,filename)
+        let dirPath = Path.Combine(postsDir.FullName,filename)
         let filePath =
-            if Directory.Exists path then
-                Path.Combine(path,"index.md")
+            if Directory.Exists dirPath then
+                Path.Combine(dirPath,"index.md")
             else
-                path
+                dirPath
         let fileInfo = FileInfo filePath
         logInfo (sprintf "processing filename '%s'" fileInfo.FullName)
         processFile fileInfo
-        copyCodeFileWithoutMarkup fileInfo
+
+        // copy files to fsharpforfunandprofit.com_code location
+        copyIndexFileWithoutMarkup fileInfo
+
+        let di = DirectoryInfo dirPath
+        di.EnumerateFiles("*.fsx")
+        |> Seq.filter (fun fi -> fi.Name.Contains("index") |> not)
+        |> Seq.iter copyNonIndexFile
+
+        
     | _ ->
         logInfo "Pass 0 or 1 parameter. 0 for all posts; 1 for filename to process"
 

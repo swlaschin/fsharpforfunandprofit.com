@@ -7,5 +7,4 @@ aliases: [/series/recursive-types-and-folds.html]
 date: 2020-01-01
 ---
 
-In this series, we'll look at recursive types and how to use them, and on the way, we'll look at
-catamorphisms, tail recursion, the difference between left and right folds, and more.
+In this series, we'll look at recursive types and how to use them, and on the way, we'll look at catamorphisms, tail recursion, the difference between left and right folds, and more.
