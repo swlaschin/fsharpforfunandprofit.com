@@ -162,7 +162,7 @@ module LinkedList =
             recurse newAcc list
 ```
 
-If we compare the signature with the [List.fold documentation](https://msdn.microsoft.com/en-us/library/ee353894.aspx) we can see that they are equivalent,
+If we compare the signature with the [List.fold documentation](https://fsharp.github.io/fsharp-core-docs/reference/fsharp-collections-listmodule.html#fold) we can see that they are equivalent,
 with `'State` replaced by `'r` and `'T list` replaced by `LinkedList<'a>`:
 
 ```fsharp
@@ -201,7 +201,7 @@ module LinkedList =
         foldWithEmpty fCons' fEmpty' initialGenerator  list
 ```
 
-Again, if we compare the signature with the [List.foldBack documentation](https://msdn.microsoft.com/en-us/library/ee353846.aspx), they are also equivalent,
+Again, if we compare the signature with the [List.foldBack documentation](https://fsharp.github.io/fsharp-core-docs/reference/fsharp-collections-listmodule.html#foldBack), they are also equivalent,
 with `'State` replaced by `'r` and `'T list` replaced by `LinkedList<'a>`:
 
 ```fsharp
