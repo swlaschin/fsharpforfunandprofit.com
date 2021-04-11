@@ -101,7 +101,7 @@ Once you have Mono installed, you can use the MonoDevelop IDE or an editor such 
 {{<linktarget "browser">}}
 ## Try F# in your browser
 
-If you don't want to download anything, you can try F# directly from your browser.  The site is at [www.tryfsharp.org](http://www.tryfsharp.org). Note that it does require Silverlight to run.
+If you don't want to download anything, you can try F# directly from your browser.  The site is at [try.fsharp.org](https://try.fsharp.org/). Note that it does require Silverlight to run.
 
 ![Interactive](./fsharp_web2.png)
 
