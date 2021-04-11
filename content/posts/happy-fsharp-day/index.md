@@ -18,7 +18,7 @@ So what date would best symbolize the "birth" of F#?  As far as I can tell, ther
 
 But five years ago, on April 12, F# 2.0 was released fully integrated with Visual Studio 2010.
 And for the first time, a high quality statically-typed functional programming language became widely distributed to mainstream programmers.
-Here's [Don's post for that day.](http://blogs.msdn.com/b/dsyme/archive/2010/04/12/f-2-0-released-as-part-of-visual-studio-2010.aspx)
+Here's [Don's post for that day.](https://dsyme.home.blog/2010/04/12/f-2-0-released/)
 
 So I'd like to celebrate that five year anniversary today, and honor the huge amount of work that went into that launch.
 
