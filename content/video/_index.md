@@ -333,6 +333,30 @@ We'll then see how the tools in this tool kit can be applied to a wide variety o
 
 {{< twocolumn-start >}}
 
+## Reinventing the Transaction Script
+
+The Transaction Script pattern organizes business logic as a single procedure. It has always
+been considered less sophisticated and flexible than a layered architecture with a rich
+domain model. But is that really true?
+
+In this talk, we'll reinvent the Transaction Script using functional programming principles.
+We'll see that we can still do domain-driven design, and still have code which is decoupled
+and reusable, all while preserving the simplicity and productivity of the original
+one-script-per-workflow approach.
+
+[Slides and more information](../transactionscript/)
+
+{{< twocolumn-image >}}
+
+[![NDC London, Jan 2020](transactionscript320.jpg)](https://www.youtube.com/watch?v=USSkidmaS6w)
+
+{{< twocolumn-end >}}
+
+
+------
+
+{{< twocolumn-start >}}
+
 ## Code Review/Refactor Live
 
 In this live session for [Community for F#](http://c4fsharp.net/), I refactor some ugly code into something a bit cleaner and functional, to give viewers an insight into basic F# coding practices, and also show how to avoid some common code smells.
