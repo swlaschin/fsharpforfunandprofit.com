@@ -41,7 +41,7 @@ Let's start with a really bad idea. We'll just provide the name of the config fi
 
 Here's how this might be written in C# pseudocode:
 
-```csharp
+```csharp {src=#none}
 interface IConfiguration
 {
     string GetConfigFilename();
@@ -50,7 +50,7 @@ interface IConfiguration
 
 and the caller code would be
 
-```csharp
+```csharp {src=#none}
 var filename = config.GetConfigFilename();
 // open file
 // write new config
@@ -72,7 +72,7 @@ But of course, a malicious caller could still corrupt the config file by writing
 
 Let's lock this down by providing the caller an interface that forces them to treat the config file as a key/value store, like this:
 
-```csharp
+```csharp {src=#none}
 interface IConfiguration
 {
     void SetConfig(string key, string value);
@@ -81,7 +81,7 @@ interface IConfiguration
 
 The caller code is then something like this:
 
-```csharp
+```csharp {src=#none}
 config.SetConfig("DontShowThisMessageAgain", "True");
 ```
 
@@ -92,7 +92,7 @@ They could also corrupt all the other configuration keys if they wanted to.
 
 Ok, so rather than having a generic config interface, let's provide an interface that provides specific methods for each configuration setting.
 
-```csharp
+```csharp {src=#none}
 enum MessageFlag {
    ShowThisMessageAgain,
    DontShowThisMessageAgain
@@ -114,7 +114,7 @@ But we still have a problem! What's to stop a malicious caller changing the conn
 
 Ok, so let's define a new interface that contains *only* the methods the caller should have access to, with all the other methods hidden.
 
-```csharp
+```csharp {src=#none}
 interface IWarningMessageConfiguration
 {
     void SetMessageFlag(MessageFlag value);
@@ -145,8 +145,7 @@ Working through a thought process like this, using good design practices only, w
 That is: designing the most minimal interface that the caller needs will both avoid accidental complexity (good design) and increase security (POLA).
 
 Of course, we don't normally have to deal with malicious callers, but we should treat ourselves, as developers, as unintentionally malicious.
-For example, if there is a extra method in the interface, it might well be used in a different context, which then increases
-coupling between the two contexts and makes refactoring harder.
+For example, if there is a extra method in the interface, it might well be used in a different context, which then increases coupling between the two contexts and makes refactoring harder.
 
 So, here's a tip: **design for malicious callers and you will probably end up with more modular code!**
 
@@ -164,18 +163,13 @@ That "one thing" is a "capability". The caller has a capability to set the messa
 * Finally, the capabilities can be passed around. For example, I can acquire the capability at startup and then later pass it to the UI layer which
   can use it as needed.
 
-In other words, we have a "just-in-time" rather than a "just-in-case" model; we pass in the minimal amount of authority as and when needed,
-rather than having excess "ambient" authority available globally to everyone.
+In other words, we have a "just-in-time" rather than a "just-in-case" model; we pass in the minimal amount of authority as and when needed, rather than having excess "ambient" authority available globally to everyone.
 
-The capability-based model is often focused on operating systems, but it can be mapped to programming languages very nicely,
-where it is called [the object-capability model](https://en.wikipedia.org/wiki/Object-capability_model).
+The capability-based model is often focused on operating systems, but it can be mapped to programming languages very nicely, where it is called [the object-capability model](https://en.wikipedia.org/wiki/Object-capability_model).
 
-I hope to demonstrate in this post that by using a capability-based approach in your code, you can create better designed and more robust code.
-In addition, potential security errors will be detectable at *compile-time* rather than at run-time.
+I hope to demonstrate in this post that by using a capability-based approach in your code, you can create better designed and more robust code. In addition, potential security errors will be detectable at *compile-time* rather than at run-time.
 
-As I mentioned above, if your app is trusted, you can always use .NET reflection to "forge" capabilities that you are not entitled to.
-So, again, the approach shown here is not about preventing truly malicious attacks so much as it about
-creating a more robust design that reduces *unintentional* security vulnerabilities.
+As I mentioned above, if your app is trusted, you can always use .NET reflection to "forge" capabilities that you are not entitled to. So, again, the approach shown here is not about preventing truly malicious attacks so much as it about creating a more robust design that reduces *unintentional* security vulnerabilities.
 
 {{< linktarget "authority" >}}
 
@@ -186,13 +180,9 @@ A capability-based security model tends to use the term "authority" rather than 
 * In an *authority* based system, once I have been granted authority to do something, I can pass some or all of that authority to others, add additional constraints of my own, and so on.
 * In a *permission* based system, I can ask for permission to do something, but I cannot pass that around to others.
 
-It might seem that an authority based system is more open and "dangerous" than a permission based system. But in a permission based system, if others have access to me and I cooperate with them,
-I can act as proxy for anything they want to do so, so third-parties can *still* get authority indirectly.
-Permissions don't really make things more secure -- an attacker just has to use a more convoluted approach.
+It might seem that an authority based system is more open and "dangerous" than a permission based system. But in a permission based system, if others have access to me and I cooperate with them, I can act as proxy for anything they want to do so, so third-parties can *still* get authority indirectly. Permissions don't really make things more secure -- an attacker just has to use a more convoluted approach.
 
-Here's a concrete example. Let's say Alice trusts me to drive her car, and she is willing to let me borrow it, but she doesn't trust Bob.
-If I'm friends with Bob, I can let Bob drive the car anyway when Alice is not looking. So if Alice trusts me, she also implicitly trusts anyone that I trust.
-An authority-based system just makes this explicit.  Alice giving me her car keys is giving me the "capability" to drive her car, with full knowledge that I might give the car keys to someone else.
+Here's a concrete example. Let's say Alice trusts me to drive her car, and she is willing to let me borrow it, but she doesn't trust Bob. If I'm friends with Bob, I can let Bob drive the car anyway when Alice is not looking. So if Alice trusts me, she also implicitly trusts anyone that I trust. An authority-based system just makes this explicit.  Alice giving me her car keys is giving me the "capability" to drive her car, with full knowledge that I might give the car keys to someone else.
 
 Of course, when I act as a proxy in a permission based system, I can stop cooperating with the third-party if I want to,
 at which point the third-party loses their access.
@@ -204,7 +194,7 @@ In the car key analogy, this might be like having car keys that self-destruct on
 
 An interface with one method can be better realized as a function. So this interface:
 
-```csharp
+```csharp {src=#none}
 interface IWarningMessageConfiguration
 {
     void SetMessageFlag(MessageFlag value);
@@ -213,19 +203,17 @@ interface IWarningMessageConfiguration
 
 becomes just this function:
 
-```csharp
-Action<MessageFlag> messageFlagCapability = // get function;
+```csharp {src=#none}
+Action<MessageFlag> setMessageFlag = ...
 ```
 
 or in F#:
 
-```fsharp
-let messageFlagCapability = // get function;
+```fsharp {src=#none}
+let setMessageFlag messageFlag = ...
 ```
 
-In a functional approach to capability-based security, each capability is represented by a function rather than an interface.
-
-The nice thing about using functions to represent capabilities is that we can use all the standard functional programming techniques: we can compose them, combine them with combinators, and so on.
+In a functional approach to capability-based security, each capability is represented by a function rather than an interface. The nice thing about using functions to represent capabilities is that we can use all the standard functional programming techniques: we can compose them, combine them with combinators, and so on.
 
 ## The object-capability model vs. the functional programming model
 
@@ -283,14 +271,12 @@ on paths that assumed that it was successful.
 
 You can see that there is quite a lot of overlap.
 
-One of the *unofficial* goals of the object-capability model is **make security user-friendly by making the security invisible**. I think that this is a great idea,
-and by passing capabilities as functions, is quite easily achievable.
+One of the *unofficial* goals of the object-capability model is **make security user-friendly by making the security invisible**. I think that this is a great idea, and by passing capabilities as functions, is quite easily achievable.
 
 It's important to note there is one important aspect in which a capability-based model does *not* overlap with a true functional model.
 
 Capabilities are mostly all about (side) effects -- reading or writing the file system, the network, etc.
-A true functional model would try to wrap them somehow (e.g. in a monad).
-Personally, using F#, I would generally just allow the side-effects rather than constructing [a more complex framework](http://hackage.haskell.org/package/Capabilities).
+A true functional model would try to wrap them somehow (e.g. in a monad). Personally, using F#, I would generally just allow the side-effects rather than constructing [a more complex framework](http://hackage.haskell.org/package/Capabilities).
 
 But again, as I noted above, the goal of this post is to not to force you into a 100% strict object-capability model, but to borrow some of the same ideas in order to create better designs.
 
@@ -298,17 +284,15 @@ But again, as I noted above, the goal of this post is to not to force you into a
 
 A natural question at this point is: where do these capability functions come from?
 
-The answer is, some sort of service that can authorize you to have that capability.  In the configuration example, we generally don't do serious authorization, so the configuration
-service itself will normally provide the capabilities without checking your identity, role or other claims.
+The answer is, some sort of service that can authorize you to have that capability.  In the configuration example, we generally don't do serious authorization, so the configuration service itself will normally provide the capabilities without checking your identity, role or other claims.
 
 But now I need a capability to access the configuration service. Where does that come from? The buck has to stop somewhere!
 
-In OO designs, there is typically a bootstrap/startup stage where all the dependencies are constructed and an IoC container is configured. In a capability based system,
-a [so-called Powerbox](http://c2.com/cgi/wiki?PowerBox) plays a similar role of being the starting point for all authority.
+In OO designs, there is typically a bootstrap/startup stage where all the dependencies are constructed and an IoC container is configured. In a capability based system, a [so-called Powerbox](http://c2.com/cgi/wiki?PowerBox) plays a similar role of being the starting point for all authority.
 
 Here's the code for a service that provides configuration capabilities:
 
-```csharp
+```csharp {src=#none}
 interface IConfigurationCapabilities
 {
     Action<MessageFlag> SetMessageFlag();
@@ -319,8 +303,7 @@ interface IConfigurationCapabilities
 
 This code might look very similar to the interface defined earlier, but the difference is that this one will be initialized at startup to return capabilities that are then passed around.
 
-The actual users of the capabilities will not have access to the configuration system at all, just the capabilities they have been given.
-That is, the capability will be injected into the clients in the same way as a one method interface would be injected in an OO model.
+The actual users of the capabilities will not have access to the configuration system at all, just the capabilities they have been given. That is, the capability will be injected into the clients in the same way as a one method interface would be injected in an OO model.
 
 Here's some sample C# pseudocode to demonstrate:
 
@@ -329,7 +312,7 @@ Here's some sample C# pseudocode to demonstrate:
 * The `ApplicationWindow` creates a checkbox.
 * The event handler for the checkbox calls the capability.
 
-```csharp
+```csharp {src=#none}
 // at startup
 var messageFlagCapability =
     configurationCapabilities.SetMessageFlag()
@@ -345,7 +328,9 @@ class ApplicationWindow
         // set fields
     }
 
-    // setup the check box and register the "OnCheckboxChecked" handler
+    // setup the check box and register
+    // the "OnCheckboxChecked" handler
+    // ...
 
     // use the capability when the event happens
     void OnCheckboxChecked(CheckBox sender)
@@ -356,6 +341,10 @@ class ApplicationWindow
 ```
 
 ## A complete example in F# ##
+
+<!--
+CapabilityBasedSecurity_ConfigExample.fsx
+-->
 
 Here's the code to a complete example in F# (also available as a [gist here](https://gist.github.com/swlaschin/909c5b24bf921e5baa8c#file-capabilitybasedsecurity_configexample-fsx)).
 
@@ -378,7 +367,7 @@ We start with the configuration system. Here's an overview:
 * An in-memory store (`ConfigStore`) is created for the purposes of the demo
 * Finally, the `configurationCapabilities` are created using functions that read and write to the `ConfigStore`
 
-```fsharp
+```fsharp {src=#none}
 module Config =
 
     type MessageFlag  = ShowThisMessageAgain | DontShowThisMessageAgain
@@ -425,7 +414,7 @@ This requires in turn that the main form creation function (`createForm`) is als
 These capabilities, and these capabilities *only* are passed in to the form. The capabilities for setting the background color or connection string are *not* passed in,
 and thus not available to be (mis)used.
 
-```fsharp
+```fsharp {src=#none}
 module AnnoyingPopupMessage =
     open System.Windows.Forms
 
@@ -482,7 +471,7 @@ In addition, the capability functions are modified:
 
 Here's the code:
 
-```fsharp
+```fsharp {src=#none}
 module UserInterface =
     open System.Windows.Forms
     open System.Drawing
@@ -560,7 +549,7 @@ module UserInterface =
 Finally, the top-level module, here called `Startup`, gets some of the capabilities from the Configuration subsystem, and combines them into a tuple that can be passed
 to the main form. The `ConnectionString` capabilities are *not* passed in though, so there is no way the form can accidentally show it to a user or update it.
 
-```fsharp
+```fsharp {src=#none}
 module Startup =
 
     // set up capabilities
@@ -654,7 +643,7 @@ although my version is cruder and simpler.
 For a more complete understanding, I suggest you follow up on the links below:
 
 * The Wikipedia articles on [Capability-based security](https://en.wikipedia.org/wiki/Capability-based_security) and [Object-capability model](https://en.wikipedia.org/wiki/Object-capability_model) are a good starting point.
-* [What is a Capability, Anyway?](https://webcache.googleusercontent.com/search?q=cache:www.eros-os.org/essays/capintro.html) by Jonathan Shapiro of the EROS project. He also discusses ACL-based security vs. a capability-based model.
+* [What is a Capability, Anyway?](https://web.archive.org/web/20160908063528/http://www.eros-os.org/essays/capintro.html) by Jonathan Shapiro of the EROS project. He also discusses ACL-based security vs. a capability-based model.
 * ["The Lazy Programmer's Guide to Secure Computing"](http://www.youtube.com/watch?v=eL5o4PFuxTY), a great video on capability-based security by Marc Stiegler. Don't miss the last 5 mins (starting around 1h:02m:10s)!
 * ["Object Capabilities for Security"](https://www.youtube.com/watch?v=EGX2I31OhBE), a good talk by David Wagner.
 
