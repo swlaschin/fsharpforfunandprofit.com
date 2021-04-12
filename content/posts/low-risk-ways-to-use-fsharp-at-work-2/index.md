@@ -82,7 +82,7 @@ Using F# in this way will allow you and your fellow developers to use F# code to
 There shouldn't be any resistance from managers for this low-risk approach -- in the worse case you can easily switch to using a different tool.
 
 A hidden agenda, of course, is that once your fellow developers get a chance to play with F#, they'll be hooked,
-and you'll be one step closer to using [F# end to end](https://web.archive.org/web/20201112015808/colinbul.wordpress.com/2013/02/23/f-end-to-end/)!
+and you'll be one step closer to using [F# end to end](https://web.archive.org/web/20130226011503/http://colinbul.wordpress.com/2013/02/23/f-end-to-end/)!
 
 ### What can you do with F# scripts?
 
