@@ -8,7 +8,7 @@ more:
     ref: "/about/terms"
   - name: "License"
     ref: "/about/license"
-  - name: "This site on GitHub"
+  - name: "Typo? Create an issue on GitHub"
     ref: "https://github.com/swlaschin/fsharpforfunandprofit.com"
     external: true
 
