@@ -528,7 +528,7 @@ let makeTargetCustomer (sourceCustomer:SourceSql.ServiceTypes.CustomerImport) =
     targetCustomer // return it
 ```
 
-With this transform in place, the rest of the code is easy, we just just read from the source and write to the target.
+With this transform in place, the rest of the code is easy, we just read from the source and write to the target.
 
 ```fsharp
 let transferAll() =
