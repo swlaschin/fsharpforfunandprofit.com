@@ -34,14 +34,14 @@ This book starts with a discussion of Domain Driven Design, and then shows to ho
 
 [Buy direct from the Pragmatic Programmers site (eBook and paper)](https://goo.gl/oviuHT)
 
-![](./US-flag.gif) [Buy from Amazon US](https://goo.gl/iR36WC)
+![](./US-flag.gif) [Buy from Amazon US](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfu0d-20)
 
-![](./UK-flag.gif) [Buy from Amazon UK](https://goo.gl/JYkL8j)
+![](./UK-flag.gif) [Buy from Amazon UK](https://www.amazon.co.uk/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfuna-21)
 
 ![](./globe-icon.png) [Buy from The Book Depository (Free delivery worldwide)](https://www.bookdepository.com/Domain-Modeling-Made-Functional-Scott-Wlaschin/9781680502541)
 
 *NOTE: Some people have had issues with the formatting on the Kindle version. For all eBook formats (including .mobi) I recommend buying directly from
-[the Pragmatic Programmers site (eBook and paper)](https://goo.gl/oviuHT).*
+[the Pragmatic Programmers site (eBook and paper)](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/).*
 
 If you enjoy the book, I'd be grateful if you could leave a review on [the Goodreads page](https://www.goodreads.com/book/show/34921689-domain-modeling-made-functional).
 
@@ -51,7 +51,7 @@ It does have some chapters on stuff I haven't blogged about (yet) such as how to
 
 {{< twocolumn-image >}}
 
-[![Domain Modeling Made Functional](domain-modeling-made-functional-200.jpg)](https://goo.gl/oviuHT)
+[![Domain Modeling Made Functional](domain-modeling-made-functional-200.jpg)](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
 
 {{< twocolumn-end >}}
 
@@ -65,6 +65,6 @@ Not available right now.
 
 {{< twocolumn-image >}}
 
-[![Gitbook](gitbook-200.jpg)](https://goo.gl/XHLBgC)
+[![Gitbook](gitbook-200.jpg)]()
 
 {{< twocolumn-end >}}
