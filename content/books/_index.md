@@ -11,14 +11,20 @@ date: 2020-01-01
 ---
 
 
+## Domain Modeling Made Functional
 
 {{< twocolumn-start >}}
 
-## Domain Modeling Made Functional (ebook and paper)
-
 This book starts with a discussion of Domain Driven Design, and then shows to how to model a design using types. The last part shows how to implement the design using functional programming with F# (composition of functions, "railway-oriented programming" for error handling, etc).
 
-**Here are some of the 5 star reviews**
+{{< twocolumn-image >}}
+
+[![Domain Modeling Made Functional](domain-modeling-made-functional-200.jpg)](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
+
+{{< twocolumn-end >}}
+
+
+### Here are some of the 5 star reviews
 
 "This is a fantastic book for anyone looking to dive into Domain Driven Design using F#, or any functional language for that matter."
 
@@ -30,13 +36,17 @@ This book starts with a discussion of Domain Driven Design, and then shows to ho
 
 "Eye opening. One of the better programming books that I've read in a long time."
 
-**How to buy it**
+### How to buy it
 
-[Buy direct from the Pragmatic Programmers site (eBook and paper)](https://goo.gl/oviuHT)
+[Buy direct from the Pragmatic Programmers site (eBook and paper)](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
 
-![](./US-flag.gif) [Buy from Amazon US](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfu0d-20)
+![](./US-flag.gif) [Buy from Amazon US (affiliate link)](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfu0d-20)
 
-![](./UK-flag.gif) [Buy from Amazon UK](https://www.amazon.co.uk/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfuna-21)
+![](./UK-flag.gif) [Buy from Amazon UK (affiliate link)](https://www.amazon.co.uk/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfuna-21)
+
+![](./DE-flag.gif) [Buy from Amazon DE (affiliate link)](https://www.amazon.de/Domain-Modeling-Made-Functional-Domain-Driven/dp/1680502549?tag=fsharpforfu00-21)
+
+
 
 ![](./globe-icon.png) [Buy from The Book Depository (Free delivery worldwide)](https://www.bookdepository.com/Domain-Modeling-Made-Functional-Scott-Wlaschin/9781680502541)
 
@@ -45,15 +55,14 @@ This book starts with a discussion of Domain Driven Design, and then shows to ho
 
 If you enjoy the book, I'd be grateful if you could leave a review on [the Goodreads page](https://www.goodreads.com/book/show/34921689-domain-modeling-made-functional).
 
-**How is it different from the content on this site?**
+### How is it different from the content on this site?
 
-It does have some chapters on stuff I haven't blogged about (yet) such as how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
+Many of the topics in the book are similar to posts on this site, but the book has a proper structure and a consistent example running through it.
 
-{{< twocolumn-image >}}
+Also, it does have some chapters on stuff I haven't blogged about (yet) such as understanding DDD, how to design a functional architecture, two whole chapters on serialization and persistence of algebraic types (important but not often covered in detail), and how to evolve an existing design.
 
-[![Domain Modeling Made Functional](domain-modeling-made-functional-200.jpg)](https://pragprog.com/titles/swdddf/domain-modeling-made-functional/)
 
-{{< twocolumn-end >}}
+
 
 ----
 
