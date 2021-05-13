@@ -17,7 +17,7 @@ This means that your programs will be more type-safe, more self documenting, and
 
 Here are some examples of one-liner types in F#:
 
-```fsharp
+```fsharp {src=#oneliner}
 open System
 
 // some "record" types
@@ -27,8 +27,8 @@ type Coord = {Lat:float; Long:float}
 // some "union" (choice) types
 type TimePeriod = Hour | Day | Week | Year
 type Temperature = C of int | F of int
-type Appointment = OneTime of DateTime
-                   | Recurring of DateTime list
+type Appointment =
+  OneTime of DateTime | Recurring of DateTime list
 ```
 
 
@@ -40,62 +40,77 @@ Furthermore, "value" objects in DDD should have structural equality, meaning tha
 
 To show how easy it is to create DDD types in F#, here are some example types that might be created for a simple "customer" domain.
 
-```fsharp
-type PersonalName = {FirstName:string; LastName:string}
+```fsharp {src=#concisecustomer}
+type PersonalName =
+  {FirstName:string; LastName:string}
 
 // Addresses
-type StreetAddress = {Line1:string; Line2:string; Line3:string }
+type StreetAddress = {
+  Line1:string;
+  Line2:string;
+  Line3:string
+  }
 
-type ZipCode =  ZipCode of string
-type StateAbbrev =  StateAbbrev of string
-type ZipAndState =  {State:StateAbbrev; Zip:ZipCode }
-type USAddress = {Street:StreetAddress; Region:ZipAndState}
+type ZipCode = ZipCode of string
+type StateAbbrev = StateAbbrev of string
+type ZipAndState =
+  {State:StateAbbrev; Zip:ZipCode }
+type USAddress =
+  {Street:StreetAddress; Region:ZipAndState}
 
-type UKPostCode =  PostCode of string
-type UKAddress = {Street:StreetAddress; Region:UKPostCode}
+type UKPostCode = PostCode of string
+type UKAddress =
+  {Street:StreetAddress; Region:UKPostCode}
 
 type InternationalAddress = {
-    Street:StreetAddress; Region:string; CountryName:string}
+  Street:StreetAddress;
+  Region:string;
+  CountryName:string
+  }
 
-// choice type  -- must be one of these three specific types
-type Address = USAddress | UKAddress | InternationalAddress
+// choice type -- must be one of these three specific types
+type Address =
+  | USAddress of USAddress
+  | UKAddress of UKAddress
+  | InternationalAddress of InternationalAddress
 
 // Email
 type Email = Email of string
 
 // Phone
 type CountryPrefix = Prefix of int
-type Phone = {CountryPrefix:CountryPrefix; LocalNumber:string}
+type Phone =
+  CountryPrefix:CountryPrefix; LocalNumber:string}
 
 type Contact =
-    {
-    PersonalName: PersonalName;
-    // "option" means it might be missing
-    Address: Address option;
-    Email: Email option;
-    Phone: Phone option;
-    }
+  {
+  PersonalName: PersonalName;
+  // "option" means it might be missing
+  Address: Address option;
+  Email: Email option;
+  Phone: Phone option;
+  }
 
 // Put it all together into a CustomerAccount type
-type CustomerAccountId  = AccountId of string
+type CustomerAccountId = AccountId of string
 type CustomerType  = Prospect | Active | Inactive
 
 // override equality and deny comparison
 [<CustomEquality; NoComparison>]
 type CustomerAccount =
-    {
-    CustomerAccountId: CustomerAccountId;
-    CustomerType: CustomerType;
-    ContactInfo: Contact;
-    }
+  {
+  CustomerAccountId: CustomerAccountId;
+  CustomerType: CustomerType;
+  ContactInfo: Contact;
+  }
 
-    override this.Equals(other) =
-        match other with
-        | :? CustomerAccount as otherCust ->
-          (this.CustomerAccountId = otherCust.CustomerAccountId)
-        | _ -> false
+  override this.Equals(other) =
+    match other with
+    | :? CustomerAccount as otherCust ->
+      (this.CustomerAccountId = otherCust.CustomerAccountId)
+    | _ -> false
 
-    override this.GetHashCode() = hash this.CustomerAccountId
+  override this.GetHashCode() = hash this.CustomerAccountId
 ```
 
 This code fragment contains 17 type definitions in just a few lines, but with minimal complexity. How many lines of C# code would you need to do the same thing?
