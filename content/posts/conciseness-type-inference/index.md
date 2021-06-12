@@ -55,8 +55,8 @@ The type inference algorithm is excellent at gathering information from many sou
 ```fsharp
 let i = 1
 let s = "hello"
-let tuple = s,i      // pack into tuple
-let s2,i2 = tuple    // unpack
+let tuple = s,i       // pack into tuple
+let s2,i2 = tuple     // unpack
 let list = [s2]       // type is string list
 ```
 
