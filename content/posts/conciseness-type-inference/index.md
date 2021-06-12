@@ -53,10 +53,10 @@ You might notice that the standard F# implementations for "filter" and "groupBy"
 The type inference algorithm is excellent at gathering information from many sources to determine the types. In the following example, it correctly deduces that the `list` value is a list of strings.
 
 ```fsharp
-let i  = 1
+let i = 1
 let s = "hello"
-let tuple  = s,i      // pack into tuple
-let s2,i2  = tuple    // unpack
+let tuple = s,i      // pack into tuple
+let s2,i2 = tuple    // unpack
 let list = [s2]       // type is string list
 ```
 
