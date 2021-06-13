@@ -115,7 +115,7 @@ Expression-oriented style is not a choice in F#, and it is one of the things tha
 The type system in F# is based on the concept of **algebraic types**. That is, new compound types are built by combining existing types in two different ways:
 
 * First, a combination of values, each picked from a set of types. These are called "product" types.
-* Of, alternately, as a disjoint union representing a choice between a set of types. These are called "sum" types.
+* Or, alternately, as a disjoint union representing a choice between a set of types. These are called "sum" types.
 
 For example, given existing types `int` and `bool`, we can create a new product type that must have one of each:
 
