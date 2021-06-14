@@ -430,5 +430,5 @@ This would be much harder in the imperative version.
 
 Functional Reactive Programming (known as FRP) is a big topic, and we've only just touched on it here. I hope this introduction has given you a glimpse of the usefulness of this way of doing things.
 
-If you want to learn more, see the documentation for the F# [Observable module](https://msdn.microsoft.com/visualfsharpdocs/conceptual/control.observable-module-%5bfsharp%5d), which has the basic transformations used above.
+If you want to learn more, see the documentation for the F# [Observable module](https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2010/ee370313(v=vs.100)?redirectedfrom=MSDN), which has the basic transformations used above.
 And there is also the [Reactive Extensions (Rx)](https://docs.microsoft.com/en-us/previous-versions/dotnet/reactive-extensions/hh242985(v=vs.103)) library which shipped as part of .NET 4.  That contains many other additional transformations.
