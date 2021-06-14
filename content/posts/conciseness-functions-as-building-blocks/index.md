@@ -249,4 +249,4 @@ let showRainbow =
 defaultShape |> showRainbow
 ```
 
-Notice that the functions are getting more complex, but the amount of code is still quite small. One reason for this is that the function parameters can often be ignored when doing function composition, which reduces visual clutter. For example, the "`showRainbow`" function does take a shape as a parameter, but it is not explicitly shown! This elision of parameters is called "point-free" style and will be discussed further in the ["thinking functionally"](/series/thinking-functionally.html) series
+Notice that the functions are getting more complex, but the amount of code is still quite small. One reason for this is that the function parameters can often be ignored when doing function composition, which reduces visual clutter. For example, the "`showRainbow`" function does take a shape as a parameter, but it is not explicitly shown! This elision of parameters is called "point-free" style and will be discussed further in the ["thinking functionally"](/series/thinking-functionally.html) series.
