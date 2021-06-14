@@ -80,7 +80,7 @@ type Email = Email of string
 // Phone
 type CountryPrefix = Prefix of int
 type Phone =
-  CountryPrefix:CountryPrefix; LocalNumber:string}
+  {CountryPrefix:CountryPrefix; LocalNumber:string}
 
 type Contact =
   {

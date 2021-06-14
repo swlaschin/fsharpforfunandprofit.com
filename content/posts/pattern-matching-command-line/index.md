@@ -132,7 +132,7 @@ at which point we can exit the loop and return the `optionsSoFar` value as the f
 There are two special cases:
 
 * Matching the "orderBy" option creates a submatch pattern that looks at the first item in the rest of the list and if not found, complains about a missing second parameter.
-* The very last match on the main `match..with` is not a wildcard, but a "bind to value". Just like a wildcard, this will always succeed, but because we havd bound to the value, it allows us to print the offending unmatched argument.
+* The very last match on the main `match..with` is not a wildcard, but a "bind to value". Just like a wildcard, this will always succeed, but because we have bound to the value, it allows us to print the offending unmatched argument.
 * Note that for printing errors, we use `eprintf` rather than `printf`. This will write to STDERR rather than STDOUT.
 
 So now let's test this:

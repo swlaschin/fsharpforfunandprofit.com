@@ -113,7 +113,7 @@ There will be some upcoming posts on these different types of control flow expre
 What about `let x=something`? In the examples above we saw:
 
 ```fsharp
-let x5 = let n=1 in n+2
+let x6 = let n=1 in n+2
 ```
 
 How can "`let`" be an expression? The reason will be discussed in the next post on ["let", "use" and "do"](/posts/let-use-do).
