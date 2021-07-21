@@ -9,7 +9,7 @@
             <div class="subtitle ">{{ .Description  }}</div>
             {{ end }}
             <div class="flex flex-even">
-            <div class="gdoc-post__date ">{{ .Date.Format "02 Jan 2006" }}</div>
+            <div class="gdoc-post__date ">{{ .Date.Format "02 Jan 2006" }} {{if lt .Date.Year (sub now.Year 3) }}<span style="color:darkred; background-color:lightgoldenrodyellow ;">This post is over 3 years old</span>{{end}}</div>
             <div class="" style="margin-left: auto"> {{ partial "twitter_tweet.html" . }}</div>
             </div>
         </header>
