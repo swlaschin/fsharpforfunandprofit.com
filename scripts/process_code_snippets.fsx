@@ -111,9 +111,11 @@ let main() =
     if flagArgs |> Array.contains ("-d") then
         debugOn <- true
 
+    let allPosts = flagArgs |> Array.contains ("-all")
+
     let nonFlagArgs = fsi.CommandLineArgs |> Array.filter (fun s -> s.StartsWith "-" |> not)
     match nonFlagArgs with
-    | [|_fsiPath|] ->
+    | [|_fsiPath|] when allPosts ->
         logInfo (sprintf "processing all posts in '%s'" postsDir.FullName)
         processDirectory postsDir
     | [|_fsiPath; filename |] ->
@@ -135,9 +137,15 @@ let main() =
         |> Seq.filter (fun fi -> fi.Name.Contains("index") |> not)
         |> Seq.iter copyNonIndexFile
 
-        
+
     | _ ->
-        logInfo "Pass 0 or 1 parameter. 0 for all posts; 1 for filename to process"
+        printfn "OPTIONS"
+        printfn @"process_code_snippets.fsx [-d] postDir/filename // one file only"
+        printfn @"process_code_snippets.fsx [-d] postDir // all files in post folder"
+        printfn @"process_code_snippets.fsx [-d] -all // all files"
+        printfn "NOTES"
+        printfn "   -d for debug"
+        printfn "   postDir is relative to /posts"
 
 // CLI
 main()
