@@ -127,8 +127,8 @@ let person1 = {First="john"; Last="Doe"}
 
 // Union types have choices. Vertical bars are separators.
 type Temp =
-	| DegreesC of float
-	| DegreesF of float
+  | DegreesC of float
+  | DegreesF of float
 let temp = DegreesF 98.6
 
 // Types can be combined recursively in complex ways.
