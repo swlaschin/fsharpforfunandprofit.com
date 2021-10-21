@@ -256,7 +256,7 @@ let rec totalCostUsingAcc costSoFar gift =
 A few things to note:
 
 * The new version of the function has an extra parameter (`costSoFar`). We will have to provide an initial value for this (such as zero) when we call it at the top level.
-* The non-recursive cases (`Book` and `Chocolate`) are the end points. The take the cost so far and add it to their price, and then that is the final result.
+* The non-recursive cases (`Book` and `Chocolate`) are the end points. They take the cost so far and add it to their price, and then that is the final result.
 * The recursive cases calculate a new `costSoFar` based on the parameter that is passed in. The new `costSoFar` is then passed down to the next lower level,
   just as in the example above.
 

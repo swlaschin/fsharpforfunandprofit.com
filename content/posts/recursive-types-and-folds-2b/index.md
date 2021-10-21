@@ -150,7 +150,7 @@ and Directory = {name:string; dirSize:int; subitems:FileSystemItem list}
 ```
 
 Note that each directory contains a *list* of subitems, so this is not a linear structure like `Gift`, but a tree-like structure.
-Out implementation of fold will have to take this into account.
+Our implementation of fold will have to take this into account.
 
 Here are some sample values:
 
