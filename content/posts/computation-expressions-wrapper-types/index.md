@@ -102,6 +102,12 @@ type DbResultBuilder() =
 let dbresult = new DbResultBuilder()
 ```
 
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
+
 And with this workflow, we can focus on the big picture and write much cleaner code:
 
 ```fsharp

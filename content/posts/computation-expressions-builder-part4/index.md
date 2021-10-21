@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: Overloading"
+title: "Implementing a CE: Overloading"
 description: "Stupid method tricks"
 date: 2013-01-28
 nav: thinking-functionally
@@ -11,6 +11,12 @@ seriesOrder: 9
 In this post, we'll take a detour and look at some tricks you can do with methods in a computation expression builder.
 
 Ultimately, this detour will lead to a dead end, but I hope the journey might provide some more insight into good practices for designing your own computation expressions.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
 
 ## An insight: builder methods can be overloaded
 

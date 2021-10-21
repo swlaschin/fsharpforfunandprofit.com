@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: Combine"
+title: "Implementing a CE: Combine"
 description: "How to return multiple values at once"
 date: 2013-01-26
 nav: thinking-functionally
@@ -9,6 +9,12 @@ seriesOrder: 7
 ---
 
 In this post we're going to look at returning multiple values from a computation expression using the `Combine` method.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
 
 ## The story so far...
 

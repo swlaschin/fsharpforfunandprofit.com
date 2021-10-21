@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: Zero and Yield"
+title: "Implementing a CE: Zero and Yield"
 description: "Getting started with the basic builder methods"
 date: 2013-01-25
 nav: thinking-functionally
@@ -9,6 +9,11 @@ seriesOrder: 6
 ---
 
 Having covered bind and continuations, and the use of wrapper types, we're finally ready to take on the full set of methods associated with "builder" classes.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
 
 If you look at the [MSDN documentation](http://msdn.microsoft.com/en-us/library/dd233182.aspx), you'll see not just `Bind` and `Return`, but also other strangely named methods like `Delay` and `Zero`. What are *they* for?  That's what this and the next few posts will answer.
 

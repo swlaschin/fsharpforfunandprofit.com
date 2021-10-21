@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: Adding laziness"
+title: "Implementing a CE: Adding laziness"
 description: "Delaying a workflow externally"
 date: 2013-01-29
 nav: thinking-functionally
@@ -11,6 +11,11 @@ seriesOrder: 10
 In a [previous post](/posts/computation-expressions-builder-part3/), we saw how to avoid unnecessary evaluation of expressions in a workflow until needed.
 
 But that approach was designed for expressions *inside* a workflow. What happens if we want to delay the *whole workflow itself* until needed.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
 
 ## The problem
 

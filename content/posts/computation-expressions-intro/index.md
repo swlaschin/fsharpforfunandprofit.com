@@ -91,6 +91,12 @@ type LoggingBuilder() =
 
 *Don't worry about what the mysterious `Bind` and `Return` are for yet -- they will be explained soon.*
 
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
+
 Next we create an instance of the type, `logger` in this case.
 
 ```fsharp

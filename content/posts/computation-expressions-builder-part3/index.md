@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: Delay and Run"
+title: "Implementing a CE: Delay and Run"
 description: "Controlling when functions execute"
 date: 2013-01-27
 nav: thinking-functionally
@@ -9,6 +9,12 @@ seriesOrder: 8
 ---
 
 In the last few posts we have covered all the basic methods (Bind, Return, Zero, and Combine) needed to create your own computation expression builder. In this post, we'll look at some of the extra features needed to make the workflow more efficient, by controlling when expressions get evaluated.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
 
 ## The problem: avoiding unnecessary evaluations
 

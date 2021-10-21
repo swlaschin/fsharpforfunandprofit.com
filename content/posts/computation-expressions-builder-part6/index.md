@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Implementing a builder: The rest of the standard methods"
+title: "Implementing a CE: The rest of the standard methods"
 description: "Implementing While, Using, and exception handling"
 date: 2013-01-30
 nav: thinking-functionally
@@ -19,6 +19,11 @@ These methods are:
 Remember, as always, that not all methods need to be implemented. If `While` is not relevant to you, don't bother with it.
 
 One important note before we get started: **all the methods discussed here rely on [delays](/posts/computation-expressions-builder-part3/)** being used. If you are not using delay functions, then none of the methods will give the expected results.
+
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
 
 ## Implementing "While"
 

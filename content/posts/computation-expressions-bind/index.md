@@ -13,6 +13,12 @@ And we introduced a `pipeInto` function that allowed us to add hooks into the co
 
 Now we are ready to look at our first builder method, `Bind`, which formalizes this approach and is the core of any computation expression.
 
+{{<alertinfo>}}
+Note that the "builder" in the context of a computation expression is not the same as the OO "builder pattern" for constructing and validating objects.
+There is a post on the ["builder pattern" here](../builder-pattern).
+{{</alertinfo>}}
+
+
 ### Introducing "Bind "
 
 The [MSDN page on computation expressions](http://msdn.microsoft.com/en-us/library/dd233182.aspx) describes the `let!` expression as syntactic sugar for a `Bind` method. Let's look at this again:
