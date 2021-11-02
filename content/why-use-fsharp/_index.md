@@ -32,7 +32,7 @@ type Person = {First:string; Last:string}
 // complex types in a few lines
 type Employee =
   | Worker of Person
-  | Manager of Employee list
+  | Manager of Person * Employee list
 
 // type inference
 let jdoe = {First="John"; Last="Doe"}
@@ -163,4 +163,3 @@ form.Show()
 ## Want more details?
 
 If you want more information, the ["Why use F#?" series of posts](/series/why-use-fsharp/) covers each of these points in much greater detail.
-
