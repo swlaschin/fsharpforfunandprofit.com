@@ -803,7 +803,7 @@ let resultAdd =
 
 Note that we can't just have *one* `add` function in the first list -- we have to have one `add` for every element in the second and third lists!
 
-That could get annoying, so often, a "paird" version of `zip` is used, whereby you don't specify a combining function at all, and just get back a list of pairs instead,
+That could get annoying, so often, a "paired" version of `zip` is used, whereby you don't specify a combining function at all, and just get back a list of pairs instead,
 which you can then process later using `map`.
 This is the same approach as was used in the `combine` functions discussed above, but for `zipList`.
 
