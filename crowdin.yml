@@ -1,6 +1,6 @@
-base_path: "/content"
+base_path: /content
 files:
   - source: '**/*.md'
     translation: '%original_path%/%original_file_name%'
 export_languages:
-- uk
+  - uk
