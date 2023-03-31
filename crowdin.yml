@@ -1,3 +1,5 @@
 files:
   - source: content/**/*.md
     translation: '%original_path%/%original_file_name%'
+export_languages:
+- uk
