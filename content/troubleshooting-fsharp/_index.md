@@ -76,7 +76,7 @@ type Customer = {Name:string; Address: string}  // correct
 
 ### Don't use ! for not or != for not-equal ###
 
-The exclamation point symbol is not the "NOT" operator. It is the deferencing operator for mutable references. If you use it by mistake, you will get the following error:
+The exclamation point symbol is not the "NOT" operator. It is the dereferencing operator for mutable references. If you use it by mistake, you will get the following error:
 
 ```fsharp
 let y = true
