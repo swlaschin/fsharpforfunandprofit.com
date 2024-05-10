@@ -508,7 +508,7 @@ let list = [
     Person.create "John" "Johnson";
     Person.create "Jack" "Jackson"]
 
-//get all the full names at once
+// get all the full names at once
 list |> List.map fullName
 ```
 
@@ -522,7 +522,7 @@ let list = [
     Person.create "John" "Johnson";
     Person.create "Jack" "Jackson"]
 
-//get all the full names at once
+// get all the full names at once
 list |> List.map (fun p -> p.FullName)
 ```
 
