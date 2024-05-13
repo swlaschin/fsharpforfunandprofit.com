@@ -448,7 +448,7 @@ let batman =
     // string concatenation using +
     (+) <!> ["bam"; "kapow"; "zap"] <*> ["!"; "!!"]
 
-// result =
+// batman =
 // ["bam!"; "bam!!"; "kapow!"; "kapow!!"; "zap!"; "zap!!"]
 ```
 
