@@ -3,7 +3,7 @@ layout: post
 title: "The Builder Pattern in F#"
 description: ""
 date: 2021-07-23
-draft: false
+draft: true
 ---
 
 In this post, we'll look at the "builder pattern", and discuss various ways of implementing it in F#.
