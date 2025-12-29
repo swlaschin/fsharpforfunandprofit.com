@@ -6,6 +6,7 @@ date: 2025-12-19
 categories: []
 seriesId: "Designing Weaving Software"
 seriesOrder: 1
+image: "/posts/designing-weaving-software/twitter_card800x418_2.jpg"
 ---
 
 
@@ -14,7 +15,7 @@ seriesOrder: 1
 
 Recently, I have taken up a new hobby, hand weaving. As a meditative, physical activity with tangible results, it's a great antidote to doom-scrolling and spending too much time in front of a screen. The first time I tried it, something about the weaving  process really appealed to me and I got a little bit obsessed with learning more.  It turns out that weaving is a subject with never-ending depth to it, much like learning to play a musical instrument.  And like any sensible programmer, I wanted to take what I learned and write software for it.
 
-This series of posts describes how I went about designing some weaving software, and some of the decisions I took. This domain is very different from my usual topic of BLOBAS (Boring Line Of Business Applications), so I was curious to see if my usual approach would even be useful.
+This series of posts describes how I went about designing some weaving software, and some of the decisions I took. This domain is very different from my usual topic of BLOBAS (Boring Line Of Business Applications), so I was curious to see if my standard approach would even be useful.
 
 Now in order to understand some of the design decisions I made, you'll need to understand the domain.  And since most of my readers will know nothing about weaving, forgive me if I spend some time up front in this post explaining it. 
 
@@ -24,12 +25,9 @@ Now in order to understand some of the design decisions I made, you'll need to u
 
 Unlike superficially similar fiber arts like knitting or crocheting, weaving involves a lot of almost "programming-like" upfront planning. Furthermore, some very interesting effects occur when two threads are interwoven in complicated ways. I think this appeals to programmers in the same way that generative art like fractals and [L-systems](https://en.wikipedia.org/wiki/L-system) do.
 
-And it seems that I'm not the only programmer who is attracted to weaving. 
+And it seems that I'm not the only programmer who is attracted to weaving. For example, when I first started researching weaving patterns, I frequently came across the name of [Ralph Griswold](https://en.wikipedia.org/wiki/Ralph_Griswold). That rang a bell for me, because [his book on the Icon programming language](https://archive.org/details/iconprogrammingl0000gris) was one of the first books I owned when I started programming. He was also into weaving and created a [large archive of weaving resources](https://www2.cs.arizona.edu/patterns/weaving/index.html) at the University of Arizona, where he was a professor.  Many other programmers have discovered hand weaving, such as [Kris Bruland](https://handwovenmagazine.com/handweaving-net-from-the-beginning-and-into-the-future/), a software architect who has built a massive and impressive weaving site called [handweaving.net](https://handweaving.net/).
 
-* When I first started researching weaving patterns, I frequently came across the name of [Ralph Griswold](https://en.wikipedia.org/wiki/Ralph_Griswold). That rang a bell for me, because [his book on the Icon programming language](https://archive.org/details/iconprogrammingl0000gris) was one of the first books I owned when I started programming. He was also into weaving and created a [large archive of weaving resources](https://www2.cs.arizona.edu/patterns/weaving/index.html) at the University of Arizona, where he was a professor.
-* [Betty Shannon](https://en.wikipedia.org/wiki/Betty_Shannon), a mathematician and the wife of Claude Shannon, was a serious weaver.
-* [Kris Bruland](https://handwovenmagazine.com/handweaving-net-from-the-beginning-and-into-the-future/) is a software architect who has built a massive and impressive weaving site called [handweaving.net](https://handweaving.net/).
-* And of course, we all know that the use of punch cards in early computers can be directly traced to the [Jacquard loom](https://en.wikipedia.org/wiki/Jacquard_machine#Importance_in_computing).
+And of course, we all know that the use of punch cards in early computers can be directly traced to the [Jacquard loom](https://en.wikipedia.org/wiki/Jacquard_machine#Importance_in_computing).
 
 ## Why weaving software?
 
@@ -47,7 +45,7 @@ For example, here are three different designs using exactly the same weave struc
 
 ![](colorandweave.jpg)
 
-And here are three different designs using exactly the same color pattern (alternating dark & light colors), but slightly diferent weave structures.
+And here are three different designs using exactly the same color pattern (alternating dark & light colors), but slightly different weave structures.
 
 ![](weavestructure.jpg)
 
@@ -63,7 +61,7 @@ Second, and more importantly, the apps work on a thread by thread by basis, rath
 
 ## Communicating weaving design through "drafts"
 
-Let's start with plainweave, the most basic structure. In plainweave you lift up every other vertical (warp) thread to make a gap, and then you feed a horizontal weft thread between them. In the next row, you lift the other half of the threads and pass through another weft thread. This creates the classic over-and-under look.`
+Let's start with plainweave, the most basic structure. In plainweave you lift up every other vertical (warp) thread to make a gap, and then you feed a horizontal weft thread between them. In the next row, you lift the other half of the threads and pass through another weft thread. This creates the classic over-and-under look.
 
 How would you communicate this process to someone else? This is what a "weaving draft" does. It's a visual way of communicating a weaving design. 
 
@@ -71,9 +69,9 @@ The most common way of drawing a draft is to draw grids on the top and right sid
 
 ![](plainweave2_draft.jpg)
 
-* The grid above the design (the "threading") indicates how the warp threads are grouped. The grid is read right-to-left, so the first vertical warp thread (on the far right) is in group 1. The second thread is in group 2, the 3rd thread is in group 1 again. And so on. These groups are called "shafts". On a physical loom all the threads in the same group really are tied together onto a single shaft which is then lifted up when required.
+* The grid above the design (the "threading") indicates how the warp threads are grouped. The grid is read right-to-left, so the first vertical warp thread (on the far right) is in group 1. The second thread is in group 2, the 3rd thread is in group 1 again. And so on. These groups are called "shafts". On a physical loom all the threads in the same group really are tied together onto a single rod (hence "shaft") that goes across the entire width of the loom, and which is then lifted up when required.
 
-* The grid on the right of the design (the "liftplan") describes which shafts are lifted for each row. In the first row, shaft 1 is lifted, which in turn lifts half of the warp threads. In the second row, shaft 2 is lifted, which lifts the other half of the warp threads.
+* The grid on the right of the design (the "liftplan") describes which shafts are lifted for each row. In the first row, shaft 1 is lifted, which in turn lifts half of the warp threads. In the second row, shaft 2 is lifted, which lifts the other half of the warp threads. And then alternating shafts 1 and 2 as you move down the rows.
 
 Now let's look at another draft. This time for the weave structure called twill, which has a distinctive diagonal pattern effect (the denim in jeans is a twill).
 
@@ -106,6 +104,7 @@ Similarly, when it comes to color, I would like to do the same thing. In the hou
 
 Furthermore, I would like to use an indirect reference like "1st color" rather than a specific color like "brown". This means I can easily swap between different color palettes to see which color combinations I like best.
 
+
 ## A weaving design language
 
 As a programmer, this concept of "groups" and "repeats" immediately made me think of regular expressions. And so in my head, I came up with a syntax for describing a pattern:
@@ -117,6 +116,8 @@ A pattern is:
 * A way of labeling a group of threads. E.g "`A=[ 1 2 ]; B=[3 4]`"
 * A repeat of any of the above. E.g "`1x2 [3 4]x3 [A B]x4`"
 
+
+Of course, I'm not the only person who has thought of doing generative weaving by combining smaller components. For example, Laura Devendorf did an [interesting presentation](https://www.youtube.com/watch?v=kKQs0bVuN-8) on AdaCAD, [AdaCAD](https://adacad.org/) is a visual flowchart-style approach to designing weaves. Even though I am both a programmer and a weaver, I found it a bit overwhelming to use in practice, and didn't align with my vision. 
 
 ## A domain-driven weaving model
 
@@ -277,7 +278,7 @@ type ColorPatternUnit =
   | Mirrored of ColorPatternUnit 
 ```
 
-Now we are running into the same problem that you often have with inheritance heirarchies in object-oriented design. There is some special case that doesn't fit.
+Now we are running into the same problem that you often have with inheritance hierarchies in object-oriented design. There is some special case that doesn't fit.
 
 This particular case can be handled by adding another type parameter to represent a "transform".
 
@@ -406,13 +407,23 @@ module DraftLiftplan =
 
 So now we get the best of both worlds. Two domain specific models, but we can still convert between them when needed.
 
+## Conclusion
+
+So far, I'm happy with the decisions I made during the preliminary domain modeling phase (but I reserve the right to refactor as I get further into implementation!). 
+Based on this, my general advice at the domain modeling stage would be:
+
+* Do try to use only words from your domain when you design your domain model.
+* Don't make the design too abstract and generic if it means losing the vocabulary of the domain and there isn't a domain-specific meaning to the abstraction.
+* Don't try to make one domain model work for every purpose. Do create more than one domain model for different subdomains, and then map or convert between them.
+
+
 
 ## Next time
 
 This is planned to be the first post in a series. In future posts, we'll look at:
 
-* parsing a text represention of the model
-* unfolding the model
+* creating and parsing a text representation of the model
+* converting the design model into the draft model
 * rendering the model to SVG files
 * and more
 

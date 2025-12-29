@@ -6,6 +6,7 @@ date: 2025-12-28
 categories: []
 seriesId: "Designing Weaving Software"
 seriesOrder: 2
+image: "/posts/designing-weaving-software/twitter_card800x418_2.jpg"
 ---
 
 
