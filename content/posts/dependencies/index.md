@@ -35,7 +35,7 @@ Before we get started, let's define what we mean by a "dependency" for this post
 
 But this happens all the time, so what kinds of dependencies are problematic?
 
-First, we want generally want to create code that is predictable and deterministic (pure). Any calls that are non-deterministic will mess this up. These non-deterministic calls include all kinds of I/O, random number generators, getting the current date & time, etc.  So we will want to manage and control impure dependencies.
+First, we generally want to create code that is predictable and deterministic (pure). Any calls that are non-deterministic will mess this up. These non-deterministic calls include all kinds of I/O, random number generators, getting the current date & time, etc.  So we will want to manage and control impure dependencies.
 
 Second, even for pure code, we may often want to change behavior at runtime by passing in different implementations, rather than hard-coding one. In OO design, we would probably use the Strategy Pattern, and in FP design, we would probably pass in a "strategy" function as a parameter.
 
@@ -230,4 +230,3 @@ The source code for this post is available at these gists:
 * [DependencyRetention.fsx](https://gist.github.com/swlaschin/d35b59795a85a62723124df1a79d2388)
 
 In the [next post](/posts/dependencies-2/), we'll look at "dependency parameterization". That is, passing in dependencies as standard function parameters.
-

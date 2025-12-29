@@ -154,7 +154,7 @@ Here are the seven ways again, along with a more formal term, if available.
 * "A test oracle"
 
 So that's the theory. How might we apply them in practice?
-[In the next post, we'll look at some simple tasks](/posts/property-based-testing-3), such as "sort a list", "reverse a list", and so on, and see how we might test there implementations with these various approaches.
+[In the next post, we'll look at some simple tasks](/posts/property-based-testing-3), such as "sort a list", "reverse a list", and so on, and see how we might test their implementations with these various approaches.
 
 
 
