@@ -539,10 +539,10 @@ type ValidMovesForPlayerX = PlayerXPos list
 type ValidMovesForPlayerO = PlayerOPos list
 
 type MoveResult =
-    | PlayerXToMove of GameState * ValidMovesForPlayerX
-    | PlayerOToMove of GameState * ValidMovesForPlayerO
-    | GameWon of GameState * Player
-    | GameTied of GameState
+    | PlayerXToMove of ValidMovesForPlayerX
+    | PlayerOToMove of ValidMovesForPlayerO
+    | GameWon of Player
+    | GameTied
 ```
 
 We've replaced the `InProcess` case with two new cases `PlayerXToMove` and `PlayerOToMove`, which I think is actually clearer.
