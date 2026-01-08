@@ -528,13 +528,13 @@ First, here's an example of lifting a two-parameter function:
 
 ```fsharp
 // define a two-parameter function to test with
-let addPair x y = x + y
+let add2 x y = x + y
 
 // lift a two-param function
-let addPairOpt = Option.lift2 addPair
+let add2Opt = Option.lift2 add2
 
 // call as normal
-addPairOpt (Some 1) (Some 2)
+add2Opt (Some 1) (Some 2)
 // result => Some 3
 ```
 
@@ -542,13 +542,13 @@ And here's an example of lifting a three-parameter function:
 
 ```fsharp
 // define a three-parameter function to test with
-let addTriple x y z = x + y + z
+let add3 x y z = x + y + z
 
 // lift a three-param function
-let addTripleOpt = Option.lift3 addTriple
+let add3eOpt = Option.lift3 add3
 
 // call as normal
-addTripleOpt (Some 1) (Some 2) (Some 3)
+add3Opt (Some 1) (Some 2) (Some 3)
 // result => Some 6
 ```
 
@@ -567,7 +567,7 @@ Option.lift2 (*) (Some 2) (Some 3)   // Some 6
 
 Going further, can we eliminate the need for this first function parameter and have a *generic* way of combining the values?
 
-Why, yes we can! We can just use a tuple constructor to combine the values.
+Why, yes we can! We can just use a pair constructor to combine the values.
 When we do this we are combining the values without making any decision about how they will be used yet.
 
 Here's what it looks like in a diagram:
@@ -577,16 +577,16 @@ Here's what it looks like in a diagram:
 and here's how you might implement it for options and lists:
 
 ```fsharp
-// define a tuple creation function
-let tuple x y = x,y
+// define a pair creation function
+let pair x y = x,y
 
 // create a generic combiner of options
-// with the tuple constructor baked in
-let combineOpt x y = Option.lift2 tuple x y
+// with the pair constructor baked in
+let combineOpt x y = Option.lift2 pair x y
 
 // create a generic combiner of lists
-// with the tuple constructor baked in
-let combineList x y = List.lift2 tuple x y
+// with the pair constructor baked in
+let combineList x y = List.lift2 pair x y
 ```
 
 Let's see what happens when we use the combiners:
@@ -599,7 +599,7 @@ combineList [1;2] [100;200]
 // Result => [(1, 100); (1, 200); (2, 100); (2, 200)]
 ```
 
-Now that we have an elevated tuple, we can work with the pair in any way we want, we just need to use `map` to do the actual combining.
+Now that we have an elevated pair, we can work with the pair in any way we want, we just need to use `map` to do the actual combining.
 
 Want to add the values? Just use `+` in the `map` function:
 
@@ -742,7 +742,7 @@ Hence the use of `*>` to ignore the leading quote and `<*` to ignore the trailin
 **What it does**:  Combines two lists (or other enumerables) using a specified function
 
 **Signature**:  `E<(a->b->c)> -> E<a> -> E<b> -> E<c>` where `E` is a list or other enumerable type,
-   or `E<a> -> E<b> -> E<a,b>` for the tuple-combined version.
+   or `E<a> -> E<b> -> E<a,b>` for the pair-combined version.
 
 ### Description
 
@@ -803,7 +803,7 @@ let resultAdd =
 
 Note that we can't just have *one* `add` function in the first list -- we have to have one `add` for every element in the second and third lists!
 
-That could get annoying, so often, a "tupled" version of `zip` is used, whereby you don't specify a combining function at all, and just get back a list of tuples instead,
+That could get annoying, so often, a "paired" version of `zip` is used, whereby you don't specify a combining function at all, and just get back a list of pairs instead,
 which you can then process later using `map`.
 This is the same approach as was used in the `combine` functions discussed above, but for `zipList`.
 
